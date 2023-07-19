@@ -6,6 +6,7 @@ import './App.css';
 // a savoir nos "pages" qui elles meme ont des composants
 
 import { useState, useEffect } from 'react';
+import { PongGame } from './PongGame';
 
 // type Username = { id: string; name: string }[];
 
@@ -86,7 +87,12 @@ export default function App() {
 
   return (
     <div>
-      {usernames.map((username, index) => (
+<div className="App">
+      <header className="App-header">
+        <PongGame />
+      </header>
+    </div>
+          {usernames.map((username, index) => (
         <p key={index}>hello {username}</p>
       ))}
     </div>
