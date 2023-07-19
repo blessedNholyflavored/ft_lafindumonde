@@ -7,6 +7,7 @@ import './App.css';
 
 import { useState, useEffect } from 'react';
 import { PongGame } from './PongGame';
+import { Route, Routes } from 'react-router-dom';
 
 // type Username = { id: string; name: string }[];
 
@@ -89,8 +90,11 @@ export default function App() {
     <div>
 <div className="App">
       <header className="App-header">
-        <PongGame />
       </header>
+        <Routes>
+        <Route path="/game" element={<PongGame />} />
+          {/* <PongGame /> */}
+        </Routes>
     </div>
           {usernames.map((username, index) => (
         <p key={index}>hello {username}</p>
