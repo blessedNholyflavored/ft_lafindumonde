@@ -15,11 +15,11 @@ RUN npm install
 COPY --chown=node:node . .
 
 # # compile le main (pas utile pour le moment)
- RUN npm run build
+ #RUN npm run build
 
 # Generate prisma client code
 RUN npx prisma generate
 
 EXPOSE 8080
 
-CMD ["npm", "run", "start:dev"]
+CMD ["npm", "run", "start:migrate:dev"]
