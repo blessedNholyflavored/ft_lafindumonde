@@ -90,15 +90,17 @@ export default function App() {
     <div>
 <div className="App">
       <header className="App-header">
+      <PongGame />
+
       </header>
-        <Routes>
+        {/* <Routes>
         <Route path="/game" element={<PongGame />} />
-          {/* <PongGame /> */}
-        </Routes>
+          <PongGame />
+        </Routes> */}
     </div>
-          {usernames.map((username, index) => (
+          {/* {usernames.map((username, index) => (
         <p key={index}>hello {username}</p>
-      ))}
+      ))} */}
     </div>
   );
 }

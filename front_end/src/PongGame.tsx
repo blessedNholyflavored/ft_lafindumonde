@@ -4,37 +4,38 @@ export const PongGame = () => {
 
     const [player1, setPlayer1] = useState(300);
     const [player2, setPlayer2] = useState(300);
-    const [ballStart, setBallStart] = useState(250);
-    const [ball, setBall] = useState({ x: 900, y: 300 });
-    const [ballDir, setBallDir] = useState({ x: 1, y: -1 });
+ //   const [ball, setBall] = useState({ x: 900, y: 300 });
+  //  const [ballDir, setBallDir] = useState({ x: 1, y: -1 });
     const [keyCode, setKeyCode] = useState('');
-    const gameAreaRef = useRef(null);
+    const gameAreaRef = useRef<HTMLDivElement>(null);    
     const mapy = 600;
     const mapx = 1800;
     const ballSpeed = 7;
     const [ player1Point, setPoint1 ] = useState(0);
     const [ player2Point, setPoint2 ] = useState(0);
+    const [ball, setBall] = useState<{ x: number; y: number }>({ x: 50, y: 50 }); // Position de la balle
+    const [ballDir, setBallDir] = useState<{ x: number; y: number }>({ x: 1, y: 1 }); // Direction de la balle
 
-    const playerMove = (e) => {
+    const playerMove = (e: React.KeyboardEvent<HTMLDivElement>) => {
 
 
-            setKeyCode(e.keyCode);
-            const { keyCode } = e;
-            const speed = 20;
+            setKeyCode(e.key);
+            const key = e.keyCode;
+            const speed = 40;
         
-            if (keyCode === 87 && player1 > 0)
+            if (key === 87 && player1 > 0)
             {
               setPlayer1(player1 - speed);
             }
-            else if (keyCode === 83 && player1 < mapy - 90)
+            else if (key === 83 && player1 < mapy - 90)
             {
               setPlayer1(player1 + speed);
             }
-            else if (keyCode === 38 && player2 > 0)
+            else if (key === 38 && player2 > 0)
             {
               setPlayer2(player2 - speed);
             }
-            else if (keyCode === 40 && player2 < mapy - 90)
+            else if (key === 40 && player2 < mapy - 90)
             {
               setPlayer2(player2 + speed);
             }
@@ -44,7 +45,7 @@ export const PongGame = () => {
       useEffect(() => {
 
         const interval = setInterval(() => {
-          setBall((prevBallPos) => ({
+          setBall((prevBallPos: { x: number; y: number }) => ({
             x: prevBallPos.x + ballDir.x * ballSpeed,
             y: prevBallPos.y + ballDir.y * ballSpeed,
           }));
@@ -57,26 +58,26 @@ export const PongGame = () => {
 
           if (ball.y >= mapy - 8 || ball.y <= 0)
           {
-            setBallDir((prevBallDir) => ({ ...prevBallDir, y: -prevBallDir.y }));
+            setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: -prevBallDir.y }));
           }
           if (ball.x >= mapx - 8 - 10 || ball.x <= 10)
           {
             if ((ball.x > mapx / 2 && ball.y + 8 >= player2 && ball.y <= player2 + 90) || (ball.x < mapx / 2 && ball.y + 8 >= player1 && ball.y <= player1 + 90))
             {
-              setBallDir((prevBallDir) => ({ ...prevBallDir, x: -prevBallDir.x }));
+              setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, x: -prevBallDir.x }));
             }
           }
           if (ball.x <= 0)
           {
             ball.x = 900;
             ball.y = 300;
-            setPoint2((prevScore) => prevScore + 1);
+            setPoint2((prevScore: number) => prevScore + 1);
           }
           if (ball.x >= mapx)
           {
             ball.x = 900;
             ball.y = 300;
-            setPoint1((prevScore) => prevScore + 1);
+            setPoint1((prevScore: number) => prevScore + 1);
 
           }
         }, [ball]);
@@ -97,7 +98,7 @@ export const PongGame = () => {
           </div>
           <div
             ref={gameAreaRef}
-            tabIndex="0"
+            tabIndex={0}
             onKeyDown={playerMove}
             style={{
               width: mapx,
