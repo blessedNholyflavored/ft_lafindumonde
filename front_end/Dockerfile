@@ -7,9 +7,11 @@ WORKDIR /usr/src/app
 COPY --chown=node:node package*.json ./
 
 RUN npm install
+
 # I had prb for copy with failed it ==> https://stackoverflow.com/questions/63783323/getting-copy-failed-stat-when-trying-to-copy-package-json-file-in-docker-on-dig
 COPY --chown=node:node . .
 
-EXPOSE 8080
+RUN npm run build
+#EXPOSE 8080
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "start"]

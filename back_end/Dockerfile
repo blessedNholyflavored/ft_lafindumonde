@@ -20,6 +20,6 @@ COPY --chown=node:node . .
 # Generate prisma client code
 RUN npx prisma generate
 
-EXPOSE 8080
+EXPOSE 3000
 
 CMD ["npm", "run", "start:migrate:dev"]
