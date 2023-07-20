@@ -9,7 +9,7 @@ export const PongGame = () => {
     const [keyCode, setKeyCode] = useState('');
     const gameAreaRef = useRef<HTMLDivElement>(null);    
     const mapy = 600;
-    const mapx = 1800;
+    const mapx = 1800; 
     const ballSpeed = 7;
     const [ player1Point, setPoint1 ] = useState(0);
     const [ player2Point, setPoint2 ] = useState(0);
@@ -21,9 +21,9 @@ export const PongGame = () => {
 
             setKeyCode(e.key);
             const key = e.keyCode;
-            const speed = 40;
+            const speed = 30;
         
-            if (key === 87 && player1 > 0)
+            if (key === 87 && player1 > 10)
             {
               setPlayer1(player1 - speed);
             }
@@ -31,7 +31,7 @@ export const PongGame = () => {
             {
               setPlayer1(player1 + speed);
             }
-            else if (key === 38 && player2 > 0)
+            else if (key === 38 && player2 > 10)
             {
               setPlayer2(player2 - speed);
             }
@@ -77,8 +77,8 @@ export const PongGame = () => {
             ball.x = 900;
             ball.y = 300;
             setBall((prevBallPos: { x: number; y: number }) => ({
-              x: ballDir.x,
-              y: ballDir.y,
+              x: 900,
+              y: 300,
             }));
             setPoint2((prevScore: number) => prevScore + 1);
           }
@@ -87,8 +87,8 @@ export const PongGame = () => {
             ball.x = 900;
             ball.y = 300;
             setBall((prevBallPos: { x: number; y: number }) => ({
-              x: ballDir.x,
-              y: ballDir.y,
+              x: 900,
+              y: 300,
             }));
             setPoint1((prevScore: number) => prevScore + 1);
           }
