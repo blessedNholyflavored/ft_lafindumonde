@@ -13,8 +13,8 @@ export const PongGame = () => {
     const ballSpeed = 7;
     const [ player1Point, setPoint1 ] = useState(0);
     const [ player2Point, setPoint2 ] = useState(0);
-    const [ball, setBall] = useState<{ x: number; y: number }>({ x: 50, y: 50 }); // Position de la balle
-    const [ballDir, setBallDir] = useState<{ x: number; y: number }>({ x: 1, y: 1 }); // Direction de la balle
+    const [ball, setBall] = useState<{ x: number; y: number }>({ x: 50, y: 50 });
+    const [ballDir, setBallDir] = useState<{ x: number; y: number }>({ x: 1, y: 0 });
 
     const playerMove = (e: React.KeyboardEvent<HTMLDivElement>) => {
 
@@ -64,21 +64,33 @@ export const PongGame = () => {
           {
             if ((ball.x > mapx / 2 && ball.y + 8 >= player2 && ball.y <= player2 + 90) || (ball.x < mapx / 2 && ball.y + 8 >= player1 && ball.y <= player1 + 90))
             {
-              setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, x: -prevBallDir.x }));
+              if (ball.y <= player2 - 20 || ball.y <= player1 - 20)
+                setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: -prevBallDir.y - 0.2}));
+              if (ball.y <= player2 + 20 || ball.y <= player1 + 20)
+                setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: -prevBallDir.y + 0.2}));
+              setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, x: -prevBallDir.x}));
+
             }
           }
           if (ball.x <= 0)
           {
             ball.x = 900;
             ball.y = 300;
+            setBall((prevBallPos: { x: number; y: number }) => ({
+              x: ballDir.x,
+              y: ballDir.y,
+            }));
             setPoint2((prevScore: number) => prevScore + 1);
           }
           if (ball.x >= mapx)
           {
             ball.x = 900;
             ball.y = 300;
+            setBall((prevBallPos: { x: number; y: number }) => ({
+              x: ballDir.x,
+              y: ballDir.y,
+            }));
             setPoint1((prevScore: number) => prevScore + 1);
-
           }
         }, [ball]);
         
@@ -93,6 +105,8 @@ export const PongGame = () => {
       return (
         <div>
                   <h1>KeyCode: {keyCode}</h1>
+                  <h1>Player1: {player1}</h1>
+                  <h1>Player2: {player2}</h1>
           <div style={{ textAlign: 'center', fontSize: '24px', marginBottom: '10px' }}>
             Score - Joueur 1: { player1Point } | Joueur 2: { player2Point }
           </div>
