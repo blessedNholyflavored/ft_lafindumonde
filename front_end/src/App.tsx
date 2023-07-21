@@ -71,13 +71,14 @@ import { Route, Routes } from 'react-router-dom';
 
 export default function App() {
   const [usernames, setUsernames] = useState([]);
-  console.log("nonono");
-
+  
   useEffect(() => {
     const fetchUsernames = async () => {
       try {
+        console.log("nonono");
         const response = await (await fetch("http://localhost:3000/users")).json();
         const usernamesArray = response.map((user: { username: any; }) => user.username);
+        console.log(usernamesArray[0]);
         setUsernames(usernamesArray);
       } catch (error) {
         console.error('Error fetching usernames:', error);
