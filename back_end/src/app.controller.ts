@@ -9,17 +9,17 @@ import { JwtAuthGuard } from './auth/jwt-auth.guards';
 export class AppController {
   constructor(private readonly authService: AuthService) {}
 
-	//POST /login
-	@UseGuards(FortyTwoAuthGuard)
-	@Post('login')
-	login(@Request() req): any{
-		return this.authService.login(req.user);
-	}
+  //POST /login
+  @UseGuards(FortyTwoAuthGuard)
+  @Post('login')
+  login(@Request() req): any {
+    return this.authService.login(req.user);
+  }
 
-	//GET /protected
-	@UseGuards(JwtAuthGuard)
-	@Get('protected')
-	getHello(@Request() req): string {
-		return req.user;
-	}
+  //GET /protected
+  @UseGuards(JwtAuthGuard)
+  @Get('protected')
+  getHello(@Request() req): string {
+    return req.user;
+  }
 }

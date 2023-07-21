@@ -13,7 +13,28 @@ datasource db {
 model User {
 	id			Int			@id @default(autoincrement())
 	createdAt	DateTime	@default(now())
-	email		String		
-	hash		String
+	email		String		@unique
+	password	String?
 	username	String 		@unique
+	level		Int?
+	xp			Int?
+	status		USER_STATUS	@default(OFFLINE)
+	game1		Game[] @relation("player1")
+	game2		Game[] @relation("player2")
+}
+
+enum USER_STATUS{
+	INGAME
+	OFFLINE
+	ONLINE
+}
+
+model Game {
+	id			Int			@id @default(autoincrement())
+	start_at	DateTime
+	end_at		DateTime
+  	userId1		Int  @unique
+	player1		User @relation("player1", fields: [userId1], references: [id])
+  	userId2		Int  @unique
+	player2		User @relation("player2", fields: [userId2], references: [id])
 }
