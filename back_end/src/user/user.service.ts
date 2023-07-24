@@ -9,4 +9,14 @@ export class UserService {
     const users = await prisma.user.findMany();
     return users;
   }
+
+  async updateUsername(username: string) {
+	const user = await prisma.user.findUnique({
+		where:	{ id : 1 },
+	});
+	prisma.user.update({
+		where:	{ id : 1 },
+		data:	{ username }
+	})
+  }
 }
