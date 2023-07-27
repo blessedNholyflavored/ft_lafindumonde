@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get , Post , Body , Param } from '@nestjs/common';
 import { UserService } from './user.service';
 
 @Controller('users')
@@ -10,5 +10,14 @@ export class UsersController {
     // console.log("lolfjeiokfjeoifjeofjoe");
     const users = this.userService.findUser();
     return users;
+  }
+
+  @Post('/:id/')
+  updating(@Param('id') id: string, @Body() username: string) {
+	console.log(username);
+	console.log(id);
+	const newUsername = username['username'];
+	const user = this.userService.updateUsername(id, newUsername);
+	return user;
   }
 }

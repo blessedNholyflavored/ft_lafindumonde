@@ -7,7 +7,8 @@ import './App.css';
 
 import { useState, useEffect } from 'react';
 import { PongGame } from './PongGame';
-import { Route, Routes } from 'react-router-dom';
+import { UserSetting } from './UserSetting';
+import { Form, Route, Routes } from 'react-router-dom';
 
 // type Username = { id: string; name: string }[];
 
@@ -71,7 +72,7 @@ import { Route, Routes } from 'react-router-dom';
 
 export default function App() {
   const [usernames, setUsernames] = useState([]);
-  
+ 
   useEffect(() => {
     const fetchUsernames = async () => {
       try {
@@ -93,12 +94,24 @@ export default function App() {
       <header className="App-header">
         <Routes>
         <Route path="/game" element={<PongGame />} />
+		<Route path="/settings" element={<UserSetting />} />
         </Routes>
 
         <a href="/game">
           <button>GAME</button>
           </a>
-          </header> 
+
+		{/* <form >
+			<label>choose ID
+				<input type='text' value={id} onChange={setId()}/>
+			</label>
+			<button type='submit'>send</button>
+ 
+		</form> */}
+		<a href="/settings">
+			<button>SETTINGs</button>
+		</a>
+          </header>
     </div>
           {/* {usernames.map((username, index) => (
         <p key={index}>hello {username}</p>
