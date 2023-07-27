@@ -10,13 +10,14 @@ export class UserService {
     return users;
   }
 
-  async updateUsername(username: string) {
-	const user = await prisma.user.findUnique({
-		where:	{ id : 1 },
-	});
-	prisma.user.update({
-		where:	{ id : 1 },
-		data:	{ username }
-	})
+  async updateUsername(id: string, newUsername: string) {
+    const updateUser = await prisma.user.update({
+      where: { id: parseInt(id) }, // Remplacez id par l'ID de l'utilisateur que vous souhaitez mettre à jour
+      data: {
+        username: newUsername, // Remplacez newUsername par le nouveau nom d'utilisateur
+      },
+    });
+
+    return updateUser;
   }
 }

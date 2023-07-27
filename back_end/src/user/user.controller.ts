@@ -1,4 +1,4 @@
-import { Controller, Get , Post , Body } from '@nestjs/common';
+import { Controller, Get , Post , Body , Param } from '@nestjs/common';
 import { UserService } from './user.service';
 
 @Controller('users')
@@ -12,9 +12,12 @@ export class UsersController {
     return users;
   }
 
-  @Post('update-username')
-  updating(@Body() username: string) {
-	const user = this.userService.updateUsername(username);
-	return ;
+  @Post('/:id/')
+  updating(@Param('id') id: string, @Body() username: string) {
+	console.log(username);
+	console.log(id);
+	const newUsername = username['username'];
+	const user = this.userService.updateUsername(id, newUsername);
+	return user;
   }
 }
