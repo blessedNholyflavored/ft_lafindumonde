@@ -17,7 +17,20 @@ export class UserService {
         username: newUsername, // Remplacez newUsername par le nouveau nom d'utilisateur
       },
     });
-
     return updateUser;
+  }
+
+  async getPicture(id: string) {
+	const User = await prisma.user.findUnique({
+		where: { id: parseInt(id)},
+		select: { pictureURL: true, },
+	  });
+	if (User)
+	{
+		console.log(User.pictureURL);
+		return (User.pictureURL);
+	}
+	else
+		return (null);
   }
 }

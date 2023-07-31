@@ -14,10 +14,17 @@ export class UsersController {
 
   @Post('/:id/')
   updating(@Param('id') id: string, @Body() username: string) {
-	console.log(username);
-	console.log(id);
+	//console.log(username);
+	//console.log(id);
 	const newUsername = username['username'];
 	const user = this.userService.updateUsername(id, newUsername);
 	return user;
+  }
+
+  @Get('/:id/avatar')
+  returnPic(@Param('id') id: string) {
+	let pictureURL = this.userService.getPicture(id);
+	console.log(pictureURL);
+	return (pictureURL);
   }
 }
