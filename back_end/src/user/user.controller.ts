@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Param } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { UserService } from './user.service';
+import { User } from '.prisma/client';
 
 @Controller('users')
 export class UsersController {
   constructor(private userService: UserService) {}
+
 
   @Get('/')
   findAll() {
@@ -12,8 +14,14 @@ export class UsersController {
     return users;
   }
 
-  @Post('/:id')
-  async findUsernameById(@Param('id') id: string) {
-    console.log("aaaaaaa");
+  @Get(':id')
+  async findUserById(@Param('id') id: string) {
+    return this.userService.findUserById(id);
+  }
+
+  @Get('/:username')
+  async getUserByUsername(@Param('username') username: string): Promise<User | null> {
+    const user = await this.userService.findUserByUsername(username);
+    return user;
   }
 }

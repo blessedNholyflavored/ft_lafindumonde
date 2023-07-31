@@ -7,8 +7,6 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { PongController } from './game/game.controller';
-import { PongGateway } from './game/game.gateway';
 
 @Module({
   imports: [
@@ -17,9 +15,9 @@ import { PongGateway } from './game/game.gateway';
     }),
     PrismaModule,
     UserModule,
-	AuthModule,
+      	AuthModule,
   ],
-  controllers: [AppController, PongController],
-  providers: [PrismaService, UserService, AppService, PongGateway],
+  controllers: [AppController],
+  providers: [PrismaService, UserService, AppService],
 })
 export class AppModule {}

@@ -8,6 +8,8 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import { PongGame } from './PongGame';
 import { Route, Routes } from 'react-router-dom';
+import { io, Manager, Socket } from 'socket.io-client';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 // type Username = { id: string; name: string }[];
 
@@ -69,33 +71,69 @@ import { Route, Routes } from 'react-router-dom';
 
 
 
-// App.tsx
-
+interface User {
+  id: number;
+  username: string;
+}
 
 const App: React.FC = () => {
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
+  const [userDetails, setUserDetails] = useState<User | null>(null);
+  const [message, setMessage] = useState<string>('');
+  const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
 
-  const handlePlayerSelect = (player: string) => {
+  const handlePlayerSelect = async (player: string) => {
     setSelectedPlayer(player);
+    try {
+      const response = await fetch(`http://localhost:3000/users/${player}`);
+      const userDetails = await response.json();
+      setUserDetails(userDetails);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+    }
+  };
+
+  const connectToWebSocket = () => {
+    const newSocket = io('http://localhost:3000', {
+      withCredentials: true,
+      transports: ['websocket'],
+    });
+
+    newSocket.on('connect', () => {
+      console.log('Connecté au serveur WebSocket.');
+      setSocket(newSocket);
+    });
+
+    newSocket.on('receiveMessage', (data: { username: string; message: string }) => {
+      console.log(`${data.username}: ${data.message}`);
+    });
+  };
+
+  const handleSendMessage = () => {
+    if (socket && userDetails) {
+      socket.emit('sendMessage', { username: userDetails.username, message });
+      setMessage('');
+    }
   };
 
   return (
     <div className="App">
       <header className="App-header">
         {selectedPlayer ? (
-          <Routes>
-            <Route
-              path="/game"
-              element={<PongGame selectedPlayer={selectedPlayer} />}
-            />
-          </Routes>
+          <PongGame userDetails={userDetails} socket={socket} setSocket={setSocket} />
         ) : (
           <>
             <h2>Choisissez votre personnage :</h2>
-            <button onClick={() => handlePlayerSelect('ldinaut')}>Ldinaut (Joueur 1)</button>
-            <button onClick={() => handlePlayerSelect('mcouppe')}>Mcouppe (Joueur 2)</button>
+            <button onClick={() => handlePlayerSelect('1')}>Ldinaut (Joueur 1)</button>
+            <button onClick={() => handlePlayerSelect('2')}>Mcouppe (Joueur 2)</button>
           </>
         )}
+        {/* {socket && userDetails && (
+          <div>
+            <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
+            <button onClick={handleSendMessage}>Envoyer</button>
+          </div>
+        )} */}
       </header>
     </div>
   );
@@ -103,26 +141,3 @@ const App: React.FC = () => {
 
 export default App;
 
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.tsx</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
-// export default App;

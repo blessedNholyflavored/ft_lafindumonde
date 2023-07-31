@@ -1,32 +1,35 @@
-// user.service.ts
+// backend/src/user/user.service.ts
 
-import { Injectable } from '@nestjs/common';
-import { PrismaClient, User } from '@prisma/client';
-
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaClient, User } from '@prisma/client'; // Renommez "User" en "PrismaUser"
 const prisma = new PrismaClient();
 
 @Injectable()
 export class UserService {
+  prisma: any;
   async findUser() {
-    try {
-      const users = await prisma.user.findMany();
-      return users;
-    } catch (error) {
-      console.error('Erreur lors de la récupération des utilisateurs :', error);
-      throw new Error('Une erreur est survenue lors de la récupération des utilisateurs');
-    }
+    const users = await prisma.user.findMany();
+    return users;
   }
 
-  async findUserByUsername(username: string): Promise<User | null> {
-    try {
-      const user = await prisma.user.findUnique({
-        where: { username },
-      });
-      return user;
-    } catch (error) {
-      console.error('Erreur lors de la récupération de l\'utilisateur :', error);
-      throw new Error('Une erreur est survenue lors de la récupération de l\'utilisateur');
-    }
+  async findUsernameById(id: string): Promise<string | null> {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      select: {
+        username: true,
+      },
+    });
+
+    return user?.username ?? null;
   }
+  async findUserById(id: string): Promise<User | null> {
+    return prisma.user.findUnique({ where: { id: parseInt(id) } });
+  }
+
+async findUserByUsername(username: string): Promise<User | null> {
+  return this.prisma.user.findUnique({ where: { username } });
+}
 }
 

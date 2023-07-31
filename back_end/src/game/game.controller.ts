@@ -1,25 +1,37 @@
-// pong.controller.ts
+// backend/src/game/game.controller.ts
 
-import { Controller, Get, Param } from '@nestjs/common';
-import { UserService } from '../user/user.service';
+import { Controller } from '@nestjs/common';
+import { WebSocketGateway, WebSocketServer, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import { Server } from 'socket.io';
 
-@Controller('pong')
-export class PongController {
-  constructor(private userService: UserService) {}
+@WebSocketGateway()
+@Controller() // Add the @Controller() decorator here
+export class PongController implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer()
+  server: Server;
 
-  @Get('user/:username')
-  async getUserByUsername(@Param('username') username: string) {
-    try {
-      const user = await this.userService.findUserByUsername(username);
+  @SubscribeMessage('startGame')
+  handleStartGame(client: any, payload: any) {
+    // Traitez le démarrage du jeu ici
+    // Vous pouvez initialiser l'état du jeu et envoyer des informations aux deux joueurs pour démarrer le jeu.
+  }
 
-      if (user) {
-        return { username: user.username, id: user.id };
-      } else {
-        return { error: 'Utilisateur non trouvé' };
-      }
-    } catch (error) {
-      console.error('Erreur lors de la récupération de l\'utilisateur :', error);
-      return { error: 'Une erreur est survenue lors de la récupération de l\'utilisateur' };
-    }
+  @SubscribeMessage('updatePaddle')
+  handleUpdatePaddle(client: any, payload: any) {
+    // Gérez les mises à jour des raquettes des joueurs ici
+    // Les joueurs enverront leurs positions de raquette via ce message
+    // Vous pouvez mettre à jour l'état du jeu en conséquence.
+  }
+
+  // Méthode appelée lorsqu'un joueur se connecte
+  handleConnection(client: any, ...args: any[]) {
+    // Traitez la connexion du joueur ici
+    // Vous pouvez attribuer un identifiant unique au joueur et le préparer pour le jeu.
+  }
+
+  // Méthode appelée lorsqu'un joueur se déconnecte
+  handleDisconnect(client: any) {
+    // Traitez la déconnexion du joueur ici
+    // Vous pouvez gérer la fin du jeu ou l'arrêt de la partie en cas de déconnexion.
   }
 }
