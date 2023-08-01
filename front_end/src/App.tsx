@@ -70,55 +70,40 @@ import { Form, Route, Routes } from 'react-router-dom';
 
 
 
-export default function App() {
-  const [usernames, setUsernames] = useState([]);
- 
-  useEffect(() => {
-    const fetchUsernames = async () => {
-      try {
-        console.log("nonono");
-        const response = await (await fetch("http://localhost:3000/users")).json();
-        const usernamesArray = response.map((user: { username: any; }) => user.username);
-        console.log(usernamesArray[0]);
-        setUsernames(usernamesArray);
-      } catch (error) {
-        console.error('Error fetching usernames:', error);
-      }
-    };
-    fetchUsernames();
-  }, []);
+// App.tsx
+
+
+const App: React.FC = () => {
+  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
+
+  const handlePlayerSelect = (player: string) => {
+    setSelectedPlayer(player);
+  };
 
   return (
-    <div>
-<div className="App">
+    <div className="App">
       <header className="App-header">
-        <Routes>
-        <Route path="/game" element={<PongGame />} />
-		<Route path="/settings" element={<UserSetting />} />
-        </Routes>
-
-        <a href="/game">
-          <button>GAME</button>
-          </a>
-
-		{/* <form >
-			<label>choose ID
-				<input type='text' value={id} onChange={setId()}/>
-			</label>
-			<button type='submit'>send</button>
- 
-		</form> */}
-		<a href="/settings">
-			<button>SETTINGs</button>
-		</a>
-          </header>
-    </div>
-          {/* {usernames.map((username, index) => (
-        <p key={index}>hello {username}</p>
-      ))} */}
+        {selectedPlayer ? (
+          <Routes>
+            <Route
+              path="/game"
+              element={<PongGame selectedPlayer={selectedPlayer} />}
+            />
+          </Routes>
+        ) : (
+          <>
+            <h2>Choisissez votre personnage :</h2>
+            <button onClick={() => handlePlayerSelect('ldinaut')}>Ldinaut (Joueur 1)</button>
+            <button onClick={() => handlePlayerSelect('mcouppe')}>Mcouppe (Joueur 2)</button>
+          </>
+        )}
+      </header>
     </div>
   );
-}
+};
+
+export default App;
+
 
 // function App() {
 //   return (
