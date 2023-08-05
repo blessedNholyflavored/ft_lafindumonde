@@ -51,7 +51,7 @@ export class UserService {
           email: user.email,
           hash: "fuck",
           username: user.username,
-         // pictureURL: user.pictureURL
+          pictureURL: user.pictureURL,
         }
       });
       return tmpUser;

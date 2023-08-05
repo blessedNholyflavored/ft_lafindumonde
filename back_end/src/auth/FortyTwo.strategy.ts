@@ -15,7 +15,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy){
 		super({
 			clientID: config.get('API_CLIENTID'), //env var
 			clientSecret: config.get('API_CLIENTSECRET'), //env var
-			callbackURL: String("http://" + config.get<string>('HOST') + ":3000/api/v1/auth/42/callback"),
+			callbackURL: String("http://localhost:3000/auth/api/v1/auth/42/callback"),
 		});
 	}
 
@@ -25,12 +25,13 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy){
 			hash: "fuck",
 			username : profile.username,
 			id: Number.parseInt(profile.id),
-			//pictureURL: profile._json.image.link,
+			pictureURL: profile._json.image.link,
 		};
-		const user = await this.userService.getID(fortyTwoUser.id);
-		if (!user) {
+		try {
+			const user = await this.userService.getID(fortyTwoUser.id);
+			return user;
+		} catch (e) {
 			return await this.userService.createUser(fortyTwoUser);
 		}
-		return user;
 	}
 }

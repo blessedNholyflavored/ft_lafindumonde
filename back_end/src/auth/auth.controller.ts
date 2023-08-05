@@ -23,12 +23,13 @@ export class AuthController{
         console.log('hello??');
     }
 
-    @Get('42/callback')
+    @Get('/api/v1/auth/42/callback')
     @UseGuards(FortyTwoAuthGuard)
     async callback(@Req() req:any, @Res() res: any){
         const token = await this.authService.login(req.user);
         //res.redirect()
         console.log("bravo la mif");
+		res.json({ token });
         return token;
     }
 }

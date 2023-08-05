@@ -4,4 +4,5 @@ export interface PrismaUserCreateInput{
     email: string;
     hash: string;
     username: string;
+	pictureURL: string;
 }

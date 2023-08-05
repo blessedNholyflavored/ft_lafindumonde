@@ -3,4 +3,5 @@ export interface createUserDto {
     email: string;
     hash: string;
     username: string;
+	pictureURL: string;
 }
