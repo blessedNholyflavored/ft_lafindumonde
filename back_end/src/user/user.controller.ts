@@ -16,4 +16,12 @@ export class UsersController {
     const ret = await this.userService.getID(parseInt(id));
     return ret;
   }
+
+  // @Get('/:id/achievements')
+  // async getAchievements(@Param('id') userId: string) {
+  //   const achievements = await this.userService.getUserAchievements(
+  //     parseInt(userId),
+  //   );
+  //   return achievements;
+  // }
 }

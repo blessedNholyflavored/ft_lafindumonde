@@ -8,7 +8,7 @@ import './App.css';
 // import { useState, useEffect } from 'react';
 import { PongGame } from './PongGame';
 import { Route, Routes } from 'react-router-dom';
-import { Profile } from './components/Profile'
+import { Profile } from './components/user/Profile'
 
 function App() {
   

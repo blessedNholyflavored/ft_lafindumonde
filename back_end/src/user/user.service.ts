@@ -27,4 +27,30 @@ export class UserService {
       throw new BadRequestException('getid error : ' + error);
     }
   }
+
+  // async getUserAchievements(id: number) {
+  //   try {
+  //     const achievements = await prisma.userAchievement.findMany({
+  //       where: { userId: id },
+  //     });
+  //     return achievements;
+  //   } catch (error) {
+  //     throw new BadRequestException('error');
+  //   }
+  // }
 }
+
+// async getUserAchievements(id: number) {
+//   if (id === undefined) {
+//     throw new BadRequestException('Undefined user ID');
+//   }
+//   try {
+//     const achievements = await this.prisma.userAchievement.findMany({
+//       where: { userId: id },
+//       include: { achievement: true },
+//       });
+//     return achievements;
+//   } catch (error) {
+//     throw new BadRequestException('getUser error : ' + error);
+//   }
+// }

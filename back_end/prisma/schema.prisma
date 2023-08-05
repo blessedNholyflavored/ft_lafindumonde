@@ -1,4 +1,4 @@
-// This is your Prisma schema file,
+ 	// This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -21,7 +21,42 @@ model User {
 	status		USER_STATUS	@default(OFFLINE)
 	game1		Game[] @relation("player1")
 	game2		Game[] @relation("player2")
+	gameplayed	Int?
+
+	// friends		User[] @relation ("Friends")
+	// friendsOf	User[] @relation ("Friends")
+	// achievements		UserAchievement[]
+
+	// @@map("users")
+
 }
+
+// model Friendship {
+// 	id				Int					@id @default(autoincrement())
+// }
+
+// model Achievement {
+// 	id			Int			@id @default(autoincrement())
+// 	name		String		@unique
+// 	description	String
+// 	createdAt	DateTime	@default(now())
+
+// 	users		UserAchievement[]
+// 	@@map("achievements")
+
+// }
+
+// model UserAchievement {
+// 	id				Int			@id @default(autoincrement())
+// 	userId			Int
+// 	achievementId	Int
+// 	createdAt		DateTime	@default(now())
+	
+// 	user			User		@relation(fields: [userId], references: [id])
+// 	achievement		Achievement	@relation(fields: [achievementId], references: [id])
+// 	@@unique([userId, achievementId])
+// }
+
 
 enum USER_STATUS{
 	INGAME
