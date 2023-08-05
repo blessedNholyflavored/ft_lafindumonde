@@ -29,15 +29,33 @@ async function bootstrap() {
   // Gérer les connexions WebSocket
   io.on('connection', (socket: Socket) => {
     console.log('Client connecté :', socket.id);
-  
+
     // Écouter les événements côté client
     socket.on('sendMessage', (data: { username: string; message: string }) => {
       console.log(`${data.username}: ${data.message}`);
-      
+
       // Envoyer le message reçu à tous les clients connectés
       io.emit('receiveMessage', { username: data.username, message: data.message });
     });
-  
+
+    // Gérer le déplacement du point
+    let pointPosition = { x: 400, y: 300 };
+    const speed = 5; // Vitesse de déplacement du point
+
+    const updatePointPosition = () => {
+      io.emit('updatePointPosition', pointPosition);
+    };
+
+    socket.on('moveUp', () => {
+      pointPosition.y -= speed;
+      updatePointPosition();
+    });
+
+    socket.on('moveDown', () => {
+      pointPosition.y += speed;
+      updatePointPosition();
+    });
+
     // Écouter l'événement de déconnexion du client
     socket.on('disconnect', () => {
       console.log('Client déconnecté :', socket.id);
