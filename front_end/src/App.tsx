@@ -2,9 +2,9 @@ import React from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import { PongGame } from './PongGame';
-import { Profile } from './components/Profile'
 import { UserSetting } from './UserSetting';
 import { Form, Route, Routes } from 'react-router-dom';
+import { Profile } from './components/user/Profile'
 
 function App() {
   

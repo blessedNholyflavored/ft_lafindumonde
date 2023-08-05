@@ -39,16 +39,39 @@ export class UserService {
   }
 
   async getPicture(id: string) {
-	const User = await prisma.user.findUnique({
-		where: { id: parseInt(id)},
-		select: { pictureURL: true, },
-	  });
-	if (User)
-	{
-		console.log(User.pictureURL);
-		return (User.pictureURL);
-	}
-	else
-		return (null);
+    const User = await prisma.user.findUnique({
+      where: { id: parseInt(id) },
+      select: { pictureURL: true },
+    });
+    if (User) {
+      console.log(User.pictureURL);
+      return User.pictureURL;
+    } else return null;
   }
+
+  // async getUserAchievements(id: number) {
+  //   try {
+  //     const achievements = await prisma.userAchievement.findMany({
+  //       where: { userId: id },
+  //     });
+  //     return achievements;
+  //   } catch (error) {
+  //     throw new BadRequestException('error');
+  //   }
+  // }
 }
+
+// async getUserAchievements(id: number) {
+//   if (id === undefined) {
+//     throw new BadRequestException('Undefined user ID');
+//   }
+//   try {
+//     const achievements = await this.prisma.userAchievement.findMany({
+//       where: { userId: id },
+//       include: { achievement: true },
+//       });
+//     return achievements;
+//   } catch (error) {
+//     throw new BadRequestException('getUser error : ' + error);
+//   }
+// }
