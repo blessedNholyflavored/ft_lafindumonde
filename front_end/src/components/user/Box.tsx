@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import '../../style/Profile.css'
 import ProfileBox from "./ProfileBox"
 import icon from "../../img/buttoncomp.png"
-import footer from "../../img/footerprofile.png"
 import logo from "../../img/logo42.png"
 import domo from "../../img/domo.png"
 import ScoreList from "./ScoreList";
+import Friends from "./FriendsList";
 
 const Box = (props: any) => {
 
@@ -13,11 +13,11 @@ const Box = (props: any) => {
 
     useEffect(() => {
         if (props.type === 'info') {
-            // console.log("hiihihi")
             setInfo(<ProfileBox type={props.type}/>)
         } else if  (props.type === 'friends') {
-             setInfo(<ProfileBox type={props.type}/>)
-            }
+             setInfo(<Friends type={props.type}/>)
+        } else if (props.type === 'score')
+            setInfo(<ScoreList type={props.type}/>)
     
 }, [props.type])
 
@@ -50,9 +50,9 @@ return (
             </div>
             <div className="boxrow">
                 <div className="navbarsmallbox">
-                    <p className="boxtitle"> INFO </p>
+                    <p className="boxtitle"> Friends </p>
                 </div>
-                    <ProfileBox type="info"/>
+                    <Friends type="info"/>
                     <div className="footersmallbox">
                     <br></br>
                 </div>

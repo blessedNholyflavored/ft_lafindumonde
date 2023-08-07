@@ -9,6 +9,7 @@ import './App.css';
 import { PongGame } from './PongGame';
 import { Route, Routes } from 'react-router-dom';
 import { Profile } from './components/user/Profile'
+import FriendsList from './components/user/FriendsList';
 
 function App() {
   
@@ -19,6 +20,7 @@ function App() {
         <Routes>
         <Route path="/game" element={<PongGame />} />
         <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/users/:id/friends" element={<FriendsList />} />
 
         </Routes>
 

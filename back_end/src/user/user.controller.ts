@@ -17,7 +17,7 @@ export class UsersController {
     return ret;
   }
 
-  // @Get('/:id/achievements')
+  // @Get('/:id')
   // async getAchievements(@Param('id') userId: string) {
   //   const achievements = await this.userService.getUserAchievements(
   //     parseInt(userId),

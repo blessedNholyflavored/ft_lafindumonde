@@ -23,18 +23,32 @@ model User {
 	game2		Game[] @relation("player2")
 	gameplayed	Int?
 
-	// friends		User[] @relation ("Friends")
-	// friendsOf	User[] @relation ("Friends")
-	// achievements		UserAchievement[]
+	friends		User[] @relation ("Friends")
+	friendsOf	User[] @relation ("Friends")
 
+	InvitFriendSent		Friends[]			@relation("SentFriendships")
+	InvitFriendReceived	Friends[]			@relation("ReceivedFriendships")
+
+	// achievements		UserAchievement[]
 	// @@map("users")
 
 }
 
-// model Friendship {
-// 	id				Int					@id @default(autoincrement())
-// }
+model Friends {
+	id				Int						@id @default(autoincrement())
+	status			FriendsInvitationStatus	@default(PENDING)
+	sender			User					@relation("SentFriendships", fields: [senderId], references: [id])
+	senderId		Int
+	recipient		User					@relation("ReceivedFriendships", fields: [recipientId], references: [id])
+	recipientId		Int
+	@@unique([senderId, recipientId])
+}
 
+enum FriendsInvitationStatus {
+	ACCEPTED
+	PENDING
+	REFUSED
+}
 // model Achievement {
 // 	id			Int			@id @default(autoincrement())
 // 	name		String		@unique
@@ -53,7 +67,7 @@ model User {
 // 	createdAt		DateTime	@default(now())
 	
 // 	user			User		@relation(fields: [userId], references: [id])
-// 	achievement		Achievement	@relation(fields: [achievementId], references: [id])
+// 	achievement		Achievement?	@relation(fields: [achievementId], references: [id])
 // 	@@unique([userId, achievementId])
 // }
 
@@ -63,6 +77,8 @@ enum USER_STATUS{
 	OFFLINE
 	ONLINE
 }
+
+
 
 model Game {
 	id			Int			@id @default(autoincrement())
