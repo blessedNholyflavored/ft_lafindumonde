@@ -5,6 +5,7 @@ import { PongGame } from './PongGame';
 import { UserSetting } from './UserSetting';
 import { Form, Route, Routes } from 'react-router-dom';
 import { Profile } from './components/user/Profile'
+import FriendsList from './components/user/FriendsList';
 
 function App() {
   
@@ -16,6 +17,8 @@ function App() {
         <Route path="/game" element={<PongGame />} />
 		    <Route path="/settings" element={<UserSetting />} />
         <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/users/:id/friends" element={<FriendsList />} />
+
         </Routes>
 
         <a href="/game">

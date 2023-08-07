@@ -1,45 +1,88 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import axios from 'axios';
 
-const FriendsList = (props: any) => {
-    const [friends, displayfriends] = useState<string>('');
-    // const [user, setUser] = useState<any>(null);
-    // const [lvl, setLevel] = useState<number>();
-    // const [xp, setXp] = useState<number>();
+export const FriendsList = (props: any) => {
+    const [friends, setFriends] = useState<string[]>([]);
     const { id } = useParams();
-    // let mode = 0;
+
+    const [senderId, setSenderId] = useState('');
+  const [recipientId, setRecipientId] = useState('');
+  const [friendshipResult, setFriendshipResult] = useState(null);
 
     useEffect(() => {
-        fetchFriendsList(id);
-      }, [id, props.type]);
+        fetchFriendsList();
+    }, [id]);
 
-      const fetchFriendsList = async (id: string | undefined) => {
+    const fetchFriendsList = async () => {
         try {
-          const response =  await fetch(`http://localhost:3000/users/${id}`, {
-            method: "GET",
-            //ici il faudra rajouter des trucs de header grace a lauth (pour verifier que lutilisateur connecte a bien les droits pour cette route)
-          })
-          if (response.ok) {
-            const data = await response.json();
-            if (data.username) {
-                displayfriends(data.username);
-        } else
-          console.log("error : wrong shit");
-          return "error";
-          }
+            const response = await fetch(`http://localhost:3000/friends/${id}`, {
+                method: "GET",
+                // les trucs dauth
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.length > 0) { 
+                    const friendObjects = data[0].friends; 
+                    const friendNames = friendObjects.map((friend: { username: any; }) => friend.username);
+                    setFriends(friendNames);
+                }
+            } else {
+                console.log("error: HTTP request failed");
+            }
         } catch (error) {
-          console.error('Error fetching usernames:', error);
+            console.error('Error fetching friends:', error);
         }
-}
+    };
+
+    // const openFriendship = async () => {
+    //     try {
+    //       const response = await axios.post('/api/addFriends', {
+    //         senderId: parseInt(senderId), // Convert to number
+    //         recipientId: parseInt(recipientId), // Convert to number
+    //       });
+    //       setFriendshipResult(response.data);
+    //     } catch (err) {
+    //       return('An error occurred while opening the friendship.');
+    //     }
+    //   };
+
     return (
-      <div className="test">
-      {/* { mode ===1 && (
-      <p>hiiiii {user}, your level is {lvl} and your xp is {xp} </p>)}
-      { mode ===2 && (
-      <p>6 {user}, your {lvl} </p>)}
-       */}
-        </div>
-    )
+        <div className="test">
+            {friends.map((friend, index) => (
+                <div key={index}>{friend} </div>
+            ))}
+        <div>
+      {/* <input
+        type="text" // Change the type to "text"
+        value={senderId}
+        onChange={(e) => setSenderId(e.target.value)}
+        placeholder="Sender ID"
+      />
+      <input
+        type="text" // Change the type to "text"
+        value={recipientId}
+        onChange={(e) => setRecipientId(e.target.value)}
+        placeholder="Recipient ID"
+      />
+      <button onClick={openFriendship}>Open Friendship</button>
+      {friendshipResult && (
+        <p>Friendship opened between {friendshipResult.senderId} and {friendshipResult.recipientId}</p>
+      )} */}
+    </div> 
+    </div>
+        
+    );
+
+
+
+
+ 
+  
+ 
+
 }
+
 
 export default FriendsList;

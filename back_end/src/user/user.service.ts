@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaClient, User } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
+// import { UserAchievements } from '../user/user.interface';
 
 const prisma = new PrismaClient();
 
@@ -48,6 +50,21 @@ export class UserService {
       return User.pictureURL;
     } else return null;
   }
+  // async getAchievementById(id: number) {
+  //   if (id === undefined) {
+  //     throw new BadRequestException('Undefined user ID');
+  //   }
+  //   try {
+  //     const achievement = await prisma.achievement.findUniqueOrThrow({
+  //       where: {
+  //         id: id,
+  //       },
+  //     });
+  //     return achievement;
+  //   } catch (error) {
+  //     throw new BadRequestException('getUser error : ' + error);
+  //   }
+  // }
 
   // async getUserAchievements(id: number) {
   //   try {
@@ -59,19 +76,27 @@ export class UserService {
   //     throw new BadRequestException('error');
   //   }
   // }
-}
 
-// async getUserAchievements(id: number) {
-//   if (id === undefined) {
-//     throw new BadRequestException('Undefined user ID');
-//   }
-//   try {
-//     const achievements = await this.prisma.userAchievement.findMany({
-//       where: { userId: id },
-//       include: { achievement: true },
-//       });
-//     return achievements;
-//   } catch (error) {
-//     throw new BadRequestException('getUser error : ' + error);
-//   }
-// }
+  //   async getAllAchievements(): Promise<UserAchievements[]> {
+  //     const allachiev = (await prisma.userAchievement.findMany({
+  //       select: UserAchievements,
+  //     })) as UserAchievements[];
+  //     console.log(allachiev);
+  //     return allachiev;
+  //   }
+  // }
+
+  // async getUserAchievements(id: number) {
+  //   if (id === undefined) {
+  //     throw new BadRequestException('Undefined user ID');
+  //   }
+  //   try {
+  //     const achievements = await this.prisma.userAchievement.findMany({
+  //       where: { userId: id },
+  //       include: { achievement: true },
+  //       });
+  //     return achievements;
+  //   } catch (error) {
+  //     throw new BadRequestException('getUser error : ' + error);
+  //   }
+}
