@@ -26,6 +26,8 @@ export class AuthService {
 	//ici faudra add 2FA boolean ds param
 	async login(user: any) {
 		console.log('in login from auth service !!!')
+		console.log('username is :', user.username);
+		console.log('pictureURl is :', user.pictureURL);
 		const payload = {name: user.name, sub: user.id};
 
 		return {
