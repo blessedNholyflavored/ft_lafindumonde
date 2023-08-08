@@ -26,15 +26,15 @@ model User {
 	friends		User[] @relation ("Friends")
 	friendsOf	User[] @relation ("Friends")
 
-	InvitFriendSent		Friends[]			@relation("SentFriendships")
-	InvitFriendReceived	Friends[]			@relation("ReceivedFriendships")
+	InvitFriendSent		Friendship[]			@relation("SentFriendships")
+	InvitFriendReceived	Friendship[]			@relation("ReceivedFriendships")
 
 	// achievements		UserAchievement[]
 	// @@map("users")
 
 }
 
-model Friends {
+model Friendship {
 	id				Int						@id @default(autoincrement())
 	status			FriendsInvitationStatus	@default(PENDING)
 	sender			User					@relation("SentFriendships", fields: [senderId], references: [id])

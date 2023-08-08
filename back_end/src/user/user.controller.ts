@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 
 @Controller('users')
 export class UsersController {
+  friendService: any;
   constructor(private userService: UserService) {}
 
   @Get('/')
@@ -16,6 +17,12 @@ export class UsersController {
     const ret = await this.userService.getID(parseInt(id));
     return ret;
   }
+
+  // @Get('/friends/:id')
+  // async getFriends(@Param('id') id: string) {
+  //   const friends = await this.friendService.findAll(id);
+  //   return friends;
+  // }
 
   // @Get('/:id')
   // async getAchievements(@Param('id') userId: string) {

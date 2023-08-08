@@ -1,4 +1,0 @@
-// interface userRelationSelectFields {
-//     username: string;
-//     status: number??? enum????;
-//   }

@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
-import { Friend } from './types/friends';
+// import { Friend } from './types/friends';
 
 const prisma = new PrismaClient();
 
@@ -26,34 +26,57 @@ export class FriendsService {
     }
   }
 
-  async openFriendship(requesterId: number, receiverId: number) {
-    const friendship = await this.prisma.Friends.create({
+  async showFriends(id: string) {
+    // const { id } = userId;
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: parseInt(id) },
+        include: { friends: true, friendsOf: true },
+      });
+      return user;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async addNewFriendship(senderId: number, recipientId: number) {
+    const friendship = await this.prisma.friendship.create({
       data: {
-        requesterId: requesterId,
-        receiverId: receiverId,
+        senderId: senderId,
+        recipientId: recipientId,
       },
     });
     return friendship;
   }
 
-  // async getFriendsInvitationStatus(senderId: number, recipientId: number) {
-  //   try {
-  //     const friendstatus = await this.prisma.Friends.findUnique({
-  //       where: {
-  //         senderId_recipientId: {
-  //           senderId,
-  //           recipientId,
-  //         },
-  //       },
-  //       select: {
-  //         status: true,
-  //       },
-  //     });
-  //     console.log('lol');
-  //     return friendstatus?.status ?? null;
-  //   } catch (error) {
-  //     console.error('Error getting FriendsInvitationStatus:', error);
-  //     throw error;
-  //   }
-  // }
+  async getReceivedFriendships(userId: any) {
+    const { id } = userId;
+    try {
+      const user = await this.userService.getID(parseInt(id));
+      const demands = await this.prisma.friendship.findMany({
+        where: {
+          recipientId: user.id,
+        },
+        include: {
+          sender: true,
+        },
+      });
+      return demands;
+    } catch (error) {
+      throw new BadRequestException('getReceivedFriendships error : ' + error);
+    }
+  }
+
+  async updateFriendship(id: any) {
+    const { demandId, response } = id;
+    const friendhip = await this.prisma.friendship.update({
+      where: {
+        id: parseInt(demandId),
+      },
+      data: {
+        status: response,
+      },
+    });
+    return friendhip;
+  }
 }

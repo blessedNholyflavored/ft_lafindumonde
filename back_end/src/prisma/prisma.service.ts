@@ -6,7 +6,6 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
-  Friends: any;
   constructor(config: ConfigService) {
     super({
       datasources: {

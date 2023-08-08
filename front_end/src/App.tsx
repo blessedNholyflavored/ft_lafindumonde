@@ -8,8 +8,8 @@ import './App.css';
 // import { useState, useEffect } from 'react';
 import { PongGame } from './PongGame';
 import { Route, Routes } from 'react-router-dom';
-import { Profile } from './components/user/Profile'
-import FriendsList from './components/user/FriendsList';
+import { Profile } from './components/user/Profile';
+import { FriendshipComponent } from './components/friends/friendship'
 
 function App() {
   
@@ -19,9 +19,8 @@ function App() {
       <header className="App-header">
         <Routes>
         <Route path="/game" element={<PongGame />} />
-        <Route path="/profile/:id" element={<Profile />} />
-        <Route path="/users/:id/friends" element={<FriendsList />} />
-
+        <Route path={`/users/profile/:id`} element={<Profile />} />
+        <Route path="/addfriend" element={<FriendshipComponent />} />
         </Routes>
 
         <a href="/game">
