@@ -4,7 +4,6 @@ import './App.css';
 import { PongGame } from './PongGame';
 import { UserSetting } from './components/user/UserSetting';
 import { Form, Route, Routes } from 'react-router-dom';
-import FriendsList from './components/user/FriendsList';
 import { Profile } from './components/user/Profile';
 import { FriendshipComponent } from './components/friends/friendship'
 
@@ -17,7 +16,6 @@ function App() {
         <Routes>
         <Route path="/game" element={<PongGame />} />
 		    <Route path="/settings" element={<UserSetting />} />
-        <Route path="/profile/:id" element={<Profile />} />
         <Route path={`/users/profile/:id`} element={<Profile />} />
         <Route path="/addfriend" element={<FriendshipComponent />} />
         </Routes>
@@ -31,7 +29,7 @@ function App() {
           </header>
         <a href="/profile">
           <button>Profile</button>
-          </a>
+          </a>       
     </div>
     </div>
   );
