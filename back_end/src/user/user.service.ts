@@ -50,6 +50,23 @@ export class UserService {
       return User.pictureURL;
     } else return null;
   }
+
+  async getFriends(id: number) {
+    if (id === undefined) {
+      throw new BadRequestException('Undefined user ID');
+    }
+    try {
+      const user = await prisma.user.findMany({
+        where: {
+          id: id,
+        },
+        // include: { friends: true, friendsOf: true },
+      });
+      return user;
+    } catch (error) {
+      throw new BadRequestException('getUser error : ' + error);
+    }
+  }
   // async getAchievementById(id: number) {
   //   if (id === undefined) {
   //     throw new BadRequestException('Undefined user ID');
