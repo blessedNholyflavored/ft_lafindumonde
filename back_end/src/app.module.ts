@@ -7,6 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthModule } from './auth/auth.module';
     PrismaModule,
     UserModule,
 	AuthModule,
+	MulterModule.register({dest: './uploads',})
   ],
   controllers: [AppController],
   providers: [PrismaService, UserService, AppService],

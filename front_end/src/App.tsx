@@ -101,13 +101,6 @@ export default function App() {
           <button>GAME</button>
           </a>
 
-		{/* <form >
-			<label>choose ID
-				<input type='text' value={id} onChange={setId()}/>
-			</label>
-			<button type='submit'>send</button>
- 
-		</form> */}
 		<a href="/settings">
 			<button>SETTINGs</button>
 		</a>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 export const UserSetting: React.FC = () => {
 	const [newUsername, setNewUsername] = useState('');
-	const [newPicture, setNewPicture] = useState(String);
+	const [newPicture, setNewPicture] = useState<File | null>(null);
 	let [ImgUrl, setImgUrl] = useState<string>('');
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -42,7 +42,7 @@ export const UserSetting: React.FC = () => {
 			if (response.ok) {
 				const pictureURL = await response.text();
 				setImgUrl(pictureURL);
-				console.log(ImgUrl);
+				console.log(pictureURL);
 			}
 		}
 		catch (error) {
@@ -52,30 +52,43 @@ export const UserSetting: React.FC = () => {
 	displayPic();
 }, [ImgUrl]);
 
-	// const changePic = async(e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-	// 	e.preventDefault();
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		e.preventDefault();
+		const file = e.target.files?.[0];
+		if (file) {
+			console.log("QQQQQQQQQQQQQQQQQ", file);
+			setNewPicture(file);
+		}
+	};
 
-	// 	const userId = 3;
-	// 	const formData = new FormData();
-
-	// 	try {
-	// 		const response = await fetch(`http://localhost:3000.users/${userId}`, {
-	// 			method: 'POST',
-	// 			body: formData,
-	// 		});
-
-	// 		if (response.ok) {
-	// 			alert('profil picture mise à jour avec succès !');
-	// 			setNewPicture('');
-	// 		} else {
-	// 			alert('ya eu un souci poto');
-	// 		}
-	// 	}
-	// 	catch (error) {
-	// 		console.error('erreur = ', error);
-	// 	}
-	// };
-
+	const changePic = async () => {
+		console.log("DANS CHANGE PIC");
+		const userId = 3;
+		if (newPicture) {
+		  const blob = new Blob([newPicture], { type: newPicture.type });
+		  const formData = new FormData();
+		  
+		  formData.append("userpic", blob, newPicture.name); // Utilisez simplement newPicture.name comme deuxième argument
+	  
+		  console.log(formData);
+	  
+		  try {
+			const response = await fetch(`http://localhost:3000/users/${userId}/update-avatar`, {
+			  method: 'POST',
+			  body: formData,
+			});
+	  
+			if (response.ok) {
+			  alert('profil picture mise à jour avec succès !');
+			} else {
+			  alert('ya eu un souci poto');
+			}
+		  } catch (error) {
+			console.error('erreur = ', error);
+		  }
+		}
+	  };
+	  
   return (
 	<>
 		<form onSubmit={handleSubmit}>
@@ -89,13 +102,11 @@ export const UserSetting: React.FC = () => {
 			<button type="submit">Mettre à jour</button>
 		</form>
 		<p>current picture</p>
-		<img src={ImgUrl} ></img>
-		{/* <label>
-			<input
-				type='file'
-				value={newPicture}
-				onChange={changePic} />
-		</label> */}
+		<img src={ImgUrl} alt='user profile avatar'></img>
+		<div>
+			<input type="file" accept="image/*" onChange={handleFileChange} />
+			<button onClick={changePic}>Upload</button>
+		</div>
 	</>
   );
 };
