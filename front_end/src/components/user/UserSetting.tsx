@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import '../../style/Profile.css'
+import icon from "../../img/buttoncomp.png"
+import logo from "../../img/logo42.png"
 
 export const UserSetting: React.FC = () => {
 	const [newUsername, setNewUsername] = useState('');
@@ -78,24 +81,82 @@ export const UserSetting: React.FC = () => {
 
   return (
 	<>
-		<form onSubmit={handleSubmit}>
-			<label>
-				Nouveau Nom d'utilisateur:
+    <div className="mainpage">
+		<div className="navbarmainpage">
+		<img src={icon} className="buttonnav" alt="icon" />
+           <p className="titlemainpage"> TRANSCENDENCE </p>
+        </div>
+        <div className="Insidemain">
+		<div className="navbarbox">
+        <img src={icon} className="buttonnav" alt="icon" />
+           <p className="titlebox"> SETTINGS </p>
+        </div>
+        <div className="threerow">
+{/* premier */}
+
+		<div className="boxrowsettings">
+                <div className="navbarsmallbox">
+                    <p className="boxtitle"> CHANGE USERNAME </p>
+                </div>
+
+				<form className='formsettings' onSubmit={handleSubmit}>
+			<label className='labelcss'>
 				<input
+					className='inputcss'
 					type="text"
 					value={newUsername}
+					placeholder="type new username"
 					onChange={(e) => setNewUsername(e.target.value)} />
 			</label>
-			<button type="submit">Mettre à jour</button>
+			<button className='buttonsettings' type="submit">Mettre à jour</button>
 		</form>
+	
+
+                <div className="footersmallbox">
+                    <br></br>
+                </div>
+            </div>
+
+
+	{/* deuxieme */}
+
+	<div className="boxrowsettings">
+                <div className="navbarsmallbox">
+                    <p className="boxtitle"> CHANGE IMAGE </p>
+                </div>
+
 		<p>current picture</p>
 		<img src={ImgUrl} ></img>
-		{/* <label>
-			<input
-				type='file'
-				value={newPicture}
-				onChange={changePic} />
-		</label> */}
+
+                <div className="footersmallbox">
+                    <br></br>
+                </div>
+            </div>
+
+
+{/* troisieme */}
+
+		
+<div className="boxrowsettings">
+                <div className="navbarsmallbox">
+                    <p className="boxtitle"> 2FAC AUTH </p>
+                </div>
+
+				
+
+                <div className="footersmallbox">
+                    <br></br>
+                </div>
+            </div>
+
+        </div>
+        </div>
+		<div className="footerprofilsettings">
+            {/* <br></br> */}
+            <img src={logo} className="logo" alt="icon" />
+		</div>
+		</div>
+
 	</>
   );
 };

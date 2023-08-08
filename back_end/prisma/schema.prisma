@@ -22,6 +22,7 @@ model User {
 	game1		Game[] @relation("player1")
 	game2		Game[] @relation("player2")
 	gameplayed	Int?
+	pictureURL	String?
 
 	friends		User[] @relation ("Friends")
 	friendsOf	User[] @relation ("Friends")

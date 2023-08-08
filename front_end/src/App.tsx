@@ -2,7 +2,7 @@ import React from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import { PongGame } from './PongGame';
-import { UserSetting } from './UserSetting';
+import { UserSetting } from './components/user/UserSetting';
 import { Form, Route, Routes } from 'react-router-dom';
 import FriendsList from './components/user/FriendsList';
 import { Profile } from './components/user/Profile';
