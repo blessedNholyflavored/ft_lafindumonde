@@ -211,6 +211,9 @@
   margin: 25px;
   border-bottom: 1rem solid ;
 }
+.boxrowsettings img {
+	height: 120px;
+}
 
 .formsettings{
 height: 47px;

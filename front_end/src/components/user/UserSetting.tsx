@@ -36,7 +36,7 @@ export const UserSetting: React.FC = () => {
 	useEffect(() => {
 
 	const displayPic = async() => {
-		const userId = 3;
+		const userId = 1;
 
 		try {
 			const response = await fetch(`http://localhost:3000/users/${userId}/avatar`, {
@@ -108,7 +108,7 @@ export const UserSetting: React.FC = () => {
 					placeholder="type new username"
 					onChange={(e) => setNewUsername(e.target.value)} />
 			</label>
-			<button className='buttonsettings' type="submit">Mettre à jour</button>
+			<button className='buttonsettings' type="submit">update</button>
 		</form>
 	
 

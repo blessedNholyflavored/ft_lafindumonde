@@ -48,7 +48,9 @@ export class UserService {
     if (User) {
       console.log(User.pictureURL);
       return User.pictureURL;
-    } else return null;
+    }
+	else
+		return null;
   }
 
   async getFriends(id: number) {
