@@ -1,7 +1,7 @@
-// backend/src/user/user.service.ts
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClient, User } from '@prisma/client'; // Renommez "User" en "PrismaUser"
+import { PrismaService } from 'src/prisma/prisma.service';
+
 const prisma = new PrismaClient();
 
 @Injectable()

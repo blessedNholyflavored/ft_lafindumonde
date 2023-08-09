@@ -1,54 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-
-interface User {
-  id: number;
-  username: string;
-}
+import { User, Room } from './interfaces'; // Assurez-vous d'importer les interfaces correctes
 
 interface PongGameProps {
-  userDetails: User | null;
-  socket: Socket<DefaultEventsMap, DefaultEventsMap> | null;
+  user: User | null;
+  socket: Socket | null;
 }
 
-export const PongGame: React.FC<PongGameProps> = ({ userDetails, socket }) => {
-  const [pointPosition, setPointPosition] = useState<{ x: number; y: number }>({ x: 400, y: 300 });
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    const key = event.code;
-    if (key === 'ArrowUp' && socket) {
-      socket.emit('moveUp');
-    }
-    if (key === 'ArrowDown' && socket) {
-      socket.emit('moveDown');
-    }
-  };
+const PongGame: React.FC<PongGameProps> = ({ user, socket }) => {
+  const [room, setRoom] = useState<Room | null>(null);
+  const [roomData, setRoomData] = useState<Room>({ player1: { id: 0, username: '' }, player2: { id: 0, username: '' } });
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
+    if (socket)
+    {
+      console.log("aaaaa");
+    socket?.emit('startGame', (roomData: Room) => {
+      console.log("wwww");
+      if (roomData.player1 && roomData.player2) {
+        setRoom(roomData);
+      }
+    });
+
+    // D'autres effets et nettoyages...
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      if (socket)
+      socket.off('startGame');
+      // Nettoyage des autres effets...
     };
-  }, [socket]);
-
-  useEffect(() => {
-    if (socket) {
-      socket.on('updatePointPosition', (data: { x: number; y: number }) => {
-        setPointPosition({ x: data.x, y: data.y });
-      });
-    }
-  }, [socket]);
+  }}, [socket]);
 
   return (
     <div>
-      {userDetails && (
-        <h2>Vous êtes connecté en tant que {userDetails.username}</h2>
+      {user && (
+        <h2>Vous êtes connecté en tant que {user.username}</h2>
       )}
-      {socket && userDetails && (
+      {room && room.player1 && (
         <div>
-          <div style={{ position: 'absolute', width: 10, height: 10, backgroundColor: 'red', top: pointPosition.y, left: pointPosition.x }}></div>
+          <p>La partie commence entre {room.player1.username} et {room.player2?.username} !</p>
         </div>
       )}
     </div>
