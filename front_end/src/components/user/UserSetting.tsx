@@ -11,7 +11,7 @@ export const UserSetting: React.FC = () => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		const userId = 3; // Remplacez 1 par l'ID de l'utilisateur que vous souhaitez mettre à jour
+		const userId = 1; // Remplacez 1 par l'ID de l'utilisateur que vous souhaitez mettre à jour
 
 		try {
 			const response = await fetch(`http://localhost:3000/users/${userId}`, {
@@ -55,108 +55,101 @@ export const UserSetting: React.FC = () => {
 	displayPic();
 }, [ImgUrl]);
 
-	// const changePic = async(e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-	// 	e.preventDefault();
+	const changePic = async(e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+		e.preventDefault();
 
-	// 	const userId = 3;
-	// 	const formData = new FormData();
+		const userId = 3;
+		const formData = new FormData();
 
-	// 	try {
-	// 		const response = await fetch(`http://localhost:3000.users/${userId}`, {
-	// 			method: 'POST',
-	// 			body: formData,
-	// 		});
+		try {
+			const response = await fetch(`http://localhost:3000.users/${userId}`, {
+				method: 'POST',
+				body: formData,
+			});
 
-	// 		if (response.ok) {
-	// 			alert('profil picture mise à jour avec succès !');
-	// 			setNewPicture('');
-	// 		} else {
-	// 			alert('ya eu un souci poto');
-	// 		}
-	// 	}
-	// 	catch (error) {
-	// 		console.error('erreur = ', error);
-	// 	}
-	// };
+			if (response.ok) {
+				alert('profil picture mise à jour avec succès !');
+				setNewPicture('');
+			} else {
+				alert('ya eu un souci poto');
+			}
+		}
+		catch (error) {
+			console.error('erreur = ', error);
+		}
+	};
 
   return (
 	<>
-    <div className="mainpage">
+	<div className="mainpage">
 		<div className="navbarmainpage">
-		<img src={icon} className="buttonnav" alt="icon" />
-           <p className="titlemainpage"> TRANSCENDENCE </p>
-        </div>
-        <div className="Insidemain">
-		<div className="navbarbox">
-        <img src={icon} className="buttonnav" alt="icon" />
-           <p className="titlebox"> SETTINGS </p>
-        </div>
-        <div className="threerow">
+			<img src={icon} className="buttonnav" alt="icon" />
+			<p className="titlemainpage"> TRANSCENDENCE </p>
+		</div>
+		<div className="Insidemain">
+			<div className="navbarbox">
+				<img src={icon} className="buttonnav" alt="icon" />
+				<p className="titlebox"> SETTINGS </p>
+			</div>
+		<div className="threerow">
+
 {/* premier */}
-
-		<div className="boxrowsettings">
-                <div className="navbarsmallbox">
-                    <p className="boxtitle"> CHANGE USERNAME </p>
-                </div>
-
-				<form className='formsettings' onSubmit={handleSubmit}>
+	<div className="boxrowsettings">
+		<div className="navbarsmallbox">
+			<p className="boxtitle"> CHANGE USERNAME </p>
+		</div>
+		<form className='formsettings' onSubmit={handleSubmit}>
 			<label className='labelcss'>
-				<input
-					className='inputcss'
-					type="text"
-					value={newUsername}
-					placeholder="type new username"
-					onChange={(e) => setNewUsername(e.target.value)} />
+			<input
+				className='inputcss'
+				type="text"
+				value={newUsername}
+				placeholder="type new username"
+				onChange={(e) => setNewUsername(e.target.value)} />
 			</label>
 			<button className='buttonsettings' type="submit">update</button>
 		</form>
-	
-
-                <div className="footersmallbox">
-                    <br></br>
-                </div>
-            </div>
-
+		<div className="footersmallbox">
+			<br></br>
+		</div>
+	</div>
 
 	{/* deuxieme */}
-
 	<div className="boxrowsettings">
-                <div className="navbarsmallbox">
-                    <p className="boxtitle"> CHANGE IMAGE </p>
-                </div>
-
+		<div className="navbarsmallbox">
+			<p className="boxtitle"> CHANGE IMAGE </p>
+		</div>
 		<p>current picture</p>
-		<img src={ImgUrl} ></img>
-
-                <div className="footersmallbox">
-                    <br></br>
-                </div>
-            </div>
-
+		<img src={ImgUrl} alt='profil avatar'></img>
+		<label>
+			<input
+				type='file'
+				value={newPicture}
+				onChange={changePic} />
+		</label>
+		<div className="footersmallbox">
+			<br></br>
+		</div>
+	</div>
 
 {/* troisieme */}
-
-		
-<div className="boxrowsettings">
-                <div className="navbarsmallbox">
-                    <p className="boxtitle"> 2FAC AUTH </p>
-                </div>
-
-				
-
-                <div className="footersmallbox">
-                    <br></br>
-                </div>
-            </div>
-
-        </div>
-        </div>
-		<div className="footerprofilsettings">
-            {/* <br></br> */}
-            <img src={logo} className="logo" alt="icon" />
+	<div className="boxrowsettings">
+		<div className="navbarsmallbox">
+			<p className="boxtitle"> 2FAC AUTH </p>
 		</div>
+		<div className="footersmallbox">
+			<br></br>
 		</div>
+	</div>
 
+	</div>
+
+	</div>
+	<div className="footerprofilsettings">
+		{/* <br></br> */}
+		<img src={logo} className="logo" alt="icon" />
+	</div>
+	</div>
 	</>
   );
 };
