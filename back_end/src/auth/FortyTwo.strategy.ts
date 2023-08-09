@@ -22,16 +22,17 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy){
 	async validate(accessToken: string, refreshToken: string, profile: any): Promise<any> {
 		const fortyTwoUser = {
 			email: profile.emails[0].value,
-			hash: "fuck",
+			hash: "",
 			username : profile.username,
 			id: Number.parseInt(profile.id),
 			pictureURL: profile._json.image.link,
 		};
-		try {
-			const user = await this.userService.getID(fortyTwoUser.id);
-			return user;
-		} catch (e) {
+		const user = await this.userService.getUserByID(fortyTwoUser.id);
+		if (!user){
 			return await this.userService.createUser(fortyTwoUser);
 		}
+		console.log('user id : ',user.id);
+		console.log('profile: ', profile.id);
+		return user;
 	}
 }

@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaUserCreateInput } from './user-create.input';
 import { PrismaClient, User } from '@prisma/client';
-import { createUserDto } from 'src/dto/createUserDto.dto';
+//import { createUserDto } from 'src/dto/createUserDto.dto';
 
 const prisma = new PrismaClient();
 
@@ -27,6 +27,22 @@ export class UserService {
     return updateUser;
   }
 
+  async getUserByID(id: number): Promise<User | undefined> {
+    return await prisma.user.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+  }
+
+  async getUserByUsername(username: string): Promise <User | undefined>{
+    return await prisma.user.findUnique({
+      where: {
+        username,
+      },
+    });
+  }
+
   async getID(id: number) {
   //throw new Error('Method not implemented.');
     try {
@@ -47,9 +63,9 @@ export class UserService {
     try {
       tmpUser = await prisma.user.create({
         data: {
-          //userID: user.id,
+          id: user.id,
           email: user.email,
-          hash: "fuck",
+          hash: "",
           username: user.username,
           pictureURL: user.pictureURL,
         }
