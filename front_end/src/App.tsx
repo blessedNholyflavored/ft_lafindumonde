@@ -39,7 +39,7 @@ export const App: React.FC = () => {
   return (
     <AuthProvider>
       <Routes>
-      {/* <Route path="/" element={<Home socket={socket} setUser={setUser} />} /> */}
+      <Route path="/" element={<Home socket={socket} setUser={setUser} />} />
         <Route path="/game" element={<PongGame socket={socket} user={user} />} />
         <Route path="/login" element={<Login />} />
         <Route path='/' element={<ProtectedRoute><Profile /></ProtectedRoute>} />

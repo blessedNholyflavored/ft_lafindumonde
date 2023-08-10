@@ -31,7 +31,7 @@ export class UserService {
     return user?.username ?? null;
   }
 
-  async updateUsername(id: string, newUsername: string) {
+  async updateUsername(id: number, newUsername: string) {
     const updateUser = await prisma.user.update({
       where: { id: id }, // Remplacez id par l'ID de l'utilisateur que vous souhaitez mettre à jour
       data: {
@@ -92,6 +92,6 @@ export class UserService {
       //throw err;
     }
   }
-}
+
 }
 

@@ -28,10 +28,9 @@ export class UsersController {
     const ret = await this.userService.getID(id);
     return ret;
   }
-  
-  @Get('/:username')
-  async getUserByUsername(@Param('username') username: string): Promise<User | null> {
-    const user = await this.userService.findUserByUsername(username);
-    return user;
+
+  // @Get('/:username')
+  // async getUserByUsername(@Param('username') username: string): Promise<User | null> {
+  //   const user = await this.userService.findUserByUsername(username);
+  //   return user;
   }
-}

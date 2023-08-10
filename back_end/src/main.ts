@@ -13,14 +13,19 @@ import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.get(PrismaService);
 
   // Ajouter le middleware CORS avant de configurer WebSocket
-  app.enableCors();
+  app.enableCors({
+    origin: 'http://localhost:8080',
+    credentials: true,
+  });
   app.use(cookieParser());
 
 
   // Configurer l'adaptateur WebSocket
   const server = await app.listen(3000);
+
 
   // Configurer l'adaptateur WebSocket
   const io = new Server(server, {
@@ -143,7 +148,6 @@ async function bootstrap() {
   });
 
   // Récupérer le service Prisma
-  app.get(PrismaService);
 
   console.log('Serveur en cours d\'exécution sur le port 3000');
 }

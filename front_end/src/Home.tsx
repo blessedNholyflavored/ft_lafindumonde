@@ -33,11 +33,18 @@ const Home: React.FC<HomeProps> = ({ socket, setUser }) => {
     }
   };
 
+
+  const navigateToProfPage = () => {
+    navigate('/auth');
+  };
+
+
   return (
     <div>
       <h2>Choisissez votre personnage :</h2>
       <button onClick={() => handlePlayerSelect('1')}>Ldinaut</button>
       <button onClick={() => handlePlayerSelect('2')}>Mcouppe</button>
+      <button onClick={navigateToProfPage}>Aller à la page Prof</button>
 
       {queueCount > 0 && (
         <p>En attente d'autres joueurs...</p>
