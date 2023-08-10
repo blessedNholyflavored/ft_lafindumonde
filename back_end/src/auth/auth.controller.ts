@@ -31,15 +31,19 @@ export class AuthController{
     @UseGuards(FortyTwoAuthGuard)
     async callback(@Req() req:any, @Res() res: any){
         const token = await this.authService.login(req.user);
-        res.cookie('access_token', token.access_token, {httpOnly: true }).redirect('/auth/protected');
+        res.cookie('access_token', token.access_token, {httpOnly: true }).redirect('http://localhost:8080/');
         return token;
     }
 
-    @Get('Protected')
+    @Get('me')
     @UseGuards(JwtAuthGuard)
     async protected(@Req() req: any) {
-        const user = await this.userService.getUserByID(req.user.id);
         //return (`Salut ${user}`);
-        return user;
+        return req.user;
+    }
+
+    @Get('logout')
+    async   logout(@Res() res: any){
+        res.clearCookie('access_token').status(200).send();
     }
 }
