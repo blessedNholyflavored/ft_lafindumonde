@@ -6,6 +6,8 @@ import { Server, Socket } from 'socket.io';
 import * as http from 'http';
 import { UserService } from './user/user.service';
 import { Room, User } from './interfaces';
+import { v4 as uuidv4 } from 'uuid';
+import { networkInterfaces } from 'os';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -66,16 +68,73 @@ async function bootstrap() {
     socket.on('startGame', (roomData: Room) => {
       const firstPlayer = playerQueue2.shift()!;
       const secondPlayer = playerQueue2.shift()!;
+      const roomid = uuidv4();
+      const user1: User = { id: 1, username: firstPlayer, point: { x: 0, y: 200 }, socketid: '' };
+      const user2: User = { id: 2, username: secondPlayer, point: { x: 700, y: 200 }, socketid: '' };
 
-      const user1: User = { id: 1, username: firstPlayer, point: { x: 400, y: 400 } };
-      const user2: User = { id: 2, username: secondPlayer, point: { x: 420, y: 420 } };
-
-      const room: Room = { player1: user1, player2: user2, ball: { x: 0, y: 0 } };      console.log(room);
+      const room: Room = { player1: user1, player2: user2, ball: { x: 350, y: 200, speedX: -3, speedY: 0, speed: 5 }, idRoom: roomid };
+      if (user1.username != undefined)
+        console.log(room);
       io.emit('startGame2', room);
     });
+
+    socket.on('movePoint', (data: string, keycode: string, room: Room) => {
+
+    if (keycode === 'ArrowUp')
+    {
+      if (room.player1.username === data)
+      {
+        if (room.player1.point.y - 10 > -10)
+          room.player1.point.y -= 10;
+      }
+      else if (room.player2.username === data)
+      {
+        if (room.player2.point.y - 10 > -10)
+          room.player2.point.y -= 10;
+      }
+    }
+    else if (keycode === 'ArrowDown')
+    {
+      if (room.player1.username === data)
+      {
+        if (room.player1.point.y + 10 < 330)
+         room.player1.point.y += 10;
+      }
+      else if (room.player2.username === data)
+      {
+        if (room.player2.point.y + 10 < 330)
+          room.player2.point.y += 10;
+      }
+    }
+    io.emit('recupMoov', room);
+
+    // io.to(room.player1.socketid).emit('recupMoov', room);
+    // io.to(room.player2.socketid).emit('recupMoov', room);
+  });
+
+  socket.on('ballMoovEMIT', (room: Room) => {
+
+    room.ball.x += room.ball.speedX;
+    room.ball.y += room.ball.speedY;
+  
     
+    const leftPaddle = room.player1;
+    const rightPaddle = room.player2;
+    if (
+      (room.ball.x <= leftPaddle.point.x + 10 &&
+        room.ball.y >= leftPaddle.point.y &&
+        room.ball.y <= leftPaddle.point.y + 80) ||
+      (room.ball.x >= rightPaddle.point.x - 10 &&
+        room.ball.y >= rightPaddle.point.y &&
+        room.ball.y <= rightPaddle.point.y + 80)
+    )
+    {
+      room.ball.speedX = -room.ball.speedX;
+    }
+    io.emit('ballMoovON', room);
+  });
+
     
-    // ...
   });
 
   // Récupérer le service Prisma
