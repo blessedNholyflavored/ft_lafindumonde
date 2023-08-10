@@ -67,12 +67,11 @@ async function bootstrap() {
       const firstPlayer = playerQueue2.shift()!;
       const secondPlayer = playerQueue2.shift()!;
 
-      const user1: User = { id: 1, username: firstPlayer };
-      const user2: User = { id: 2, username: secondPlayer };
+      const user1: User = { id: 1, username: firstPlayer, point: { x: 400, y: 400 } };
+      const user2: User = { id: 2, username: secondPlayer, point: { x: 420, y: 420 } };
 
-      const room: Room = { player1: user1, player2: user2 };
-      console.log(room.player1);
-      io.to(user1.id.toString()).to(user2.id.toString()).emit('startGame', room);
+      const room: Room = { player1: user1, player2: user2, ball: { x: 0, y: 0 } };      console.log(room);
+      io.emit('startGame2', room);
     });
     
     

@@ -45,3 +45,17 @@
   height:8px;
   border:2px solid #679403;
 }
+
+.player-point {
+  width: 10px;
+  height: 10px;
+  background-color: blue; /* Couleur du point du joueur */
+  position: absolute;
+}
+
+.ball {
+  width: 10px;
+  height: 10px;
+  background-color: red; /* Couleur de la balle */
+  position: absolute;
+}
