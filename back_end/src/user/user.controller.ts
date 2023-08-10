@@ -15,7 +15,7 @@ export class UsersController {
   }
 
   @Post('/:id/')
-  updating(@Param('id') id: string, @Body() username: string) {
+  updating(@Param('id') id: number, @Body() username: string) {
 	console.log(username);
 	console.log(id);
 	const newUsername = username['username'];
@@ -31,5 +31,11 @@ export class UsersController {
   async getUserByUsername(@Param('username') username: string): Promise<User | null> {
     const user = await this.userService.findUserByUsername(username);
     return user;
+  }
+
+  @Get('/:id')
+  async getUserById(@Param('id') id: number){
+    const ret = await this.userService.getID(id);
+    return ret;
   }
 }

@@ -8,6 +8,8 @@ import { UserService } from './user/user.service';
 import { Room, User } from './interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import { networkInterfaces } from 'os';
+import * as cookieParser from 'cookie-parser';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -136,6 +138,9 @@ async function bootstrap() {
 
     
   });
+
+app.use(cookieParser());
+
 
   // Récupérer le service Prisma
   app.get(PrismaService);
