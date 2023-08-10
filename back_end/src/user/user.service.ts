@@ -32,9 +32,9 @@ export class UserService {
 
   async updateUsername(id: string, newUsername: string) {
     const updateUser = await prisma.user.update({
-      where: { id: parseInt(id) }, // Remplacez id par l'ID de l'utilisateur que vous souhaitez mettre à jour
+      where: { id: parseInt(id) },
       data: {
-        username: newUsername, // Remplacez newUsername par le nouveau nom d'utilisateur
+        username: newUsername,
       },
     });
     return updateUser;
@@ -48,9 +48,7 @@ export class UserService {
     if (User) {
       console.log(User.pictureURL);
       return User.pictureURL;
-    }
-	else
-		return null;
+    } else return null;
   }
 
   async getFriends(id: number) {

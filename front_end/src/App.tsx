@@ -3,7 +3,7 @@ import React from 'react';
 import './App.css';
 import { PongGame } from './PongGame';
 import { UserSetting } from './components/user/UserSetting';
-import { Form, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { Profile } from './components/user/Profile';
 import { FriendshipComponent } from './components/friends/friendship'
 

@@ -3,13 +3,19 @@ import { PrismaClient } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 // import { Friend } from './types/friends';
+import { Friend } from './friends.interface';
+import {
+  AcceptFriendRequestDto,
+  CreateFriendRequestDto,
+} from './dto/friend.dto';
+import { FriendsInvitationStatus } from './interfaces/friends.interface';
 
 const prisma = new PrismaClient();
 
 @Injectable()
 export class FriendsService {
   constructor(
-    private readonly prisma: PrismaService,
+    private prisma: PrismaService,
     private userService: UserService,
   ) {}
 
@@ -26,57 +32,103 @@ export class FriendsService {
     }
   }
 
-  async showFriends(id: string) {
-    // const { id } = userId;
-    try {
-      const user = await this.prisma.user.findUnique({
-        where: { id: parseInt(id) },
-        include: { friends: true, friendsOf: true },
-      });
-      return user;
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  // async showFriends(id: string) {
+  //   // const { id } = userId;
+  //   try {
+  //     const user = await this.prisma.user.findUnique({
+  //       where: { id: parseInt(id) },
+  //       include: { friends: true, friendsOf: true },
+  //     });
+  //     return user;
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
-  async addNewFriendship(senderId: number, recipientId: number) {
-    const friendship = await this.prisma.friendship.create({
-      data: {
-        senderId: senderId,
-        recipientId: recipientId,
-      },
-    });
-    return friendship;
-  }
+  async createFriendRequest(
+    createFriendRequestDto: CreateFriendRequestDto,
+  ): Promise<Friend> {
+    const { senderId, recipientId } = createFriendRequestDto;
 
-  async getReceivedFriendships(userId: any) {
-    const { id } = userId;
-    try {
-      const user = await this.userService.getID(parseInt(id));
-      const demands = await this.prisma.friendship.findMany({
-        where: {
-          recipientId: user.id,
-        },
-        include: {
-          sender: true,
-        },
-      });
-      return demands;
-    } catch (error) {
-      throw new BadRequestException('getReceivedFriendships error : ' + error);
-    }
-  }
-
-  async updateFriendship(id: any) {
-    const { demandId, response } = id;
-    const friendhip = await this.prisma.friendship.update({
+    const existingFriendship = await this.prisma.friendship.findUnique({
       where: {
-        id: parseInt(demandId),
-      },
-      data: {
-        status: response,
+        senderId_recipientId: {
+          senderId,
+          recipientId,
+        },
       },
     });
-    return friendhip;
+    if (existingFriendship) {
+      throw new Error('Friendship request already exists');
+    }
+    const newFriendRequest: Friend = await this.prisma.friendship.create({
+      data: {
+        sender: {
+          connect: {
+            id: senderId,
+          },
+        },
+        recipient: {
+          connect: {
+            id: recipientId,
+          },
+        },
+        status: 'PENDING',
+      },
+    });
+
+    return newFriendRequest;
+  }
+
+  async acceptFriendRequest(
+    acceptFriendRequestDto: AcceptFriendRequestDto,
+  ): Promise<void> {
+    const { senderId, recipientId } = acceptFriendRequestDto;
+
+    await this.prisma.friendship.update({
+      where: {
+        senderId_recipientId: {
+          senderId,
+          recipientId,
+        },
+      },
+      data: {
+        status: 'ACCEPTED',
+      },
+    });
+  }
+
+
+  async updateFriendshipStatus(
+    senderId: number,
+    recipientId: number,
+    newStatus: FriendsInvitationStatus,
+  ): Promise<void> {
+    await this.prisma.friendship.update({
+      where: {
+        senderId_recipientId: {
+          senderId,
+          recipientId,
+        },
+      },
+      data: {
+        status: newStatus,
+      },
+    });
+  }
+
+  async getFriendshipStatus(
+    senderId: number,
+    recipientId: number,
+  ): Promise<string | null> {
+    const friendship = await this.prisma.friendship.findUnique({
+      where: {
+        senderId_recipientId: {
+          senderId,
+          recipientId,
+        },
+      },
+    });
+    return friendship ? friendship.status : null;
   }
 }

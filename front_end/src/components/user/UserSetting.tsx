@@ -5,33 +5,30 @@ import logo from "../../img/logo42.png"
 
 export const UserSetting: React.FC = () => {
 	const [newUsername, setNewUsername] = useState('');
-	const [newPicture, setNewPicture] = useState(String);
+	// const [newPicture, setNewPicture] = useState(String);
 	let [ImgUrl, setImgUrl] = useState<string>('');
 
 	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-
-		const userId = 3; // Remplacez 1 par l'ID de l'utilisateur que vous souhaitez mettre à jour
-
-		try {
-			const response = await fetch(`http://localhost:3000/users/${userId}`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ username: newUsername }),
-			});
-
-			if (response.ok) {
-				alert('Nom d\'utilisateur mis à jour avec succès !');
-				setNewUsername('');
-			} else {
-				alert('Une erreur s\'est produite lors de la mise à jour du nom d\'utilisateur.');
-			}
-		} catch (error) {
-			console.error('Erreur:', error);
-		}
-	};
+        e.preventDefault();
+        const userId = 1; // Remplacez 1 par l'ID de l'utilisateur que vous souhaitez mettre à jour
+        try {
+            const response = await fetch(`http://localhost:3000/users/${userId}/update-username`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: newUsername }),
+            });
+            if (response.ok) {
+                alert('Nom d\'utilisateur mis à jour avec succès !');
+                //setNewUsername('');
+            } else {
+                alert('Une erreur s\'est produite lors de la mise à jour du nom d\'utilisateur.');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    };
 
 	useEffect(() => {
 
@@ -126,7 +123,7 @@ export const UserSetting: React.FC = () => {
                 </div>
 
 		<p>current picture</p>
-		<img src={ImgUrl} ></img>
+		<img src={ImgUrl} alt="currentpic"></img>
 
                 <div className="footersmallbox">
                     <br></br>
