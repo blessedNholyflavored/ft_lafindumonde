@@ -11,12 +11,13 @@ import ProtectedRoute from "./ProtectedRoute";
 import { AuthProvider } from "./AuthProvider";
 import axios from './AxiosInstance';
 import { useAuth } from './AuthProvider';
+import Profile from './prof';
 
 
 
 export const App: React.FC = () => {
   const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user2, setUser2] = useState<User | null>(null);
 
   useEffect(() => {
     const newSocket = io('http://localhost:3000', {
@@ -42,38 +43,14 @@ export const App: React.FC = () => {
       <AuthProvider>
 
       <Routes>
-        {/* <Route path='/' element={<ProtectedRoute><Profile /></ProtectedRoute>} /> */}
+        <Route path='/prof' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Home socket={socket} setUser={setUser} />} />
-        <Route path="/game" element={<PongGame socket={socket} user={user} />} />
+        {/* <Route path="/" element={<Home socket={socket} setUser2={setUser2} />} /> */}
+        <Route path="/game" element={<PongGame socket={socket} user2  ={user2} />} />
       </Routes>
       </ AuthProvider>
       </div>
   )
-
-
-function  Profile() {
-  const { user, setUser } =useAuth();
-
-  async function logout() {
-    try {
-      // on appelle la route qui clear cookie ds le back
-      const res = await axios.get('/auth/logout');
-      // du coup l'user qu'on avait set bah il faut le unset
-      setUser(null);
-    } catch (error) {
-      console.log('Error: ', error);
-    }
   }
-  return (
-    <div className="Salut">
-      <h1>{user!.username}</h1>
-      <img src={user!.pictureURL} alt="profile picture" />
-      <p>{ JSON.stringify(user) }</p>
-      <button onClick={logout}>Log Out</button>
-    </div>
-  );
-};
-}
 
 export default App;

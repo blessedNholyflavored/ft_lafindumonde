@@ -15,7 +15,7 @@ export class UsersController {
   }
 
   @Post('/:id/')
-  updating(@Param('id') id: number, @Body() username: string) {
+  updating(@Param('id') id: string, @Body() username: string) {
 	console.log(username);
 	console.log(id);
 	const newUsername = username['username'];

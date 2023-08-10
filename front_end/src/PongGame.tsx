@@ -2,16 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { User, Room } from './interfaces'; // Assurez-vous d'importer les interfaces correctes
 import './App.css'
+import { useAuth } from './AuthProvider';
 
 interface PongGameProps {
-  user: User | null;
+  user2: User | null;
   socket: Socket | null;
 }
 
-const PongGame: React.FC<PongGameProps> = ({ user, socket }) => {
+const PongGame: React.FC<PongGameProps> = ({ user2, socket }) => {
   const [room, setRoom] = useState<Room | null>(null);
   const [roomData, setRoomData] = useState<Room>({ player1: { id: 0, username: '', point: { x: 0, y: 0 }, socketid: '' }, player2: { id: 0, username: '', point: { x: 0, y: 0 }, socketid: '' }, ball: { x: 0, y: 0, speedX: -1, speedY: 0, speed: 5}});
   const [counter, setCounter] = useState(0);
+  const { user, setUser } =useAuth();
+  console.log(user);
+
 
   useEffect(() => {
     if (socket) {
