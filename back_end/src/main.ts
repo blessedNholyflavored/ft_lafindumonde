@@ -8,12 +8,16 @@ import { UserService } from './user/user.service';
 import { Room, User } from './interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import { networkInterfaces } from 'os';
+import * as cookieParser from 'cookie-parser';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Ajouter le middleware CORS avant de configurer WebSocket
   app.enableCors();
+  app.use(cookieParser());
+
 
   // Configurer l'adaptateur WebSocket
   const server = await app.listen(3000);
@@ -22,6 +26,7 @@ async function bootstrap() {
   const io = new Server(server, {
     cors: {
       origin: '*', // Ou spécifiez l'origine de votre front-end ici
+     credentials: true,
     },
   });
 

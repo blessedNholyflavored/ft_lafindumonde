@@ -3,24 +3,36 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-42';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy){
-	constructor(private authService: AuthService, config: ConfigService) {
+	constructor(
+		private readonly authService: AuthService,
+		private config: ConfigService,
+		private userService: UserService
+	) {
 		super({
 			clientID: config.get('API_CLIENTID'), //env var
 			clientSecret: config.get('API_CLIENTSECRET'), //env var
-			callbackURL: "http://127.0.0.1:3000/auth/42/callback"
+			callbackURL: String("http://localhost:3000/auth/api/v1/auth/42/callback"),
 		});
 	}
 
-	async validate(username: string, password: string): Promise<any> {
-		const user =  await this.authService.validateUser(username, password);
-
+	async validate(accessToken: string, refreshToken: string, profile: any): Promise<any> {
+		const fortyTwoUser = {
+			email: profile.emails[0].value,
+			hash: "",
+			username : profile.username,
+			id: Number.parseInt(profile.id),
+			pictureURL: profile._json.image.link,
+		};
+		const user = await this.userService.getUserByID(fortyTwoUser.id);
 		if (!user){
-			throw new UnauthorizedException();
+			return await this.userService.createUser(fortyTwoUser);
 		}
-
+		console.log('user id : ',user.id);
+		console.log('profile: ', profile.id);
 		return user;
 	}
 }

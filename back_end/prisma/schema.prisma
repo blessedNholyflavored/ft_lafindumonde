@@ -11,9 +11,10 @@ datasource db {
 }
 
 model User {
-	id			Int			@id @default(autoincrement())
+	id			Int			@id
 	createdAt	DateTime	@default(now())
 	email		String		
 	hash		String
 	username	String 		@unique
+	pictureURL	String?
 }

@@ -15,18 +15,20 @@ export class UsersController {
   }
 
   @Post('/:id/')
-  updating(@Param('id') id: string, @Body() username: string) {
+  updating(@Param('id') id: number, @Body() username: string) {
 	console.log(username);
 	console.log(id);
 	const newUsername = username['username'];
 	const user = this.userService.updateUsername(id, newUsername);
 	return user;
   }
-  @Get(':id')
-  async findUserById(@Param('id') id: string) {
-    return this.userService.findUserById(id);
-  }
 
+  @Get('/:id')
+  async getUserById(@Param('id') id: number){
+    const ret = await this.userService.getID(id);
+    return ret;
+  }
+  
   @Get('/:username')
   async getUserByUsername(@Param('username') username: string): Promise<User | null> {
     const user = await this.userService.findUserByUsername(username);
