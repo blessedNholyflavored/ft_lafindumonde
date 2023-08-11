@@ -11,6 +11,9 @@ export interface User {
     player2: User | null = null;
     ball: Ball;
     idRoom: string;
+    scorePlayer1: number;
+    scorePlayer2: number;
+    end: number;
   }
 
 
@@ -20,6 +23,7 @@ export interface Point {
 }
 
 export interface Ball {
+  radius: number;
   x: number;
   y: number;
   speedX: number;

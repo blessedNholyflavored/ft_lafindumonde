@@ -82,7 +82,10 @@ async function bootstrap() {
       const user1: User = { id: 1, username: firstPlayer, point: { x: 0, y: 200 }, socketid: '' };
       const user2: User = { id: 2, username: secondPlayer, point: { x: 700, y: 200 }, socketid: '' };
 
-      const room: Room = { player1: user1, player2: user2, ball: { x: 350, y: 200, speedX: -3, speedY: 0, speed: 5 }, idRoom: roomid };
+      const room: Room = { player1: user1, player2: user2, ball: {
+        x: 350, y: 200, speedX: -5, speedY: 0, speed: 5,
+        radius: 0
+      }, idRoom: roomid, scorePlayer1: 0, scorePlayer2: 0, end: 0 };
       if (user1.username != undefined)
         console.log(room);
       io.emit('startGame2', room);
@@ -122,27 +125,72 @@ async function bootstrap() {
     // io.to(room.player2.socketid).emit('recupMoov', room);
   });
 
-  socket.on('ballMoovEMIT', (room: Room) => {
+  const canvasWidth = 700; // Remplacez par la largeur de votre zone de jeu
+  const canvasHeight = 400; // Remplacez par la hauteur de votre zone de jeu
 
+  
+  socket.on('ballMoovEMIT', (room: Room) => {
     room.ball.x += room.ball.speedX;
     room.ball.y += room.ball.speedY;
   
-    
     const leftPaddle = room.player1;
     const rightPaddle = room.player2;
+  
+    // Condition de rebond sur la raquette du joueur 1 (gauche)
     if (
-      (room.ball.x <= leftPaddle.point.x + 10 &&
-        room.ball.y >= leftPaddle.point.y &&
-        room.ball.y <= leftPaddle.point.y + 80) ||
-      (room.ball.x >= rightPaddle.point.x - 10 &&
-        room.ball.y >= rightPaddle.point.y &&
-        room.ball.y <= rightPaddle.point.y + 80)
-    )
-    {
+      room.ball.x <= leftPaddle.point.x + 10 &&
+      room.ball.y >= leftPaddle.point.y &&
+      room.ball.y <= leftPaddle.point.y + 80
+    ) {
+      const relativeY = (room.ball.y - leftPaddle.point.y) / 80; // Calcul de la position relative sur la raquette
       room.ball.speedX = -room.ball.speedX;
+      room.ball.speedY = relativeY * 5 - 1; // Angle en fonction de la position relative
     }
+  
+    // Condition de rebond sur la raquette du joueur 2 (droite)
+    if (
+      room.ball.x >= rightPaddle.point.x - 10 &&
+      room.ball.y >= rightPaddle.point.y &&
+      room.ball.y <= rightPaddle.point.y + 80
+    ) {
+      const relativeY = (room.ball.y - rightPaddle.point.y) / 80; // Calcul de la position relative sur la raquette
+      room.ball.speedX = -room.ball.speedX;
+      room.ball.speedY = relativeY * 5 - 1; // Angle en fonction de la position relative
+    }
+  
+    // Condition de rebond sur le mur haut
+    if (room.ball.y <= room.ball.radius) {
+      room.ball.speedY = -room.ball.speedY;
+    }
+  
+    // Condition de rebond sur le mur bas
+    if (room.ball.y >= canvasHeight - room.ball.radius) {
+      room.ball.speedY = -room.ball.speedY;
+    }
+  
+    // Condition de rebond sur les murs gauche et droit
+    if (room.ball.x <= 0)
+    {
+      room.ball.x = canvasWidth / 2;
+      room.ball.y = canvasHeight / 2;
+      room.ball.speedX = -room.ball.speedX;
+      room.scorePlayer2 += 1;
+    }
+    if (room.ball.x >= canvasWidth) {
+      room.ball.x = canvasWidth / 2;
+      room.ball.y = canvasHeight / 2;
+      room.ball.speedX = -room.ball.speedX;
+      room.scorePlayer1 += 1;
+    }
+    if (room.scorePlayer1 == 5 || room.scorePlayer2 == 5)
+      room.end = 1;
+  
     io.emit('ballMoovON', room);
   });
+  
+  
+    
+
 
     
   });

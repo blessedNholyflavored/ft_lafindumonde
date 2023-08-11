@@ -10,6 +10,10 @@ export interface User {
     player1: User | null = null;
     player2: User | null = null;
     ball: Ball | undefined;
+    scorePlayer1!: number | 0;
+    scorePlayer2!: number | 0;
+    end!: number;
+
   }
 
   export interface Point {
