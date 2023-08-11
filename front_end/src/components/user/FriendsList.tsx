@@ -18,6 +18,7 @@ export const FriendsList = (props: any) => {
 
             if (response.ok) {
                 const data = await response.json();
+                console.log(data);
                 if (data.length > 0) { 
                     const friendObjects = data[0].friends;
                     const friendInfo = friendObjects.map((friend: { username: any; status: any; }) => ({
@@ -36,14 +37,19 @@ export const FriendsList = (props: any) => {
 
     return (
         <div className="test">
-            {friends.map((friend, index) => (
+        {friends.length > 0 ? (
+            friends.map((friend, index) => (
                 <div key={index}>
                     <div>{friend.name}</div>
                     <div>{friend.status}</div>
                 </div>
-            ))}
-        </div>
-    );
+            ))
+        ) : (
+            <div>ptdr t'as pas de pote</div>
+        )}
+    </div>
+);
 }
 
 export default FriendsList;
+

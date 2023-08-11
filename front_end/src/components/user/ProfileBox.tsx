@@ -110,6 +110,8 @@ export const ProfileBox = (props: any) => {
             if (response.ok) {
                 const status = await response.text();
                 setFriendshipStatus(status as FriendsInvitationStatus);
+                console.log('hihihihih');
+                console.log(response);
             } else {
                 console.log("Error fetching friendship status");
             }
@@ -153,6 +155,7 @@ export const ProfileBox = (props: any) => {
                 {xp}
             </p>
             {renderFriendshipButton()}
+            
 
         </div>
     );

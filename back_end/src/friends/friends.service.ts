@@ -28,10 +28,17 @@ export class FriendsService {
       });
       return friends;
     } catch (error) {
-      console.error(error);
+      throw new BadRequestException('getfriends error : ' + error);
     }
   }
 
+  async addFriend(request: any) {
+    const { senderId, recipientId } = request;
+    const sender = await this.userService.getID(parseInt(senderId));
+    const recipient = await this.userService.getID(parseInt(recipientId));
+    await this.userService.addFriendOnTable(sender.id, recipient.id);
+    await this.userService.addFriendOnTable(recipient.id, sender.id);
+  }
   // async showFriends(id: string) {
   //   // const { id } = userId;
   //   try {
@@ -97,7 +104,6 @@ export class FriendsService {
       },
     });
   }
-
 
   async updateFriendshipStatus(
     senderId: number,

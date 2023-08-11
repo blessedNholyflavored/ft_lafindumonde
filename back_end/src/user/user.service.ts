@@ -1,7 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaClient, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { UserDto } from './dto/user.dto';
 // import { UserAchievements } from '../user/user.interface';
+import { plainToClass } from 'class-transformer';
 
 const prisma = new PrismaClient();
 
@@ -24,9 +26,10 @@ export class UserService {
           id: id,
         },
       });
-      return user;
+      const userDTO = plainToClass(UserDto, user);
+      return userDTO;
     } catch (error) {
-      throw new BadRequestException('getid error : ' + error);
+      throw new BadRequestException('getUser error : ' + error);
     }
   }
 
@@ -60,12 +63,25 @@ export class UserService {
         where: {
           id: id,
         },
-        // include: { friends: true, friendsOf: true },
+        include: { friends: true, friendsOf: true },
       });
       return user;
     } catch (error) {
       throw new BadRequestException('getUser error : ' + error);
     }
+  }
+
+  async addFriendOnTable(id1: number, id2: number) {
+    const updateUser = await prisma.user.update({
+      where: {
+        id: id1,
+      },
+      include: { friends: true, friendsOf: true },
+      data: {
+        friends: { connect: { id: id2 } },
+      },
+    });
+    return updateUser;
   }
   // async getAchievementById(id: number) {
   //   if (id === undefined) {
