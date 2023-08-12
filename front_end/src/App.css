@@ -34,6 +34,15 @@ body {
   padding: 7em 2em;
 }
 
+.App {
+  text-align: center;
+  background-color: black;
+  height: 90%;
+  background-image: url("img/sphere.png");
+  background-position: 50%;
+  background-size: cover;
+}
+
 
 .App-logo {
   height: 40vmin;

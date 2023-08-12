@@ -1,4 +1,4 @@
-// This is your Prisma schema file,
+ 	// This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -13,8 +13,80 @@ datasource db {
 model User {
 	id			Int			@id
 	createdAt	DateTime	@default(now())
-	email		String		
-	hash		String
+	email		String		@unique
+	password	String?
 	username	String 		@unique
+	level		Int?
+	xp			Int?
+	status		USER_STATUS	@default(OFFLINE)
+	game1		Game[] @relation("player1")
+	game2		Game[] @relation("player2")
+	gameplayed	Int?
 	pictureURL	String?
+
+	friends		User[] @relation ("Friends")
+	friendsOf	User[] @relation ("Friends")
+
+	InvitFriendSent		Friendship[]			@relation("SentFriendships")
+	InvitFriendReceived	Friendship[]			@relation("ReceivedFriendships")
+
+	// achievements		UserAchievement[]
+	// @@map("users")
+
+}
+
+model Friendship {
+	id				Int						@id @default(autoincrement())
+	status			FriendsInvitationStatus	@default(PENDING)
+	sender			User					@relation("SentFriendships", fields: [senderId], references: [id])
+	senderId		Int
+	recipient		User					@relation("ReceivedFriendships", fields: [recipientId], references: [id])
+	recipientId		Int
+	@@unique([senderId, recipientId])
+}
+
+enum FriendsInvitationStatus {
+	ACCEPTED
+	PENDING
+	REFUSED
+}
+// model Achievement {
+// 	id			Int			@id @default(autoincrement())
+// 	name		String		@unique
+// 	description	String
+// 	createdAt	DateTime	@default(now())
+
+// 	users		UserAchievement[]
+// 	@@map("achievements")
+
+// }
+
+// model UserAchievement {
+// 	id				Int			@id @default(autoincrement())
+// 	userId			Int
+// 	achievementId	Int
+// 	createdAt		DateTime	@default(now())
+	
+// 	user			User		@relation(fields: [userId], references: [id])
+// 	achievement		Achievement?	@relation(fields: [achievementId], references: [id])
+// 	@@unique([userId, achievementId])
+// }
+
+
+enum USER_STATUS{
+	INGAME
+	OFFLINE
+	ONLINE
+}
+
+
+
+model Game {
+	id			Int			@id @default(autoincrement())
+	start_at	DateTime
+	end_at		DateTime
+  	userId1		Int  @unique
+	player1		User @relation("player1", fields: [userId1], references: [id])
+  	userId2		Int  @unique
+	player2		User @relation("player2", fields: [userId2], references: [id])
 }

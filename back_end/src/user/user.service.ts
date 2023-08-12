@@ -3,6 +3,7 @@ import { PrismaClient, User } from '@prisma/client'; // Renommez "User" en "Pris
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaUserCreateInput } from './user-create.input';
 //import { createUserDto } from 'src/dto/createUserDto.dto';
+// import { UserAchievements } from '../user/user.interface';
 
 const prisma = new PrismaClient();
 
@@ -13,7 +14,7 @@ export class UserService {
     try {
       const users = await prisma.user.findMany();
       return users;
-    } catch (error){
+    } catch (error) {
       throw new BadRequestException('finduser' + error);
     }
   }
@@ -31,14 +32,28 @@ export class UserService {
     return user?.username ?? null;
   }
 
-  async updateUsername(id: number, newUsername: string) {
+  async getID(id: number) {
+    //throw new Error('Method not implemented.');
+    try {
+      const user = await prisma.user.findUniqueOrThrow({
+        where: {
+          id: id,
+        },
+      });
+      return user;
+    } catch (error) {
+      throw new BadRequestException('getid error : ' + error);
+    }
+  }
+
+  async updateUsername(id: string, newUsername: string)
+  {
     const updateUser = await prisma.user.update({
-      where: { id: id }, // Remplacez id par l'ID de l'utilisateur que vous souhaitez mettre à jour
+      where: { id: parseInt(id) },
       data: {
-        username: newUsername, // Remplacez newUsername par le nouveau nom d'utilisateur
+        username: newUsername,
       },
     });
-
     return updateUser;
   }
 
@@ -58,19 +73,6 @@ export class UserService {
     });
   }
 
-  async getID(id: number) {
-  //throw new Error('Method not implemented.');
-    try {
-      const user = await prisma.user.findUniqueOrThrow({
-        where: {
-          id: id,
-        },
-      });
-      return user;
-    } catch (error) {
-      throw new BadRequestException('getid error : ' + error);
-    }
-  }
 
   async createUser(user: PrismaUserCreateInput): Promise<User> {
     let tmpUser: User;
@@ -93,5 +95,92 @@ export class UserService {
     }
   }
 
+  async getPicture(id: string) {
+    const User = await prisma.user.findUnique({
+      where: { id: parseInt(id) },
+      select: { pictureURL: true },
+    });
+    if (User) {
+      return (User.pictureURL);
+    }
+	else
+		return null;
+  }
+
+  async updatePicture(id: string, newURL: string)
+  {
+	console.log(newURL);
+	const updateUser = await prisma.user.update({
+		where: { id: parseInt(id)},
+		data: { pictureURL: newURL, },
+	});
+	return (updateUser.pictureURL);
+  }
+
+  async getFriends(id: number) {
+    if (id === undefined) {
+      throw new BadRequestException('Undefined user ID');
+    }
+    try {
+      const user = await prisma.user.findMany({
+        where: {
+          id: id,
+        },
+        // include: { friends: true, friendsOf: true },
+      });
+      return user;
+    } catch (error) {
+      throw new BadRequestException('getUser error : ' + error);
+    }
+  }
+  // async getAchievementById(id: number) {
+  //   if (id === undefined) {
+  //     throw new BadRequestException('Undefined user ID');
+  //   }
+  //   try {
+  //     const achievement = await prisma.achievement.findUniqueOrThrow({
+  //       where: {
+  //         id: id,
+  //       },
+  //     });
+  //     return achievement;
+  //   } catch (error) {
+  //     throw new BadRequestException('getUser error : ' + error);
+  //   }
+  // }
+
+  // async getUserAchievements(id: number) {
+  //   try {
+  //     const achievements = await prisma.userAchievement.findMany({
+  //       where: { userId: id },
+  //     });
+  //     return achievements;
+  //   } catch (error) {
+  //     throw new BadRequestException('error');
+  //   }
+  // }
+
+  //   async getAllAchievements(): Promise<UserAchievements[]> {
+  //     const allachiev = (await prisma.userAchievement.findMany({
+  //       select: UserAchievements,
+  //     })) as UserAchievements[];
+  //     console.log(allachiev);
+  //     return allachiev;
+  //   }
+  // }
+
+  // async getUserAchievements(id: number) {
+  //   if (id === undefined) {
+  //     throw new BadRequestException('Undefined user ID');
+  //   }
+  //   try {
+  //     const achievements = await this.prisma.userAchievement.findMany({
+  //       where: { userId: id },
+  //       include: { achievement: true },
+  //       });
+  //     return achievements;
+  //   } catch (error) {
+  //     throw new BadRequestException('getUser error : ' + error);
+  //   }
 }
 

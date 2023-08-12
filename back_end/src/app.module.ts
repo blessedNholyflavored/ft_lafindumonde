@@ -5,6 +5,9 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { FriendsModule } from './friends/friends.module';
+import { join } from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -14,6 +17,12 @@ import { AuthModule } from './auth/auth.module';
     PrismaModule,
     UserModule,
 	  AuthModule,
+    AuthModule,
+    FriendsModule,
+	// ServeStaticModule.forRoot({
+	// 	rootPath: join(__dirname, '..', 'back_end/uploads/'),
+	// 	serveRoot: '/uploads',
+	// }),
   ],
   providers: [PrismaService, UserService],
 })
