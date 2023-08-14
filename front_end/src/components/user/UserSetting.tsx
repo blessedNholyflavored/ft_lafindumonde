@@ -8,6 +8,7 @@ export const UserSetting: React.FC = () => {
 	const [newUsername, setNewUsername] = useState('');
 	const [newPicture, setNewPicture] = useState<File | null>(null);
 	let [ImgUrl, setImgUrl] = useState<string>('');
+	const [error, setError] = useState<string | null>(null);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -85,6 +86,7 @@ export const UserSetting: React.FC = () => {
 		e.preventDefault();
 		const file = e.target.files?.[0];
 		if (file) {
+			console.log(file.type);
 			console.log("QQQQQQQQQQQQQQQQQ", file);
 			setNewPicture(file);
 		}
@@ -113,11 +115,20 @@ export const UserSetting: React.FC = () => {
 				console.log("DDDDDDDDDDDDDDDDDDDDDD", result.pictureURL);
 				alert('profil picture mise à jour avec succès !');
 			} else {
-			  alert('ya eu un souci poto');
+				console.log("kkkkkkkkkk");
+				const backError = await response.json();
+				setError(backError.message);
+				alert(backError.message);
 			}
 		  } catch (error) {
-			console.error('erreur = ', error);
-		  }
+			console.log("icicicci   ",error);
+			if (error instanceof Response) {
+				const backError = await error.json(); // Convertir la réponse en objet JSON
+				setError(backError.message);
+				alert(backError.message);
+				console.log("llalalalaal   ", backError)
+			}
+		}
 		}
 	  };
 
@@ -161,10 +172,11 @@ export const UserSetting: React.FC = () => {
 		<div className="navbarsmallbox">
 			<p className="boxtitle"> CHANGE IMAGE </p>
 		</div>
-		<p>current picture</p>
 		<img src={ImgUrl} alt='user avatar'></img>
 		<div>
-			<input type="file" accept="image/*" onChange={handleFileChange} />
+			{/* {error ? <p>{error}</p>} */}
+			{/* accept="image/.jpg,.jpeg" */}
+			<input type="file" accept="" onChange={handleFileChange} />
 			<button onClick={changePic}>Upload</button>
 		</div>
 		<div className="footersmallbox">
