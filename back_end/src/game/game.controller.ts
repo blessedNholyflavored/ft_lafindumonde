@@ -1,37 +1,22 @@
-// backend/src/game/game.controller.ts
+import { Controller, Get , Post , Body, Res , Param, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { User } from '.prisma/client';
+import * as path from 'path';
+import { join } from 'path';
+import { Response } from 'express';
+import { GameService } from './game.service';
 
-import { Controller } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-import { Server } from 'socket.io';
 
-@WebSocketGateway()
-@Controller() // Add the @Controller() decorator here
-export class PongController implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer()
-  server: Server;
+@Controller('game')
+export class GameController {
+  friendService: any;
+  userService: any;
+  constructor(private gameService: GameService) {}
 
-  @SubscribeMessage('startGame')
-  handleStartGame(client: any, payload: any) {
-    // Traitez le démarrage du jeu ici
-    // Vous pouvez initialiser l'état du jeu et envoyer des informations aux deux joueurs pour démarrer le jeu.
-  }
-
-  @SubscribeMessage('updatePaddle')
-  handleUpdatePaddle(client: any, payload: any) {
-    // Gérez les mises à jour des raquettes des joueurs ici
-    // Les joueurs enverront leurs positions de raquette via ce message
-    // Vous pouvez mettre à jour l'état du jeu en conséquence.
-  }
-
-  // Méthode appelée lorsqu'un joueur se connecte
-  handleConnection(client: any, ...args: any[]) {
-    // Traitez la connexion du joueur ici
-    // Vous pouvez attribuer un identifiant unique au joueur et le préparer pour le jeu.
-  }
-
-  // Méthode appelée lorsqu'un joueur se déconnecte
-  handleDisconnect(client: any) {
-    // Traitez la déconnexion du joueur ici
-    // Vous pouvez gérer la fin du jeu ou l'arrêt de la partie en cas de déconnexion.
+  @Post('/create')
+  createGame()
+  {
+    console.log("DANS CREATE GAME");
   }
 }

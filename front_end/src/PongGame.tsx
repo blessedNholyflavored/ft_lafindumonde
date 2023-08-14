@@ -14,6 +14,10 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
   const [counter, setCounter] = useState(0);
   const { user, setUser } =useAuth();
   const [end, setEnd] = useState<number>(0);
+  const [endflag, setEndflag] = useState<number>(0);
+  const [startFlag, setStartflag] = useState<number>(0);
+
+
 
   useEffect(() => {
     if (socket && room && room.end)
@@ -24,14 +28,14 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
 
 
   useEffect(() => {
-    if (socket) {
-      socket?.emit('startGame', (roomData: Room) => {
+    if (socket && counter === 0) {
+      let t = user?.id;
+      console.log(t);
+      socket?.emit('startGame', async (roomData: Room, t: number) => {
         if (roomData.player1 && roomData.player2) {
           setRoom(roomData);
-          if (room && room.player1 && user?.username === room.player1.username)
-            room.player1.socketid = socket.id;
-          if (room && room.player2 && user?.username === room.player2.username)
-          room.player2.socketid = socket.id;
+          
+          const response = await fetch(`http://localhost:3000/game/create`);
         }
       });
 
@@ -61,6 +65,17 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
       socket.on('startGame2', (room: Room) => {
         if (room.player1 && room.player2 && room.player1.username !== undefined) {
           setRoom(room);
+          if (room && room.player1 && user?.id === room.player1.id)
+          {  
+            room.player1.socketid = socket.id;
+            room.player1.id = user.id;
+          }
+          if (room && room.player2 && user?.id === room.player2.id)
+          {
+            room.player2.socketid = socket.id;
+            room.player2.id = user.id;
+          }
+
           setCounter(1);
         }
       });
@@ -79,7 +94,7 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
 
     if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !end)
     {
-      socket?.emit("movePoint", user?.username, event.key, room);
+      socket?.emit("movePoint", user?.id, event.key, room);
     }
   };
   
@@ -114,8 +129,17 @@ if (socket && !end) {
     }
   });
 }
-
 });
+
+useEffect(() => {
+
+if (socket && !startFlag && room && counter === 1) {
+  setStartflag(1);
+  socket.emit('CreateGame', (room: Room) => {
+  });
+}
+});
+
 
   return (
 <div className="pong-game">
@@ -130,12 +154,7 @@ if (socket && !end) {
             <div>
               <h1>Fin de partie !</h1>
               Score - { room.player1.username } { room.scorePlayer1 } | { room.scorePlayer2 } { room.player2.username }
-              { room.scorePlayer1 >= 5 && (
-                <p>{ room.player1.username } remporte la partie</p>
-              )}
-              { room.scorePlayer2 >= 5 && (
-                <p>{ room.player2.username } remporte la partie</p>
-              )}
+                <p>{ room.winner } remporte la partie</p>
               
               </div>)}
               { !end && (

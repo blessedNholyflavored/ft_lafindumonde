@@ -13,6 +13,13 @@ export interface User {
     scorePlayer1!: number | 0;
     scorePlayer2!: number | 0;
     end!: number;
+    winner?: string;
+    winnerid?: number;
+    idRoom?: number;
+    idP1?: number;
+    idP2?: number;
+
+
 
   }
 

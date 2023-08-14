@@ -21,7 +21,7 @@ const Home: React.FC<HomeProps> = ({ socket }) => {
       // const response = await fetch(`http://localhost:3000/users/${player}`);
       // const user = await response.json();
       if (user)
-      socket?.emit('joinQueue', user.id.toString());
+      socket?.emit('joinQueue', user.id);
       setUser(user);
 
       socket?.on('queueUpdate', (count: number) => {

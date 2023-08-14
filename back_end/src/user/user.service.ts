@@ -82,7 +82,6 @@ export class UserService {
         data: {
           id: user.id,
           email: user.email,
-          hash: "",
           username: user.username,
           pictureURL: user.pictureURL,
         }
