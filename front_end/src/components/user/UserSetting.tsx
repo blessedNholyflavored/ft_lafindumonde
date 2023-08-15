@@ -10,6 +10,10 @@ export const UserSetting: React.FC = () => {
 	let [ImgUrl, setImgUrl] = useState<string>('');
 	const [error, setError] = useState<string | null>(null);
 
+	useEffect(() => {
+		displayPic2();
+	});
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		const userId = 1;
@@ -31,9 +35,7 @@ export const UserSetting: React.FC = () => {
 		}
 	};
 
-	useEffect(() => {
-
-	const displayPic = async() => {
+	const displayPic2 = async() => {
 		const userId = 1;
 
 		try {
@@ -42,26 +44,25 @@ export const UserSetting: React.FC = () => {
 			});
 			if (response.ok) {
 				const pictureURL = await response.text();
-				console.log("aaaaaaA",pictureURL);
+				//console.log("aaaaaaA",pictureURL);
 				try {
 					const response = await fetch(`http://localhost:3000/users/uploads/${pictureURL}`, {
 						method: 'GET',
 					});
 					if (response.ok) {
-
 						// const backPath = 'http://localhost:3000/users';
 						// const absoluteURL = `${backPath}/${pictureURL}`
 						//setImgUrl(pictureURL);
 						const blob = await response.blob();
 						const absoluteURL = URL.createObjectURL(blob);
 						setImgUrl(absoluteURL);
-						console.log("FOFOFOFOFOFOFOF", absoluteURL);
+						//console.log("FOFOFOFOFOFOFOF", absoluteURL);
 						//setImgUrl(URL.createObjectURL(blob));
 						//console.log("dans front", pictureURL);
 					}
 				}
 				catch (error) {
-					console.error(error);
+					//console.error(error);
 				}
 			//	const pictureURL = await response.text();
 				// const backPath = 'http://localhost:3000/users';
@@ -79,8 +80,57 @@ export const UserSetting: React.FC = () => {
 			console.error(error);
 		}
 	}
-	displayPic();
-}, []);
+
+// 	useEffect(() => {
+
+// 	const displayPic = async() => {
+// 		const userId = 1;
+
+// 		try {
+// 			const response = await fetch(`http://localhost:3000/users/${userId}/avatar`, {
+// 				method: 'GET',
+// 			});
+// 			if (response.ok) {
+// 				const pictureURL = await response.text();
+// 				console.log("aaaaaaA",pictureURL);
+// 				try {
+// 					const response = await fetch(`http://localhost:3000/users/uploads/${pictureURL}`, {
+// 						method: 'GET',
+// 					});
+// 					if (response.ok) {
+
+// 						// const backPath = 'http://localhost:3000/users';
+// 						// const absoluteURL = `${backPath}/${pictureURL}`
+// 						//setImgUrl(pictureURL);
+// 						const blob = await response.blob();
+// 						const absoluteURL = URL.createObjectURL(blob);
+// 						setImgUrl(absoluteURL);
+// 						console.log("FOFOFOFOFOFOFOF", absoluteURL);
+// 						//setImgUrl(URL.createObjectURL(blob));
+// 						//console.log("dans front", pictureURL);
+// 					}
+// 				}
+// 				catch (error) {
+// 					console.error(error);
+// 				}
+// 			//	const pictureURL = await response.text();
+// 				// const backPath = 'http://localhost:3000/users';
+// 				// const absoluteURL = `${backPath}/${pictureURL}`
+// 				//setImgUrl(pictureURL);
+// 				//const blob = await response.blob();
+// 				//console.log("FOFOFOFOFOFOFOF", blob);
+// 				//setImgUrl(URL.createObjectURL(blob));
+// 				//const absoluteURL = URL.createObjectURL(blob);
+// 				//setImgUrl(absoluteURL);
+// 				//console.log("dans front", pictureURL);
+// 			}
+// 		}
+// 		catch (error) {
+// 			console.error(error);
+// 		}
+// 	}
+// 	displayPic();
+// }, []);
 
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
@@ -99,7 +149,7 @@ export const UserSetting: React.FC = () => {
 		  const blob = new Blob([newPicture], { type: newPicture.type });
 		  const formData = new FormData();
 		  
-		  formData.append("userpic", blob, newPicture.name); // Utilisez simplement newPicture.name comme deuxième argument
+		  formData.append("userpic", blob, newPicture.name);
 	  
 		  console.log(formData);
 	  
@@ -114,6 +164,8 @@ export const UserSetting: React.FC = () => {
 				//setImgUrl(URL.createObjectURL(blob));
 				console.log("DDDDDDDDDDDDDDDDDDDDDD", result.pictureURL);
 				alert('profil picture mise à jour avec succès !');
+				displayPic2();
+				
 			} else {
 				console.log("kkkkkkkkkk");
 				const backError = await response.json();
@@ -121,9 +173,9 @@ export const UserSetting: React.FC = () => {
 				alert(backError.message);
 			}
 		  } catch (error) {
-			console.log("icicicci   ",error);
+			//console.log("icicicci   ",error);
 			if (error instanceof Response) {
-				const backError = await error.json(); // Convertir la réponse en objet JSON
+				const backError = await error.json();
 				setError(backError.message);
 				alert(backError.message);
 				console.log("llalalalaal   ", backError)
@@ -174,9 +226,7 @@ export const UserSetting: React.FC = () => {
 		</div>
 		<img src={ImgUrl} alt='user avatar'></img>
 		<div>
-			{/* {error ? <p>{error}</p>} */}
-			{/* accept="image/.jpg,.jpeg" */}
-			<input type="file" accept="" onChange={handleFileChange} />
+			<input type="file" accept="image/.jpg,.jpeg,.png" onChange={handleFileChange} />
 			<button onClick={changePic}>Upload</button>
 		</div>
 		<div className="footersmallbox">

@@ -1,11 +1,11 @@
-import { Controller, Get , Post , Body, Res , Param, UploadedFile, UseInterceptors, ParseFilePipe, HttpException, HttpStatus  } from '@nestjs/common';
+import { Controller, Get , Post , Body, Res , Param, UploadedFile, UseInterceptors, HttpException, HttpStatus  } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UserService } from './user.service';
 import * as path from 'path';
 import { join } from 'path';
 import { Response } from 'express';
-import * as mimeTypes from 'mime-types';
+import * as mimetype from 'mime-types';
 
 
 @Controller('users')
@@ -32,7 +32,7 @@ export class UsersController {
   returnPic(@Param('id') id: string) {
     let pictureURL = this.userService.getPicture(id);
 	//const backPath = path.join(, pictureURL);
-    console.log(pictureURL);
+    //console.log(pictureURL);
 	//console.log(backPath);
     return pictureURL;
   }
@@ -40,7 +40,7 @@ export class UsersController {
   @Get('/uploads/:file')
   async getFileUrl(@Param('file') filename: string, @Res() res: Response)
   {
-		return res.sendFile(filename, {root : 'uploads/'});
+	return res.sendFile(filename, {root : 'uploads/'});
   }
 
   @Post('/:id/update-avatar')
@@ -52,30 +52,26 @@ export class UsersController {
 				const name = file.originalname.split('.')[0];
 				const fileExtName = path.extname(file.originalname);
 				const rand = `${Date.now()}-${Math.round(Math.random() * 16)}`;
-				// if (file && mimeTypes.lookup(file.originalname) === 'image/jpeg' || mimeTypes.lookup(file.originalname) === 'image/png')
-				// {
-				// 	console.log("111111111111111111111111111111111111111111111");
-				// 	if (file.size < 52000)
-				// 		cb(null, `${name}-${rand}${fileExtName}`);
-				// }
-				// else
-				// {
-				// 	console.log("2222222222222222222222222222222222222222222");
-
-				// 	throw new HttpException('jpg/jpeg/png images files only accepted', HttpStatus.BAD_REQUEST);
-				// }
 				cb(null, `${name}-${rand}${fileExtName}`);
-
 			}
 		}),
+		fileFilter: (req, file, cb) => {
+			if (file.mimetype === 'image/jpg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpeg')
+			{
+				console.log("IFFFFFFFFFFFFFFFFF");
+				cb(null, true);
+			} else {
+				console.log("ELSSEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+				cb(new HttpException('jpg/jpeg/png images files only accepted', HttpStatus.BAD_REQUEST), false);
+			}
+		},
+		limits: {
+			fileSize: 1024 * 1024 * 4,
+		},
 	}),
 	)
   async updatePic(@Param('id') id: string, @UploadedFile() file: any)//: Express.Multer.File)
   {
-	
-		console.log("SSSSSSSSSSSSSSSSSSSSSSSSSS", file.size);
-		//if (file.size > 52000)
-		//	throw new  HttpException('file too big :(', HttpStatus.BAD_REQUEST);
 		//const name = file.originalname.split('.')[0];
 		//const picPath = file.path;
 		const test = file.filename
