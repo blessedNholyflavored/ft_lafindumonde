@@ -145,20 +145,6 @@ export class UserService {
     });
   }
 
-  async getID(id: number) {
-  //throw new Error('Method not implemented.');
-    try {
-      const user = await prisma.user.findUniqueOrThrow({
-        where: {
-          id: id,
-        },
-      });
-      return user;
-    } catch (error) {
-      throw new BadRequestException('getid error : ' + error);
-    }
-  }
-
   async createUser(user: PrismaUserCreateInput): Promise<User> {
     let tmpUser: User;
 
@@ -167,7 +153,7 @@ export class UserService {
         data: {
           id: user.id,
           email: user.email,
-          hash: "",
+        //   hash: "",
           username: user.username,
           pictureURL: user.pictureURL,
         }

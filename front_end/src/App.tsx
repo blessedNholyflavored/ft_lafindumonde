@@ -1,7 +1,7 @@
 import React from 'react';
 // import logo from './logo.svg';
 import './App.css';
-import { Form, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { PongGame } from './PongGame';
 import { UserSetting } from './components/user/UserSetting';
 //import { Profile } from './components/user/Profile';
