@@ -89,6 +89,7 @@ export class MyGateway implements OnModuleInit {
   @SubscribeMessage('movePoint')
   async onMovePlayer(@MessageBody() data: number, keycode: string, room: Room, @ConnectedSocket() socket: Socket,)
   {
+    console.log("AAAAAAAAAAAAAAA ", keycode);
     if (keycode === 'ArrowUp')
     {
       if (room.player1.id === data)

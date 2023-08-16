@@ -3,6 +3,8 @@ import { Socket } from 'socket.io-client';
 import { User, Room } from './interfaces'; // Assurez-vous d'importer les interfaces correctes
 import './App.css'
 import { useAuth } from './AuthProvider';
+import { useNavigate } from 'react-router-dom';
+
 
 interface PongGameProps {
   socket: Socket | null;
@@ -16,6 +18,8 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
   const [end, setEnd] = useState<number>(0);
   const [endflag, setEndflag] = useState<number>(0);
   const [startFlag, setStartflag] = useState<number>(0);
+  const navigate = useNavigate();
+
 
 
 
@@ -49,8 +53,11 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
     if (socket && !end) {
       socket.on('recupMoov', (updatedRoom: Room) => {
         setRoom(updatedRoom);
+        console.log(room);
       });
-  
+      return () => {
+        if (socket) socket.off('recupMoov');
+      };
 
     }
   }, [socket]);
@@ -136,6 +143,10 @@ if (socket && !startFlag && room && counter === 1) {
 }
 });
 
+const NavHome = () => {
+  navigate('/');
+
+}
 
   return (
 <div className="pong-game">
@@ -151,7 +162,8 @@ if (socket && !startFlag && room && counter === 1) {
               <h1>Fin de partie !</h1>
               Score - { room.player1.username } { room.scorePlayer1 } | { room.scorePlayer2 } { room.player2.username }
                 <p>{ room.winner } remporte la partie</p>
-              
+                <button onClick={NavHome}>Retourner au Home</button>
+
               </div>)}
               { !end && (
               <div>

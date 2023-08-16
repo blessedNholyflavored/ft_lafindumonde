@@ -7,9 +7,9 @@ export interface User {
 
 
   export class Room {
-    player1?: User | null = null;
-    player2?: User | null = null;
-    ball?: Ball | undefined;
+    player1: User | null = null;
+    player2: User | null = null;
+    ball: Ball | undefined;
     scorePlayer1!: number | 0;
     scorePlayer2!: number | 0;
     end!: number;
@@ -29,8 +29,8 @@ export interface User {
   }
 
   export interface Ball {
-    x?: number;
-    y?: number;
+    x: number;
+    y: number;
     speedX: number;
     speedY: number;
     speed: number;
