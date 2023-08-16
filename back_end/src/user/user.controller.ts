@@ -80,8 +80,8 @@ export class UsersController {
   }
 
   @Get('/:id')
-  async getUserById(@Param('id') id: string) {
-    const ret = await this.userService.getID(parseInt(id));
+  async getUserById(@Param('id') id: number){
+    const ret = await this.userService.getID(id);
     return ret;
   }
 

@@ -1,0 +1,11 @@
+/*.Login {
+    display: flex;
+}*/
+.Login img{
+    max-height: 150px;
+    border-radius: 2em 1em;
+}
+
+.Login img:hover{
+    cursor: pointer;
+}

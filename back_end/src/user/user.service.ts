@@ -1,7 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { PrismaUserCreateInput } from './user-create.input';
 import { PrismaClient, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-// import { UserAchievements } from '../user/user.interface';
+//import { createUserDto } from 'src/dto/createUserDto.dto';
 
 const prisma = new PrismaClient();
 
@@ -128,4 +129,54 @@ export class UserService {
   //   } catch (error) {
   //     throw new BadRequestException('getUser error : ' + error);
   //   }
+  async getUserByID(id: number): Promise<User | undefined> {
+    return await prisma.user.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+  }
+
+  async getUserByUsername(username: string): Promise <User | undefined>{
+    return await prisma.user.findUnique({
+      where: {
+        username,
+      },
+    });
+  }
+
+  async getID(id: number) {
+  //throw new Error('Method not implemented.');
+    try {
+      const user = await prisma.user.findUniqueOrThrow({
+        where: {
+          id: id,
+        },
+      });
+      return user;
+    } catch (error) {
+      throw new BadRequestException('getid error : ' + error);
+    }
+  }
+
+  async createUser(user: PrismaUserCreateInput): Promise<User> {
+    let tmpUser: User;
+
+    try {
+      tmpUser = await prisma.user.create({
+        data: {
+          id: user.id,
+          email: user.email,
+          hash: "",
+          username: user.username,
+          pictureURL: user.pictureURL,
+        }
+      });
+      return tmpUser;
+    } catch (err) {
+      // doc here : https://www.prisma.io/docs/reference/api-reference/error-reference
+      console.log('Error creating user:', err);
+      //throw err;
+    }
+  }
 }
