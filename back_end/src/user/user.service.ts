@@ -33,6 +33,7 @@ export class UserService {
 
   async updateUsername(id: string, newUsername: string)
   {
+	console.log("dans controleur", id);
     const updateUser = await prisma.user.update({
       where: { id: parseInt(id) },
       data: {

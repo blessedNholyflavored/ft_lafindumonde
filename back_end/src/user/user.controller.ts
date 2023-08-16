@@ -22,7 +22,7 @@ export class UsersController {
   @Post('/:id/update-username')
   updating_username(@Param('id') id: string, @Body() username: string) {
     //console.log(username);
-    //console.log(id);
+    console.log("service update username ", id);
     const newUsername = username['username'];
     const user = this.userService.updateUsername(id, newUsername);
     return user;

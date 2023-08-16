@@ -21,7 +21,7 @@ return (
 			<AuthProvider>
 				<Routes>
 				<Route path="/game" element={<PongGame />} />
-					<Route path="/settings" element={<UserSetting />} />
+					<Route path="/settings" element={<ProtectedRoute><UserSetting /></ProtectedRoute>} />
 					<Route path="/login" element={<Login />} />
 					<Route path='/' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 				{/* <Route path={`/users/profile/:id`} element={<Profile />} /> */}
