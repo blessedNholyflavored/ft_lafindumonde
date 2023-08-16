@@ -3,48 +3,48 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './Home';
 import PongGame from './PongGame';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-import { Socket, io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import { User } from './interfaces';
-import "./App.css";
-import { Login } from "./Login";
-import ProtectedRoute from "./ProtectedRoute";
-import { AuthProvider } from "./AuthProvider";
-import axios from './AxiosInstance';
-import { useAuth } from './AuthProvider';
-
-
-
+import './App.css';
+import { Login } from './Login';
+import ProtectedRoute from './ProtectedRoute';
+import { AuthProvider, useAuth } from './AuthProvider';
+import axios from 'axios';
+import { socket, WebsocketProvider } from './WebsocketContext';
+import { Websocket } from './Websocket';
 export const App: React.FC = () => {
-  const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
+  //const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    const newSocket = io('http://localhost:3000', {
-      withCredentials: true,
-      transports: ['websocket'],
-    });
+  // useEffect(() => {
+  //   const newSocket = io('http://localhost:3000', {
+  //     withCredentials: true,
+  //   });
 
-    newSocket.on('connect', () => {
-      console.log('Connecté au serveur WebSocket.');
-      setSocket(newSocket);
-    });
+  //   newSocket.on('connect', () => {
+  //     console.log('Connecté au serveur WebSocket.');
+  //     setSocket(newSocket);
+  //   });
 
-    return () => {
-      if (socket) {
-        socket.disconnect();
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (socket) {
+  //       socket.disconnect();
+  //     }
+  //   };
+  // }, []);
 
   return (
+        <WebsocketProvider value={socket}>
     <AuthProvider>
-      <Routes>
-      <Route path="/" element={<Home socket={socket} />} />
-        <Route path="/game" element={<PongGame socket={socket} />} />
-        <Route path="/login" element={<Login />} />
-        <Route path='/auth' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-      </Routes>
-    </ AuthProvider>
+        <Routes>
+          <Route path="/" element={<Home socket={socket} />} />
+          <Route path="/game" element={<PongGame socket={socket} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/auth" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/sock" element={<ProtectedRoute><Websocket /></ProtectedRoute>} />
+        </Routes>
+    </AuthProvider>
+      </WebsocketProvider>
   );
 };
 

@@ -14,6 +14,11 @@ const Home: React.FC<HomeProps> = ({ socket }) => {
   const [queueCount, setQueueCount] = useState<number>(0);
   const { user, setUser } =useAuth();
 
+  if (socket)
+    console.log(socket.id);
+  if (user)
+    console.log(user.id);
+
   const handlePlayerSelect = async (player: string) => {
     setSelectedPlayer(player);
 
@@ -43,7 +48,7 @@ const Home: React.FC<HomeProps> = ({ socket }) => {
 
   return (
     <div>
-      <h2>Choisissez votre personnage :</h2>
+      <h2>Les WebSocket c'est dla merde</h2>
       <button onClick={() => handlePlayerSelect('1')}>RECHERCHE DE PARTIE</button>
       <button onClick={navigateToProfPage}>Aller à la page Prof</button>
 

@@ -35,7 +35,6 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
         if (roomData.player1 && roomData.player2) {
           setRoom(roomData);
           
-          const response = await fetch(`http://localhost:3000/game/create`);
         }
       });
 
@@ -52,11 +51,7 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
         setRoom(updatedRoom);
       });
   
-      return () => {
-        if (socket) {
-          socket.off('recupMoov');
-        }
-      };
+
     }
   }, [socket]);
 
@@ -75,6 +70,7 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
             room.player2.socketid = socket.id;
             room.player2.id = user.id;
           }
+
 
           setCounter(1);
         }

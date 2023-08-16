@@ -10,6 +10,8 @@ import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { GameService } from './game/game.service';
 import { GameModule } from './game/game.module';
+import { GatewayModule } from './gateway/socket.module';
+// import { WebsocketProvider } from './gateway/socket.provider';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { GameModule } from './game/game.module';
 	  AuthModule,
     FriendsModule,
     GameModule,
+    GatewayModule
 	// ServeStaticModule.forRoot({
 	// 	rootPath: join(__dirname, '..', 'back_end/uploads/'),
 	// 	serveRoot: '/uploads',
