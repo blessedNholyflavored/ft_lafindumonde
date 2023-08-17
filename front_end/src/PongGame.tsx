@@ -12,7 +12,7 @@ interface PongGameProps {
 
 const PongGame: React.FC<PongGameProps> = ({ socket }) => {
   const [room, setRoom] = useState<Room | null>(null);
-  const [roomData, setRoomData] = useState<Room>({ player1: { id: 0, username: '', point: { x: 0, y: 0 }, socketid: '' }, player2: { id: 0, username: '', point: { x: 0, y: 0 }, socketid: '' }, ball: { x: 0, y: 0, speedX: -1, speedY: 0, speed: 5}, scorePlayer1: 0, scorePlayer2: 0, end: 0});
+  const [roomData, setRoomData] = useState<Room>();
   const [counter, setCounter] = useState(0);
   const { user, setUser } =useAuth();
   const [end, setEnd] = useState<number>(0);
@@ -38,7 +38,7 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
       socket?.emit('startGame', async (roomData: Room, t: number) => {
         if (roomData.player1 && roomData.player2) {
           setRoom(roomData);
-          
+
         }
       });
 
@@ -53,7 +53,6 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
     if (socket && !end) {
       socket.on('recupMoov', (updatedRoom: Room) => {
         setRoom(updatedRoom);
-        console.log(room);
       });
       return () => {
         if (socket) socket.off('recupMoov');
@@ -64,23 +63,20 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
 
   useEffect(() => {
     if (socket) {
-      socket.on('startGame2', (room: Room) => {
-        if (room.player1 && room.player2 && room.player1.username !== undefined) {
+      socket.on('startGame2', async (room: Room) => {
           setRoom(room);
-          if (room && room.player1 && user?.id === room.player1.id)
-          {  
-            room.player1.socketid = socket.id;
-            room.player1.id = user.id;
-          }
-          if (room && room.player2 && user?.id === room.player2.id)
-          {
-            room.player2.socketid = socket.id;
-            room.player2.id = user.id;
-          }
+          // if (room && room.player1 && user?.username === room.player1)
+          // {  
+          //   room.player1.id = user.id;
+          // }
+          // if (room && room.player2 && user?.id === room.player2.id)
+          // {
+          //   room.player2.socketid = socket.id;
+          //   room.player2.id = user.id;
+          // }
 
 
           setCounter(1);
-        }
       });
 
       // D'autres effets et nettoyages...
@@ -97,7 +93,7 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
 
     if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !end)
     {
-      socket?.emit("movePoint", user?.id, event.key, room);
+      socket?.emit("movePoint", user?.username, event.key);
     }
   };
   
@@ -113,8 +109,8 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
     let intervalId: NodeJS.Timeout;
     if (socket && counter === 1 && !end) {
       intervalId = setInterval(() => {
-        socket.emit('ballMoovEMIT', room);
-    }, 1000 / 60); // Mettez ici l'intervalle de temps souhaité (en millisecondes)
+        socket.emit('ballMoovEMIT');
+    }, 1000 / 60);
   }
   return () => {
     if (intervalId) {
@@ -127,7 +123,7 @@ useEffect(() => {
 
 if (socket && !end) {
   socket.on('ballMoovON', (room: Room) => {
-    if (room.player1 && room.player2 && room.player1.username !== undefined) {
+    if (room.player1 && room.player2 && room.player1 !== undefined) {
       setRoom(room);
     }
   });
@@ -153,27 +149,27 @@ const NavHome = () => {
   {user && (
     <h2>Vous êtes connecté en tant que {user.username}</h2>
   )}
-  {room && room.player1 && room.player2 && room.ball !== undefined &&  (
+  {room && room.player1 && room.player2 &&  (
     <div>
-      <p>La partie commence entre {room.player1.username} et {room.player2?.username} !</p>
+      <p>La partie commence entre {room.player1} et {room.player2} !</p>
       <div style={{ textAlign: 'center', fontSize: '24px', marginBottom: '10px' }}>
           { end && (
             <div>
               <h1>Fin de partie !</h1>
-              Score - { room.player1.username } { room.scorePlayer1 } | { room.scorePlayer2 } { room.player2.username }
+              Score - { room.player1 } { room.scoreP1 } | { room.scoreP2 } { room.player2 }
                 <p>{ room.winner } remporte la partie</p>
                 <button onClick={NavHome}>Retourner au Home</button>
 
               </div>)}
               { !end && (
               <div>
-              Score - { room.player1.username } { room.scorePlayer1 } | { room.scorePlayer2 } { room.player2.username }
+              Score - { room.player1 } { room.scoreP1 } | { room.scoreP2 } { room.player2 }
               </div>
               )}
           </div>
-      <div className={`player-rect player1`} style={{ top: room.player1.point.y }}></div>
-      <div className={`player-rect player2`} style={{ top: room.player2.point.y }}></div>
-      <div className="ball" style={{ left: room.ball.x, top: room.ball.y }}></div>
+      <div className={`player-rect player1`} style={{ top: room.player1Y }}></div>
+      <div className={`player-rect player2`} style={{ top: room.player2Y }}></div>
+      <div className="ball" style={{ left: room.ballX, top: room.ballY }}></div>
     </div>
   )}
 </div>

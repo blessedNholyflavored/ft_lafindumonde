@@ -32,6 +32,7 @@ const Home: React.FC<HomeProps> = ({ socket }) => {
       socket?.on('queueUpdate', (count: number) => {
         setQueueCount(count);
         if (count === 2) {
+         // socket?.emit('updateUserIG', user?.id);
           navigate('/game');
         }
       });

@@ -6,17 +6,17 @@ import * as path from 'path';
 import { join } from 'path';
 import { Response } from 'express';
 import { GameService } from './game.service';
+import { UserService } from 'src/user/user.service';
 
 
 @Controller('game')
 export class GameController {
   friendService: any;
-  userService: any;
-  constructor(private gameService: GameService) {}
+  constructor(private gameService: GameService,private readonly userService: UserService) {}
 
-  @Post('/create')
-  createGame()
+  @Get('/create/:id')
+  async createGame(@Param('id') id: string)
   {
-    console.log("DANS CREATE GAME");
+    console.log("AAAAAAAAAAAAAAAA");
   }
 }

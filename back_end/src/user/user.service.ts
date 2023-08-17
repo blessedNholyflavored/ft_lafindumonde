@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaClient, User } from '@prisma/client'; // Renommez "User" en "PrismaUser"
+import { PrismaClient, User, USER_STATUS } from '@prisma/client'; // Renommez "User" en "PrismaUser"
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaUserCreateInput } from './user-create.input';
 //import { createUserDto } from 'src/dto/createUserDto.dto';
@@ -19,10 +19,10 @@ export class UserService {
     }
   }
 
-  async findUsernameById(id: string): Promise<string | null> {
+  async findUsernameById(id: number): Promise<string | null> {
     const user = await prisma.user.findUnique({
       where: {
-        id: parseInt(id),
+        id: id,
       },
       select: {
         username: true,
@@ -131,6 +131,24 @@ export class UserService {
     } catch (error) {
       throw new BadRequestException('getUser error : ' + error);
     }
+  }
+
+  async updateUserStatuIG(id: number, newStatus: USER_STATUS)
+  {
+    const updateUser = await prisma.user.update({
+      where: { id : id},
+      data: { status: newStatus,} 
+    })
+    return updateUser;
+  }
+
+  async updateGamePlayer(id: string)
+  {
+    const updateUser = await prisma.user.update({
+      where: { id : parseInt(id)},
+      data: { gameplayed: {increment: 1},} 
+    })
+    return updateUser;
   }
   // async getAchievementById(id: number) {
   //   if (id === undefined) {

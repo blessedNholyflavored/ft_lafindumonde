@@ -21,6 +21,20 @@ export interface User {
 
   }
 
+  export class roomSend {
+    player1?: string;
+    player2?: string;
+    ballX?: number;
+    ballY?: number;
+    scoreP1?: number;
+    scoreP2?: number;
+    player1Y?: number;
+    player2Y?: number;
+    winner?: string;
+    end?: number;
+    roomID?: number;
+  }
+
 
 export interface Point {
   x: number;

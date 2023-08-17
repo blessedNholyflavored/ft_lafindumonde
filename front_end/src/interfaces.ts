@@ -7,20 +7,17 @@ export interface User {
 
 
   export class Room {
-    player1: User | null = null;
-    player2: User | null = null;
-    ball: Ball | undefined;
-    scorePlayer1!: number | 0;
-    scorePlayer2!: number | 0;
-    end!: number;
+    player1?: string;
+    player2?: string;
+    ballX?: number;
+    ballY?: number;
+    scoreP1?: number;
+    scoreP2?: number;
+    player1Y?: number;
+    player2Y?: number;
     winner?: string;
-    winnerid?: number;
-    idRoom?: number;
-    idP1?: number;
-    idP2?: number;
-
-
-
+    end?: number;
+    roomID?: number;
   }
 
   export interface Point {
