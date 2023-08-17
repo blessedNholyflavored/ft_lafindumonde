@@ -1,71 +1,76 @@
-import React from 'react';
-// import logo from './logo.svg';
-import './App.css';
-import { Route, Routes } from 'react-router-dom';
-import { PongGame } from './PongGame';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './Home';
+import PongGame from './PongGame';
 import { UserSetting } from './components/user/UserSetting';
-//import { Profile } from './components/user/Profile';
-//import { FriendshipComponent } from './components/friends/friendship'
-import { Login } from "./Login";
-import ProtectedRoute from "./ProtectedRoute";
-import { AuthProvider } from "./AuthProvider";
-import axios from './AxiosInstance';
-import { useAuth } from './AuthProvider';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { io, Socket } from 'socket.io-client';
+import { User } from './interfaces';
+import './App.css';
+import { Login } from './Login';
+import ProtectedRoute from './ProtectedRoute';
+import { AuthProvider, useAuth } from './AuthProvider';
+import axios from 'axios';
+import { socket, WebsocketProvider } from './WebsocketContext';
+import { Websocket } from './Websocket';
+export const App: React.FC = () => {
+  //const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
+  // useEffect(() => {
+  //   const newSocket = io('http://localhost:3000', {
+  //     withCredentials: true,
+  //   });
 
-function App() {
-return (
-	<div>
-		<div className="App">
-			<header className="App-header">
-			<AuthProvider>
-				<Routes>
-				<Route path="/game" element={<PongGame />} />
-					<Route path="/settings" element={<ProtectedRoute><UserSetting /></ProtectedRoute>} />
-					<Route path="/login" element={<Login />} />
-					<Route path='/' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-				{/* <Route path={`/users/profile/:id`} element={<Profile />} /> */}
-				{/* <Route path="/addfriend" element={<FriendshipComponent />} /> */}
-				</Routes>
-			</AuthProvider>
+  //   newSocket.on('connect', () => {
+  //     console.log('Connecté au serveur WebSocket.');
+  //     setSocket(newSocket);
+  //   });
 
-				<a href="/game">
-					<button>GAME</button>
-				</a>
-				<a href="/settings">
-					<button>SETTINGs</button>
-				</a>
-			</header>
-			<a href="/profile">
-				<button>Profile</button>
-			</a>
-		</div>
-	</div>
+  //   return () => {
+  //     if (socket) {
+  //       socket.disconnect();
+  //     }
+  //   };
+  // }, []);
+
+  return (
+        <WebsocketProvider value={socket}>
+    <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Home socket={socket} />} />
+          <Route path="/game" element={<PongGame socket={socket} />} />
+		  <Route path="/settings" element={<ProtectedRoute><UserSetting /></ProtectedRoute>} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/auth" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/sock" element={<ProtectedRoute><Websocket /></ProtectedRoute>} />
+        </Routes>
+    </AuthProvider>
+      </WebsocketProvider>
   );
 };
 
 function  Profile() {
-	const { user, setUser } =useAuth();
-  
-	async function logout() {
-	  try {
-		// on appelle la route qui clear cookie ds le back
-		const res = await axios.get('/auth/logout');
-		// du coup l'user qu'on avait set bah il faut le unset
-		setUser(null);
-	  } catch (error) {
-		console.log('Error: ', error);
-	  }
-	}
-	return (
-	  <div className="Salut">
-		<h1>{user!.username}</h1>
-		<img src={user!.pictureURL} alt="profile picture" />
-		<p>{ JSON.stringify(user) }</p>
-		<button onClick={logout}>Log Out</button>
-	  </div>
-	);
-  }
+  const { user, setUser } =useAuth();
 
+  async function logout() {
+    try {
+      // on appelle la route qui clear cookie ds le back
+      const res = await axios.get('/auth/logout');
+      // du coup l'user qu'on avait set bah il faut le unset
+      setUser(null);
+    } catch (error) {
+      console.log('Error: ', error);
+    }
+  }
+  return (
+    <div className="Salut">
+      <h1>{user!.username}</h1>
+      <img src={user!.pictureURL} alt="profile picture" />
+      <p>{ JSON.stringify(user) }</p>
+      <button onClick={logout}>Log Out</button>
+    </div>
+  );
+};
 
 export default App;

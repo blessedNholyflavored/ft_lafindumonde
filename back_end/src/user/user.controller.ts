@@ -2,6 +2,7 @@ import { Controller, Get , Post , Body, Res , Param, UploadedFile, UseIntercepto
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UserService } from './user.service';
+import { User } from '.prisma/client';
 import * as path from 'path';
 import { join } from 'path';
 import { Response } from 'express';
@@ -12,6 +13,7 @@ import * as mimetype from 'mime-types';
 export class UsersController {
   friendService: any;
   constructor(private userService: UserService) {}
+
 
   @Get('/')
   findAll() {

@@ -5,6 +5,7 @@
   "proxy": "http://localhost:3000",
   "private": true,
   "dependencies": {
+    "@nestjs/platform-socket.io": "^10.1.2",
     "@fontsource/ibm-plex-mono": "^5.0.5",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -17,6 +18,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.14.2",
     "react-scripts": "5.0.1",
+    "socket.io": "^4.7.1",
+    "socket.io-client": "^4.7.1",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
@@ -45,6 +48,7 @@
     ]
   },
   "devDependencies": {
-    "@types/react": "^18.2.18"
+    "@types/react": "^18.2.17",
+    "@types/socket.io-client": "^3.0.0"
   }
 }

@@ -8,6 +8,10 @@ import { AuthModule } from './auth/auth.module';
 import { FriendsModule } from './friends/friends.module';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { GameService } from './game/game.service';
+import { GameModule } from './game/game.module';
+import { GatewayModule } from './gateway/socket.module';
+// import { WebsocketProvider } from './gateway/socket.provider';
 
 @Module({
   imports: [
@@ -16,9 +20,15 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     }),
     PrismaModule,
     UserModule,
-    AuthModule,
+	  AuthModule,
     FriendsModule,
+    GameModule,
+    GatewayModule
+	// ServeStaticModule.forRoot({
+	// 	rootPath: join(__dirname, '..', 'back_end/uploads/'),
+	// 	serveRoot: '/uploads',
+	// }),
   ],
-  providers: [PrismaService, UserService],
+  providers: [PrismaService, UserService, GameService],
 })
 export class AppModule {}
