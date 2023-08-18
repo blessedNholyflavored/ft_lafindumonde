@@ -1,4 +1,4 @@
-import { OnModuleInit } from '@nestjs/common';
+import { OnModuleInit, UseGuards } from '@nestjs/common';
 import {
   MessageBody,
   SubscribeMessage,
@@ -6,16 +6,23 @@ import {
   WebSocketServer,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
+// ici on import le type Socket qui extends socket de socket.io mais avec l'user
+import Socket from 'src/gateway/types/socket';
 import { GameService } from 'src/game/game.service';
 import { Room, User, roomSend } from 'src/interfaces';
 import { UserService } from 'src/user/user.service';
+import { AuthenticatedGuard } from 'src/auth/authenticated.guards';
 
-@WebSocketGateway(
-  { cors: ["*"], origin: ["*"], path: "", }
-
-)
-
+// ici add de l'authorisation de recup des credentials du front (le token)
+@WebSocketGateway({
+  cors: {
+    origin: "http://localhost:8080",
+    credentials: true
+  },
+  path: "",
+})
+@UseGuards(AuthenticatedGuard)
 export class MyGateway implements OnModuleInit {
   @WebSocketServer()
   server: Server;
@@ -44,8 +51,13 @@ export class MyGateway implements OnModuleInit {
     });
   }
 
+  // ICICICI exemple hihihi
   @SubscribeMessage('joinQueue')
   async onJoinQueue(@MessageBody() player: number, @ConnectedSocket() socket: Socket,){
+    // ici plutot que player : socket.user
+    console.log("dans OnJoinQueue: userid = ", socket.user.id);
+    console.log("l'ensemble du user = ", socket.user);
+    // fin de l'exemple
     if (!this.playerQueue.includes(player)) {
       this.playerQueue.push(player);
       this.playerQueue2.push(player);

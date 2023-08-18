@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { UserModule } from 'src/user/user.module';
 import { FortyTwoStrategy } from './FortyTwo.strategy';
 import { JwtStrategy } from './jwt.strategy';
+import { JwtService } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { AuthController} from './auth.controller';
 
@@ -13,8 +14,8 @@ import { AuthController} from './auth.controller';
 		secret: process.env.JWT_SECURE_KEY, // => envvar
 		signOptions: { expiresIn: '1d'},
   })],
-  providers: [AuthService, FortyTwoStrategy, JwtStrategy],
-  exports: [AuthService],
+  providers: [AuthService, FortyTwoStrategy, JwtStrategy, JwtService],
+  exports: [AuthService, JwtService],
   controllers: [AuthController],
 })
 export class AuthModule {}
