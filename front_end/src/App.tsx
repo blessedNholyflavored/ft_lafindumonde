@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './Home';
 import PongGame from './PongGame';
+import { UserSetting } from './components/user/UserSetting';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { io, Socket } from 'socket.io-client';
 import { User } from './interfaces';
@@ -39,6 +40,7 @@ export const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Home socket={socket} />} />
           <Route path="/game" element={<PongGame socket={socket} />} />
+		  <Route path="/settings" element={<ProtectedRoute><UserSetting /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/sock" element={<ProtectedRoute><Websocket /></ProtectedRoute>} />

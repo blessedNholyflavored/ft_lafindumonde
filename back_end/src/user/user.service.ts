@@ -19,6 +19,8 @@ export class UserService {
     }
   }
 
+<<<<<<< HEAD
+=======
   async findUsernameById(id: number): Promise<string | null> {
     const user = await prisma.user.findUnique({
       where: {
@@ -32,6 +34,7 @@ export class UserService {
     return user?.username ?? null;
   }
 
+>>>>>>> origin/ju/game+auth
   async getID(id: number) {
     //throw new Error('Method not implemented.');
     try {
@@ -48,6 +51,7 @@ export class UserService {
 
   async updateUsername(id: string, newUsername: string)
   {
+	console.log("dans controleur", id);
     const updateUser = await prisma.user.update({
       where: { id: parseInt(id) },
       data: {
@@ -55,43 +59,6 @@ export class UserService {
       },
     });
     return updateUser;
-  }
-
-  async getUserByID(id: number): Promise<User | undefined> {
-    return await prisma.user.findUnique({
-      where: {
-        id: Number(id),
-      },
-    });
-  }
-
-  async getUserByUsername(username: string): Promise <User | undefined>{
-    return await prisma.user.findUnique({
-      where: {
-        username,
-      },
-    });
-  }
-
-
-  async createUser(user: PrismaUserCreateInput): Promise<User> {
-    let tmpUser: User;
-
-    try {
-      tmpUser = await prisma.user.create({
-        data: {
-          id: user.id,
-          email: user.email,
-          username: user.username,
-          pictureURL: user.pictureURL,
-        }
-      });
-      return tmpUser;
-    } catch (err) {
-      // doc here : https://www.prisma.io/docs/reference/api-reference/error-reference
-      console.log('Error creating user:', err);
-      //throw err;
-    }
   }
 
   async getPicture(id: string) {
@@ -199,5 +166,41 @@ export class UserService {
   //   } catch (error) {
   //     throw new BadRequestException('getUser error : ' + error);
   //   }
+  async getUserByID(id: number): Promise<User | undefined> {
+    return await prisma.user.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+  }
+
+  async getUserByUsername(username: string): Promise <User | undefined>{
+    return await prisma.user.findUnique({
+      where: {
+        username,
+      },
+    });
+  }
+
+  async createUser(user: PrismaUserCreateInput): Promise<User> {
+    let tmpUser: User;
+
+    try {
+      tmpUser = await prisma.user.create({
+        data: {
+          id: user.id,
+          email: user.email,
+        //   hash: "",
+          username: user.username,
+          pictureURL: user.pictureURL,
+        }
+      });
+      return tmpUser;
+    } catch (err) {
+      // doc here : https://www.prisma.io/docs/reference/api-reference/error-reference
+      console.log('Error creating user:', err);
+      //throw err;
+    }
+  }
 }
 
