@@ -221,8 +221,8 @@ export class MyGateway implements OnModuleInit {
 
       }
       this.gameService.updateGame(this.room);
-      // this.userService.updateUserStatuIG(this.p1, 'ONLINE');
-      // this.userService.updateUserStatuIG(this.p2, 'ONLINE');
+      this.userService.updateUserStatuIG(this.p1, 'ONLINE');
+      this.userService.updateUserStatuIG(this.p2, 'ONLINE');
       this.room.end = 1;
       roomUpdate.winner = this.room.winner;
       roomUpdate.end = this.room.end;
@@ -238,10 +238,40 @@ export class MyGateway implements OnModuleInit {
   @SubscribeMessage('updateUserIG')
   async onUpdateUserIG(@MessageBody() id: number, @ConnectedSocket() socket: Socket,){
     
+    console.log("icicicicicicicicici");
     this.userService.updateUserStatuIG(id, 'INGAME');
     this.userService.updateGamePlayer(id.toString());
   
   }
-  
 
+  @SubscribeMessage('leaveGame')
+  async onDisconnect(@ConnectedSocket() socket: Socket) {
+
+    if (this.room)
+    {
+    if (socket.user.id == this.room.idP1)
+    {
+      this.room.winnerid = this.room.idP2;
+      this.room.winner = this.room.player2.username;
+      this.room.scorePlayer1 = -1;
+    }
+    else if (socket.user.id == this.room.idP2)
+    {
+      this.room.winnerid = this.room.idP2;
+      this.room.winner = this.room.player1.username;
+      this.room.scorePlayer2 = -1;
+    }
+
+    if (!this.room.end)
+      this.gameService.updateGame(this.room);
+    this.room.end = 1;
+
+    let roomUpdate: roomSend = {player1: this.room.player1.username, player2: this.room.player2.username,
+      ballX: this.room.ball.x, ballY: this.room.ball.y, scoreP1: this.room.scorePlayer1,
+      scoreP2: this.room.scorePlayer2, player1Y: this.room.player1.point.y, player2Y: this.room.player2.point.y,
+      winner: '', roomID: this.res.id, end: this.room.end};
+    this.room = null;
+    this.server.emit('playerLeave', roomUpdate);
+    }
+  }
 }

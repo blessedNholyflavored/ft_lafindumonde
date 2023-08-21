@@ -12,6 +12,7 @@ import { AuthProvider, useAuth } from './AuthProvider';
 import axios from 'axios';
 import { socket, WebsocketProvider } from './WebsocketContext';
 import { Websocket } from './Websocket';
+import SuperPong from './SuperPong';
 export const App: React.FC = () => {
   //const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -37,11 +38,12 @@ export const App: React.FC = () => {
         <WebsocketProvider value={socket}>
     <AuthProvider>
         <Routes>
-          <Route path="/" element={<Home socket={socket} />} />
+          <Route path="/" element={<Home socket={socket}  />} />
           <Route path="/game" element={<PongGame socket={socket} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/sock" element={<ProtectedRoute><Websocket /></ProtectedRoute>} />
+          <Route path="/SuperGame" element={<ProtectedRoute><SuperPong socket={socket} /></ProtectedRoute>} />
         </Routes>
     </AuthProvider>
       </WebsocketProvider>

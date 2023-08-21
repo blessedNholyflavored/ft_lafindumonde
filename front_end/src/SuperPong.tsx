@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { User, Room } from './interfaces'; // Assurez-vous d'importer les interfaces correctes
-import './App.css'
+import './AppTest.css'
 import { useAuth } from './AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { WebsocketContext } from './WebsocketContext';
@@ -11,7 +11,7 @@ interface PongGameProps {
   socket: Socket | null;
 }
 
-const PongGame: React.FC<PongGameProps> = () => {
+const SuperPong: React.FC<PongGameProps> = () => {
   const [room, setRoom] = useState<Room | null>(null);
   const [counter, setCounter] = useState(0);
   const { user, setUser } =useAuth();
@@ -181,38 +181,75 @@ useEffect(() => {
   }
   });
 
+  const [showPlayer1, setShowPlayer1] = useState(false);
+  const [showPlayer2, setShowPlayer2] = useState(false);
+
+  useEffect(() => {
+    // Définir un timer pour afficher la raquette du joueur 1 pendant 1 seconde toutes les 2 secondes
+    const player1Timer = setInterval(() => {
+      setShowPlayer1(true);
+      setTimeout(() => {
+        setShowPlayer1(false);
+      }, 1000);
+    }, 2000);
+
+    // Définir un timer pour afficher la raquette du joueur 2 pendant 1 seconde toutes les 2 secondes
+    const player2Timer = setInterval(() => {
+      setShowPlayer2(true);
+      setTimeout(() => {
+        setShowPlayer2(false);
+      }, 1000);
+    }, 2000);
+
+    // Nettoyer les timers lorsque le composant est démonté
+    return () => {
+      clearInterval(player1Timer);
+      clearInterval(player2Timer);
+    };
+  }, []);
+
   return (
-<div className="pong-game">
-  {user && (
-    <h2>Vous êtes connecté en tant que {user.username}</h2>
-  )}
-  {room && room.player1 && room.player2 &&  (
-    <div>
-      <p>La partie commence entre {room.player1} et {room.player2} !</p>
-      <div style={{ textAlign: 'center', fontSize: '24px', marginBottom: '10px' }}>
-          { end && (
-            <div>
-              <h1>Fin de partie !</h1>
-              Score - { room.player1 } { room.scoreP1 } | { room.scoreP2 } { room.player2 }
-                <p>{ room.winner } remporte la partie</p>
-                <button onClick={NavHome}>Retourner au Home</button>
-
-              </div>)}
-              { !end && (
+    <div className="pong-game">
+      {user && (
+        <h2>Vous êtes connecté en tant que {user.username}</h2>
+      )}
+      {room && room.player1 && room.player2 && (
+        <div>
+          <p>La partie commence entre {room.player1} et {room.player2} !</p>
+          <div style={{ textAlign: 'center', fontSize: '24px', marginBottom: '10px' }}>
+            {end && (
               <div>
-              Score - { room.player1 } { room.scoreP1 } | { room.scoreP2 } { room.player2 }
+                <h1>Fin de partie !</h1>
+                Score - {room.player1} {room.scoreP1} | {room.scoreP2} {room.player2}
+                <p>{room.winner} remporte la partie</p>
+                <button onClick={NavHome}>Retourner au Home</button>
               </div>
-              )}
+            )}
+            {!end && (
+              <div>
+                Score - {room.player1} {room.scoreP1} | {room.scoreP2} {room.player2}
+              </div>
+            )}
           </div>
-      <div className={`player-rect player1`} style={{ top: room.player1Y }}></div>
-      <div className={`player-rect player2`} style={{ top: room.player2Y }}></div>
-      <div className="ball" style={{ left: room.ballX, top: room.ballY }}></div>
+            <div
+              className="ball"
+              style={{ left: room.ballX, top: room.ballY }}
+            ></div>
+
+            {/* Afficher la raquette du joueur 1 si showPlayer1 est vrai */}
+            {showPlayer1 && (
+              <div className="player-rect player1" style={{ top: room.player1Y }}></div>
+            )}
+
+            {/* Afficher la raquette du joueur 2 si showPlayer2 est vrai */}
+            {showPlayer2 && (
+              <div className="player-rect player2" style={{ top: room.player2Y }}></div>
+            )}
+
+          </div>
+      )}
     </div>
-  )}
-</div>
-
-
   );
-};
+}
 
-export default PongGame;
+export default SuperPong;
