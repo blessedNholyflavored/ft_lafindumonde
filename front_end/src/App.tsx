@@ -3,16 +3,17 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './Home';
 import PongGame from './PongGame';
 import { UserSetting } from './components/user/UserSetting';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-import { io, Socket } from 'socket.io-client';
+//import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+//import { io, Socket } from 'socket.io-client';
 import { User } from './interfaces';
 import './App.css';
 import { Login } from './Login';
 import ProtectedRoute from './ProtectedRoute';
 import { AuthProvider, useAuth } from './AuthProvider';
-import axios from 'axios';
 import { socket, WebsocketProvider } from './WebsocketContext';
 import { Websocket } from './Websocket';
+import api from './AxiosInstance';
+
 export const App: React.FC = () => {
   //const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -56,7 +57,7 @@ function  Profile() {
   async function logout() {
     try {
       // on appelle la route qui clear cookie ds le back
-      const res = await axios.get('/auth/logout');
+      const res = await api.get('/auth/logout');
       // du coup l'user qu'on avait set bah il faut le unset
       setUser(null);
     } catch (error) {

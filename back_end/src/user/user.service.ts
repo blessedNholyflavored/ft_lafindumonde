@@ -19,8 +19,6 @@ export class UserService {
     }
   }
 
-<<<<<<< HEAD
-=======
   async findUsernameById(id: number): Promise<string | null> {
     const user = await prisma.user.findUnique({
       where: {
@@ -34,7 +32,6 @@ export class UserService {
     return user?.username ?? null;
   }
 
->>>>>>> origin/ju/game+auth
   async getID(id: number) {
     //throw new Error('Method not implemented.');
     try {
@@ -182,6 +179,13 @@ export class UserService {
     });
   }
 
+  async usernameAuthChecker(username: string){
+    let tmpUser = await this.getUserByUsername(username);
+
+    if (tmpUser)
+      return true;
+    return false;
+  }
   async createUser(user: PrismaUserCreateInput): Promise<User> {
     let tmpUser: User;
 

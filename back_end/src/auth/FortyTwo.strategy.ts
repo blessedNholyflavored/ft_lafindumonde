@@ -29,6 +29,10 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy){
 		};
 		const user = await this.userService.getUserByID(fortyTwoUser.id);
 		if (!user){
+			if (await this.userService.usernameAuthChecker(fortyTwoUser.username) == true){
+				// in case someone already have this username
+				fortyTwoUser.username = profile.username + '_';
+			}
 			return await this.userService.createUser(fortyTwoUser);
 		}
 		console.log('user id : ',user.id);
