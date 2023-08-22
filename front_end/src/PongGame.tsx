@@ -7,11 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { WebsocketContext } from './WebsocketContext';
 
 
-interface PongGameProps {
-  socket: Socket | null;
-}
 
-const PongGame: React.FC<PongGameProps> = () => {
+const PongGame: React.FC = () => {
   const [room, setRoom] = useState<Room | null>(null);
   const [counter, setCounter] = useState(0);
   const { user, setUser } =useAuth();
@@ -34,13 +31,8 @@ const PongGame: React.FC<PongGameProps> = () => {
   useEffect(() => {
     if (socket && counter === 0) {
       let t = user?.id;
-      console.log(t);
-      socket?.emit('startGame', async (roomData: Room, t: number) => {
-        if (roomData.player1 && roomData.player2) {
-          setRoom(roomData);
-
-        }
-      });
+      socket?.emit('startGame');
+      setCounter(1);
 
       return () => {
         if (socket) socket.off('startGame');
@@ -52,6 +44,8 @@ const PongGame: React.FC<PongGameProps> = () => {
   useEffect(() => {
     if (socket && !end) {
       socket.on('recupMoov', (updatedRoom: Room) => {
+    console.log("wwwwwwwwww");
+
         setRoom(updatedRoom);
       });
       return () => {
@@ -93,7 +87,7 @@ const PongGame: React.FC<PongGameProps> = () => {
 
     if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !end)
     {
-      socket?.emit("movePoint", user?.username, event.key);
+      socket?.emit("movePoint", user?.username, event.key, room?.roomID);
     }
   };
   
@@ -109,7 +103,7 @@ const PongGame: React.FC<PongGameProps> = () => {
     let intervalId: NodeJS.Timeout;
     if (socket && counter === 1 && !end) {
       intervalId = setInterval(() => {
-        socket.emit('ballMoovEMIT');
+        socket.emit('ballMoovEMIT', room?.roomID);
     }, 1000 / 60);
   }
   return () => {
@@ -146,6 +140,8 @@ if (socket && !startFlag && room && counter === 1) {
 });
 
 const NavHome = () => {
+  socket.emit('changeStatus', (socket: Socket) => {
+  });
   navigate('/');
   window.location.reload();
 
@@ -153,12 +149,11 @@ const NavHome = () => {
 
 useEffect(() => {
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-    if (!end)
-    {
+
       console.log(end);
     // Émettez un événement pour quitter la partie lorsque la fenêtre se ferme ou que l'URL change
     socket?.emit('leaveGame');
-  }
+    socket?.emit('changeStatus');
   };
 
   // Ajoutez le gestionnaire d'événements beforeunload
@@ -174,12 +169,14 @@ useEffect(() => {
 
 useEffect(() => {
 
-  if (socket) {
+  if (socket && !end) {
     socket.on('playerLeave', (room: Room) => {
       setRoom(room)
     });
   }
   });
+
+
 
   return (
 <div className="pong-game">

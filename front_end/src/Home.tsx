@@ -15,18 +15,32 @@ const Home: React.FC<HomeProps> = () => {
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [queueCount, setQueueCount] = useState<number>(0);
   const { user, setUser } =useAuth();
+  // const [recupStatus, setStatus] = useState<string>('');
+  let recupStatus = '';
+  const [inGame, setInGame] = useState<number>(0);
 
-  if (socket)
-    console.log(socket.id);
-  if (user)
-    console.log(user.id);
+
+  // if (socket)
+  //   console.log(socket.id);
+  // if (user)
+  //   console.log(user.id);
 
   const handlePlayerSelect = async (player: string) => {
     setSelectedPlayer(player);
 
     try {
-      // const response = await fetch(`http://localhost:3000/users/${player}`);
-      // const user = await response.json();
+      console.log("before fetch");
+      const response = await fetch(`http://localhost:3000/users/status/${user?.id}`, {
+        method: 'GET',
+      });
+      if (response.ok) {
+        const recup = await response.text();
+        // setStatus(recup);
+        recupStatus = recup;
+      }
+      console.log(recupStatus);
+      if (recupStatus !== "INGAME")
+      {
       if (user)
       socket?.emit('joinQueue', user.id);
       setUser(user);
@@ -37,7 +51,13 @@ const Home: React.FC<HomeProps> = () => {
          socket?.emit('updateUserIG', user?.id);
           navigate('/game');
         }
+      
       });
+    }
+    else if (recupStatus === "INGAME")
+    {
+      setInGame(1);
+    }
     } catch (error) {
       console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
     }
@@ -53,10 +73,9 @@ const Home: React.FC<HomeProps> = () => {
 const handlePlayerSelect222 = async (player: string) => {
   setSelectedPlayer(player);
 
+
   try {
-    // const response = await fetch(`http://localhost:3000/users/${player}`);
-    // const user = await response.json();
-    if (user)
+      if (user)
     socket?.emit('joinQueue', user.id);
     setUser(user);
 
@@ -99,6 +118,9 @@ const handlePlayerSelect222 = async (player: string) => {
       )}
       {queueCount === 2 && (
         <p>La partie commence entre Ldinaut et Mcouppe !</p>
+      )}
+      { inGame === 1 && (
+        <p>Deja en game mon reuf !</p>
       )}
     </div>
   );

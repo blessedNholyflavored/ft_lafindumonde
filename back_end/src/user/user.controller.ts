@@ -90,6 +90,15 @@ export class UsersController {
 	return { test };
 	//return (updateUser);
   }
+
+  @Get('/status/:id')
+  async getPlayerStatus(@Param('id') id: number)
+  {
+    console.log("qqqqqqqqqqqqqqqqqqqqq");
+    const user = await this.userService.getUserByID(id);
+    console.log("dans le back mdr:    ", user.status, "    fin dans le back ndrrrrr");
+    return (user.status);
+  }
   
   // @Get('/:id')
   // async getUserById(@Param('id') id: string) {

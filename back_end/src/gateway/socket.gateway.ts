@@ -6,13 +6,15 @@ import {
   WebSocketServer,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server} from 'socket.io';
 // ici on import le type Socket qui extends socket de socket.io mais avec l'user
 import Socket from 'src/gateway/types/socket';
 import { GameService } from 'src/game/game.service';
 import { Room, User, roomSend } from 'src/interfaces';
 import { UserService } from 'src/user/user.service';
 import { AuthenticatedGuard } from 'src/auth/authenticated.guards';
+import { RoomMapService } from './room_map.service';
+import SocketWithUser from 'src/gateway/types/socket';
 
 // ici add de l'authorisation de recup des credentials du front (le token)
 @WebSocketGateway({
@@ -31,7 +33,8 @@ export class MyGateway implements OnModuleInit {
   private res;
   private p1;
   private p2;
-  constructor(private readonly gameService: GameService, private readonly userService: UserService) {}
+  constructor(private readonly gameService: GameService, private readonly userService: UserService,
+    private readonly roomMapService: RoomMapService) {}
   private room: Room;
 
   onModuleInit() {
@@ -81,7 +84,7 @@ export class MyGateway implements OnModuleInit {
   }
 
   @SubscribeMessage('startGame')
-  async onStartGame(@MessageBody() @ConnectedSocket() socket: Socket,)
+  async onStartGame(@MessageBody() @ConnectedSocket() socket: Socket)
   {
       const firstPlayer = this.playerQueue2.shift()!;
       const secondPlayer = this.playerQueue2.shift()!;
@@ -98,140 +101,151 @@ export class MyGateway implements OnModuleInit {
       this.room = { player1: user1, player2: user2, ball: {
         x: 350, y: 200, speedX: -5, speedY: 0, speed: 5,
         radius: 0
-      }, idRoom: this.res.id, scorePlayer1: 0, scorePlayer2: 0, end: 0, winner: null, idP1: this.p1, idP2: this.p2 };
-      const Sroom: roomSend = {player1: Bp1.username, player2: Bp2.username, ballX: 350, ballY: 200, scoreP1: 0,
-        scoreP2: 0, player1Y: 200, player2Y: 200, winner: '', roomID: this.res.id};
-      // this.userService.updateUserStatuIG(Bp1.id, 'INGAME');
+      }, idRoom: this.res.id, scorePlayer1: 0, scorePlayer2: 0, end: 0, winner: null, idP1: this.p1,
+      idP2: this.p2 };
+      const Sroom: roomSend = {player1: Bp1.username, player2: Bp2.username,
+        ballX: 350,
+        ballY: 200, scoreP1: 0,
+        scoreP2: 0, player1Y: 200, player2Y: 200, winner: '',
+        roomID: this.res.id};
+        console.log("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqQ: ", this.res.id);
+        this.roomMapService.addRoom(this.res.id.toString(), this.room);
+        // socket.join("this.res.id.toString()");
       // this.userService.updateGamePlayer(Bp2.id, Bp2.gameplayed);
       this.server.emit('startGame2', Sroom);
   }
 
   @SubscribeMessage('movePoint')
-  async onMovePlayer(@MessageBody() data: {userId: string, keycode: string}, @ConnectedSocket() socket: Socket,)
+  async onMovePlayer(@MessageBody() data: {userId: string, keycode: string, roomId: string}, @ConnectedSocket() socket: Socket,)
   {
-    if (this.room && this.room.player1)
+    const recupRoom = this.roomMapService.getRoom(data[2]);
+    console.log("in moveplayer back:    ", recupRoom);
+    if (recupRoom && recupRoom.player1)
     {
     if (data[1] === 'ArrowUp')
     {
-      if (this.room.player1.username === data[0])
+      if (recupRoom.player1.username === data[0])
       {
-        if (this.room.player1.point.y - 10 > -10)
-          this.room.player1.point.y -= 10;
+        if (recupRoom.player1.point.y - 10 > -10)
+          recupRoom.player1.point.y -= 10;
       }
-      else if (this.room.player2.username === data[0])
+      else if (recupRoom.player2.username === data[0])
       {
-        if (this.room.player2.point.y - 10 > -10)
-          this.room.player2.point.y -= 10;
+        if (recupRoom.player2.point.y - 10 > -10)
+          recupRoom.player2.point.y -= 10;
       }
     }
     else if (data[1] === 'ArrowDown')
     {
-      if (this.room.player1.username === data[0])
+      if (recupRoom.player1.username === data[0])
       {
-        if (this.room.player1.point.y + 10 < 330)
-         this.room.player1.point.y += 10;
+        if (recupRoom.player1.point.y + 10 < 330)
+         recupRoom.player1.point.y += 10;
       }
-      else if (this.room.player2.username === data[0])
+      else if (recupRoom.player2.username === data[0])
       {
-        if (this.room.player2.point.y + 10 < 330)
-          this.room.player2.point.y += 10;
+        if (recupRoom.player2.point.y + 10 < 330)
+          recupRoom.player2.point.y += 10;
       }
     }
-    const roomUpdate: roomSend = {player1: this.room.player1.username, player2: this.room.player2.username,
-      ballX: this.room.ball.x, ballY: this.room.ball.y, scoreP1: this.room.scorePlayer1,
-      scoreP2: this.room.scorePlayer2, player1Y: this.room.player1.point.y, player2Y: this.room.player2.point.y, winner: '', roomID: this.res.id};
-    this.server.emit('recupMoov', roomUpdate);
+    const roomUpdate: roomSend = {player1: recupRoom.player1.username, player2: recupRoom.player2.username,
+      ballX: recupRoom.ball.x, ballY: recupRoom.ball.y, scoreP1: recupRoom.scorePlayer1,
+      scoreP2: recupRoom.scorePlayer2, player1Y: recupRoom.player1.point.y, player2Y: recupRoom.player2.point.y, winner: '', roomID: this.res.id};
+    // this.server.emit('recupMoov', roomUpdate);
+    console.log("wwwwwwwwww", recupRoom.idRoom);
+      // this.server.to(data[2]).emit('recupMoove', roomUpdate);
   }
   }
 
   @SubscribeMessage('ballMoovEMIT')
-  async onMoveBall(@MessageBody()@ConnectedSocket() socket: Socket,)
-  {
+  async onMoveBall(@MessageBody() id: string, @ConnectedSocket() socket: Socket,)
+    {
+      const recupRoom = this.roomMapService.getRoom(id);
+      //  console.log("vvvvvvv    ", id);
 
-    if (this.room && this.room.ball)
+    if (recupRoom && recupRoom.ball)
     {
       let roomUpdate: roomSend = {};
-      this.room.ball.x += this.room.ball.speedX;
-      this.room.ball.y += this.room.ball.speedY;
+      recupRoom.ball.x += recupRoom.ball.speedX;
+      recupRoom.ball.y += recupRoom.ball.speedY;
 
 
     const canvasWidth = 700;
     const canvasHeight = 400;
-    const leftPaddle = this.room.player1;
-    const rightPaddle = this.room.player2;
+    const leftPaddle = recupRoom.player1;
+    const rightPaddle = recupRoom.player2;
   
     // Condition de rebond sur la raquette du joueur 1 (gauche)
     if (
-      this.room.ball.x <= leftPaddle.point.x + 10 &&
-      this.room.ball.y >= leftPaddle.point.y &&
-      this.room.ball.y <= leftPaddle.point.y + 80
+      recupRoom.ball.x <= leftPaddle.point.x + 10 &&
+      recupRoom.ball.y >= leftPaddle.point.y &&
+      recupRoom.ball.y <= leftPaddle.point.y + 80
     ) {
-      const relativeY = (this.room.ball.y - leftPaddle.point.y) / 80; // Calcul de la position relative sur la raquette
-      this.room.ball.speedX = -this.room.ball.speedX;
-      this.room.ball.speedY = relativeY * 5 - 1; // Angle en fonction de la position relative
+      const relativeY = (recupRoom.ball.y - leftPaddle.point.y) / 80; // Calcul de la position relative sur la raquette
+      recupRoom.ball.speedX = -recupRoom.ball.speedX;
+      recupRoom.ball.speedY = relativeY * 5 - 1; // Angle en fonction de la position relative
     }
   
     // Condition de rebond sur la raquette du joueur 2 (droite)
     if (
-      this.room.ball.x >= rightPaddle.point.x - 10 &&
-      this.room.ball.y >= rightPaddle.point.y &&
-      this.room.ball.y <= rightPaddle.point.y + 80
+      recupRoom.ball.x >= rightPaddle.point.x - 10 &&
+      recupRoom.ball.y >= rightPaddle.point.y &&
+      recupRoom.ball.y <= rightPaddle.point.y + 80
     ) {
-      const relativeY = (this.room.ball.y - rightPaddle.point.y) / 80; // Calcul de la position relative sur la raquette
-      this.room.ball.speedX = -this.room.ball.speedX;
-      this.room.ball.speedY = relativeY * 5 - 1; // Angle en fonction de la position relative
+      const relativeY = (recupRoom.ball.y - rightPaddle.point.y) / 80; // Calcul de la position relative sur la raquette
+      recupRoom.ball.speedX = -recupRoom.ball.speedX;
+      recupRoom.ball.speedY = relativeY * 5 - 1; // Angle en fonction de la position relative
     }
   
     // Condition de rebond sur le mur haut
-    if (this.room.ball.y <= this.room.ball.radius) {
-      this.room.ball.speedY = -this.room.ball.speedY;
+    if (recupRoom.ball.y <= recupRoom.ball.radius) {
+      recupRoom.ball.speedY = -recupRoom.ball.speedY;
     }
   
     // Condition de rebond sur le mur bas
-    if (this.room.ball.y >= canvasHeight - this.room.ball.radius) {
-      this.room.ball.speedY = -this.room.ball.speedY;
+    if (recupRoom.ball.y >= canvasHeight - recupRoom.ball.radius) {
+      recupRoom.ball.speedY = -recupRoom.ball.speedY;
     }
   
     // Condition de rebond sur les murs gauche et droit
-    if (this.room.ball.x <= 0)
+    if (recupRoom.ball.x <= 0)
     {
-      this.room.ball.x = canvasWidth / 2;
-      this.room.ball.y = canvasHeight / 2;
-      this.room.ball.speedX = -this.room.ball.speedX;
-      this.room.scorePlayer2 += 1;
+      recupRoom.ball.x = canvasWidth / 2;
+      recupRoom.ball.y = canvasHeight / 2;
+      recupRoom.ball.speedX = -recupRoom.ball.speedX;
+      recupRoom.scorePlayer2 += 1;
     }
-    if (this.room.ball.x >= canvasWidth) {
-      this.room.ball.x = canvasWidth / 2;
-      this.room.ball.y = canvasHeight / 2;
-      this.room.ball.speedX = -this.room.ball.speedX;
-      this.room.scorePlayer1 += 1;
+    if (recupRoom.ball.x >= canvasWidth) {
+      recupRoom.ball.x = canvasWidth / 2;
+      recupRoom.ball.y = canvasHeight / 2;
+      recupRoom.ball.speedX = -recupRoom.ball.speedX;
+      recupRoom.scorePlayer1 += 1;
     }
-    if (this.room.scorePlayer1 == 3 || this.room.scorePlayer2 == 3)
+    if (recupRoom.scorePlayer1 == 3 || recupRoom.scorePlayer2 == 3)
     {
-      if (this.room.scorePlayer1 == 3)
+      if (recupRoom.scorePlayer1 == 3)
       {
-        this.room.winner = this.room.player1.username;
-        this.room.winnerid = this.room.idP1;
+        recupRoom.winner = recupRoom.player1.username;
+        recupRoom.winnerid = recupRoom.idP1;
 
       }
       else
       {
-        this.room.winner = this.room.player2.username;
-        this.room.winnerid = this.room.idP2;
+        recupRoom.winner = recupRoom.player2.username;
+        recupRoom.winnerid = recupRoom.idP2;
 
       }
-      this.gameService.updateGame(this.room);
-      this.userService.updateUserStatuIG(this.p1, 'ONLINE');
-      this.userService.updateUserStatuIG(this.p2, 'ONLINE');
-      this.room.end = 1;
-      roomUpdate.winner = this.room.winner;
-      roomUpdate.end = this.room.end;
+      this.gameService.updateGame(recupRoom);
+      recupRoom.end = 1;
+      roomUpdate.winner = recupRoom.winner;
+      roomUpdate.end = recupRoom.end;
     }
-    roomUpdate = {player1: this.room.player1.username, player2: this.room.player2.username,
-      ballX: this.room.ball.x, ballY: this.room.ball.y, scoreP1: this.room.scorePlayer1,
-      scoreP2: this.room.scorePlayer2, player1Y: this.room.player1.point.y, player2Y: this.room.player2.point.y,
-      winner: '', roomID: this.res.id, end: this.room.end}
-    this.server.emit('ballMoovON', roomUpdate);
+    roomUpdate = {player1: recupRoom.player1.username, player2: recupRoom.player2.username,
+      ballX: recupRoom.ball.x, ballY: recupRoom.ball.y, scoreP1: recupRoom.scorePlayer1,
+      scoreP2: recupRoom.scorePlayer2, player1Y: recupRoom.player1.point.y, player2Y: recupRoom.player2.point.y,
+      winner: '', roomID: this.res.id, end: recupRoom.end}
+     this.server.emit('ballMoovON', roomUpdate);
+      // this.server.to(id).emit('ballMoovON', roomUpdate);
   }
   }
 
@@ -247,7 +261,7 @@ export class MyGateway implements OnModuleInit {
   @SubscribeMessage('leaveGame')
   async onDisconnect(@ConnectedSocket() socket: Socket) {
 
-    if (this.room)
+    if (this.room && !this.room.end)
     {
     if (socket.user.id == this.room.idP1)
     {
@@ -262,7 +276,7 @@ export class MyGateway implements OnModuleInit {
       this.room.scorePlayer2 = -1;
     }
 
-    if (!this.room.end)
+    if (!this.room.end) 
       this.gameService.updateGame(this.room);
     this.room.end = 1;
 
@@ -273,5 +287,10 @@ export class MyGateway implements OnModuleInit {
     this.room = null;
     this.server.emit('playerLeave', roomUpdate);
     }
+  }
+
+  @SubscribeMessage('changeStatus')
+  async onChaneStatus(@ConnectedSocket() socket: Socket) {
+  this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');
   }
 }
