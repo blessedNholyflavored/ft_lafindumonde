@@ -11,7 +11,7 @@ export class AuthController{
     constructor(
         private readonly authService: AuthService,
         private readonly userService: UserService,
-	private config: ConfigService,
+	    private config: ConfigService,
     ){}
 
     //pour plus tard
