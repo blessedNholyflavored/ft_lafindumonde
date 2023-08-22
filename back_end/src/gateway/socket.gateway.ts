@@ -110,7 +110,7 @@ export class MyGateway implements OnModuleInit {
         roomID: this.res.id};
         console.log("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqQ: ", this.res.id);
         this.roomMapService.addRoom(this.res.id.toString(), this.room);
-        // socket.join("this.res.id.toString()");
+        // socket.join(this.res.id.toString());
       // this.userService.updateGamePlayer(Bp2.id, Bp2.gameplayed);
       this.server.emit('startGame2', Sroom);
   }
