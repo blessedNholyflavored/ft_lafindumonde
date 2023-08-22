@@ -84,12 +84,10 @@ export class MyGateway implements OnModuleInit {
   }
 
   @SubscribeMessage('startGame')
-  async onStartGame(@MessageBody() @ConnectedSocket() socket: Socket)
+  async onStartGame(@ConnectedSocket() socket: Socket)
   {
       const firstPlayer = this.playerQueue2.shift()!;
       const secondPlayer = this.playerQueue2.shift()!;
-      //const username1 = await this.userService.findUsernameById(this.p1);
-      //const username2 = await this.userService.findUsernameById(this.p2);
       
       const Bp1 = await this.userService.getUserByID(this.p1);
       const Bp2 = await this.userService.getUserByID(this.p2);
@@ -108,18 +106,16 @@ export class MyGateway implements OnModuleInit {
         ballY: 200, scoreP1: 0,
         scoreP2: 0, player1Y: 200, player2Y: 200, winner: '',
         roomID: this.res.id};
-        console.log("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqQ: ", this.res.id);
         this.roomMapService.addRoom(this.res.id.toString(), this.room);
-        // socket.join(this.res.id.toString());
+        socket.join(this.res.id.toString());
       // this.userService.updateGamePlayer(Bp2.id, Bp2.gameplayed);
-      this.server.emit('startGame2', Sroom);
+      this.server.to(this.res.id.toString()).emit('startGame2', Sroom);
   }
 
   @SubscribeMessage('movePoint')
   async onMovePlayer(@MessageBody() data: {userId: string, keycode: string, roomId: string}, @ConnectedSocket() socket: Socket,)
   {
     const recupRoom = this.roomMapService.getRoom(data[2]);
-    console.log("in moveplayer back:    ", recupRoom);
     if (recupRoom && recupRoom.player1)
     {
     if (data[1] === 'ArrowUp')
@@ -148,11 +144,10 @@ export class MyGateway implements OnModuleInit {
           recupRoom.player2.point.y += 10;
       }
     }
-    const roomUpdate: roomSend = {player1: recupRoom.player1.username, player2: recupRoom.player2.username,
-      ballX: recupRoom.ball.x, ballY: recupRoom.ball.y, scoreP1: recupRoom.scorePlayer1,
-      scoreP2: recupRoom.scorePlayer2, player1Y: recupRoom.player1.point.y, player2Y: recupRoom.player2.point.y, winner: '', roomID: this.res.id};
+    // const roomUpdate: roomSend = {player1: recupRoom.player1.username, player2: recupRoom.player2.username,
+    //   ballX: recupRoom.ball.x, ballY: recupRoom.ball.y, scoreP1: recupRoom.scorePlayer1,
+    //   scoreP2: recupRoom.scorePlayer2, player1Y: recupRoom.player1.point.y, player2Y: recupRoom.player2.point.y, winner: '', roomID: this.res.id};
     // this.server.emit('recupMoov', roomUpdate);
-    console.log("wwwwwwwwww", recupRoom.idRoom);
       // this.server.to(data[2]).emit('recupMoove', roomUpdate);
   }
   }
@@ -161,7 +156,6 @@ export class MyGateway implements OnModuleInit {
   async onMoveBall(@MessageBody() id: string, @ConnectedSocket() socket: Socket,)
     {
       const recupRoom = this.roomMapService.getRoom(id);
-      //  console.log("vvvvvvv    ", id);
 
     if (recupRoom && recupRoom.ball)
     {
@@ -244,15 +238,14 @@ export class MyGateway implements OnModuleInit {
       ballX: recupRoom.ball.x, ballY: recupRoom.ball.y, scoreP1: recupRoom.scorePlayer1,
       scoreP2: recupRoom.scorePlayer2, player1Y: recupRoom.player1.point.y, player2Y: recupRoom.player2.point.y,
       winner: '', roomID: this.res.id, end: recupRoom.end}
-     this.server.emit('ballMoovON', roomUpdate);
-      // this.server.to(id).emit('ballMoovON', roomUpdate);
+    //  this.server.emit('ballMoovON', roomUpdate);
+      this.server.to(recupRoom.idRoom.toString()).emit('ballMoovON', roomUpdate);
   }
   }
 
   @SubscribeMessage('updateUserIG')
   async onUpdateUserIG(@MessageBody() id: number, @ConnectedSocket() socket: Socket,){
     
-    console.log("icicicicicicicicici");
     this.userService.updateUserStatuIG(id, 'INGAME');
     this.userService.updateGamePlayer(id.toString());
   

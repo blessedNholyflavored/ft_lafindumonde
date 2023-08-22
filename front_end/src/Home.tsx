@@ -20,16 +20,10 @@ const Home: React.FC<HomeProps> = () => {
   const [inGame, setInGame] = useState<number>(0);
 
 
-  // if (socket)
-  //   console.log(socket.id);
-  // if (user)
-  //   console.log(user.id);
-
   const handlePlayerSelect = async (player: string) => {
     setSelectedPlayer(player);
 
     try {
-      console.log("before fetch");
       const response = await fetch(`http://localhost:3000/users/status/${user?.id}`, {
         method: 'GET',
       });
@@ -38,7 +32,6 @@ const Home: React.FC<HomeProps> = () => {
         // setStatus(recup);
         recupStatus = recup;
       }
-      console.log(recupStatus);
       if (recupStatus !== "INGAME")
       {
       if (user)

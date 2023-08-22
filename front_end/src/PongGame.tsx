@@ -19,71 +19,7 @@ const PongGame: React.FC = () => {
 
 
 
-
-  useEffect(() => {
-    if (socket && room && room.end)
-    {
-      setEnd(1);
-    }
-  }, [end,room,socket]);
-
-
-  useEffect(() => {
-    if (socket && counter === 0) {
-      let t = user?.id;
-      socket?.emit('startGame');
-      setCounter(1);
-
-      return () => {
-        if (socket) socket.off('startGame');
-        // Nettoyage des autres effets...
-      };
-    }
-  }, [socket]);
-
-  useEffect(() => {
-    if (socket && !end) {
-      socket.on('recupMoov', (updatedRoom: Room) => {
-    console.log("wwwwwwwwww");
-
-        setRoom(updatedRoom);
-      });
-      return () => {
-        if (socket) socket.off('recupMoov');
-      };
-
-    }
-  }, [socket]);
-
-  useEffect(() => {
-    if (socket) {
-      socket.on('startGame2', async (room: Room) => {
-          setRoom(room);
-          // if (room && room.player1 && user?.username === room.player1)
-          // {  
-          //   room.player1.id = user.id;
-          // }
-          // if (room && room.player2 && user?.id === room.player2.id)
-          // {
-          //   room.player2.socketid = socket.id;
-          //   room.player2.id = user.id;
-          // }
-
-
-          setCounter(1);
-      });
-
-      // D'autres effets et nettoyages...
-
-      return () => {
-        if (socket) socket.off('startGame2');
-        // Nettoyage des autres effets...
-      };
-    }
-  }, [socket]);
-
   const handleKeyDown = (event: KeyboardEvent) => {
-    console.log(event.key);
 
     if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !end)
     {
@@ -113,31 +49,12 @@ const PongGame: React.FC = () => {
   };
 }, [socket, room]);
 
-useEffect(() => {
 
-if (socket && !end) {
-  socket.on('ballMoovON', (room: Room) => {
-    if (room.player1 && room.player2 && room.player1 !== undefined) {
-      setRoom(room);
-    }
-  });
-}
-return () => {
-  if (socket) {
-    socket.off('recupMoov');
-    socket.off('ballMoovON');
-  }
-};
-}, [socket, room]);
 
-useEffect(() => {
 
-if (socket && !startFlag && room && counter === 1) {
-  setStartflag(1);
-  socket.emit('CreateGame', (room: Room) => {
-  });
-}
-});
+
+
+
 
 const NavHome = () => {
   socket.emit('changeStatus', (socket: Socket) => {
@@ -148,22 +65,69 @@ const NavHome = () => {
 }
 
 useEffect(() => {
+
+      //      CREATION DU MODEL DE LA GAME DANS LA DB
+
+  if (socket && !startFlag && room && counter === 1) {
+    setStartflag(1);
+    socket.emit('CreateGame', (room: Room) => {
+    });
+  }
+
+      //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
+
+  if (socket && counter === 0) {
+    let t = user?.id;
+    socket?.emit('startGame');
+    setCounter(1);
+  }
+
+      //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
+
+  if (socket) {
+    socket.on('startGame2', async (room: Room) => {
+        setRoom(room);
+        setCounter(1);
+    });
+  }
+
+        //      RECUP DES DATAS DES PLAYER MOVES ET DES DEPLACEMENTS DE LA BALLE DEPUIS LE BACK VERS LE FRONT
+
+  if (socket && !end) {
+    socket.on('ballMoovON', (room: Room) => {
+      if (room.player1 && room.player2 && room.player1 !== undefined) {
+        setRoom(room);
+      }
+    });
+  }
+
+  if (socket && room && room.end)
+  setEnd(1);
+
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
 
-      console.log(end);
-    // Émettez un événement pour quitter la partie lorsque la fenêtre se ferme ou que l'URL change
     socket?.emit('leaveGame');
     socket?.emit('changeStatus');
   };
 
-  // Ajoutez le gestionnaire d'événements beforeunload
   window.addEventListener('beforeunload', handleBeforeUnload);
 
-  // Nettoyez le gestionnaire d'événements lorsque le composant est démonté
+
+      //      CLEAR DES DIFFERENTS EVENT
+
   return () => {
     window.removeEventListener('beforeunload', handleBeforeUnload);
+    if (socket) {
+      socket.off('recupMoov');
+      socket.off('ballMoovON');
+      socket.off('recupMoov');
+      socket.off('startGame2');
+      socket.off('startGame');
+
+
+    }
   };
-}, [socket]);
+}, [socket, room, end]);
 
 
 
