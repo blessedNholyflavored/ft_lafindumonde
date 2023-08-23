@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards } from "@nestjs/common";
 import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
-import { FortyTwoAuthGuard } from "./FortyTwo-auth.guard";
+import { FortyTwoAuthGuard } from "./guards/FortyTwo-auth.guard";
 import { ConfigService } from '@nestjs/config';
-import { JwtAuthGuard } from "./jwt-auth.guards";
+import { JwtAuthGuard } from "./guards/jwt-auth.guards";
 import { AuthGuard } from "@nestjs/passport";
 
 @Controller("auth")
