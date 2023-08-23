@@ -12,7 +12,7 @@ import Socket from 'src/gateway/types/socket';
 import { GameService } from 'src/game/game.service';
 import { Room, User, roomSend } from 'src/interfaces';
 import { UserService } from 'src/user/user.service';
-import { AuthenticatedGuard } from 'src/auth/authenticated.guards';
+import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
 
 // ici add de l'authorisation de recup des credentials du front (le token)
 @WebSocketGateway({

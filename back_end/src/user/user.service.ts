@@ -186,6 +186,7 @@ export class UserService {
       return true;
     return false;
   }
+
   async createUser(user: PrismaUserCreateInput): Promise<User> {
     let tmpUser: User;
 

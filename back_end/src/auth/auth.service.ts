@@ -21,7 +21,7 @@ export class AuthService {
 		console.log('in login from auth service !!!')
 		console.log('username is :', user.username);
 		console.log('pictureURl is :', user.pictureURL);
-		const payload = {name: user.name, sub: user.id};
+		const payload = {sub: user.id};
 
 		return {
 			access_token: this.jwtService.sign(payload,{
@@ -30,4 +30,18 @@ export class AuthService {
 			message: 'Success Login',
 		};
 	}
+
+	async retrieveUser(data: any){
+		const user = await this.userService.getUserByID(data.id);
+		if (!user){
+		// TODO: check what happens if data is empty
+			if (await this.userService.usernameAuthChecker(data.username) == true){
+				// in case someone already have this username
+				data.username =  data.username + '_';
+			}
+			return await this.userService.createUser(data);
+		}
+		return user;
+	}
+
 }
