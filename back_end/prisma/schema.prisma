@@ -23,6 +23,8 @@ model User {
 	game2		Game[] @relation("player2")
 	gameplayed	Int?
 	pictureURL	String?
+	enabled2FA	Boolean?
+	totpKey		String?
 
 	friends		User[] @relation ("Friends")
 	friendsOf	User[] @relation ("Friends")

@@ -186,6 +186,7 @@ export class UserService {
       return true;
     return false;
   }
+
   async createUser(user: PrismaUserCreateInput): Promise<User> {
     let tmpUser: User;
 
@@ -197,6 +198,7 @@ export class UserService {
         //   hash: "",
           username: user.username,
           pictureURL: user.pictureURL,
+          enabled2FA: false,
         }
       });
       return tmpUser;
@@ -205,6 +207,14 @@ export class UserService {
       console.log('Error creating user:', err);
       //throw err;
     }
+  }
+
+  async enable2FA(id: number) {
+    const updateUser = await prisma.user.update({
+      where: { id: id},
+      data: { enable2FA:true, },
+    });
+    return (updateUser);
   }
 }
 
