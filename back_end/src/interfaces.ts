@@ -18,6 +18,7 @@ export interface User {
     winnerid?: number;
     idP1?: number;
     idP2?: number;
+    interval?: any;
 
   }
 
@@ -33,6 +34,13 @@ export interface User {
     winner?: string;
     end?: number;
     roomID?: number;
+    speedX?: number;
+    speedY?: number;
+  }
+
+  export class PosPlayerSend{
+    player1Y?: number;
+    player2Y?: number;
   }
 
 

@@ -15,6 +15,7 @@ import { UserService } from 'src/user/user.service';
 import { AuthenticatedGuard } from 'src/auth/authenticated.guards';
 import { RoomMapService } from './room_map.service';
 import SocketWithUser from 'src/gateway/types/socket';
+import { Interval } from '@nestjs/schedule';
 
 // ici add de l'authorisation de recup des credentials du front (le token)
 @WebSocketGateway({
@@ -36,7 +37,7 @@ export class MyGateway implements OnModuleInit {
   constructor(private readonly gameService: GameService, private readonly userService: UserService,
     private readonly roomMapService: RoomMapService) {}
   private room: Room;
-
+  private interval: NodeJS.Timeout;
   onModuleInit() {
     this.server.on('connection', (socket) => {
       console.log(socket.id);
@@ -108,6 +109,9 @@ export class MyGateway implements OnModuleInit {
         roomID: this.res.id};
         this.roomMapService.addRoom(this.res.id.toString(), this.room);
         socket.join(this.res.id.toString());
+        if (socket.user.id === this.room.idP1)
+          this.startLoop(Sroom.roomID);
+
       // this.userService.updateGamePlayer(Bp2.id, Bp2.gameplayed);
       this.server.to(this.res.id.toString()).emit('startGame2', Sroom);
   }
@@ -144,104 +148,164 @@ export class MyGateway implements OnModuleInit {
           recupRoom.player2.point.y += 10;
       }
     }
-    // const roomUpdate: roomSend = {player1: recupRoom.player1.username, player2: recupRoom.player2.username,
-    //   ballX: recupRoom.ball.x, ballY: recupRoom.ball.y, scoreP1: recupRoom.scorePlayer1,
-    //   scoreP2: recupRoom.scorePlayer2, player1Y: recupRoom.player1.point.y, player2Y: recupRoom.player2.point.y, winner: '', roomID: this.res.id};
+    const roomUpdate: roomSend = {
+      ballX: recupRoom.ball.x, ballY: recupRoom.ball.y, player1Y: recupRoom.player1.point.y, player2Y: recupRoom.player2.point.y};
     // this.server.emit('recupMoov', roomUpdate);
-      // this.server.to(data[2]).emit('recupMoove', roomUpdate);
+      this.server.to(recupRoom.idRoom.toString()).emit('recupMoov', roomUpdate);
+
   }
   }
 
-  @SubscribeMessage('ballMoovEMIT')
-  async onMoveBall(@MessageBody() id: string, @ConnectedSocket() socket: Socket,)
-    {
-      const recupRoom = this.roomMapService.getRoom(id);
 
-    if (recupRoom && recupRoom.ball)
-    {
-      let roomUpdate: roomSend = {};
-      recupRoom.ball.x += recupRoom.ball.speedX;
-      recupRoom.ball.y += recupRoom.ball.speedY;
+  startLoop(id: number) {
 
+    // Démarrez la boucle en utilisant setIntervalif
+    
+    this.interval = setInterval(() => {
+      // Votre code ici
+      
+      let recupRoom = this.roomMapService.getRoom(id.toString());
+      let flag = 0;
 
-    const canvasWidth = 700;
-    const canvasHeight = 400;
-    const leftPaddle = recupRoom.player1;
-    const rightPaddle = recupRoom.player2;
-  
-    // Condition de rebond sur la raquette du joueur 1 (gauche)
-    if (
-      recupRoom.ball.x <= leftPaddle.point.x + 10 &&
-      recupRoom.ball.y >= leftPaddle.point.y &&
-      recupRoom.ball.y <= leftPaddle.point.y + 80
-    ) {
-      const relativeY = (recupRoom.ball.y - leftPaddle.point.y) / 80; // Calcul de la position relative sur la raquette
-      recupRoom.ball.speedX = -recupRoom.ball.speedX;
-      recupRoom.ball.speedY = relativeY * 5 - 1; // Angle en fonction de la position relative
-    }
-  
-    // Condition de rebond sur la raquette du joueur 2 (droite)
-    if (
-      recupRoom.ball.x >= rightPaddle.point.x - 10 &&
-      recupRoom.ball.y >= rightPaddle.point.y &&
-      recupRoom.ball.y <= rightPaddle.point.y + 80
-    ) {
-      const relativeY = (recupRoom.ball.y - rightPaddle.point.y) / 80; // Calcul de la position relative sur la raquette
-      recupRoom.ball.speedX = -recupRoom.ball.speedX;
-      recupRoom.ball.speedY = relativeY * 5 - 1; // Angle en fonction de la position relative
-    }
-  
-    // Condition de rebond sur le mur haut
-    if (recupRoom.ball.y <= recupRoom.ball.radius) {
-      recupRoom.ball.speedY = -recupRoom.ball.speedY;
-    }
-  
-    // Condition de rebond sur le mur bas
-    if (recupRoom.ball.y >= canvasHeight - recupRoom.ball.radius) {
-      recupRoom.ball.speedY = -recupRoom.ball.speedY;
-    }
-  
-    // Condition de rebond sur les murs gauche et droit
-    if (recupRoom.ball.x <= 0)
-    {
-      recupRoom.ball.x = canvasWidth / 2;
-      recupRoom.ball.y = canvasHeight / 2;
-      recupRoom.ball.speedX = -recupRoom.ball.speedX;
-      recupRoom.scorePlayer2 += 1;
-    }
-    if (recupRoom.ball.x >= canvasWidth) {
-      recupRoom.ball.x = canvasWidth / 2;
-      recupRoom.ball.y = canvasHeight / 2;
-      recupRoom.ball.speedX = -recupRoom.ball.speedX;
-      recupRoom.scorePlayer1 += 1;
-    }
-    if (recupRoom.scorePlayer1 == 3 || recupRoom.scorePlayer2 == 3)
-    {
-      if (recupRoom.scorePlayer1 == 3)
+      if (recupRoom && recupRoom.ball)
       {
-        recupRoom.winner = recupRoom.player1.username;
-        recupRoom.winnerid = recupRoom.idP1;
+        let roomUpdate: roomSend = {};
+        recupRoom.ball.x += recupRoom.ball.speedX;
+        recupRoom.ball.y += recupRoom.ball.speedY;
+  
+  
+      const canvasWidth = 700;
+      const canvasHeight = 400;
+      const leftPaddle = recupRoom.player1;
+      const rightPaddle = recupRoom.player2;
+    
+      // Condition de rebond sur la raquette du joueur 1 (gauche)
+      if (
+        recupRoom.ball.x <= leftPaddle.point.x + 10 &&
+        recupRoom.ball.y >= leftPaddle.point.y &&
+        recupRoom.ball.y <= leftPaddle.point.y + 80
+      ) {
+        const relativeY = (recupRoom.ball.y - leftPaddle.point.y) / 80; // Calcul de la position relative sur la raquette
+        recupRoom.ball.speedX = -recupRoom.ball.speedX;
+        recupRoom.ball.speedY = relativeY * 5 - 1; // Angle en fonction de la position relative
+        flag = 1;
+
 
       }
-      else
-      {
-        recupRoom.winner = recupRoom.player2.username;
-        recupRoom.winnerid = recupRoom.idP2;
+    
+      // Condition de rebond sur la raquette du joueur 2 (droite)
+      if (
+        recupRoom.ball.x >= rightPaddle.point.x - 10 &&
+        recupRoom.ball.y >= rightPaddle.point.y &&
+        recupRoom.ball.y <= rightPaddle.point.y + 80
+      ) {
+        const relativeY = (recupRoom.ball.y - rightPaddle.point.y) / 80; // Calcul de la position relative sur la raquette
+        recupRoom.ball.speedX = -recupRoom.ball.speedX;
+        recupRoom.ball.speedY = relativeY * 5 - 1; // Angle en fonction de la position relative
+        flag = 1;
+
 
       }
-      this.gameService.updateGame(recupRoom);
-      recupRoom.end = 1;
-      roomUpdate.winner = recupRoom.winner;
-      roomUpdate.end = recupRoom.end;
-    }
-    roomUpdate = {player1: recupRoom.player1.username, player2: recupRoom.player2.username,
-      ballX: recupRoom.ball.x, ballY: recupRoom.ball.y, scoreP1: recupRoom.scorePlayer1,
-      scoreP2: recupRoom.scorePlayer2, player1Y: recupRoom.player1.point.y, player2Y: recupRoom.player2.point.y,
-      winner: '', roomID: this.res.id, end: recupRoom.end}
-    //  this.server.emit('ballMoovON', roomUpdate);
-      this.server.to(recupRoom.idRoom.toString()).emit('ballMoovON', roomUpdate);
+    
+      // Condition de rebond sur le mur haut
+      if (recupRoom.ball.y <= recupRoom.ball.radius) {
+        flag = 1;
+        recupRoom.ball.speedY = -recupRoom.ball.speedY;
+      }
+    
+      // Condition de rebond sur le mur bas
+      if (recupRoom.ball.y >= canvasHeight - recupRoom.ball.radius) {
+        recupRoom.ball.speedY = -recupRoom.ball.speedY;
+        flag = 1;
+
+
+      }
+    
+      // Condition de rebond sur les murs gauche et droit
+      if (recupRoom.ball.x <= 0)
+      {
+        recupRoom.ball.x = canvasWidth / 2;
+        recupRoom.ball.y = canvasHeight / 2;
+        recupRoom.ball.speedX = -recupRoom.ball.speedX;
+        recupRoom.scorePlayer2 += 1;
+        flag = 1;
+
+
+      }
+      if (recupRoom.ball.x >= canvasWidth) {
+        recupRoom.ball.x = canvasWidth / 2;
+        recupRoom.ball.y = canvasHeight / 2;
+        recupRoom.ball.speedX = -recupRoom.ball.speedX;
+        recupRoom.scorePlayer1 += 1;
+        flag = 1;
+
+
+      }
+      if (recupRoom.scorePlayer1 == 3 || recupRoom.scorePlayer2 == 3)
+      {
+        if (recupRoom.scorePlayer1 == 3)
+        {
+          recupRoom.winner = recupRoom.player1.username;
+          recupRoom.winnerid = recupRoom.idP1;
+  
+        }
+        else
+        {
+          recupRoom.winner = recupRoom.player2.username;
+          recupRoom.winnerid = recupRoom.idP2;
+  
+        }
+        this.gameService.updateGame(recupRoom);
+        recupRoom.end = 1;
+
+        roomUpdate.winner = recupRoom.winner;
+        roomUpdate.end = recupRoom.end;
+        flag = 2;
+      }
+      roomUpdate = {player1: recupRoom.player1.username, player2: recupRoom.player2.username,
+        ballX: recupRoom.ball.x, ballY: recupRoom.ball.y, scoreP1: recupRoom.scorePlayer1,
+        scoreP2: recupRoom.scorePlayer2, 
+        winner: '', roomID: this.res.id, end: recupRoom.end, speedX: recupRoom.ball.speedX,
+        speedY: recupRoom.ball.speedY}
+
+
+        this.server.to(recupRoom.idRoom.toString()).emit('ballMoovON', roomUpdate);
+        if (flag === 1)
+        {
+          flag = 0;
+        }
+        else if (flag === 2)
+        {
+          this.server.to(recupRoom.idRoom.toString()).emit('ballMoovON', roomUpdate);
+          this.stopLoop();
+          this.interval = null;
+          return ;
+        }
+      }
+
+
+
+      }, 1000 / 60); // 1000 millisecondes (1 seconde)
+  }
+
+  stopLoop() {
+    // Arrêtez la boucle en utilisant clearInterval
+    if (this.interval)
+  {
+    clearInterval(this.interval);
+    this.interval = null;
   }
   }
+
+  // @SubscribeMessage('ballMoovEMIT')
+  // async onMoveBall(@MessageBody() id: string, @ConnectedSocket() socket: Socket,)
+  //   {
+  //     const recupRoom = this.roomMapService.getRoom(id);
+
+    
+  //   //  this.server.emit('ballMoovON', roomUpdate);
+  //     // this.server.to(recupRoom.idRoom.toString()).emit('ballMoovON', roomUpdate);
+  // }
 
   @SubscribeMessage('updateUserIG')
   async onUpdateUserIG(@MessageBody() id: number, @ConnectedSocket() socket: Socket,){
@@ -278,6 +342,7 @@ export class MyGateway implements OnModuleInit {
       scoreP2: this.room.scorePlayer2, player1Y: this.room.player1.point.y, player2Y: this.room.player2.point.y,
       winner: '', roomID: this.res.id, end: this.room.end};
     this.room = null;
+    this.stopLoop();
     this.server.emit('playerLeave', roomUpdate);
     }
   }
@@ -285,5 +350,6 @@ export class MyGateway implements OnModuleInit {
   @SubscribeMessage('changeStatus')
   async onChaneStatus(@ConnectedSocket() socket: Socket) {
   this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');
+  this.stopLoop();
   }
 }

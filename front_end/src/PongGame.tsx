@@ -16,6 +16,12 @@ const PongGame: React.FC = () => {
   const [startFlag, setStartflag] = useState<number>(0);
   const navigate = useNavigate();
   const socket = useContext(WebsocketContext);
+  const [player1Pos, setPlayer1Pos] = useState<number>(200);
+  const [player2Pos, setPlayer2Pos] = useState<number>(200);
+  const [BallXpos, setBallXPos] = useState<number>(350);
+  const [BallYpos, setBallYPos] = useState<number>(200);
+  const [SpeedBallX, setSpeedBallX] = useState<number>(0);
+  const [SpeedBallY, setSpeedBallY] = useState<number>(0);
 
 
 
@@ -35,23 +41,42 @@ const PongGame: React.FC = () => {
     };
   }, [socket, room, user]);
 
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-    if (socket && counter === 1 && !end) {
-      intervalId = setInterval(() => {
-        socket.emit('ballMoovEMIT', room?.roomID);
-    }, 1000 / 60);
-  }
-  return () => {
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
-  };
-}, [socket, room]);
+//   useEffect(() => {
+//     let intervalId: NodeJS.Timeout;
+//     if (socket && counter === 1 && !end) {
+//       intervalId = setInterval(() => {
+//         socket.emit('ballMoovEMIT', room?.roomID);
+//     }, 1000 / 60);
+//   }
+//   return () => {
+//     if (intervalId) {
+//       clearInterval(intervalId);
+//     }
+//   };
+// }, [socket, room]);
 
 
+//   const gameLoopFront = () =>
+//   {
+//     setBallXPos((prevXPos) => prevXPos + SpeedBallX);
+//     setBallYPos((prevYPos) => prevYPos + SpeedBallY);
+//   }
 
+//   useEffect(() => {
+//     let intervalId: NodeJS.Timeout;
+//     if (socket && counter === 1 && !end) {
+//       intervalId = setInterval(() => {
 
+//         gameLoopFront();
+
+//     }, 1000 / 60);
+//   }
+//   return () => {
+//     if (intervalId) {
+//       clearInterval(intervalId);
+//     }
+//   };
+// }, [socket, room]);
 
 
 
@@ -65,6 +90,8 @@ const NavHome = () => {
 }
 
 useEffect(() => {
+
+
 
       //      CREATION DU MODEL DE LA GAME DANS LA DB
 
@@ -91,12 +118,27 @@ useEffect(() => {
     });
   }
 
+  if (socket && !end) {
+    socket.on('recupMoov', (updatedRoom: Room) => {
+      if (room)
+      {
+      setPlayer1Pos(updatedRoom.player1Y);
+      setPlayer2Pos(updatedRoom.player2Y);
+      }
+      // setRoom(updatedRoom);
+    });
+  }
+
         //      RECUP DES DATAS DES PLAYER MOVES ET DES DEPLACEMENTS DE LA BALLE DEPUIS LE BACK VERS LE FRONT
 
   if (socket && !end) {
-    socket.on('ballMoovON', (room: Room) => {
-      if (room.player1 && room.player2 && room.player1 !== undefined) {
-        setRoom(room);
+    socket.on('ballMoovON', (updateRoom: Room) => {
+      if (updateRoom.player1 && updateRoom.player2 && updateRoom.player1 !== undefined) {
+        setRoom(updateRoom);
+        setSpeedBallX(updateRoom.speedX);
+        setSpeedBallY(updateRoom.speedY);
+        setBallXPos(updateRoom.ballX);
+        setBallYPos(updateRoom.ballY);
       }
     });
   }
@@ -127,7 +169,7 @@ useEffect(() => {
 
     }
   };
-}, [socket, room, end]);
+}, [socket, room, end, BallXpos, BallYpos]);
 
 
 
@@ -165,9 +207,9 @@ useEffect(() => {
               </div>
               )}
           </div>
-      <div className={`player-rect player1`} style={{ top: room.player1Y }}></div>
-      <div className={`player-rect player2`} style={{ top: room.player2Y }}></div>
-      <div className="ball" style={{ left: room.ballX, top: room.ballY }}></div>
+      <div className={`player-rect player1`} style={{ top: player1Pos }}></div>
+      <div className={`player-rect player2`} style={{ top: player2Pos }}></div>
+      <div className="ball" style={{ left: BallXpos, top: BallYpos }}></div>
     </div>
   )}
 </div>
