@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-42';
-import { AuthService } from './auth.service';
+import { AuthService } from 'src/auth/auth.service';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/user/user.service';
 
@@ -27,14 +27,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy){
 			id: Number.parseInt(profile.id),
 			pictureURL: profile._json.image.link,
 		};
-		const user = await this.userService.getUserByID(fortyTwoUser.id);
-		if (!user){
-			if (await this.userService.usernameAuthChecker(fortyTwoUser.username) == true){
-				// in case someone already have this username
-				fortyTwoUser.username = profile.username + '_';
-			}
-			return await this.userService.createUser(fortyTwoUser);
-		}
+		const user = await this.authService.retrieveUser(fortyTwoUser);
 		console.log('user id : ',user.id);
 		console.log('profile: ', profile.id);
 		return user;

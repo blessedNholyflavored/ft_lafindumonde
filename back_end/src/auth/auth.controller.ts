@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards, BadRequestException } from "@nestjs/common";
 import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
 import { FortyTwoAuthGuard } from "./guards/FortyTwo-auth.guard";
@@ -14,6 +14,23 @@ export class AuthController{
 	    private config: ConfigService,
     ){}
 
+	// DEV ROUTE FOR TEST
+	// TODO: suppr cette route pour la prod
+// pour creer le user : avec l'extension RESTED</> faire une requete post
+// a http://localhost:3000/auth/test
+// avec Content-Type /// application/json dans le Header
+// et dans le Request Body, Type: JSON, faire et remplir les champs username, id et email (eventuellement pictureURL si on veut...
+	@Post('test')
+	async loginTest(@Body() body: {username: string, id: number, email: string}, @Res() res: any){
+		if (!body.username || !body.id || !body.email){
+			console.log(body);
+			throw new BadRequestException("id, username or email is missing");
+		}
+		const user = await this.authService.retrieveUser(body);
+		const token = await this.authService.login(user);
+		res.cookie('access_token', token.access_token, {httpOnly: true}).json({user, token}).statusCode(200).send();
+
+	}
     //pour plus tard
     @Post('login')
     async login(@Body() loginDto:any){
