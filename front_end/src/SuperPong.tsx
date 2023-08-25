@@ -19,81 +19,20 @@ const SuperPong: React.FC<PongGameProps> = () => {
   const [startFlag, setStartflag] = useState<number>(0);
   const navigate = useNavigate();
   const socket = useContext(WebsocketContext);
+  const [player1Pos, setPlayer1Pos] = useState<number>(200);
+  const [player2Pos, setPlayer2Pos] = useState<number>(200);
+  const [BallXpos, setBallXPos] = useState<number>(350);
+  const [BallYpos, setBallYPos] = useState<number>(200);
+  const [SpeedBallX, setSpeedBallX] = useState<number>(-5);
+  const [SpeedBallY, setSpeedBallY] = useState<number>(0);
 
 
-
-
-  useEffect(() => {
-    if (socket && room && room.end)
-    {
-      setEnd(1);
-    }
-  }, [end,room,socket]);
-
-
-  useEffect(() => {
-    if (socket && counter === 0) {
-      let t = user?.id;
-      console.log(t);
-      socket?.emit('startGame', async (roomData: Room, t: number) => {
-        if (roomData.player1 && roomData.player2) {
-          setRoom(roomData);
-
-        }
-      });
-
-      return () => {
-        if (socket) socket.off('startGame');
-        // Nettoyage des autres effets...
-      };
-    }
-  }, [socket]);
-
-  useEffect(() => {
-    if (socket && !end) {
-      socket.on('recupMoov', (updatedRoom: Room) => {
-        setRoom(updatedRoom);
-      });
-      return () => {
-        if (socket) socket.off('recupMoov');
-      };
-
-    }
-  }, [socket]);
-
-  useEffect(() => {
-    if (socket) {
-      socket.on('startGame2', async (room: Room) => {
-          setRoom(room);
-          // if (room && room.player1 && user?.username === room.player1)
-          // {  
-          //   room.player1.id = user.id;
-          // }
-          // if (room && room.player2 && user?.id === room.player2.id)
-          // {
-          //   room.player2.socketid = socket.id;
-          //   room.player2.id = user.id;
-          // }
-
-
-          setCounter(1);
-      });
-
-      // D'autres effets et nettoyages...
-
-      return () => {
-        if (socket) socket.off('startGame2');
-        // Nettoyage des autres effets...
-      };
-    }
-  }, [socket]);
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    console.log(event.key);
 
     if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !end)
     {
-      socket?.emit("movePoint", user?.username, event.key);
+      socket?.emit("movePoint", user?.username, event.key, room?.roomID);
     }
   };
   
@@ -105,76 +44,137 @@ const SuperPong: React.FC<PongGameProps> = () => {
     };
   }, [socket, room, user]);
 
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-    if (socket && counter === 1 && !end) {
-      intervalId = setInterval(() => {
-        socket.emit('ballMoovEMIT');
-    }, 1000 / 60);
-  }
-  return () => {
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
-  };
-}, [socket, room]);
+//   useEffect(() => {
+//     let intervalId: NodeJS.Timeout;
+//     if (socket && counter === 1 && !end) {
+//       intervalId = setInterval(() => {
+//         socket.emit('ballMoovEMIT', room?.roomID);
+//     }, 1000 / 60);
+//   }
+//   return () => {
+//     if (intervalId) {
+//       clearInterval(intervalId);
+//     }
+//   };
+// }, [socket, room]);
 
-useEffect(() => {
 
-if (socket && !end) {
-  socket.on('ballMoovON', (room: Room) => {
-    if (room.player1 && room.player2 && room.player1 !== undefined) {
-      setRoom(room);
-    }
-  });
-}
-return () => {
-  if (socket) {
-    socket.off('recupMoov');
-    socket.off('ballMoovON');
-  }
-};
-}, [socket, room]);
 
-useEffect(() => {
+//   useEffect(() => {
+//     let intervalId: NodeJS.Timeout;
+//     if (socket && !end) {
+//       intervalId = setInterval(() => {
 
-if (socket && !startFlag && room && counter === 1) {
-  setStartflag(1);
-  socket.emit('CreateGame', (room: Room) => {
-  });
-}
-});
+//         setBallXPos((prevXPos) => prevXPos + SpeedBallX);
+//         setBallYPos((prevYPos) => prevYPos + SpeedBallY);
+
+//     }, 1000 / 60);
+//   }
+//   return () => {
+//     if (intervalId) {
+//       clearInterval(intervalId);
+//     }
+//   };
+// }, [BallXpos, BallYpos]);
+
+
+
 
 const NavHome = () => {
+  socket.emit('changeStatus', (socket: Socket) => {
+  });
   navigate('/');
   window.location.reload();
 
 }
 
 useEffect(() => {
-  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-    if (!end)
-    {
-      console.log(end);
-    // Émettez un événement pour quitter la partie lorsque la fenêtre se ferme ou que l'URL change
-    socket?.emit('leaveGame');
+
+
+
+      //      CREATION DU MODEL DE LA GAME DANS LA DB
+
+  if (socket && !startFlag && room && counter === 1) {
+    setStartflag(1);
+    socket.emit('CreateGame', (room: Room) => {
+    });
   }
+
+      //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
+
+  if (socket && counter === 0) {
+    let t = user?.id;
+    socket?.emit('startGame');
+    setCounter(1);
+  }
+
+      //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
+
+  if (socket) {
+    socket.on('startGame2', async (updateroom: Room) => {
+        setCounter(1);
+        setRoom(updateroom);
+    });
+  }
+
+  if (socket && !end) {
+    socket.on('recupMoov', (updatedRoom: Room) => {
+      if (room)
+      {
+      setPlayer1Pos(updatedRoom.player1Y);
+      setPlayer2Pos(updatedRoom.player2Y);
+      }
+      // setRoom(updatedRoom);
+    });
+  }
+
+        //      RECUP DES DATAS DES PLAYER MOVES ET DES DEPLACEMENTS DE LA BALLE DEPUIS LE BACK VERS LE FRONT
+
+  if (socket && !end) {
+    socket.on('ballMoovON', (updateRoom: Room) => {
+      if (updateRoom.player1 && updateRoom.player2 && updateRoom.player1 !== undefined) {
+        setRoom(updateRoom);
+        setSpeedBallX(updateRoom.speedX);
+        setSpeedBallY(updateRoom.speedY);
+        setBallXPos(updateRoom.ballX);
+        setBallYPos(updateRoom.ballY);
+      }
+    });
+  }
+
+  if (socket && room && room.end)
+  setEnd(1);
+
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+
+    socket?.emit('leaveGame');
+    socket?.emit('changeStatus');
   };
 
-  // Ajoutez le gestionnaire d'événements beforeunload
   window.addEventListener('beforeunload', handleBeforeUnload);
 
-  // Nettoyez le gestionnaire d'événements lorsque le composant est démonté
+
+      //      CLEAR DES DIFFERENTS EVENT
+
   return () => {
     window.removeEventListener('beforeunload', handleBeforeUnload);
+    if (socket) {
+      socket.off('recupMoov');
+      socket.off('ballMoovON');
+      socket.off('recupMoov');
+      socket.off('startGame2');
+      socket.off('startGame');
+
+
+    }
   };
-}, [socket]);
+}, [socket, room, end, BallXpos, BallYpos, SpeedBallX, SpeedBallY]);
 
 
 
 useEffect(() => {
 
-  if (socket) {
+  if (socket && !end) {
     socket.on('playerLeave', (room: Room) => {
       setRoom(room)
     });
@@ -233,17 +233,17 @@ useEffect(() => {
           </div>
             <div
               className="ball"
-              style={{ left: room.ballX, top: room.ballY }}
+              style={{ left: BallXpos, top: BallYpos }}
             ></div>
 
             {/* Afficher la raquette du joueur 1 si showPlayer1 est vrai */}
             {showPlayer1 && (
-              <div className="player-rect player1" style={{ top: room.player1Y }}></div>
+              <div className="player-rect player1" style={{ top: player1Pos }}></div>
             )}
 
             {/* Afficher la raquette du joueur 2 si showPlayer2 est vrai */}
             {showPlayer2 && (
-              <div className="player-rect player2" style={{ top: room.player2Y }}></div>
+              <div className="player-rect player2" style={{ top: player2Pos }}></div>
             )}
 
           </div>

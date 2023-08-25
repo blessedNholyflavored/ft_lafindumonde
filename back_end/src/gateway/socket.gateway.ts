@@ -31,6 +31,7 @@ export class MyGateway implements OnModuleInit {
   server: Server;
   private playerQueue: number[] = [];
   private playerQueue2: number[] = [];
+  private socketQueue: Socket[] = [];
   private res;
   private p1;
   private p2;
@@ -65,22 +66,28 @@ export class MyGateway implements OnModuleInit {
     if (!this.playerQueue.includes(player)) {
       this.playerQueue.push(player);
       this.playerQueue2.push(player);
+      this.socketQueue.push(socket);
       console.log(`${player} a rejoint la file d'attente.`);
 
       const count = this.playerQueue.length;
       if (this.playerQueue.length === 2) {
         const firstPlayer = this.playerQueue.shift()!;
         const secondPlayer = this.playerQueue.shift()!;
+        const socket1 = this.socketQueue.shift()!;
+        const socket2 = this.socketQueue.shift()!;
 
         // io.to(user1.id.toString()).to(user2.id.toString()).emit('startGame', room);
 
         console.log(`Début du jeu entre ${firstPlayer} et ${secondPlayer}.`);
         this.res = await this.gameService.CreateGame(firstPlayer, secondPlayer);
+
         this.p1 = firstPlayer;
         this.p2 = secondPlayer;
+        socket1.emit('queueUpdate', count);
+        socket2.emit('queueUpdate', count);
+        return ;
       }
-
-      this.server.emit('queueUpdate', count);
+      socket.emit('queueUpdate', count);
     }
   }
 
@@ -188,7 +195,7 @@ export class MyGateway implements OnModuleInit {
         const relativeY = (recupRoom.ball.y - leftPaddle.point.y) / 80; // Calcul de la position relative sur la raquette
         recupRoom.ball.speedX = -recupRoom.ball.speedX;
         recupRoom.ball.speedY = relativeY * 5 - 1; // Angle en fonction de la position relative
-        flag = 1;
+        // flag = 1;
 
 
       }
@@ -202,21 +209,21 @@ export class MyGateway implements OnModuleInit {
         const relativeY = (recupRoom.ball.y - rightPaddle.point.y) / 80; // Calcul de la position relative sur la raquette
         recupRoom.ball.speedX = -recupRoom.ball.speedX;
         recupRoom.ball.speedY = relativeY * 5 - 1; // Angle en fonction de la position relative
-        flag = 1;
+        // flag = 1;
 
 
       }
     
       // Condition de rebond sur le mur haut
       if (recupRoom.ball.y <= recupRoom.ball.radius) {
-        flag = 1;
+        // flag = 1;
         recupRoom.ball.speedY = -recupRoom.ball.speedY;
       }
     
       // Condition de rebond sur le mur bas
       if (recupRoom.ball.y >= canvasHeight - recupRoom.ball.radius) {
         recupRoom.ball.speedY = -recupRoom.ball.speedY;
-        flag = 1;
+        // flag = 1;
 
 
       }
@@ -274,7 +281,7 @@ export class MyGateway implements OnModuleInit {
         {
           flag = 0;
         }
-        else if (flag === 2)
+        if (flag === 2)
         {
           this.server.to(recupRoom.idRoom.toString()).emit('ballMoovON', roomUpdate);
           this.stopLoop();
@@ -344,6 +351,8 @@ export class MyGateway implements OnModuleInit {
     this.room = null;
     this.stopLoop();
     this.server.emit('playerLeave', roomUpdate);
+    this.server.to(roomUpdate.roomID.toString()).emit('playerLeave', roomUpdate);
+
     }
   }
 

@@ -20,7 +20,7 @@ const PongGame: React.FC = () => {
   const [player2Pos, setPlayer2Pos] = useState<number>(200);
   const [BallXpos, setBallXPos] = useState<number>(350);
   const [BallYpos, setBallYPos] = useState<number>(200);
-  const [SpeedBallX, setSpeedBallX] = useState<number>(0);
+  const [SpeedBallX, setSpeedBallX] = useState<number>(-5);
   const [SpeedBallY, setSpeedBallY] = useState<number>(0);
 
 
@@ -56,18 +56,14 @@ const PongGame: React.FC = () => {
 // }, [socket, room]);
 
 
-//   const gameLoopFront = () =>
-//   {
-//     setBallXPos((prevXPos) => prevXPos + SpeedBallX);
-//     setBallYPos((prevYPos) => prevYPos + SpeedBallY);
-//   }
 
 //   useEffect(() => {
 //     let intervalId: NodeJS.Timeout;
-//     if (socket && counter === 1 && !end) {
+//     if (socket && !end) {
 //       intervalId = setInterval(() => {
 
-//         gameLoopFront();
+//         setBallXPos((prevXPos) => prevXPos + SpeedBallX);
+//         setBallYPos((prevYPos) => prevYPos + SpeedBallY);
 
 //     }, 1000 / 60);
 //   }
@@ -76,7 +72,7 @@ const PongGame: React.FC = () => {
 //       clearInterval(intervalId);
 //     }
 //   };
-// }, [socket, room]);
+// }, [BallXpos, BallYpos]);
 
 
 
@@ -112,9 +108,9 @@ useEffect(() => {
       //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
 
   if (socket) {
-    socket.on('startGame2', async (room: Room) => {
-        setRoom(room);
+    socket.on('startGame2', async (updateroom: Room) => {
         setCounter(1);
+        setRoom(updateroom);
     });
   }
 
@@ -169,7 +165,7 @@ useEffect(() => {
 
     }
   };
-}, [socket, room, end, BallXpos, BallYpos]);
+}, [socket, room, end, BallXpos, BallYpos, SpeedBallX, SpeedBallY]);
 
 
 
