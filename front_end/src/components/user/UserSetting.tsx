@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import '../../style/Profile.css'
-import icon from "../../img/buttoncomp.png"
-import logo from "../../img/logo42.png"
-import { useAuth } from '../../AuthProvider';
+import '../../style/Profile.css';
+import '../../style/twoFA.css';
+import icon from "../../img/buttoncomp.png";
+import logo from "../../img/logo42.png";
+import { useAuth } from '../auth/AuthProvider';
+import { twoFAEnable, twoFADisable } from '../auth/2faComp';
 //import { useParams } from 'react-router-dom';
 
 
@@ -187,6 +189,10 @@ export const UserSetting: React.FC = () => {
 	<div className="boxrowsettings">
 		<div className="navbarsmallbox">
 			<p className="boxtitle"> 2FAC AUTH </p>
+		</div>
+		<div className="twoFA">
+			<button className="twoFAenabled" onClick={twoFAEnable}>enable</button>
+			<button className="twoFAdisabled" onClick={twoFADisable}>disable</button>
 		</div>
 		<div className="footersmallbox">
 			<br></br>

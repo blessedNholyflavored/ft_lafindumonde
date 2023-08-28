@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import io, { Socket } from 'socket.io-client';
 import { User } from './interfaces';
-import { useAuth } from './AuthProvider';
+import { useAuth } from './components/auth/AuthProvider';
 
 interface HomeProps {
   socket: Socket | null;
@@ -43,7 +43,7 @@ const Home: React.FC<HomeProps> = ({ socket }) => {
 
 
   const navigateToProfPage = () => {
-    navigate('/auth');
+    navigate('/settings');
   };
 
 

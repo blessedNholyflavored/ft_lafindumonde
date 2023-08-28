@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios, { AxiosResponse } from "./AxiosInstance";
+import axios, { AxiosResponse } from "../../AxiosInstance";
 
 // interface User 
 export interface User {

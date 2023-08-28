@@ -212,9 +212,16 @@ export class UserService {
   async enable2FA(id: number) {
     const updateUser = await prisma.user.update({
       where: { id: id},
-      data: { enable2FA:true, },
+      data: { enabled2FA:true, },
+    });
+    return (updateUser);
+  }
+
+  async disable2FA(id:number) {
+    const updateUser = await prisma.user.update({
+      where: {id: id},
+      data: { enabled2FA:false, },
     });
     return (updateUser);
   }
 }
-

@@ -7,9 +7,9 @@ import { UserSetting } from './components/user/UserSetting';
 //import { io, Socket } from 'socket.io-client';
 import { User } from './interfaces';
 import './App.css';
-import { Login } from './Login';
-import ProtectedRoute from './ProtectedRoute';
-import { AuthProvider, useAuth } from './AuthProvider';
+import { Login } from './components/auth/Login';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import { AuthProvider, useAuth } from './components/auth/AuthProvider';
 import { socket, WebsocketProvider } from './WebsocketContext';
 import { Websocket } from './Websocket';
 import api from './AxiosInstance';
@@ -39,8 +39,8 @@ export const App: React.FC = () => {
         <WebsocketProvider value={socket}>
     <AuthProvider>
         <Routes>
-          <Route path="/" element={<Home socket={socket} />} />
-          <Route path="/game" element={<PongGame socket={socket} />} />
+          <Route path="/" element={<ProtectedRoute><Home socket={socket} /></ProtectedRoute>} />
+          <Route path="/game" element={<ProtectedRoute><PongGame socket={socket} /></ProtectedRoute>} />
 		  <Route path="/settings" element={<ProtectedRoute><UserSetting /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
@@ -69,7 +69,7 @@ function  Profile() {
       <h1>{user!.username}</h1>
       <img src={user!.pictureURL} alt="profile picture" />
       <p>{ JSON.stringify(user) }</p>
-      <button onClick={logout}>Log Out</button>
+      <button onClick={logout}>LOG OUT </button>
     </div>
   );
 };

@@ -1,0 +1,33 @@
+.twoFA {
+    display: inline-block;
+}
+
+.twoFA button {
+    cursor: pointer;
+    font-family: IBM Plex Mono;
+    color: #000;
+    border: solid #000;
+    border-width: 3px;
+    height: 40px;
+    padding: 10px 16px;
+    margin: 10% 10%;
+    box-shadow: 3px 4px 0px 0px #000;
+}
+
+.twoFAenabled {
+    background-color: #30c562;
+}
+
+.twoFAenabled:hover{
+    background-color: #72db95;
+    color: #111;
+}
+
+.twoFAdisabled {
+    background-color: #c53030;
+}
+
+.twoFAdisabled:hover{
+    background-color: #d84b4b;
+    color: #111;
+}
