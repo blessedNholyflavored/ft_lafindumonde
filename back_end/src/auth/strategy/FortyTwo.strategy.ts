@@ -28,8 +28,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy){
 			pictureURL: profile._json.image.link,
 		};
 		const user = await this.authService.retrieveUser(fortyTwoUser);
-		console.log('user id : ',user.id);
-		console.log('profile: ', profile.id);
 		return user;
 	}
 }

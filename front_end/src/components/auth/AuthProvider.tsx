@@ -9,6 +9,9 @@ export interface User {
     createdAt: string;
     //hash:string; 
     pictureURL: string;
+    enabled2FA: boolean;
+    //enlever totpKey
+    totpKey: string;
 }
 
 interface AuthContextType {

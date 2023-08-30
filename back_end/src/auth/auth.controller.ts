@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards, BadRequestException } from "@nestjs/common";
+import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards, BadRequestException, UnauthorizedException } from "@nestjs/common";
 import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
 import { FortyTwoAuthGuard } from "./guards/FortyTwo-auth.guard";
 import { ConfigService } from '@nestjs/config';
-import { JwtAuthGuard } from "./guards/jwt-auth.guards";
+//import { JwtAuthGuard } from "./guards/jwt-auth.guards";
 import { AuthGuard } from "@nestjs/passport";
 import { AuthenticatedGuard } from "./guards/authenticated.guards";
+import * as bcrypt from 'bcrypt';
+import * as speakeasy from 'speakeasy';
 
 @Controller("auth")
 export class AuthController{
@@ -91,23 +93,29 @@ export class AuthController{
      * *********************/
     // a update avec try catch if no user
     @Get('2FAenable')
-    @UseGuards(JwtAuthGuard)
-    async twoFAenabler(@Req() req: any){
-        if (req.user.enabled2FA == true)
-            console.log("2FA already enabled !");
-        else {
-            const updtUser = await this.userService.enable2FA(req.user.id);
-            if (updtUser.enabled2FA == true)
-                console.log("2FA correctly enabled !");
-            else
-                console.log("An issue happened enabling 2fa ???");
-            return updtUser ;
+    @UseGuards(AuthenticatedGuard)
+    async twoFAenabler(@Req() req: any, @Res() res: any){
+        // resetting 2FA in case 2FA is already enabled
+        if (req.user.enabled2FA == true){
+            await this.userService.disable2FA(req.user.id);
         }
-        return req.user;
+        const { qrCodeImg, user } = await this.authService.generate2FAkey(req.user);
+            // here --> redirect user to a page with a generated QR code made with the secret 2fa key made for him
+            // he will have to scan the code to get second auth code. If and only IF everything here went well,
+            // we enable his 2FA by setting enabled2FA to true
+      //  return res.redirect(`http://localhost:8080//totpSave?qrCodeImg=${encodeURIComponent(qrCodeImg)}&userId=${user.id}`);
+        return res.json({code: qrCodeImg});
+      /*  if (updtUser.enabled2FA == true){
+                console.log("2FA correctly enabled !");
+                return updtUser;
+        } else {
+                console.log("An issue happened enabling 2fa ???");
+        }*/
+        //return req.user;
     }
 
     @Get('2FAdisable')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(AuthenticatedGuard)
     async twoFAdisabler(@Req() req: any){
         if (req.user.enabled2FA == false)
             console.log("2FA is already disabled !");
@@ -123,7 +131,7 @@ export class AuthController{
     }
 
     @Get('2FAtester')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(AuthenticatedGuard)
     async tester2FA(@Req() req:any){
         console.log("user here is :", req.user.username);
         if (req.user.enabled2FA == true)
@@ -141,6 +149,46 @@ export class AuthController{
         return updtUser ;
     }
 
+    /************************
+     * enticatedGuard
+     * 
+     *                                  2FA FRONT PART
+     *      
+     * 
+     * *********************/
+
+    @Post('submitCode')
+    @UseGuards(AuthenticatedGuard)
+    //@UseGuards(AuthGuard('totp'))
+    async codeChecker(@Res() res: any, @Body() body: {userInput: string, userID: number}){
+        console.log("SALUT SALUT SALUT OPUTDJSHFJKU");
+        if (!body.userInput || !body.userID){
+            console.log(body);
+            throw new BadRequestException("input is missing or user is invalid");
+        }
+        //else il faut faire un compare entre userImput et la key ds la db 
+        const user = await this.userService.getUserByID(body.userID);
+        if (!user || !body.userInput || !user.totpKey){
+            throw new BadRequestException("User doesn't exist");
+        }
+        const isValidTOTP = speakeasy.totp.verify({
+            secret: user.totpKey,
+            encoding: 'base32',
+            token: body.userInput,
+            window: 1,
+        });
+        await this.userService.enable2FA(user.id);
+        return res.redirect('http://localhost:8080/');
+/*
+        if (!isValidTOTP){
+            throw new UnauthorizedException('Invalid TOTP code');
+        }*/
+     /*   const realKey = await bcrypt.compare(body.userInput, user.totpKey);
+        if (!realKey){
+            //invalid totp secret
+            throw new UnauthorizedException('Invalid TOTP credentials');
+        }*/
+    }
     /************************
      * 
      * 

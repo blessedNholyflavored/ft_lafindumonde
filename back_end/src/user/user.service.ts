@@ -224,4 +224,12 @@ export class UserService {
     });
     return (updateUser);
   }
+
+  async add2FAKey(hash: string, id:number){
+    const updateUser = await prisma.user.update({
+      where: {id: id},
+      data: { totpKey: hash, },
+    });
+    return updateUser;
+  }
 }

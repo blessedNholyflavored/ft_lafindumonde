@@ -8,6 +8,8 @@ import { UserSetting } from './components/user/UserSetting';
 import { User } from './interfaces';
 import './App.css';
 import { Login } from './components/auth/Login';
+import { InputTotp } from './components/auth/InputTotp';
+import { SaveTotp } from './components/auth/SaveTotp';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { AuthProvider, useAuth } from './components/auth/AuthProvider';
 import { socket, WebsocketProvider } from './WebsocketContext';
@@ -41,7 +43,9 @@ export const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<ProtectedRoute><Home socket={socket} /></ProtectedRoute>} />
           <Route path="/game" element={<ProtectedRoute><PongGame socket={socket} /></ProtectedRoute>} />
-		  <Route path="/settings" element={<ProtectedRoute><UserSetting /></ProtectedRoute>} />
+		      <Route path="/settings" element={<ProtectedRoute><UserSetting /></ProtectedRoute>} />
+          <Route path="/totp" element={<ProtectedRoute><InputTotp /></ProtectedRoute>} />
+          <Route path="/totpSave" element={<ProtectedRoute><SaveTotp /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/sock" element={<ProtectedRoute><Websocket /></ProtectedRoute>} />

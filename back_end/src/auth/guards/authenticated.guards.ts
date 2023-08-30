@@ -3,21 +3,23 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { WsException } from '@nestjs/websockets';
 import { UserService } from 'src/user/user.service';
+import { AuthGuard } from '@nestjs/passport';
 
 
 @Injectable()
-export class AuthenticatedGuard implements CanActivate {
+export class AuthenticatedGuard extends AuthGuard('jwt'){
 	constructor(
 		private readonly config: ConfigService,
 		private readonly jwt: JwtService,
 		private readonly userService: UserService,
-	){}
+	){
+		super();
+	}
 
-	async canActivate(context: ExecutionContext){
+	async canActivate(context: ExecutionContext): Promise<any>{
 		switch(context.getType()) {
 			case "http" : {
-				const request =  context.switchToHttp().getRequest();
-				return request.isAuthenticated();
+				return super.canActivate(context);
 			}
 			case "ws" : {
 				// on recupe la sock du client
