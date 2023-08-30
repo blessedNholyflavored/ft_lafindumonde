@@ -2,11 +2,13 @@ import { Strategy } from 'passport-totp';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '../auth.service';
+import { decode } from 'hi-base32';
 
 function getTotpKey(this: null, user:any, done: (err: any, key: Buffer, period: number) => any): any {
+  console.log("user totp : ", user.totpKey, decode.asBytes(user.totpKey));
   const key = {
     //ici decrypt totpkey
-    key: Buffer.from(user.totpKey),
+    key: Buffer.from(decode.asBytes(user.totpKey)),
     period: 30,
   }
   return done(null, key.key, key.period);

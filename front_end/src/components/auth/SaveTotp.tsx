@@ -5,7 +5,7 @@ import './Login.css';
 //import qrCode from '../../img/qrCode.png';
 import icon from "../../img/buttoncomp.png";
 import { useAuth } from './AuthProvider';
-import { Navigate, useLocation } from 'react-router-dom';
+import { useNavigate, Navigate, useLocation } from 'react-router-dom';
 import api from '../../AxiosInstance';
 //import queryString from 'query-string';
 
@@ -13,6 +13,7 @@ export const SaveTotp: React.FC = () => {
     const { user } = useAuth();
     const [receivedCode, setReceivedCode ] = useState('');
     const location = useLocation();
+    const navigate = useNavigate();
 
     console.log("ALLLOALLOO");
     const searchParams = new URLSearchParams(location.search);
@@ -23,13 +24,12 @@ export const SaveTotp: React.FC = () => {
         e.preventDefault();
         if (user) {
             try{
-                const response = await api.post('/auth/submitCode', {
-                    userInput: receivedCode,
-                    userID: user.id,
-                });
+                const response = await api.post(`/auth/submitCode?code=${receivedCode}`);
+
 
                 if (response.status === 200){
                     console.log('it went well !');
+                    return navigate('/');
                 }
                 else {
                     console.error("HnmmmmH,mmmm:", response.data);

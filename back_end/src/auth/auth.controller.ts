@@ -158,31 +158,33 @@ export class AuthController{
      * *********************/
 
     @Post('submitCode')
-    @UseGuards(AuthenticatedGuard)
+    @UseGuards(AuthenticatedGuard, AuthGuard('totp'))
     //@UseGuards(AuthGuard('totp'))
-    async codeChecker(@Res() res: any, @Body() body: {userInput: string, userID: number}){
+    async codeChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
         console.log("SALUT SALUT SALUT OPUTDJSHFJKU");
-        if (!body.userInput || !body.userID){
+        /*if (!body.userInput || !body.userID){
             console.log(body);
             throw new BadRequestException("input is missing or user is invalid");
-        }
+        }*/
         //else il faut faire un compare entre userImput et la key ds la db 
-        const user = await this.userService.getUserByID(body.userID);
-        if (!user || !body.userInput || !user.totpKey){
+        const user = await this.userService.getUserByID(req.user.id);
+       /* if (!user || !body.userInput || !user.totpKey){
             throw new BadRequestException("User doesn't exist");
         }
+        console.log("body.userInput is:", body.userInput);
         const isValidTOTP = speakeasy.totp.verify({
             secret: user.totpKey,
             encoding: 'base32',
             token: body.userInput,
-            window: 1,
+            window: 2,
         });
-        await this.userService.enable2FA(user.id);
-        return res.redirect('http://localhost:8080/');
-/*
+    
         if (!isValidTOTP){
             throw new UnauthorizedException('Invalid TOTP code');
         }*/
+        await this.userService.enable2FA(user.id);
+        return res.status(200).json(user);
+
      /*   const realKey = await bcrypt.compare(body.userInput, user.totpKey);
         if (!realKey){
             //invalid totp secret

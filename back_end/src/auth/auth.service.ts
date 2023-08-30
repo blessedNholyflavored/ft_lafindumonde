@@ -58,7 +58,7 @@ export class AuthService {
 		console.log("DEBUGDEBUG buffer from crypto = ", buffer);
 		const secret = encode(buffer);
 		console.log("DEBUGDEBUGDEBUG buffer encoded in b32 : ", secret);
-		return secret.toLowerCase();
+		return secret;
 	}
 
 	async generate2FAkey(user: any){
@@ -67,7 +67,7 @@ export class AuthService {
 		console.log("COUCOUCOCOUC TOTP SECRET: ", totpSecret);
 		// generate QR code
 		const issuer =  'AwesomeLameApp';
-		const qrCodeImg = await qrcode.toDataURL('otpauth://totp/${issuer}:${user.id}?secret=${totpSecret}&issuer=${issuer}');
+		const qrCodeImg = await qrcode.toDataURL(`otpauth://totp/${issuer}:${user.id}?secret=${totpSecret}&issuer=${issuer}`);
 		await this.userService.add2FAKey(totpSecret, user.id);
 
 		return {qrCodeImg, user};
