@@ -15,7 +15,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy){
 		super({
 			clientID: config.get('API_CLIENTID'), //env var
 			clientSecret: config.get('API_CLIENTSECRET'), //env var
-			callbackURL: String("http://localhost:3000/auth/api/v1/auth/42/callback"),
+			callbackURL: String("http://localhost:3001/auth/api/v1/auth/42/callback"),
 		});
 	}
 

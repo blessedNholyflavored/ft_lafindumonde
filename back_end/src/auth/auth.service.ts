@@ -26,7 +26,7 @@ export class AuthService {
 		console.log('username is :', user.username);
 		console.log('pictureURl is :', user.pictureURL);
 		const payload = {sub: user.id};
-/*		if (await this.launch2FA(user) == false) {
+	/*	if (await this.launch2FA(user) == false) {
 			return {
 				access_token:'access failed',
 				message: 'Authentication with 2FA failed'
@@ -55,16 +55,16 @@ export class AuthService {
 
 	keyGenerator(): string {
 		const buffer = crypto.randomBytes(20);
-		console.log("DEBUGDEBUG buffer from crypto = ", buffer);
+	//	console.log("DEBUGDEBUG buffer from crypto = ", buffer);
 		const secret = encode(buffer);
-		console.log("DEBUGDEBUGDEBUG buffer encoded in b32 : ", secret);
+	//	console.log("DEBUGDEBUGDEBUG buffer encoded in b32 : ", secret);
 		return secret;
 	}
 
 	async generate2FAkey(user: any){
 		const totpSecret = this.keyGenerator();
 
-		console.log("COUCOUCOCOUC TOTP SECRET: ", totpSecret);
+		//console.log("COUCOUCOCOUC TOTP SECRET: ", totpSecret);
 		// generate QR code
 		const issuer =  'AwesomeLameApp';
 		const qrCodeImg = await qrcode.toDataURL(`otpauth://totp/${issuer}:${user.id}?secret=${totpSecret}&issuer=${issuer}`);
@@ -75,6 +75,6 @@ export class AuthService {
 /*	async launch2FA(user: any){
 		if (user.enabled2FA == false)
 			return true;
-		const isTotpValid = await bcrypt.compare()
+		
 	}*/
 }

@@ -7,7 +7,7 @@ export const FriendshipComponent = ()  => {
 
   const addFriendship = async () => {
     try {
-      const response = await fetch('http://localhost:3000/users/friends/${id}', {
+      const response = await fetch('http://localhost:3001/users/friends/${id}', {
         method: "POST",
     })
     if (response.ok) {

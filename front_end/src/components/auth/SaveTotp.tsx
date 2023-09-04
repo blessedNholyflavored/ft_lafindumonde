@@ -50,7 +50,7 @@ export const SaveTotp: React.FC = () => {
                         <p className="navTitle"> ▷</p>
                     </div>
                     <div className='boxAuthContent'>
-                        <p>You can use this QR in your favorite TOTP authenticator.</p>
+                        <p>Use this QR in your favorite TOTP authenticator. It will register the app inside your authenticator in order to log in easily by reloading the code input that follows upon authentication.</p>
                         {qrCodeImg && <img src={qrCodeImg} alt="qr code" />}
                         <p>Now you can use the input box below to confirm your identity with the code you received :</p>
                         <form className='totpSubmit' onSubmit={totpSubmit}>
@@ -59,7 +59,7 @@ export const SaveTotp: React.FC = () => {
                                     className='totpInput'
                                     type='text'
                                     value={receivedCode}
-                                    placeholder='0 0 0 0' 
+                                    placeholder='000000' 
                                     onChange={(e) => setReceivedCode(e.target.value)}
                                 />
                             </label>

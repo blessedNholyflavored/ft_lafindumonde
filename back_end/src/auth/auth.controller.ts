@@ -150,7 +150,7 @@ export class AuthController{
     }
 
     /************************
-     * enticatedGuard
+     * 
      * 
      *                                  2FA FRONT PART
      *      
@@ -159,38 +159,25 @@ export class AuthController{
 
     @Post('submitCode')
     @UseGuards(AuthenticatedGuard, AuthGuard('totp'))
-    //@UseGuards(AuthGuard('totp'))
     async codeChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
         console.log("SALUT SALUT SALUT OPUTDJSHFJKU");
         /*if (!body.userInput || !body.userID){
             console.log(body);
             throw new BadRequestException("input is missing or user is invalid");
         }*/
-        //else il faut faire un compare entre userImput et la key ds la db 
         const user = await this.userService.getUserByID(req.user.id);
-       /* if (!user || !body.userInput || !user.totpKey){
-            throw new BadRequestException("User doesn't exist");
-        }
-        console.log("body.userInput is:", body.userInput);
-        const isValidTOTP = speakeasy.totp.verify({
-            secret: user.totpKey,
-            encoding: 'base32',
-            token: body.userInput,
-            window: 2,
-        });
-    
-        if (!isValidTOTP){
-            throw new UnauthorizedException('Invalid TOTP code');
-        }*/
         await this.userService.enable2FA(user.id);
         return res.status(200).json(user);
-
-     /*   const realKey = await bcrypt.compare(body.userInput, user.totpKey);
-        if (!realKey){
-            //invalid totp secret
-            throw new UnauthorizedException('Invalid TOTP credentials');
-        }*/
     }
+
+	// submit input during auth login
+	@Post('submitInput')
+	@UseGuards(AuthenticatedGuard, AuthGuard('totp'))
+	async inputChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
+		console.log('inside submitInput controller');
+		const user = await this.userService.getUserByID(req.user.id);
+		return res.status(200).json(user);
+	}
     /************************
      * 
      * 

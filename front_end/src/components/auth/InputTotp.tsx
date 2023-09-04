@@ -5,23 +5,25 @@ import './Login.css';
 import qrCode from '../../img/qrCode.png';
 import icon from "../../img/buttoncomp.png";
 import { useAuth } from './AuthProvider';
-import { Navigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
+import api from '../../AxiosInstance';
 
 export const InputTotp: React.FC = () => {
     const { user } = useAuth();
     const [receivedCode, setReceivedCode ] = useState('');
+	const navigate = useNavigate();
 
     const totpSubmit = async(e: React.FormEvent) => {
         e.preventDefault();
         if (user) {
             try{
-                await fetch(`http://localhost:3000/auth/submitCode`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({userImput: receivedCode, userID: user.id})
-                });
+               const response = await api.post(`/auth/submitInput?code=${receivedCode}`);
+			   if (response.status === 200){
+				console.log('it went well !');
+				return navigate('/');
+			   } else {
+				console.error("Hmm Hmmm :", response.data);
+			   }
             } catch (error) {
                 console.error('Error: ', error);
             }
@@ -38,14 +40,14 @@ export const InputTotp: React.FC = () => {
                         <p className="navTitle"> ▷</p>
                     </div>
                     <div className='boxAuthContent'>
-                        <p>Now you can use the input box below to confirm your identity with the code you received :</p>
+                        <p>Use the input box below to confirm your identity with the code you generated with your favorite TOTP authenticator app :</p>
                         <form className='totpSubmit' onSubmit={totpSubmit}>
                             <label className='totpLabel'>
                                 <input
                                     className='totpInput'
                                     type='text'
                                     value={receivedCode}
-                                    placeholder='0 0 0 0' 
+                                    placeholder='000000' 
                                     onChange={(e) => setReceivedCode(e.target.value)}
                                 />
                             </label>
