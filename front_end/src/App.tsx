@@ -43,8 +43,7 @@ export const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<ProtectedRoute><Home socket={socket} /></ProtectedRoute>} />
           <Route path="/game" element={<ProtectedRoute><PongGame socket={socket} /></ProtectedRoute>} />
-		      <Route path="/settings" element={<ProtectedRoute><UserSetting /></ProtectedRoute>} />
-          <Route path="/totp" element={<ProtectedRoute><InputTotp /></ProtectedRoute>} />
+		  <Route path="/settings" element={<ProtectedRoute><UserSetting /></ProtectedRoute>} />
           <Route path="/totpSave" element={<ProtectedRoute><SaveTotp /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

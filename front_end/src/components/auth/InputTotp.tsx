@@ -6,10 +6,10 @@ import qrCode from '../../img/qrCode.png';
 import icon from "../../img/buttoncomp.png";
 import { useAuth } from './AuthProvider';
 import { useNavigate, Navigate } from 'react-router-dom';
-import api from '../../AxiosInstance';
+import api, { AxiosResponse } from '../../AxiosInstance';
 
 export const InputTotp: React.FC = () => {
-    const { user } = useAuth();
+    const { user, setUser } = useAuth();
     const [receivedCode, setReceivedCode ] = useState('');
 	const navigate = useNavigate();
 
@@ -20,6 +20,13 @@ export const InputTotp: React.FC = () => {
                const response = await api.post(`/auth/submitInput?code=${receivedCode}`);
 			   if (response.status === 200){
 				console.log('it went well !');
+				api.get('/auth/me')
+				.then((res: AxiosResponse<any, any>) => {
+					setUser(res.data);
+				})
+				.catch((error: any) => {
+					console.error("easter egg error :", error);
+				});
 				return navigate('/');
 			   } else {
 				console.error("Hmm Hmmm :", response.data);

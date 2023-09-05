@@ -7,4 +7,5 @@ export interface PrismaUserCreateInput{
 	pictureURL: string;
     enabled2FA: boolean;
     totpKey: string;
+	log2FA: boolean;
 }

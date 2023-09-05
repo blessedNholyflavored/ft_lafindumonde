@@ -1,10 +1,12 @@
 import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards, BadRequestException, UnauthorizedException } from "@nestjs/common";
 import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
+//TODO: careful aux .guardSSSS
 import { FortyTwoAuthGuard } from "./guards/FortyTwo-auth.guard";
 import { ConfigService } from '@nestjs/config';
 //import { JwtAuthGuard } from "./guards/jwt-auth.guards";
 import { AuthGuard } from "@nestjs/passport";
+import { JwtGuard } from "./guards/jwt.guards";
 import { AuthenticatedGuard } from "./guards/authenticated.guards";
 import * as bcrypt from 'bcrypt';
 import * as speakeasy from 'speakeasy';
@@ -74,12 +76,13 @@ export class AuthController{
     @UseGuards(FortyTwoAuthGuard)
     async callback(@Req() req:any, @Res() res: any){
         const token = await this.authService.login(req.user);
+		await this.userService.setLog2FA(req.user, false);
         res.cookie('access_token', token.access_token, {httpOnly: true }).redirect('http://localhost:8080/');
         return token;
     }
 
     @Get('me')
-    @UseGuards(AuthenticatedGuard)
+    @UseGuards(JwtGuard)
     async protected(@Req() req: any) {
         return req.user;
     }
@@ -93,7 +96,7 @@ export class AuthController{
      * *********************/
     // a update avec try catch if no user
     @Get('2FAenable')
-    @UseGuards(AuthenticatedGuard)
+    @UseGuards(...AuthenticatedGuard)
     async twoFAenabler(@Req() req: any, @Res() res: any){
         // resetting 2FA in case 2FA is already enabled
         if (req.user.enabled2FA == true){
@@ -115,7 +118,7 @@ export class AuthController{
     }
 
     @Get('2FAdisable')
-    @UseGuards(AuthenticatedGuard)
+    @UseGuards(...AuthenticatedGuard)
     async twoFAdisabler(@Req() req: any){
         if (req.user.enabled2FA == false)
             console.log("2FA is already disabled !");
@@ -131,7 +134,7 @@ export class AuthController{
     }
 
     @Get('2FAtester')
-    @UseGuards(AuthenticatedGuard)
+    @UseGuards(...AuthenticatedGuard)
     async tester2FA(@Req() req:any){
         console.log("user here is :", req.user.username);
         if (req.user.enabled2FA == true)
@@ -158,7 +161,7 @@ export class AuthController{
      * *********************/
 
     @Post('submitCode')
-    @UseGuards(AuthenticatedGuard, AuthGuard('totp'))
+    @UseGuards(JwtGuard, AuthGuard('totp'))
     async codeChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
         console.log("SALUT SALUT SALUT OPUTDJSHFJKU");
         /*if (!body.userInput || !body.userID){
@@ -172,10 +175,12 @@ export class AuthController{
 
 	// submit input during auth login
 	@Post('submitInput')
-	@UseGuards(AuthenticatedGuard, AuthGuard('totp'))
+	@UseGuards(JwtGuard, AuthGuard('totp'))
 	async inputChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
 		console.log('inside submitInput controller');
 		const user = await this.userService.getUserByID(req.user.id);
+		//set user.log2FA a true
+		await this.userService.setLog2FA(user, true);
 		return res.status(200).json(user);
 	}
     /************************
@@ -188,5 +193,7 @@ export class AuthController{
     @Get('logout')
     async   logout(@Res() res: any){
         res.clearCookie('access_token').status(200).send();
+		//TODO: set log2FA false hihihi
+		//TODO: wipe all user data en fait
     }
 }

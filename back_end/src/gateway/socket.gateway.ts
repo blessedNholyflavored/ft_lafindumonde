@@ -22,7 +22,7 @@ import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
   },
   path: "",
 })
-@UseGuards(AuthenticatedGuard)
+@UseGuards(...AuthenticatedGuard)
 export class MyGateway implements OnModuleInit {
   @WebSocketServer()
   server: Server;

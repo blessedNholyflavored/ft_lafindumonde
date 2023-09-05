@@ -199,6 +199,7 @@ export class UserService {
           username: user.username,
           pictureURL: user.pictureURL,
           enabled2FA: false,
+		  log2FA: false,
         }
       });
       return tmpUser;
@@ -231,5 +232,13 @@ export class UserService {
       data: { totpKey: hash, },
     });
     return updateUser;
+  }
+
+  async setLog2FA(user: any, bool: boolean){
+	const updateUser = await prisma.user.update({
+		where: {id: user.id},
+		data: { log2FA: bool, },
+	});
+	return updateUser;
   }
 }
