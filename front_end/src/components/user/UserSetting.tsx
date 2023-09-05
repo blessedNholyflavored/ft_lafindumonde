@@ -4,7 +4,7 @@ import '../../style/twoFA.css';
 import icon from "../../img/buttoncomp.png";
 import logo from "../../img/logo42.png";
 import { useAuth } from '../auth/AuthProvider';
-import { twoFADisable } from '../auth/2faComp';
+import { twoFAEnable, twoFADisable } from '../auth/2faComp';
 import api from '../../AxiosInstance';
 import { useNavigate } from 'react-router-dom';
 
@@ -136,16 +136,16 @@ export const UserSetting: React.FC = () => {
 		}
 		}
 	  }
-	async function twoFAEnable() {
-        try {
-            //mettre ici bonne route finale 
-            const res = await api.get('/auth/2FAenable');
-            console.log(res.data.code);
-            return navigate(`/totpSave?qrCodeImg=${encodeURIComponent(res.data.code)}`)
-        } catch (error) {
-            console.log('Error while 2fa-ing : ', error);
-        }
-    }
+	// async function twoFAEnable() {
+    //     try {
+    //         //mettre ici bonne route finale 
+    //         const res = await api.get('/auth/2FAenable');
+    //         console.log(res.data.code);
+    //         return navigate(`/totpSave?qrCodeImg=${encodeURIComponent(res.data.code)}`)
+    //     } catch (error) {
+    //         console.log('Error while 2fa-ing : ', error);
+    //     }
+    // }
 
   return (
 	<>
@@ -203,8 +203,8 @@ export const UserSetting: React.FC = () => {
 			<p className="boxtitle"> 2FAC AUTH </p>
 		</div>
 		<div className="twoFA">
-			<button className="twoFAenabled" onClick={twoFAEnable}>enable</button>
-			<button className="twoFAdisabled" onClick={twoFADisable}>disable</button>
+			<button className="twoFAenabled" onClick={() => twoFAEnable(navigate)}>enable</button>
+			<button className="twoFAdisabled" onClick={() => twoFADisable({user, setUser})}>disable</button>
 		</div>
 		<div className="footersmallbox">
 			<br></br>

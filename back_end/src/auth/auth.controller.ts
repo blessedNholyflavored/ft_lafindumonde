@@ -43,7 +43,7 @@ export class AuthController{
 		}
 		const user = await this.authService.retrieveUser(body);
 		const token = await this.authService.login(user);
-		res.cookie('access_token', token.access_token, {httpOnly: true}).json({user, token}).statusCode(200).send();
+		res.cookie('access_token', token.access_token, {httpOnly: true}).json({user: this.userService.exclude(user, ['totpKey']), token}).statusCode(200).send();
 
 	}
 
@@ -84,7 +84,7 @@ export class AuthController{
     @Get('me')
     @UseGuards(JwtGuard)
     async protected(@Req() req: any) {
-        return req.user;
+        return this.userService.exclude(req.user, ['totpKey']);
     }
 
     /************************
@@ -124,13 +124,14 @@ export class AuthController{
             console.log("2FA is already disabled !");
         else {
             const updtUser = await this.userService.disable2FA(req.user.id);
+			await this.userService.setLog2FA(updtUser, false);
             if (updtUser.enabled2FA == false)
                 console.log("2FA correctly disabled !");
             else
                 console.log("An issue happened disabling 2fa ???");
-            return updtUser;
+            return this.userService.exclude(updtUser, ['totpKey']);
         }
-        return req.user;
+        return this.userService.exclude(req.user, ['totpKey']);
     }
 
     @Get('2FAtester')
@@ -149,7 +150,7 @@ export class AuthController{
             console.log("his 2fa is ENABLED !");
         else
             console.log("his 2fa is NOT enabled >< .....");
-        return updtUser ;
+        return this.userService.exclude(updtUser, ['totpKey']);
     }
 
     /************************
@@ -170,7 +171,8 @@ export class AuthController{
         }*/
         const user = await this.userService.getUserByID(req.user.id);
         await this.userService.enable2FA(user.id);
-        return res.status(200).json(user);
+		await this.userService.setLog2FA(user, true);
+        return res.status(200).json(this.userService.exclude(user, ['totpKey']));
     }
 
 	// submit input during auth login
@@ -181,7 +183,7 @@ export class AuthController{
 		const user = await this.userService.getUserByID(req.user.id);
 		//set user.log2FA a true
 		await this.userService.setLog2FA(user, true);
-		return res.status(200).json(user);
+		return res.status(200).json(this.userService.exclude(user, ['totpKey']));
 	}
     /************************
      * 

@@ -20,14 +20,7 @@ export const InputTotp: React.FC = () => {
                const response = await api.post(`/auth/submitInput?code=${receivedCode}`);
 			   if (response.status === 200){
 				console.log('it went well !');
-				api.get('/auth/me')
-				.then((res: AxiosResponse<any, any>) => {
-					setUser(res.data);
-				})
-				.catch((error: any) => {
-					console.error("easter egg error :", error);
-				});
-				return navigate('/');
+				setUser(response.data);
 			   } else {
 				console.error("Hmm Hmmm :", response.data);
 			   }
