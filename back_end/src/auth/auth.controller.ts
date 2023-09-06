@@ -182,8 +182,8 @@ export class AuthController{
 		console.log('inside submitInput controller');
 		const user = await this.userService.getUserByID(req.user.id);
 		//set user.log2FA a true
-		await this.userService.setLog2FA(user, true);
-		return res.status(200).json(this.userService.exclude(user, ['totpKey']));
+		const updtUser = await this.userService.setLog2FA(user, true);
+		return res.status(200).json(this.userService.exclude(updtUser, ['totpKey']));
 	}
     /************************
      * 
@@ -194,6 +194,7 @@ export class AuthController{
      * *********************/
     @Get('logout')
     async   logout(@Res() res: any){
+		console.log("")
         res.clearCookie('access_token').status(200).send();
 		//TODO: set log2FA false hihihi
 		//TODO: wipe all user data en fait

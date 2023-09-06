@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './../../App.css';
-import './Login.css';
+import './../../style/Login.css';
 // temporaire le tps d'avoir un vrai qr generator
 import qrCode from '../../img/qrCode.png';
 import icon from "../../img/buttoncomp.png";
@@ -19,7 +19,7 @@ export const InputTotp: React.FC = () => {
             try{
                const response = await api.post(`/auth/submitInput?code=${receivedCode}`);
 			   if (response.status === 200){
-				console.log('it went well !');
+				console.log('it went well ! user = ', response.data);
 				setUser(response.data);
 			   } else {
 				console.error("Hmm Hmmm :", response.data);

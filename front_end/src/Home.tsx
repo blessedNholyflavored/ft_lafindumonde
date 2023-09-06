@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import io, { Socket } from 'socket.io-client';
 import { User } from './interfaces';
+import "./App.css";
+import "./style/Logout.css";
+import { Logout } from './components/auth/Logout';
 import { useAuth } from './components/auth/AuthProvider';
 
 interface HomeProps {
@@ -59,6 +62,9 @@ const Home: React.FC<HomeProps> = ({ socket }) => {
       {queueCount === 2 && (
         <p>La partie commence entre Ldinaut et Mcouppe !</p>
       )}
+	  		<div className="logoutBox">
+			<button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
+		</div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './../../App.css';
-import './Login.css';
+import './../../style/Login.css';
 // temporaire le tps d'avoir un vrai qr generator
 //import qrCode from '../../img/qrCode.png';
 import icon from "../../img/buttoncomp.png";

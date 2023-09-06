@@ -6,6 +6,7 @@ import logo from "../../img/logo42.png";
 import { useAuth } from '../auth/AuthProvider';
 import { twoFAEnable, twoFADisable } from '../auth/2faComp';
 import api from '../../AxiosInstance';
+import { Logout } from './../auth/Logout';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -216,6 +217,7 @@ export const UserSetting: React.FC = () => {
 	</div>
 	<div className="footerprofilsettings">
 		{/* <br></br> */}
+			<button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
 		<img src={logo} className="logo" alt="icon" />
 	</div>
 	</div>

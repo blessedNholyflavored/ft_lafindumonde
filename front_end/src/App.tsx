@@ -8,6 +8,7 @@ import { UserSetting } from './components/user/UserSetting';
 import { User } from './interfaces';
 import './App.css';
 import { Login } from './components/auth/Login';
+import { Logout } from './components/auth/Logout';
 import { InputTotp } from './components/auth/InputTotp';
 import { SaveTotp } from './components/auth/SaveTotp';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -57,7 +58,7 @@ export const App: React.FC = () => {
 function  Profile() {
   const { user, setUser } =useAuth();
 
-  async function logout() {
+ /* async function logout() {
     try {
       // on appelle la route qui clear cookie ds le back
       const res = await api.get('/auth/logout');
@@ -66,13 +67,13 @@ function  Profile() {
     } catch (error) {
       console.log('Error: ', error);
     }
-  }
+  }*/
   return (
     <div className="Salut">
       <h1>{user!.username}</h1>
       <img src={user!.pictureURL} alt="profile picture" />
       <p>{ JSON.stringify(user) }</p>
-      <button onClick={logout}>LOG OUT </button>
+      <button onClick={() => Logout({user, setUser})}>LOG OUT </button>
     </div>
   );
 };

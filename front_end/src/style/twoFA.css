@@ -5,6 +5,7 @@
 .twoFA button {
     cursor: pointer;
     font-family: IBM Plex Mono;
+	size: 42px;
     color: #000;
     border: solid #000;
     border-width: 3px;

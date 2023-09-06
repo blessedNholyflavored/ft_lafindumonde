@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axios, { AxiosResponse } from "../../AxiosInstance";
-import './Loading.css';
+import './../../style/Loading.css';
 import './../../App.css';
 import './../../style/Profile.css';
 import { InputTotp } from './InputTotp';

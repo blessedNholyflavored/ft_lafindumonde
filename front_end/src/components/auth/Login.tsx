@@ -1,7 +1,7 @@
 import React from 'react';
 import "./../../App.css";
 import "./../../style/Profile.css";
-import "./Login.css";
+import "./../../style/Login.css";
 import logo from "../../img/logo42.png";
 import icon from "../../img/buttoncomp.png"
 import { useAuth } from "./AuthProvider";
