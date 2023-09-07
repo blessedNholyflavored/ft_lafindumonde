@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import Home from './Home';
 import PongGame from './PongGame';
 import { UserSetting } from './components/user/UserSetting';
@@ -8,14 +8,13 @@ import { UserSetting } from './components/user/UserSetting';
 import { User } from './interfaces';
 import './App.css';
 import { Login } from './components/auth/Login';
+import { Chat } from './components/chat/Chat';
 import { Logout } from './components/auth/Logout';
-import { InputTotp } from './components/auth/InputTotp';
 import { SaveTotp } from './components/auth/SaveTotp';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { AuthProvider, useAuth } from './components/auth/AuthProvider';
 import { socket, WebsocketProvider } from './WebsocketContext';
 import { Websocket } from './Websocket';
-import api from './AxiosInstance';
 
 export const App: React.FC = () => {
   //const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
@@ -49,31 +48,29 @@ export const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/auth" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/sock" element={<ProtectedRoute><Websocket /></ProtectedRoute>} />
+		  <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
         </Routes>
     </AuthProvider>
       </WebsocketProvider>
   );
 };
 
+//TODO: remove this before prod
 function  Profile() {
   const { user, setUser } =useAuth();
+  const navigate = useNavigate();
 
- /* async function logout() {
-    try {
-      // on appelle la route qui clear cookie ds le back
-      const res = await api.get('/auth/logout');
-      // du coup l'user qu'on avait set bah il faut le unset
-      setUser(null);
-    } catch (error) {
-      console.log('Error: ', error);
-    }
-  }*/
+	const navigateToHome = () => {
+		navigate('/');
+	};
+
   return (
     <div className="Salut">
       <h1>{user!.username}</h1>
       <img src={user!.pictureURL} alt="profile picture" />
       <p>{ JSON.stringify(user) }</p>
       <button onClick={() => Logout({user, setUser})}>LOG OUT </button>
+	  <button onClick={navigateToHome}>HOME</button>
     </div>
   );
 };

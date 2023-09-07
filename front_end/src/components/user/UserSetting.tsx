@@ -217,7 +217,7 @@ export const UserSetting: React.FC = () => {
 	</div>
 	<div className="footerprofilsettings">
 		{/* <br></br> */}
-			<button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
+		<button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
 		<img src={logo} className="logo" alt="icon" />
 	</div>
 	</div>

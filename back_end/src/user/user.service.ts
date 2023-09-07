@@ -204,6 +204,7 @@ export class UserService {
       });
       return tmpUser;
     } catch (err) {
+		//TODO: return the accurate error
       // doc here : https://www.prisma.io/docs/reference/api-reference/error-reference
       console.log('Error creating user:', err);
       //throw err;

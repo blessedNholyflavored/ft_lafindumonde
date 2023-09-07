@@ -11,7 +11,7 @@ export async function twoFAEnable(navigate: any) {
 	if (window.confirm("Are you ready to save your unique QR code ?")){
 		try {
 			const res = await api.get('/auth/2FAenable');	
-			console.log(res.data.code);
+			// console.log(res.data.code);
 			return navigate(`/totpSave?qrCodeImg=${encodeURIComponent(res.data.code)}`)
 		} catch (error) {
 			console.log('Error while 2fa-ing : ', error);

@@ -29,8 +29,6 @@ export class JwtGuard extends AuthGuard('jwt'){
 					?.split("; ")
 					?.find((row) => row.startsWith("access_token"))
 					?.split("=")[1];
-				// petit console.log de test:
-				console.log("client token is :", token);
 				try {
 					// on verif la signature du jwt --> est ce que le token est valide ?
 					const payload = this.jwt.verify(token, {secret: this.config.get('JWT_SECURE_KEY')});

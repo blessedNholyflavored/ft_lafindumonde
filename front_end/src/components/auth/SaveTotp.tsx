@@ -28,7 +28,7 @@ export const SaveTotp: React.FC = () => {
 
 
                 if (response.status === 200){
-                    console.log('it went well !');
+                    // console.log('it went well !');
                     return navigate('/');
                 }
                 else {

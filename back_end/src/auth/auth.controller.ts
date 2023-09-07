@@ -56,7 +56,6 @@ export class AuthController{
      * *********************/
     @Post('login')
     async login(@Body() loginDto:any){
-        console.log('jsp gros');
         return ;
     }
 
@@ -134,24 +133,24 @@ export class AuthController{
         return this.userService.exclude(req.user, ['totpKey']);
     }
 
-    @Get('2FAtester')
-    @UseGuards(...AuthenticatedGuard)
-    async tester2FA(@Req() req:any){
-        console.log("user here is :", req.user.username);
-        if (req.user.enabled2FA == true)
-           console.log("his 2fa is ENABLED !");
-        else
-            console.log("his 2fa is NOT enabled >< .....");
+    // @Get('2FAtester')
+    // @UseGuards(...AuthenticatedGuard)
+    // async tester2FA(@Req() req:any){
+    //     console.log("user here is :", req.user.username);
+    //     if (req.user.enabled2FA == true)
+    //        console.log("his 2fa is ENABLED !");
+    //     else
+    //         console.log("his 2fa is NOT enabled >< .....");
         
-        const updtUser = await this.userService.enable2FA(req.user.id);
+    //     const updtUser = await this.userService.enable2FA(req.user.id);
         
-        console.log("user updated is :", updtUser.username);
-        if (updtUser.enabled2FA == true)
-            console.log("his 2fa is ENABLED !");
-        else
-            console.log("his 2fa is NOT enabled >< .....");
-        return this.userService.exclude(updtUser, ['totpKey']);
-    }
+    //     console.log("user updated is :", updtUser.username);
+    //     if (updtUser.enabled2FA == true)
+    //         console.log("his 2fa is ENABLED !");
+    //     else
+    //         console.log("his 2fa is NOT enabled >< .....");
+    //     return this.userService.exclude(updtUser, ['totpKey']);
+    // }
 
     /************************
      * 
@@ -164,7 +163,7 @@ export class AuthController{
     @Post('submitCode')
     @UseGuards(JwtGuard, AuthGuard('totp'))
     async codeChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
-        console.log("SALUT SALUT SALUT OPUTDJSHFJKU");
+        // console.log("SALUT SALUT SALUT OPUTDJSHFJKU");
         /*if (!body.userInput || !body.userID){
             console.log(body);
             throw new BadRequestException("input is missing or user is invalid");
@@ -179,7 +178,7 @@ export class AuthController{
 	@Post('submitInput')
 	@UseGuards(JwtGuard, AuthGuard('totp'))
 	async inputChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
-		console.log('inside submitInput controller');
+		// console.log('inside submitInput controller');
 		const user = await this.userService.getUserByID(req.user.id);
 		//set user.log2FA a true
 		const updtUser = await this.userService.setLog2FA(user, true);
@@ -194,7 +193,7 @@ export class AuthController{
      * *********************/
     @Get('logout')
     async   logout(@Res() res: any){
-		console.log("")
+		// console.log("")
         res.clearCookie('access_token').status(200).send();
 		//TODO: set log2FA false hihihi
 		//TODO: wipe all user data en fait

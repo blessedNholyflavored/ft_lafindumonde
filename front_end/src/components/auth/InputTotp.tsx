@@ -19,7 +19,7 @@ export const InputTotp: React.FC = () => {
             try{
                const response = await api.post(`/auth/submitInput?code=${receivedCode}`);
 			   if (response.status === 200){
-				console.log('it went well ! user = ', response.data);
+				// console.log('it went well ! user = ', response.data);
 				setUser(response.data);
 			   } else {
 				console.error("Hmm Hmmm :", response.data);

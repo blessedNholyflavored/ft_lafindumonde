@@ -14,8 +14,6 @@ export interface User {
     //hash:string; 
     pictureURL: string;
     enabled2FA: boolean;
-    //enlever totpKey
-    //totpKey: string;
 	log2FA: boolean;
 }
 
