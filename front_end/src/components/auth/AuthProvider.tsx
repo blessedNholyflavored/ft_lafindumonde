@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios, { AxiosResponse } from "./AxiosInstance";
+import axios, { AxiosResponse } from "../../AxiosInstance";
+import './../../style/Loading.css';
+import './../../App.css';
+import './../../style/Profile.css';
+import { InputTotp } from './InputTotp';
 
 // interface User 
 export interface User {
@@ -9,6 +13,8 @@ export interface User {
     createdAt: string;
     //hash:string; 
     pictureURL: string;
+    enabled2FA: boolean;
+	log2FA: boolean;
 }
 
 interface AuthContextType {
@@ -41,12 +47,26 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
                 setLoading(false);
             });
     }, []);
-
+// TODO: faire un joli front pour le loading....
     if (loading) {
         return (
-            <div>Loading...</div>
+            <div className='loadingPage'>
+				<div className="navbarbox navAuth">
+    			    <p className="navTitle"> WELCOME, PLAYER </p>
+                    <p className="navTitle"> ▷</p>
+                </div>
+                <div className='loadingBox'>
+                    <p> LOADING....</p>
+		        </div>
+			</div>
         );
     }
+	if (user && (user.log2FA === false && user.enabled2FA)){
+		return (
+			<AuthContext.Provider value={{ user, setUser }}>
+				<InputTotp />
+        	</AuthContext.Provider>);
+	}
 
     return (
         <AuthContext.Provider value={{ user, setUser }}>
