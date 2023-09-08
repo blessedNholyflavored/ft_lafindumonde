@@ -146,13 +146,14 @@ useEffect(() => {
 
     socket?.emit('leaveGame');
     socket?.emit('changeStatus');
+    setEnd(1);
   };
-
+  
   window.addEventListener('beforeunload', handleBeforeUnload);
-
-
+  
+  
       //      CLEAR DES DIFFERENTS EVENT
-
+      
   return () => {
     window.removeEventListener('beforeunload', handleBeforeUnload);
     if (socket) {
@@ -184,7 +185,10 @@ useEffect(() => {
 <div className="pong-game">
   {user && (
     <h2>Vous êtes connecté en tant que {user.username}</h2>
-  )}
+    )}
+    {!end && (
+    <button onClick={NavHome}>Quitter la partie</button>
+)}
   {room && room.player1 && room.player2 &&  (
     <div>
       <p>La partie commence entre {room.player1} et {room.player2} !</p>

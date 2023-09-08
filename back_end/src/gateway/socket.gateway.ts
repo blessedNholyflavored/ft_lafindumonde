@@ -16,6 +16,7 @@ import { RoomMapService } from './room_map.service';
 import SocketWithUser from 'src/gateway/types/socket';
 import { Interval } from '@nestjs/schedule';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
+import { disconnect } from 'process';
 
 // ici add de l'authorisation de recup des credentials du front (le token)
 @WebSocketGateway({
@@ -32,9 +33,15 @@ export class MyGateway implements OnModuleInit {
   private playerQueue: number[] = [];
   private playerQueue2: number[] = [];
   private socketQueue: Socket[] = [];
+  private playerQueueBonus: number[] = [];
+  private playerQueue2Bonus: number[] = [];
+  private socketQueueBonus: Socket[] = [];
   private res;
   private p1;
   private p2;
+  private resBonus;
+  private p1Bonus;
+  private p2Bonus;
   constructor(private readonly gameService: GameService, private readonly userService: UserService,
     private readonly roomMapService: RoomMapService) {}
   private room: Room;
@@ -43,6 +50,11 @@ export class MyGateway implements OnModuleInit {
     this.server.on('connection', (socket) => {
       console.log(socket.id);
       console.log('Connected');
+      socket.on('disconnect', () => {
+          this.playerQueue.splice(0, 1);
+          this.playerQueue2.splice(0, 1);
+          this.socketQueue.splice(0, 1);
+      });
     });
   }
   
@@ -58,7 +70,46 @@ export class MyGateway implements OnModuleInit {
 
   // ICICICI exemple hihihi
   @SubscribeMessage('joinQueue')
-  async onJoinQueue(@MessageBody() player: number, @ConnectedSocket() socket: Socket,){
+  async onJoinQueue(@MessageBody() data: {player: number, type: number}, @ConnectedSocket() socket: Socket,){
+    const player = data[0];
+    const type = data[1]
+    console.log(type);
+    if (type == 1)
+    {
+      // ici plutot que player : socket.user
+      console.log("dans OnJoinQueue: userid = ", socket.user.id);
+      console.log("l'ensemble du user = ", socket.user);
+      // fin de l'exemple
+      if (!this.playerQueueBonus.includes(player)) {
+        this.playerQueueBonus.push(player);
+        this.playerQueue2Bonus.push(player);
+        this.socketQueueBonus.push(socket);
+        console.log(`${player} a rejoint la file d'attente.`);
+
+        const count = this.playerQueueBonus.length;
+        if (this.playerQueueBonus.length === 2) {
+          const firstPlayer = this.playerQueueBonus.shift()!;
+          const secondPlayer = this.playerQueueBonus.shift()!;
+          const socket1 = this.socketQueueBonus.shift()!;
+          const socket2 = this.socketQueueBonus.shift()!;
+
+          // io.to(user1.id.toString()).to(user2.id.toString()).emit('startGame', room);
+
+          console.log(`Début du jeu entre ${firstPlayer} et ${secondPlayer}.`);
+          this.res = await this.gameService.CreateGame(firstPlayer, secondPlayer, type);
+
+          this.p1 = firstPlayer;
+          this.p2 = secondPlayer;
+          socket1.emit('queueUpdateBonus', count);
+          socket2.emit('queueUpdateBonus', count);
+          return ;
+        }
+        
+        socket.emit('queueUpdateBonus', count);
+      }
+    }
+    else
+    {
     // ici plutot que player : socket.user
     console.log("dans OnJoinQueue: userid = ", socket.user.id);
     console.log("l'ensemble du user = ", socket.user);
@@ -79,7 +130,7 @@ export class MyGateway implements OnModuleInit {
         // io.to(user1.id.toString()).to(user2.id.toString()).emit('startGame', room);
 
         console.log(`Début du jeu entre ${firstPlayer} et ${secondPlayer}.`);
-        this.res = await this.gameService.CreateGame(firstPlayer, secondPlayer);
+        this.res = await this.gameService.CreateGame(firstPlayer, secondPlayer, type);
 
         this.p1 = firstPlayer;
         this.p2 = secondPlayer;
@@ -87,8 +138,10 @@ export class MyGateway implements OnModuleInit {
         socket2.emit('queueUpdate', count);
         return ;
       }
+      
       socket.emit('queueUpdate', count);
     }
+  }
   }
 
   @SubscribeMessage('startGame')
@@ -347,7 +400,7 @@ export class MyGateway implements OnModuleInit {
     let roomUpdate: roomSend = {player1: this.room.player1.username, player2: this.room.player2.username,
       ballX: this.room.ball.x, ballY: this.room.ball.y, scoreP1: this.room.scorePlayer1,
       scoreP2: this.room.scorePlayer2, player1Y: this.room.player1.point.y, player2Y: this.room.player2.point.y,
-      winner: '', roomID: this.res.id, end: this.room.end};
+      winner: '', roomID: this.res.id, end: 1};
     this.room = null;
     this.stopLoop();
     this.server.emit('playerLeave', roomUpdate);

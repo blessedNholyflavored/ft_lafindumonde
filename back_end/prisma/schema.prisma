@@ -96,4 +96,5 @@ model Game {
 	scrP1		Int?
 	scrP2		Int?
 	roomId		Int?
+	superGame	Int?
 }

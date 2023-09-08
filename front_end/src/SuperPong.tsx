@@ -213,6 +213,9 @@ useEffect(() => {
       {user && (
         <h2>Vous êtes connecté en tant que {user.username}</h2>
       )}
+          {!end && (
+    <button onClick={NavHome}>Quitter la partie</button>
+    )}
       {room && room.player1 && room.player2 && (
         <div>
           <p>La partie commence entre {room.player1} et {room.player2} !</p>

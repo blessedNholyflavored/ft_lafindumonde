@@ -50,6 +50,7 @@ export const App: React.FC = () => {
           <Route path="/auth" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/sock" element={<ProtectedRoute><Websocket /></ProtectedRoute>} />
 		  <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+        <Route path="/SuperGame" element={<ProtectedRoute><SuperPong socket={socket} /></ProtectedRoute>} />
         </Routes>
     </AuthProvider>
       </WebsocketProvider>
