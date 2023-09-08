@@ -7,6 +7,7 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
+  friendRequest: any;
   constructor(config: ConfigService) {
     super({
       datasources: {

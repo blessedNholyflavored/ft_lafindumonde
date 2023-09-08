@@ -1,12 +1,7 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { FriendsService } from './friends.service';
-import { UserService } from 'src/user/user.service';
+import { CreateFriendRequestDto } from './dto/friend.dto';
 import { Friend } from './friends.interface';
-import { Response } from 'express';
-import {
-  AcceptFriendRequestDto,
-  CreateFriendRequestDto,
-} from './dto/friend.dto';
 
 @Controller('friends')
 export class FriendsController {
@@ -21,21 +16,6 @@ export class FriendsController {
   async createFriendRequest(
     @Body() createFriendRequestDto: CreateFriendRequestDto,
   ): Promise<Friend> {
-    return this.friendsService.createFriendRequest(createFriendRequestDto);
-  }
-
-  @Post('accept')
-  async acceptFriendRequest(
-    @Body() acceptFriendRequestDto: AcceptFriendRequestDto,
-  ): Promise<void> {
-    await this.friendsService.acceptFriendRequest(acceptFriendRequestDto);
-  }
-
-  @Get('status')
-  async getFriendshipStatus(
-    @Query('senderId') senderId: string,
-    @Query('recipientId') recipientId: string,
-  ): Promise<string | null> {
-    return this.friendsService.getFriendshipStatus(+senderId, +recipientId);
+    return this.friendsService.sendFriendRequest(createFriendRequestDto);
   }
 }
