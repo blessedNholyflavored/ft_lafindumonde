@@ -1,217 +1,217 @@
-import React, { useState, useRef, useEffect } from 'react';
-
-export const PongGame = () => {
-
-    const [player1, setPlayer1] = useState(300);
-    const [player2, setPlayer2] = useState(300);
- //   const [ball, setBall] = useState({ x: 900, y: 300 });
-  //  const [ballDir, setBallDir] = useState({ x: 1, y: -1 });
-    const [keyCode, setKeyCode] = useState('');
-    const gameAreaRef = useRef<HTMLDivElement>(null);    
-    const mapy = 600;
-    const mapx = 1800; 
-    const ballSpeed = 12;
-    const [ player1Point, setPoint1 ] = useState(0);
-    const [ player2Point, setPoint2 ] = useState(0);
-    const [ player1tsc, setPoint1tsc ] = useState(0);
-    const [ player2tsc, setPoint2tsc ] = useState(0);
-    const [ball, setBall] = useState<{ x: number; y: number }>({ x: 900, y: 300 });
-    const [ballDir, setBallDir] = useState<{ x: number; y: number }>({ x: -1, y: 0 });
-    const [end, setEnd] = useState<boolean>(false);
-
-    const playerMove = (e: React.KeyboardEvent<HTMLDivElement>) => {
+import React, { useContext, useEffect, useState } from 'react';
+import { Socket } from 'socket.io-client';
+import { User, Room } from './interfaces'; // Assurez-vous d'importer les interfaces correctes
+import './App.css'
+import { useAuth } from './AuthProvider';
+import { useNavigate } from 'react-router-dom';
+import { WebsocketContext } from './WebsocketContext';
 
 
-          if (end)
-            return;
-          setKeyCode(e.key);
-          const key = e.keyCode;
-          const speed = 30;
-      
-          if (key === 87 && player1 > 10)
-          {
-            setPlayer1(player1 - speed);
-          }
-          else if (key === 83 && player1 < mapy - 90)
-          {
-            setPlayer1(player1 + speed);
-          }
-          else if (key === 38 && player2 > 10)
-          {
-            setPlayer2(player2 - speed);
-          }
-          else if (key === 40 && player2 < mapy - 90)
-          {
-            setPlayer2(player2 + speed);
-          }
-      };
 
-      
-      useEffect(() => {
+const PongGame: React.FC = () => {
+  const [room, setRoom] = useState<Room | null>(null);
+  const [counter, setCounter] = useState(0);
+  const { user, setUser } =useAuth();
+  const [end, setEnd] = useState<number>(0);
+  const [startFlag, setStartflag] = useState<number>(0);
+  const navigate = useNavigate();
+  const socket = useContext(WebsocketContext);
+  const [player1Pos, setPlayer1Pos] = useState<number>(200);
+  const [player2Pos, setPlayer2Pos] = useState<number>(200);
+  const [BallXpos, setBallXPos] = useState<number>(350);
+  const [BallYpos, setBallYPos] = useState<number>(200);
+  const [SpeedBallX, setSpeedBallX] = useState<number>(-5);
+  const [SpeedBallY, setSpeedBallY] = useState<number>(0);
 
-        const interval = setInterval(() => {
-          setBall((prevBallPos: { x: number; y: number }) => ({
-            x: prevBallPos.x + ballDir.x * ballSpeed,
-            y: prevBallPos.y + ballDir.y * ballSpeed,
-          }));
-        }, 1000 / 60);
-        return () => clearInterval(interval);
-      }, [ballDir]);
 
-      useEffect(() => {
-        
-        if (end)
-          return;
-          if (ball.y >= mapy - 8 || ball.y <= 0)
-          {
-            setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: -prevBallDir.y }));
-          }
-          if (ball.x >= mapx - 8 - 10 || ball.x <= 10)
-          {
-            if ((ball.x > mapx / 2 && ball.y + 8 >= player2 && ball.y <= player2 + 90) || (ball.x < mapx / 2 && ball.y + 8 >= player1 && ball.y <= player1 + 90))
-            {
-              if (ball.y <= player2 - 20 || ball.y <= player1 - 20)
-                setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: -prevBallDir.y - 0.15}));
-              if (ball.y <= player2 + 20 || ball.y <= player1 + 20)
-                setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: -prevBallDir.y + 0.30}));
-              setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, x: -prevBallDir.x}));
-            }
-          }
-          if (ball.x < 0)
-          {
-            ball.x = 900;
-            ball.y = 300;
-            setBall((prevBallPos: { x: number; y: number }) => ({
-              x: 900,
-              y: 300,
-            }));
-            setPoint2((prevScore: number) => prevScore + 1);
-            setPoint2tsc((prevScore: number) => prevScore + 1);
-          }
-          if (ball.x >= mapx)
-          {
-            ball.x = 900;
-            ball.y = 300;
-            setBall((prevBallPos: { x: number; y: number }) => ({
-              x: 900,
-              y: 300,
-            }));
-            setPoint1((prevScore: number) => prevScore + 1);
-            setPoint1tsc((prevScore: number) => prevScore + 1);
-          }
-        }, [ball]);
 
-  const [usernames, setUsernames] = useState([]);
+  const handleKeyDown = (event: KeyboardEvent) => {
 
-        useEffect(() => {
-          const fetchUsernames = async () => {
-            try {
-              const response = await (await fetch("http://localhost:3000/users")).json();
-              const usernamesArray = response.map((user: { username: any; }) => user.username);
-              setUsernames(usernamesArray);
-            } catch (error) {
-              console.error('Error fetching usernames:', error);
-            }
-          };  
-          fetchUsernames();
-        }, []);
-
-        useEffect(() => {
-    if (gameAreaRef.current) {
-      gameAreaRef.current.focus();
+    if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !end)
+    {
+      socket?.emit("movePoint", user?.username, event.key, room?.roomID);
     }
-  }, []);
-
-  const restartGame = () => {
-    setEnd(false);
-    setPlayer1(300);
-    setPlayer2(300);
-    setPoint1tsc(0);
-    setPoint2tsc(0);
-    setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, x: 1}));
-    setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: 0}));
   };
-
+  
 
   useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [socket, room, user]);
 
-    if (player1Point >= 5 || player2Point >= 5) {
-      setEnd(true);
-      setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, x: 0}));
-      setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: 0}));
-      setPoint1(0);
-      setPoint2(0);
+//   useEffect(() => {
+//     let intervalId: NodeJS.Timeout;
+//     if (socket && counter === 1 && !end) {
+//       intervalId = setInterval(() => {
+//         socket.emit('ballMoovEMIT', room?.roomID);
+//     }, 1000 / 60);
+//   }
+//   return () => {
+//     if (intervalId) {
+//       clearInterval(intervalId);
+//     }
+//   };
+// }, [socket, room]);
+
+
+
+//   useEffect(() => {
+//     let intervalId: NodeJS.Timeout;
+//     if (socket && !end) {
+//       intervalId = setInterval(() => {
+
+//         setBallXPos((prevXPos) => prevXPos + SpeedBallX);
+//         setBallYPos((prevYPos) => prevYPos + SpeedBallY);
+
+//     }, 1000 / 60);
+//   }
+//   return () => {
+//     if (intervalId) {
+//       clearInterval(intervalId);
+//     }
+//   };
+// }, [BallXpos, BallYpos]);
+
+
+
+
+const NavHome = () => {
+  socket.emit('changeStatus', (socket: Socket) => {
+  });
+  navigate('/');
+  window.location.reload();
+
+}
+
+useEffect(() => {
+
+
+
+      //      CREATION DU MODEL DE LA GAME DANS LA DB
+
+  if (socket && !startFlag && room && counter === 1) {
+    setStartflag(1);
+    socket.emit('CreateGame', (room: Room) => {
+    });
+  }
+
+      //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
+
+  if (socket && counter === 0) {
+    let t = user?.id;
+    socket?.emit('startGame');
+    setCounter(1);
+  }
+
+      //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
+
+  if (socket) {
+    socket.on('startGame2', async (updateroom: Room) => {
+        setCounter(1);
+        setRoom(updateroom);
+    });
+  }
+
+  if (socket && !end) {
+    socket.on('recupMoov', (updatedRoom: Room) => {
+      if (room)
+      {
+      setPlayer1Pos(updatedRoom.player1Y);
+      setPlayer2Pos(updatedRoom.player2Y);
+      }
+      // setRoom(updatedRoom);
+    });
+  }
+
+        //      RECUP DES DATAS DES PLAYER MOVES ET DES DEPLACEMENTS DE LA BALLE DEPUIS LE BACK VERS LE FRONT
+
+  if (socket && !end) {
+    socket.on('ballMoovON', (updateRoom: Room) => {
+      if (updateRoom.player1 && updateRoom.player2 && updateRoom.player1 !== undefined) {
+        setRoom(updateRoom);
+        setSpeedBallX(updateRoom.speedX);
+        setSpeedBallY(updateRoom.speedY);
+        setBallXPos(updateRoom.ballX);
+        setBallYPos(updateRoom.ballY);
+      }
+    });
+  }
+
+  if (socket && room && room.end)
+  setEnd(1);
+
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+
+    socket?.emit('leaveGame');
+    socket?.emit('changeStatus');
+  };
+
+  window.addEventListener('beforeunload', handleBeforeUnload);
+
+
+      //      CLEAR DES DIFFERENTS EVENT
+
+  return () => {
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+    if (socket) {
+      socket.off('recupMoov');
+      socket.off('ballMoovON');
+      socket.off('recupMoov');
+      socket.off('startGame2');
+      socket.off('startGame');
+
 
     }
-  }, [player1Point, player2Point, end, ballDir]);
+  };
+}, [socket, room, end, BallXpos, BallYpos, SpeedBallX, SpeedBallY]);
 
 
-      return (
-        
-        <div>
+
+useEffect(() => {
+
+  if (socket && !end) {
+    socket.on('playerLeave', (room: Room) => {
+      setRoom(room)
+    });
+  }
+  });
 
 
-          {usernames.map((username, index) => (
-            <p key={index}>hello {username}</p>
-            ))}
-                  <h1>KeyCode: {keyCode}</h1>
-                  <h1>{ usernames[0] }: {player1}</h1>
-                  <h1>{ usernames[1] }: {player2}</h1>
-          <div style={{ textAlign: 'center', fontSize: '24px', marginBottom: '10px' }}>
-            Score - { usernames[0] } { player1tsc } | { player2tsc } { usernames[1] }
-            
-          </div>
-          
-          <div
-            ref={gameAreaRef}
-            tabIndex={0}
-            onKeyDown={playerMove}
-            style={{
-              width: mapx,
-              height: mapy,
-              border: '7px solid black',
-              position: 'relative',
-            }}
-          >
-            { end && (
+
+  return (
+<div className="pong-game">
+  {user && (
+    <h2>Vous êtes connecté en tant que {user.username}</h2>
+  )}
+  {room && room.player1 && room.player2 &&  (
+    <div>
+      <p>La partie commence entre {room.player1} et {room.player2} !</p>
+      <div style={{ textAlign: 'center', fontSize: '24px', marginBottom: '10px' }}>
+          { end && (
             <div>
               <h1>Fin de partie !</h1>
-              Score - { usernames[0] } { player1tsc } | { player2tsc } { usernames[1] }
-              { player1tsc >= 5 && (
-                <p>{ usernames[0] } remporte la partie</p>
-              )}
-              { player2tsc >= 5 && (
-                <p>{ usernames[1] } remporte la partie</p>
-              )}
-              <button onClick={restartGame}>Recommencer</button>
+              Score - { room.player1 } { room.scoreP1 } | { room.scoreP2 } { room.player2 }
+                <p>{ room.winner } remporte la partie</p>
+                <button onClick={NavHome}>Retourner au Home</button>
+
               </div>)}
-            
-            {!end && (
-              <>
-            <div id="moncercle" style={{ top: ball.y, left: ball.x,}}></div>
-            <div
-              style={{
-                position: 'absolute',
-                width: 10,
-                height: 90,
-                backgroundColor: 'blue',
-                top: player1,
-                left: 0,
-              }}
-            ></div>
-            <div
-              style={{
-                position: 'absolute',
-                width: 10,
-                height: 90,
-                backgroundColor: 'red',
-                top: player2,
-                right: 0,
-              }}
-            ></div>
-            </>
-            )}
+              { !end && (
+              <div>
+              Score - { room.player1 } { room.scoreP1 } | { room.scoreP2 } { room.player2 }
+              </div>
+              )}
           </div>
-        </div>
-      );
+      <div className={`player-rect player1`} style={{ top: player1Pos }}></div>
+      <div className={`player-rect player2`} style={{ top: player2Pos }}></div>
+      <div className="ball" style={{ left: BallXpos, top: BallYpos }}></div>
+    </div>
+  )}
+</div>
+
+
+  );
 };
+
+export default PongGame;

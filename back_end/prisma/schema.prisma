@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-	id			Int			@id @default(autoincrement())
+	id			Int			@id
 	createdAt	DateTime	@default(now())
 	email		String		@unique
 	password	String?
@@ -85,8 +85,12 @@ model Game {
 	id			Int			@id @default(autoincrement())
 	start_at	DateTime
 	end_at		DateTime
-  	userId1		Int  @unique
+  	userId1		Int
 	player1		User @relation("player1", fields: [userId1], references: [id])
-  	userId2		Int  @unique
+  	userId2		Int
 	player2		User @relation("player2", fields: [userId2], references: [id])
+	winnerId	Int?
+	scrP1		Int?
+	scrP2		Int?
+	roomId		Int?
 }

@@ -1,3 +1,39 @@
+
+.Salut img {
+  max-height: 360px;
+}
+
+.Salut button:hover {
+  cursor: pointer;
+  background-color: #F082AC;
+}
+
+.Salut button {
+  background-color: #EA4C89;
+  border-radius: 8px;
+  border-style: none;
+  color: #FFFFFF;
+  height: 40px;
+  padding: 10px 16px;
+}
+
+body {
+  text-align: center;
+  color: #EA4C89;
+  background-color: black;
+  height: 90%;
+  background-image: url("./sphere.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto 80%;
+  margin: 0;
+  min-height: 100vh;
+}
+
+.App {
+  padding: 7em 2em;
+}
+
 .App {
   text-align: center;
   background-color: black;
@@ -51,3 +87,46 @@
   height:8px;
   border:2px solid #679403;
 }
+
+.player-point {
+  width: 10px;
+  height: 10px;
+  background-color: blue; /* Couleur du point du joueur */
+  position: absolute;
+}
+
+.ball {
+  width: 10px;
+  height: 10px;
+  background-color: red; /* Couleur de la balle */
+  position: absolute;
+}
+
+.player-rect {
+  position: absolute;
+  width: 10px;
+  height: 80px;
+}
+
+.player-rect.player1 {
+  left: 0;
+  background-color: rgb(255, 0, 221);
+
+}
+
+.player-rect.player2 {
+  right: 0;
+  background-color: rgb(43, 255, 0);
+
+}
+
+
+.pong-game {
+  position: relative;
+  width: 700px;
+  height: 400px;
+  background-color: black;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
