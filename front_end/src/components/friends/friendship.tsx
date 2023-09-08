@@ -60,6 +60,27 @@ export const FriendshipComponent = ({ recipientId }: { recipientId?: string }) =
         }
     };
 
+    // const addFriendship = async () => {
+    //     try {
+    //         const response = await fetch('http://localhost:3001/users/friends/${id}', {
+    //             method: "POST",
+    //         })
+    //         if (response.ok) {
+    //             const data = await response.json();
+    //             if(data.senderId !== undefined) {
+    //                 setSenderId(data);
+    //             } if(data.recipientId !== undefined) {
+    //                 setRecipientId(data);
+    //             } 
+    //         } else {
+    //             console.log("error : wrong data");
+    //         }
+    //     }
+    //     catch (error) {
+    //         console.error('Error fetching usernames:', error);
+    //     }
+    // };
+    
     return (
         <form onSubmit={handleSubmit}>
             <div>
@@ -77,6 +98,5 @@ export const FriendshipComponent = ({ recipientId }: { recipientId?: string }) =
             </button>
         </form>
     );
-};
-
-export default FriendshipComponent;
+}
+    export default FriendshipComponent;

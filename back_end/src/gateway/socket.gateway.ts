@@ -12,10 +12,10 @@ import Socket from 'src/gateway/types/socket';
 import { GameService } from 'src/game/game.service';
 import { Room, User, roomSend } from 'src/interfaces';
 import { UserService } from 'src/user/user.service';
-import { AuthenticatedGuard } from 'src/auth/authenticated.guards';
 import { RoomMapService } from './room_map.service';
 import SocketWithUser from 'src/gateway/types/socket';
 import { Interval } from '@nestjs/schedule';
+import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
 
 // ici add de l'authorisation de recup des credentials du front (le token)
 @WebSocketGateway({
@@ -25,7 +25,7 @@ import { Interval } from '@nestjs/schedule';
   },
   path: "",
 })
-@UseGuards(AuthenticatedGuard)
+@UseGuards(...AuthenticatedGuard)
 export class MyGateway implements OnModuleInit {
   @WebSocketServer()
   server: Server;

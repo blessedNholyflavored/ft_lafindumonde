@@ -1,23 +1,25 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { WsException } from '@nestjs/websockets';
 import { UserService } from 'src/user/user.service';
+import { AuthGuard } from '@nestjs/passport';
 
 
 @Injectable()
-export class AuthenticatedGuard implements CanActivate {
+export class JwtGuard extends AuthGuard('jwt'){
 	constructor(
 		private readonly config: ConfigService,
 		private readonly jwt: JwtService,
 		private readonly userService: UserService,
-	){}
+	){
+		super();
+	}
 
-	async canActivate(context: ExecutionContext){
+	async canActivate(context: ExecutionContext): Promise<any>{
 		switch(context.getType()) {
 			case "http" : {
-				const request =  context.switchToHttp().getRequest();
-				return request.isAuthenticated();
+				return super.canActivate(context);
 			}
 			case "ws" : {
 				// on recupe la sock du client
@@ -27,7 +29,6 @@ export class AuthenticatedGuard implements CanActivate {
 					?.split("; ")
 					?.find((row) => row.startsWith("access_token"))
 					?.split("=")[1];
-				// petit console.log de test:
 				try {
 					// on verif la signature du jwt --> est ce que le token est valide ?
 					const payload = this.jwt.verify(token, {secret: this.config.get('JWT_SECURE_KEY')});

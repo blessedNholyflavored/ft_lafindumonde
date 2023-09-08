@@ -1,0 +1,22 @@
+
+.logoutBtn {
+	position: relative;
+	left: 60%;
+	bottom: 20%;
+	display: flex;
+    cursor: pointer;
+    font-family: IBM Plex Mono;
+    color: #000;
+    border: solid #000;
+	background-color: #dcc2ff;
+	border-radius: 0.5em;
+    border-width: 3px;
+    height: 40px;
+    padding: 10px;
+    margin: 0;
+    box-shadow: 3px 4px 0px 0px #000;
+}
+
+.logoutBox {
+	margin: 20% 5% 20% 70%;
+}

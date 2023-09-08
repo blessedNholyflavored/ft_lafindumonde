@@ -1,0 +1,84 @@
+.main_box{
+	margin: 30px 7em;
+	position: relative;
+	background-color: white;
+    background-image: url(../img/social.png);
+}
+.group_box{
+ 	display: inline-block;
+	position:relative;
+	margin: 15px 10px 30px 10px;
+	min-width: 15vw;
+	border: 1px solid black;
+    box-shadow: 10px 12px 0px 0px #000;
+    border-bottom: 1px solid #000;
+}
+.hello_box {
+	/* position: relative; */
+	/* top: 5%; */
+	height: 40vh;
+	width: 15vw;
+	background-color: purple;
+}
+
+.chat_box{
+	width: 250px;
+	height: 150px;
+	position: relative;
+	background-image: url(../img/fill.pic.png);
+	background-size: contain;
+}
+.chat_btn{
+	margin:0;
+	position:absolute;
+	top: 50%;
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+	left: 50%;
+	-ms-transform: translateX(-50%);
+	transform: translateX(-50%);
+}
+.chat_box button {
+	align-self: center;
+	z-index: 2;
+	cursor: pointer;
+	background-color: #51eb6b;
+    font-family: IBM Plex Mono;
+	font-size: 14px;
+    color: #000;
+    border: solid 3px#000;
+	border-radius: 20px;
+    box-shadow: 3px 4px 0px 0px #000;
+}
+.game_img{
+	margin:0;
+	width: 15vw;
+	display: inline-block;
+	background-color: grey;
+	background-size: contain;
+}
+
+.game_img_btn {
+	display: flex;
+	margin : 10px 10%;
+	cursor: pointer;
+	background-color: #ff6868;
+    font-family: IBM Plex Mono;
+	font-size: 12px;
+    color: #000;
+    border: solid 3px#000;
+    padding: 10px 16px;
+    box-shadow: 3px 4px 0px 0px #000;
+}
+
+.achiev_img{
+	background-color: #98f581;
+	min-width: fit-content;
+	height: 150px;
+}
+
+.footer_box{
+	background-image: url(../img/config.symbol.png);
+	background-size:contain;
+	padding: 2vh 0;
+}

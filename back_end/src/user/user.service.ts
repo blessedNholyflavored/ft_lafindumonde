@@ -54,6 +54,7 @@ export class UserService {
   }
 
   async updateUsername(id: string, newUsername: string) {
+    console.log('dans controleur', id);
     const updateUser = await prisma.user.update({
       where: { id: parseInt(id) },
       data: {
@@ -61,42 +62,6 @@ export class UserService {
       },
     });
     return updateUser;
-  }
-
-  async getUserByID(id: number): Promise<User | undefined> {
-    return await prisma.user.findUnique({
-      where: {
-        id: Number(id),
-      },
-    });
-  }
-
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return await prisma.user.findUnique({
-      where: {
-        username,
-      },
-    });
-  }
-
-  async createUser(user: PrismaUserCreateInput): Promise<User> {
-    let tmpUser: User;
-
-    try {
-      tmpUser = await prisma.user.create({
-        data: {
-          id: user.id,
-          email: user.email,
-          username: user.username,
-          pictureURL: user.pictureURL,
-        },
-      });
-      return tmpUser;
-    } catch (err) {
-      // doc here : https://www.prisma.io/docs/reference/api-reference/error-reference
-      console.log('Error creating user:', err);
-      //throw err;
-    }
   }
 
   async getPicture(id: string) {
@@ -210,4 +175,91 @@ export class UserService {
   //   } catch (error) {
   //     throw new BadRequestException('getUser error : ' + error);
   //   }
+  async getUserByID(id: number): Promise<User | undefined> {
+    return await prisma.user.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    return await prisma.user.findUnique({
+      where: {
+        username,
+      },
+    });
+  }
+
+  async usernameAuthChecker(username: string) {
+    const tmpUser = await this.getUserByUsername(username);
+
+    if (tmpUser) return true;
+    return false;
+  }
+
+  async createUser(user: PrismaUserCreateInput): Promise<User> {
+    let tmpUser: User;
+
+    try {
+      tmpUser = await prisma.user.create({
+        data: {
+          id: user.id,
+          email: user.email,
+          //   hash: "",
+          username: user.username,
+          pictureURL: user.pictureURL,
+          enabled2FA: false,
+          log2FA: false,
+        },
+      });
+      return tmpUser;
+    } catch (err) {
+      //TODO: return the accurate error
+      // doc here : https://www.prisma.io/docs/reference/api-reference/error-reference
+      console.log('Error creating user:', err);
+      //throw err;
+    }
+  }
+
+  async enable2FA(id: number) {
+    const updateUser = await prisma.user.update({
+      where: { id: id },
+      data: { enabled2FA: true },
+    });
+    return updateUser;
+  }
+
+  async disable2FA(id: number) {
+    const updateUser = await prisma.user.update({
+      where: { id: id },
+      data: { enabled2FA: false },
+    });
+    return updateUser;
+  }
+
+  async add2FAKey(hash: string, id: number) {
+    const updateUser = await prisma.user.update({
+      where: { id: id },
+      data: { totpKey: hash },
+    });
+    return updateUser;
+  }
+
+  async setLog2FA(user: any, bool: boolean) {
+    const updateUser = await prisma.user.update({
+      where: { id: user.id },
+      data: { log2FA: bool },
+    });
+    return updateUser;
+  }
+
+  exclude<User, Key extends keyof User>(
+    user: User,
+    keys: Key[],
+  ): Omit<User, Key> {
+    return Object.fromEntries(
+      Object.entries(user).filter(([key]) => !(keys as string[]).includes(key)),
+    ) as Omit<User, Key>;
+  }
 }
