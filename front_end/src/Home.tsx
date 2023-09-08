@@ -32,13 +32,14 @@ const Home: React.FC<HomeProps> = () => {
     setSelectedPlayer(player);
 
     try {
-      const response = await fetch(`http://localhost:3000/users/status/${user?.id}`, {
+      const response = await fetch(`http://localhost:3001/users/status/${user?.id}`, {
         method: 'GET',
       });
       if (response.ok) {
         const recup = await response.text();
         // setStatus(recup);
         recupStatus = recup;
+        console.log(recupStatus);
       }
       if (recupStatus !== "INGAME")
       {
@@ -148,6 +149,9 @@ const handlePlayerSelect222 = async (player: string) => {
   						{queueCount === 2 && (
     						<p>La partie commence entre Ldinaut et Mcouppe !</p>
   						)}
+              { inGame === 1 && (
+                <p>Deja en game mon reuf !</p>
+              )}
 			    </div>
 			</div>
 			{/* quatrieme */}
