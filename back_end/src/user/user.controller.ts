@@ -95,6 +95,12 @@ export class UsersController {
     return (user.status);
   }
 
+  // @Get('/scoresMG')
+  // async GetAllScores()
+  // {
+  //   console.log("bite");
+  // }
+
   // @Get('/friends/:id')
   // async getFriends(@Param('id') id: string) {
   //   const friends = await this.friendService.findAll(id);

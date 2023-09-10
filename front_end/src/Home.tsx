@@ -109,6 +109,9 @@ const handlePlayerSelect222 = async (player: string) => {
 	navigate('/chat');
   };
 
+  const NavToSoloPong = () => {
+    navigate('/solopong');
+    };
 
 
   return (
@@ -144,6 +147,7 @@ const handlePlayerSelect222 = async (player: string) => {
 				<div className="game_img">
 				    <button onClick={() => handlePlayerSelect('1')} className="game_img_btn">RECHERCHE DE PARTIE</button>
 				    <button onClick={() => handlePlayerSelect222('1')} className="game_img_btn">RECHERCHE DE SUPER PARTIE</button>
+				    <button onClick={() => NavToSoloPong()} className="game_img_btn">Mini Jeu</button>
 					<button onClick={navigateToProfPage} className="game_img_btn">Aller à la page Prof</button>
 				    	{(queueCount > 0 || queueCountBonus > 0) &&  (
     						<p>En attente d'autres joueurs...</p>

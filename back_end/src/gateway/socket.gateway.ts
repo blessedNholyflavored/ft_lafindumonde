@@ -414,4 +414,10 @@ export class MyGateway implements OnModuleInit {
   this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');
   this.stopLoop();
   }
+
+  @SubscribeMessage('updateScoreMiniGame')
+  async onUpdateScoreMiniGame(@MessageBody() newScore: number, @ConnectedSocket() socket: Socket) {
+  this.userService.updateScoreMiniGame(socket.user.id, newScore);
+
+  }
 }

@@ -106,6 +106,26 @@ export class UserService {
     return updateUser;
   }
 
+  async updateScoreMiniGame(id: number, newScore: number)
+  {
+    const user = await prisma.user.findUnique({
+      where: { id: id },
+    });
+  
+    if (newScore > user.scoreMiniGame) {
+      const updatedUser = await prisma.user.update({
+        where: { id: id },
+        data: { scoreMiniGame: newScore },
+      });
+  
+      return updatedUser;
+    }
+    else
+    {
+      return user;
+    }
+  }
+
   async updateGamePlayer(id: string)
   {
     const updateUser = await prisma.user.update({
@@ -200,6 +220,8 @@ export class UserService {
           pictureURL: user.pictureURL,
           enabled2FA: false,
 		  log2FA: false,
+      gameplayed: 0,
+      scoreMiniGame: 0,
         }
       });
       return tmpUser;
