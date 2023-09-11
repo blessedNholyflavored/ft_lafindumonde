@@ -277,6 +277,12 @@ export class UserService {
   async calculateLevel(xp: number): Promise<number> {
     return Math.floor(xp / 10) + 1;
   }
+
+  async calculateEloChange(winnerElo: number, loserElo: number, result: number) {
+    const expectedScoreA = 1 / (1 + 10 ** ((loserElo - winnerElo) / 400));
+    const eloChange = 32 * (result - expectedScoreA);
+    return eloChange;
+  }
   
 
   async updateLevelExpELO(loserID: number, winnerID: number)
@@ -310,6 +316,30 @@ export class UserService {
         data: { level: {increment: 1},} 
       })
     }
+
+
+
+    const k = 32;
+    const eloDifference = updateWinner.ELO - updateLoser.ELO;
+    
+    const expectedScoreWinner = 1 / (1 + Math.pow(10, -eloDifference / 400));
+    const expectedScoreLoser = 1 - expectedScoreWinner;
+    
+    const eloChangeWinner = k * (1 - expectedScoreWinner);
+    const eloChangeLoser = k * (0 - expectedScoreLoser);
+
+
+    
+    const updateWinner1 = await prisma.user.update({
+      where: { id: winnerID },
+      data: { ELO: Number(updateWinner.ELO + eloChangeWinner) }
+    });
+    
+    const updateLoser1 = await prisma.user.update({
+      where: { id: loserID },
+      data: { ELO: Number(updateLoser.ELO + eloChangeLoser) }
+    });
+    console.log(updateWinner1.ELO);
   }
 
 }
