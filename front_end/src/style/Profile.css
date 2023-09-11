@@ -110,11 +110,19 @@
     background-color:#FF90FF;
   }
 
-  .boxrowsettings:nth-child(3)
+  /* .boxrowsettings:nth-child(3)
   {
     background-color:#FFFF50;
+  } */
+
+
+  /* TEMPORAIRE */
+  .boxrowsettings:nth-child(3)
+  {
+    background-color:#a5ff50;
   }
-  
+/* TEMPORAIRE */
+
 
   .navbarsmallbox{
     display: flex;

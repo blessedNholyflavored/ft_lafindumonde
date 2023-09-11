@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaUserCreateInput } from './user-create.input';
 //import { createUserDto } from 'src/dto/createUserDto.dto';
 // import { UserAchievements } from '../user/user.interface';
+import { merge } from 'lodash';
 
 const prisma = new PrismaClient();
 
@@ -78,6 +79,23 @@ export class UserService {
 		data: { pictureURL: newURL, },
 	});
 	return (updateUser.pictureURL);
+  }
+
+  async fetchAllGames(id: string)
+  {
+	const ret1 = await prisma.user.findUnique({
+		where: { id: parseInt(id) },
+		select: { game1: true },
+	});
+	const ret2 = await prisma.user.findUnique({
+		where: { id: parseInt(id) },
+		select: { game2: true },
+	});
+	if (ret1 && ret2)
+	{
+		const ret = merge(ret1, ret2);
+		console.log("AAAAA", ret);
+	}
   }
 
   async getFriends(id: number) {
@@ -198,5 +216,6 @@ export class UserService {
       //throw err;
     }
   }
-}
 
+
+}

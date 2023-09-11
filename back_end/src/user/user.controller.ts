@@ -87,6 +87,12 @@ export class UsersController {
     return ret;
   }
 
+  @Get('/:id/games-data')
+  async fetchGameData(@Param('id') id: string)
+  {
+	const games = await this.userService.fetchAllGames(id);
+  }
+
   // @Get('/friends/:id')
   // async getFriends(@Param('id') id: string) {
   //   const friends = await this.friendService.findAll(id);

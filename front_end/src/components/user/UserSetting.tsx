@@ -16,6 +16,7 @@ export const UserSetting: React.FC = () => {
 	useEffect(() => {
 		displayPic();
 	});
+	
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -133,6 +134,26 @@ export const UserSetting: React.FC = () => {
 		}
 	  };
 
+	  const fetchGames = async () => {
+		const userId = user?.id;
+
+		try {
+			const response = await fetch(`http://localhost:3000/users/${userId}/games-data`, {
+				method: "GET",
+			});
+			if (response.ok) {
+				const data = await response.json();
+				console.log(data);
+			}
+			else
+			{
+				console.log("response pas ok");
+			}
+		} catch (error) {
+			console.error("error de get game data", error);
+		}
+	  };
+
   return (
 	<>
 	<div className="mainpage">
@@ -150,7 +171,7 @@ export const UserSetting: React.FC = () => {
 {/* premier */}
 	<div className="boxrowsettings">
 		<div className="navbarsmallbox">
-			<p className="boxtitle"> CHANGE USERNAME </p>
+			<p className="boxtitle"> USERNAME </p>
 		</div>
 		<form className='formsettings' onSubmit={handleSubmit}>
 			<label className='labelcss'>
@@ -171,7 +192,7 @@ export const UserSetting: React.FC = () => {
 	{/* deuxieme */}
 	<div className="boxrowsettings">
 		<div className="navbarsmallbox">
-			<p className="boxtitle"> CHANGE IMAGE </p>
+			<p className="boxtitle"> AVATAR </p>
 		</div>
 		<img src={ImgUrl} alt='user avatar'></img>
 		<div>
@@ -184,15 +205,27 @@ export const UserSetting: React.FC = () => {
 	</div>
 
 {/* troisieme */}
-	<div className="boxrowsettings">
+	{/* <div className="boxrowsettings">
 		<div className="navbarsmallbox">
 			<p className="boxtitle"> 2FAC AUTH </p>
 		</div>
 		<div className="footersmallbox">
 			<br></br>
 		</div>
-	</div>
+	</div> */}
 
+
+{/* quatre juste pour test game history */}
+	<div className="boxrowsettings">
+		<div className="navbarsmallbox">
+			<p className="boxtitle"> GAME HISTORY </p>
+		</div>
+		<div>
+		</div>
+		<div className="footersmallbox">
+			<br></br>
+		</div>
+	</div>
 	</div>
 
 	</div>

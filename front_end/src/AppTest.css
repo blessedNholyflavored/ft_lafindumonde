@@ -22,7 +22,7 @@
     color: #EA4C89;
     background-color: black;
     height: 90%;
-    background-image: url("./sphere.png");
+    /* background-image: url("./sphere.png"); */
     background-repeat: no-repeat;
     background-position: center;
     background-size: auto 80%;
@@ -38,7 +38,7 @@
     text-align: center;
     background-color: black;
     height: 90%;
-    background-image: url("img/sphere.png");
+    /* background-image: url("img/sphere.png"); */
     background-position: 50%;
     background-size: cover;
   }
