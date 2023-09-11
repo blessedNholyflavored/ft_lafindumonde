@@ -38,18 +38,18 @@ export class UserService {
     return user?.username ?? null;
   }
 
-  async getID(id: number) {
+  async getID(id: string) {
     //throw new Error('Method not implemented.');
     try {
       const user = await prisma.user.findUniqueOrThrow({
         where: {
-          id: id,
+          id: parseInt(id),
         },
       });
       const userDTO = plainToClass(UserDto, user);
       return userDTO;
     } catch (error) {
-      throw new BadRequestException('getUser error : ' + error);
+      throw new BadRequestException('getUserkkkkkkkkkkk error : ' + error);
     }
   }
 

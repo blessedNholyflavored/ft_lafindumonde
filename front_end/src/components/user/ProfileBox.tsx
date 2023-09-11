@@ -22,12 +22,13 @@ export const ProfileBox = (props: any) => {
     }, [id, props.type]);
 
     const fetchUserTab = async (id: string | undefined) => {
+        console.log("wfesfsdfscsvcdvdsvs:    ");
         try {
           const response =  await fetch(`http://localhost:3001/users/${id}`, {
             method: "GET",
             //ici il faudra rajouter des trucs de header grace a lauth (pour verifier que lutilisateur connecte a bien les droits pour cette route)
-          })
-          if (response.ok) {
+        })
+        if (response.ok) {
             const data = await response.json();
             if (data.username) {
               setUser(data.username);

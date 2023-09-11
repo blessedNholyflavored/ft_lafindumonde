@@ -101,7 +101,7 @@ export class UsersController {
 
   @Get('/:id')
   async getUserById(@Param('id') id: number) {
-    const ret = await this.userService.getID(id);
+    const ret = await this.userService.getID(id.toString());
     return ret;
   }
 
