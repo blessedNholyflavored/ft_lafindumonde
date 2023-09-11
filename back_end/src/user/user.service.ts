@@ -295,7 +295,7 @@ export class UserService {
     })
 
     const loserLevel = this.calculateLevel(updateLoser.xp);
-    if (await loserLevel > 0)
+    if (await loserLevel !== updateLoser.level)
     {
       const updateLoser = await prisma.user.update({
         where: { id : loserID},
@@ -303,7 +303,7 @@ export class UserService {
       })
     }
     const winnerLevel = this.calculateLevel(updateWinner.xp);
-    if (await winnerLevel > 0)
+    if (await winnerLevel !== updateWinner.level)
     {
       const updateWinner = await prisma.user.update({
         where: { id : winnerID},
