@@ -27,6 +27,7 @@ model User {
 	enabled2FA	Boolean?
 	totpKey		String?
 	log2FA		Boolean?
+	ELO			Int?
 
 	friends		User[] @relation ("Friends")
 	friendsOf	User[] @relation ("Friends")

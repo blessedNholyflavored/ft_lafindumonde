@@ -22,6 +22,7 @@ const PongGame: React.FC = () => {
   const [BallYpos, setBallYPos] = useState<number>(200);
   const [SpeedBallX, setSpeedBallX] = useState<number>(-5);
   const [SpeedBallY, setSpeedBallY] = useState<number>(0);
+  const [updatelvl, setUpdatelvl] = useState<number>(0);
 
 
 
@@ -177,6 +178,18 @@ useEffect(() => {
       setRoom(room)
     });
   }
+  });
+
+  useEffect(() => {
+
+    if (socket && end) {
+      if (user?.username !== room?.winner && updatelvl === 0)
+      {
+        console.log(room?.winner);
+        socket?.emit('updateLevelExpELO', user?.id, room?.roomID);
+        setUpdatelvl(1);
+      }
+    }
   });
 
 

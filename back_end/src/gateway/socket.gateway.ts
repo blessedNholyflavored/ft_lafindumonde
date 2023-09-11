@@ -318,14 +318,14 @@ export class MyGateway implements OnModuleInit {
         this.gameService.updateGame(recupRoom);
         recupRoom.end = 1;
 
-        roomUpdate.winner = recupRoom.winner;
         roomUpdate.end = recupRoom.end;
         flag = 2;
       }
       roomUpdate = {player1: recupRoom.player1.username, player2: recupRoom.player2.username,
         ballX: recupRoom.ball.x, ballY: recupRoom.ball.y, scoreP1: recupRoom.scorePlayer1,
         scoreP2: recupRoom.scorePlayer2, 
-        winner: '', roomID: this.res.id, end: recupRoom.end, speedX: recupRoom.ball.speedX,
+        winner: recupRoom.winner,
+        roomID: this.res.id, end: recupRoom.end, speedX: recupRoom.ball.speedX,
         speedY: recupRoom.ball.speedY}
 
 
@@ -418,6 +418,14 @@ export class MyGateway implements OnModuleInit {
   @SubscribeMessage('updateScoreMiniGame')
   async onUpdateScoreMiniGame(@MessageBody() newScore: number, @ConnectedSocket() socket: Socket) {
   this.userService.updateScoreMiniGame(socket.user.id, newScore);
+
+  }
+
+  @SubscribeMessage('updateLevelExpELO')
+  async onupdateLevelExpELO(@MessageBody() data: {loserID: number, roomID: number}, @ConnectedSocket() socket: Socket) {
+
+    const recupRoom = this.roomMapService.getRoom(data[1]);
+    this.userService.updateLevelExpELO(data[0], recupRoom.winnerid);
 
   }
 }

@@ -222,6 +222,9 @@ export class UserService {
 		  log2FA: false,
       gameplayed: 0,
       scoreMiniGame: 0,
+      ELO: 1000,
+      level: 0,
+      xp: 0,
         }
       });
       return tmpUser;
@@ -269,6 +272,44 @@ export class UserService {
 	return Object.fromEntries(
 		Object.entries(user).filter(([key]) => !(keys as String[]).includes(key))
 		) as Omit<User, Key>;
+  }
+
+  async calculateLevel(xp: number): Promise<number> {
+    return Math.floor(xp / 10) + 1;
+  }
+  
+
+  async updateLevelExpELO(loserID: number, winnerID: number)
+  {
+
+    console.log(winnerID);
+    console.log(loserID);
+    
+    const updateLoser = await prisma.user.update({
+      where: { id : loserID},
+      data: { xp: {increment: 1},} 
+    })
+    const updateWinner = await prisma.user.update({
+      where: { id : winnerID},
+      data: { xp: {increment: 2},} 
+    })
+
+    const loserLevel = this.calculateLevel(updateLoser.xp);
+    if (await loserLevel > 0)
+    {
+      const updateLoser = await prisma.user.update({
+        where: { id : loserID},
+        data: { level: {increment: 1},} 
+      })
+    }
+    const winnerLevel = this.calculateLevel(updateWinner.xp);
+    if (await winnerLevel > 0)
+    {
+      const updateWinner = await prisma.user.update({
+        where: { id : winnerID},
+        data: { level: {increment: 1},} 
+      })
+    }
   }
 
 }
