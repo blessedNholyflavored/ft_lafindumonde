@@ -22,24 +22,26 @@ export const ProfileBox = (props: any) => {
     }, [id, props.type]);
 
     const fetchUserTab = async (id: string | undefined) => {
-        console.log("wfesfsdfscsvcdvdsvs:    ");
         try {
-          const response =  await fetch(`http://localhost:3001/users/${id}`, {
-            method: "GET",
-            //ici il faudra rajouter des trucs de header grace a lauth (pour verifier que lutilisateur connecte a bien les droits pour cette route)
-        })
-        if (response.ok) {
-            const data = await response.json();
-            if (data.username) {
-              setUser(data.username);
-            } if (data.level) {
-              setLevel(data.level)
-          } if (data.xp) {
-              setXp(data.xp)
-        } else
-          console.log("error : wrong shit");
-          return "error";
-          }
+            const response = await fetch(`http://localhost:3001/users/${id}`, {
+                method: "GET",
+                // ici il faudra rajouter des trucs de header grace a lauth (pour verifier que lutilisateur connecte a bien les droits pour cette route)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.username) {
+                    setUser(data.username);
+                }
+                if (data.level) {
+                    setLevel(data.level);
+                }
+                if (data.xp) {
+                    setXp(data.xp);
+                }
+            } else {
+                console.log("error : wrong shit");
+            }
         } catch (error) {
             console.error('Error fetching usernames:', error);
         }
@@ -48,7 +50,7 @@ export const ProfileBox = (props: any) => {
 
     const fetchFriendshipStatus = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/friends/status?senderId=1&recipientId=${id}`);
+            const response = await fetch(`http://localhost:3001/friends/status?senderId=1&recipientId=${id}`);
             if (response.ok) {
                 const status = await response.text();
                 setFriendshipStatus(status as FriendsInvitationStatus);

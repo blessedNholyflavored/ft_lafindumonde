@@ -12,10 +12,13 @@ export class FriendsController {
     return this.friendsService.findAll(id);
   }
 
-  @Post()
-  async createFriendRequest(
-    @Body() createFriendRequestDto: CreateFriendRequestDto,
-  ): Promise<Friend> {
-    return this.friendsService.sendFriendRequest(createFriendRequestDto);
+  @Post('/:id/:id1')
+  async createFriendRequest(@Param('id') id: string,@Param('id1') id1: string) {
+    console.log("cacacacacaacacacacca:     ",id);
+    console.log("111111111111:     ",id1);
+    const senderId = id;
+    const recipientId = id1;
+    const amitie = await this.friendsService.sendFriendRequest(senderId, recipientId);
+    return amitie;
   }
 }

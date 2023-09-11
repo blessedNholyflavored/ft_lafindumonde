@@ -27,32 +27,47 @@ export class FriendsService {
     }
   }
 
-  async sendFriendRequest(
-    createFriendRequestDto: CreateFriendRequestDto,
-  ): Promise<Friend> {
-    const { senderId, recipientId } = createFriendRequestDto;
+  async sendFriendRequest(senderId: string, recipientId: string)
+    {
 
-    const existingFriendship = await this.prisma.friendship.findUnique({
+    // const existingFriendship = await this.prisma.friendship.findUnique({
+    //   where: {
+    //     senderId_recipientId: {
+    //       senderId,
+    //       recipientId,
+    //     },
+    //   },
+    // });
+    // if (existingFriendship) {
+    //   throw new Error('Friendship request already exists');
+    // }
+  
+    const p1 = await prisma.user.findUnique({
       where: {
-        senderId_recipientId: {
-          senderId,
-          recipientId,
-        },
+        id: parseInt(senderId),
       },
     });
-    if (existingFriendship) {
-      throw new Error('Friendship request already exists');
-    }
+    const p2 = await prisma.user.findUnique({
+      where: {
+        id: parseInt(recipientId),
+      },
+    });
+
+
     const newFriendRequest: Friend = await this.prisma.friendship.create({
       data: {
         sender: {
           connect: {
-            id: senderId,
+            id: parseInt(senderId),
+            email: p1.email,
+            username: p1.username
           },
         },
         recipient: {
           connect: {
-            id: recipientId,
+            id: parseInt(recipientId),
+            email: p2.email,
+            username: p2.username
           },
         },
         status: 'PENDING',
