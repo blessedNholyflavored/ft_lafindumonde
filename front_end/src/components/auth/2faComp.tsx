@@ -1,11 +1,9 @@
-import React from 'react';
 //import { Alert } from 'react-native';
 import "./../../App.css";
 import "./../../style/Profile.css";
 import "./../../style/Login.css";
 //import { useAuth } from "./AuthProvider";
 import api from '../../AxiosInstance';
-import { useNavigation } from 'react-router-dom';
 
 export async function twoFAEnable(navigate: any) {
 	if (window.confirm("Are you ready to save your unique QR code ?")){
@@ -23,6 +21,11 @@ export async function twoFADisable(context: any) {
     try {
     	const res = await api.get('/auth/2FAdisable');
 		context.setUser(res.data);
+		console.log("res.data ?", res.data.log2FA);
+		if (res.data.log2FA)
+			window.alert("You correctly disabled the two factor authentication ! Welcome to a new unsecured world !!!!");
+		else
+			window.alert("You can't disable something that wasn't enabled, weirdo !!!")
     } catch (error) {
         console.log('Error while de-2fa-ing : ', error);
     }
