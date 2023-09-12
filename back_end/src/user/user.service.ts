@@ -288,8 +288,8 @@ export class UserService {
   async updateLevelExpELO(loserID: number, winnerID: number)
   {
 
-    console.log(winnerID);
-    console.log(loserID);
+    console.log("lalaalalal:  ", winnerID);
+    console.log("iicicicicic:  ", loserID);
     
     const updateLoser = await prisma.user.update({
       where: { id : loserID},

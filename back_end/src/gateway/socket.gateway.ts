@@ -39,13 +39,11 @@ export class MyGateway implements OnModuleInit {
   private res;
   private p1;
   private p2;
-  private resBonus;
-  private p1Bonus;
-  private p2Bonus;
   constructor(private readonly gameService: GameService, private readonly userService: UserService,
     private readonly roomMapService: RoomMapService) {}
   private room: Room;
-  private interval: NodeJS.Timeout;
+  private roomIntervals: Record<string, NodeJS.Timeout> = {};
+
   onModuleInit() {
     this.server.on('connection', (socket) => {
       console.log(socket.id);
@@ -220,11 +218,13 @@ export class MyGateway implements OnModuleInit {
   startLoop(id: number) {
 
     // Démarrez la boucle en utilisant setIntervalif
+    let recupRoom = this.roomMapService.getRoom(id.toString());
     
-    this.interval = setInterval(() => {
-      // Votre code ici
-      
+    this.roomIntervals[recupRoom.idRoom] = setInterval(() => {      // Votre code ici
+    
+    
       let recupRoom = this.roomMapService.getRoom(id.toString());
+      
       let flag = 0;
 
       if (recupRoom && recupRoom.ball)
@@ -325,7 +325,7 @@ export class MyGateway implements OnModuleInit {
         ballX: recupRoom.ball.x, ballY: recupRoom.ball.y, scoreP1: recupRoom.scorePlayer1,
         scoreP2: recupRoom.scorePlayer2, 
         winner: recupRoom.winner,
-        roomID: this.res.id, end: recupRoom.end, speedX: recupRoom.ball.speedX,
+        roomID: recupRoom.idRoom, end: recupRoom.end, speedX: recupRoom.ball.speedX,
         speedY: recupRoom.ball.speedY}
 
 
@@ -337,8 +337,7 @@ export class MyGateway implements OnModuleInit {
         if (flag === 2)
         {
           this.server.to(recupRoom.idRoom.toString()).emit('ballMoovON', roomUpdate);
-          this.stopLoop();
-          this.interval = null;
+          this.stopLoop(recupRoom.idRoom);
           return ;
         }
       }
@@ -348,24 +347,14 @@ export class MyGateway implements OnModuleInit {
       }, 1000 / 60); // 1000 millisecondes (1 seconde)
   }
 
-  stopLoop() {
+  stopLoop(roomId : number) {
     // Arrêtez la boucle en utilisant clearInterval
-    if (this.interval)
-  {
-    clearInterval(this.interval);
-    this.interval = null;
+    if (this.roomIntervals[roomId]) {
+      clearInterval(this.roomIntervals[roomId]);
+      delete this.roomIntervals[roomId]; // Supprimez la référence à l'intervalle
   }
   }
 
-  // @SubscribeMessage('ballMoovEMIT')
-  // async onMoveBall(@MessageBody() id: string, @ConnectedSocket() socket: Socket,)
-  //   {
-  //     const recupRoom = this.roomMapService.getRoom(id);
-
-    
-  //   //  this.server.emit('ballMoovON', roomUpdate);
-  //     // this.server.to(recupRoom.idRoom.toString()).emit('ballMoovON', roomUpdate);
-  // }
 
   @SubscribeMessage('updateUserIG')
   async onUpdateUserIG(@MessageBody() id: number, @ConnectedSocket() socket: Socket,){
@@ -402,8 +391,8 @@ export class MyGateway implements OnModuleInit {
       scoreP2: this.room.scorePlayer2, player1Y: this.room.player1.point.y, player2Y: this.room.player2.point.y,
       winner: '', roomID: this.res.id, end: 1};
     this.room = null;
-    this.stopLoop();
-    this.server.emit('playerLeave', roomUpdate);
+    this.stopLoop(roomUpdate.roomID);
+    // this.server.emit('playerLeave', roomUpdate);
     this.server.to(roomUpdate.roomID.toString()).emit('playerLeave', roomUpdate);
 
     }
@@ -412,7 +401,7 @@ export class MyGateway implements OnModuleInit {
   @SubscribeMessage('changeStatus')
   async onChaneStatus(@ConnectedSocket() socket: Socket) {
   this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');
-  this.stopLoop();
+  // this.stopLoop();
   }
 
   @SubscribeMessage('updateScoreMiniGame')

@@ -9,7 +9,7 @@ interface PlayerScore {
     ELO: number;
   }
 
-export const leaderBoard = () => {
+export const Classement = () => {
 
   const [playerScores, setPlayerScores] = useState<PlayerScore[]>([]);
 
@@ -61,4 +61,4 @@ return(
 );
 }
 
-export default leaderBoard;
+export default Classement;
