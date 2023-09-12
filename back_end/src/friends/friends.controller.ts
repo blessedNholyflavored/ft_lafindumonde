@@ -14,11 +14,31 @@ export class FriendsController {
 
   @Post('/:id/:id1')
   async createFriendRequest(@Param('id') id: string,@Param('id1') id1: string) {
-    console.log("cacacacacaacacacacca:     ",id);
-    console.log("111111111111:     ",id1);
     const senderId = id;
     const recipientId = id1;
     const amitie = await this.friendsService.sendFriendRequest(senderId, recipientId);
     return amitie;
   }
+  
+  // @Get('/status/:id/:id1')
+  // async getFriendRequest(@Param('id') id: string,@Param('id1') id1: string) {
+  //   const senderId = id;
+  //   const recipientId = id1;
+  //   const statut = await this.friendsService.getfriendrequestStatus(senderId, recipientId);
+  //   // const amitie = await this.friendsService.sendFriendRequest(senderId, recipientId);
+  //   return statut;
+  // }
+
+//   @Post('/update')
+//   async updatestatus( request: string) {
+//     const reqstatus = await this.friendsService.updatingstatus(request);
+//     if (reqstatus.status == ACCEPTED) {
+// 			await this.friendsService.addFriend(Request);
+//     } else if (reqstatus.status == REFUSED) {
+// 			await this.friendsService.deleteFriend(request);
+//   }
+//   return reqstatus;
+// }
+
+
 }

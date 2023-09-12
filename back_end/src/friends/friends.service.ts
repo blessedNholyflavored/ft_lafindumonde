@@ -29,19 +29,6 @@ export class FriendsService {
 
   async sendFriendRequest(senderId: string, recipientId: string)
     {
-
-    // const existingFriendship = await this.prisma.friendship.findUnique({
-    //   where: {
-    //     senderId_recipientId: {
-    //       senderId,
-    //       recipientId,
-    //     },
-    //   },
-    // });
-    // if (existingFriendship) {
-    //   throw new Error('Friendship request already exists');
-    // }
-  
     const p1 = await prisma.user.findUnique({
       where: {
         id: parseInt(senderId),
@@ -53,8 +40,7 @@ export class FriendsService {
       },
     });
 
-
-    const newFriendRequest: Friend = await this.prisma.friendship.create({
+    const newFriendRequest = await this.prisma.friendship.create({
       data: {
         sender: {
           connect: {
@@ -76,4 +62,60 @@ export class FriendsService {
 
     return newFriendRequest;
   }
+
+  // async getfriendrequestStatus(sender: string, recipient: string)
+  // { 
+
+  //   const p1 = await prisma.user.findUnique({
+  //     where: {
+  //       id: parseInt(sender),
+  //     },
+  //   });
+  //   const p2 = await prisma.user.findUnique({
+  //     where: {
+  //       id: parseInt(recipient),
+  //     },
+  //   });
+
+  //   console.log("ipoejfoiewjfjwe", p1.InvitFriendSent.status)
+  //   const test  = await this.prisma.friendship.findUnique({
+  //     where: {
+  //         // sender : p1,
+  //         id : 5
+  //     },
+  //   });
+  //   if (test) {
+  //     throw new Error('Friendship request already exists');
+  //   }
+  // }
+
+  // async updatingstatus(id: any) {
+		// const { demandId, response } = id
+		// const friendship = await this.prisma.friendship.update({
+			// where: {
+				// id: parseInt(demandId),
+			// },
+			// data: {
+				// status: response,
+			// },
+		// });
+		// return friendship;
+	// }
+
+    // async addFriend(request: any) {
+    // 	const { requesterId, receiverId } = request;
+    // 	const sender = await this.userService.getUser(parseInt(senderId));
+    // 	const recipient = await this.userService.getUser(parseInt(recipientId));
+    // 	// await this.userService.addFriendOnTable(requester.id, receiver.id)
+    // 	// await this.userService.addFriendOnTable(receiver.id, requester.id)
+    // 	// await this.userService.updateAchievement(requester.id, 'Famous')
+    // 	// await this.userService.updateAchievement(receiver.id, 'Famous')
+    // }
+
+  // async deleteFriend() {
+	// 	await this.prisma.friendship.deleteMany({
+	// 		where: { status: 'REFUSED'},
+	// 	});
+	// }
+
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import icon from "../../img/iconpic.png";
 import FriendshipComponent from "./../friends/friendship"; // Assurez-vous que le chemin d'importation est correct
+import { useAuth } from "../auth/AuthProvider";
 
 export enum FriendsInvitationStatus {
     ACCEPTED = "ACCEPTED",
@@ -11,15 +12,16 @@ export enum FriendsInvitationStatus {
 
 export const ProfileBox = (props: any) => {
     const { id } = useParams();
-    const [user, setUser] = useState<string | null>(null);
+    const [userr, setUserr] = useState<string | null>(null);
     const [lvl, setLevel] = useState<number | null>(null);
     const [xp, setXp] = useState<number | null>(null);
     const [friendshipStatus, setFriendshipStatus] = useState<FriendsInvitationStatus | null>(null);
+    const {user, setUser } = useAuth();
 
     useEffect(() => {
         fetchUserTab(id);
         fetchFriendshipStatus();
-    }, [id, props.type]);
+    }, []);
 
     const fetchUserTab = async (id: string | undefined) => {
         try {
@@ -31,7 +33,7 @@ export const ProfileBox = (props: any) => {
             if (response.ok) {
                 const data = await response.json();
                 if (data.username) {
-                    setUser(data.username);
+                    setUserr(data.username);
                 }
                 if (data.level) {
                     setLevel(data.level);
@@ -49,20 +51,25 @@ export const ProfileBox = (props: any) => {
 
 
     const fetchFriendshipStatus = async () => {
+
+        console.log("ICICICICICICII");
+        console.log("id         :", id);
+        console.log("user?id    :", user?.id);
         try {
-            const response = await fetch(`http://localhost:3001/friends/status?senderId=1&recipientId=${id}`);
+            const response = await fetch(`http://localhost:3001/friends/status/${user?.id}/${id}`);
             if (response.ok) {
                 const status = await response.text();
                 setFriendshipStatus(status as FriendsInvitationStatus);
-                console.log('hihihihih');
-                console.log(response);
             } else {
-                console.log("Error fetching friendship status");
+                console.log("Error fetching friendship status. Status code:", response.status);
+                const errorText = await response.text();
+                console.error("Error details:", errorText);
             }
         } catch (error) {
             console.error('Error fetching friendship status:', error);
         }
     };
+    
     
     const renderFriendshipButton = () => {
         if (friendshipStatus === FriendsInvitationStatus.ACCEPTED) {
@@ -80,7 +87,7 @@ export const ProfileBox = (props: any) => {
         <div className="profilecard">
             <p className="username">
                 <img src={icon} className="icon" alt="icon"></img>
-                {user}
+                {userr}
             </p>
             <p className="userlvl">
                 <img src={icon} className="icon" alt="icon"></img>
