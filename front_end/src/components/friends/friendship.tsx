@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../auth/AuthProvider';
 import { useParams } from "react-router-dom";
 // 
+
+export enum FriendsInvitationStatus {
+    ACCEPTED = "ACCEPTED",
+    PENDING = "PENDING",
+    REFUSED = "REFUSED",
+  }
+
 export const FriendshipComponent = ({ recipientId }: { recipientId?: string }) => {
     const {user, setUser } = useAuth();
     const { id } = useParams();
@@ -9,6 +16,14 @@ export const FriendshipComponent = ({ recipientId }: { recipientId?: string }) =
     const [friendshipStatus, setFriendshipStatus] = useState<string | null>();
 // 
 // 
+
+useEffect(() => {
+
+fetchFriendshipStatus();
+}
+);
+
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 // 
@@ -26,7 +41,7 @@ export const FriendshipComponent = ({ recipientId }: { recipientId?: string }) =
             });
 // 
             if (response.ok) {
-                setFriendshipStatus('Pending');
+                setFriendshipStatus('PENDING');
                 alert('Friendship created successfully.');
             } else {
                 console.error('Error creating friendship: request is pending');
@@ -34,6 +49,28 @@ export const FriendshipComponent = ({ recipientId }: { recipientId?: string }) =
             }
         } catch (error) {
             console.error('Error creating friendship:', error);
+        }
+    };
+
+
+    const fetchFriendshipStatus = async () => {
+
+        console.log("ICICICICICICII");
+        console.log("id         :", id);
+        console.log("user?id    :", user?.id);
+        try {
+            const response = await fetch(`http://localhost:3001/friends/status/${user?.id}/${id}`);
+            if (response.ok) {
+                const status = await response.text();
+                setFriendshipStatus(status);
+                console.log("qqqqqqq: ", status);
+            } else {
+                console.log("Error fetching friendship status. Status code:", response.status);
+                const errorText = await response.text();
+                console.error("Error details:", errorText);
+            }
+        } catch (error) {
+            console.error('Error fetching friendship status:', error);
         }
     };
 // 
@@ -49,8 +86,8 @@ export const FriendshipComponent = ({ recipientId }: { recipientId?: string }) =
                     Recipient ID: {recipientId}
                 </label>
             </div>
-            <button type="submit" disabled={friendshipStatus === 'Pending'}>
-                {friendshipStatus === 'Pending' ? 'Pending' : 'Add Friend'}
+            <button type="submit" disabled={friendshipStatus as string === 'PENDING'}>
+                {friendshipStatus as string=== 'PENDING' ? 'PENDING' : 'Add Friend'}
             </button>
         </form>
     );

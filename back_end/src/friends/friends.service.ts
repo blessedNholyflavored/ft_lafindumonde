@@ -27,6 +27,19 @@ export class FriendsService {
     }
   }
 
+  async findInvSend(id: string) {
+    try {
+      const friends = await this.prisma.user.findMany({
+        where: { id: parseInt(id) },
+        select: { InvitFriendSent: true},
+      });
+      console.log(friends[0]);
+      return friends[0].InvitFriendSent;
+    } catch (error) {
+      throw new BadRequestException('invsend recup friends error : ' + error);
+    }
+  }
+
   async sendFriendRequest(senderId: string, recipientId: string)
     {
     const p1 = await prisma.user.findUnique({
@@ -63,31 +76,45 @@ export class FriendsService {
     return newFriendRequest;
   }
 
-  // async getfriendrequestStatus(sender: string, recipient: string)
-  // { 
+  async getfriendrequestStatus(sender: string, recipient: string)
+  { 
 
-  //   const p1 = await prisma.user.findUnique({
-  //     where: {
-  //       id: parseInt(sender),
-  //     },
-  //   });
-  //   const p2 = await prisma.user.findUnique({
-  //     where: {
-  //       id: parseInt(recipient),
-  //     },
-  //   });
+    const p1 = await prisma.user.findUnique({
+      where: {
+        id: parseInt(sender),
+      },
+      include: {
+        InvitFriendSent : true,
+      }
+    });
+    const p2 = await prisma.user.findUnique({
+      where: {
+        id: parseInt(recipient),
+      },
+    });
 
-  //   console.log("ipoejfoiewjfjwe", p1.InvitFriendSent.status)
-  //   const test  = await this.prisma.friendship.findUnique({
-  //     where: {
-  //         // sender : p1,
-  //         id : 5
-  //     },
-  //   });
-  //   if (test) {
-  //     throw new Error('Friendship request already exists');
-  //   }
-  // }
+
+    console.log(p1.InvitFriendSent);
+
+
+    const existingFriendship = await prisma.friendship.findFirst({
+      where: {
+        AND: [
+          {
+            senderId: p1.id,
+          },
+          {
+            recipientId: p2.id,
+          },
+        ],
+      },
+    });
+
+    if (existingFriendship)
+      return  existingFriendship;
+    else
+      return null;
+  }
 
   // async updatingstatus(id: any) {
 		// const { demandId, response } = id

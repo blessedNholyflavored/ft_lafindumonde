@@ -72,11 +72,11 @@ export const ProfileBox = (props: any) => {
     
     
     const renderFriendshipButton = () => {
-        if (friendshipStatus === FriendsInvitationStatus.ACCEPTED) {
+        if (friendshipStatus === "ACCEPTED") {
             return <FriendshipComponent recipientId={id} />;
-        } else if (friendshipStatus === FriendsInvitationStatus.PENDING) {
+        } else if (friendshipStatus === "PENDING") {
             return <FriendshipComponent recipientId={id} />;
-        } else if (friendshipStatus === FriendsInvitationStatus.REFUSED) {
+        } else if (friendshipStatus === "REFUSED") {
             return <FriendshipComponent recipientId={id} />;
         } else {
                 return <FriendshipComponent recipientId={id} />;
@@ -97,6 +97,7 @@ export const ProfileBox = (props: any) => {
                 <img src={icon} className="icon" alt="icon"></img>
                 {xp}
             </p>
+            
             {renderFriendshipButton()}
             
 

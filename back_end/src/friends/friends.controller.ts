@@ -12,6 +12,11 @@ export class FriendsController {
     return this.friendsService.findAll(id);
   }
 
+  @Get('invSend/:id')
+  invSend(@Param('id') id: string) {
+    return this.friendsService.findInvSend(id);
+  }
+
   @Post('/:id/:id1')
   async createFriendRequest(@Param('id') id: string,@Param('id1') id1: string) {
     const senderId = id;
@@ -20,14 +25,17 @@ export class FriendsController {
     return amitie;
   }
   
-  // @Get('/status/:id/:id1')
-  // async getFriendRequest(@Param('id') id: string,@Param('id1') id1: string) {
-  //   const senderId = id;
-  //   const recipientId = id1;
-  //   const statut = await this.friendsService.getfriendrequestStatus(senderId, recipientId);
-  //   // const amitie = await this.friendsService.sendFriendRequest(senderId, recipientId);
-  //   return statut;
-  // }
+  @Get('/status/:id/:id1')
+  async getFriendRequest(@Param('id') id: string,@Param('id1') id1: string) {
+    const senderId = id;
+    const recipientId = id1;
+    const statut = await this.friendsService.getfriendrequestStatus(senderId, recipientId);
+    
+    // const amitie = await this.friendsService.sendFriendRequest(senderId, recipientId);
+    if (statut)
+      return statut.status;
+    else return "pp";
+  }
 
 //   @Post('/update')
 //   async updatestatus( request: string) {
