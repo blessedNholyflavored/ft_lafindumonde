@@ -91,7 +91,22 @@ export class UsersController {
   async fetchGameData(@Param('id') id: string)
   {
 	const games = await this.userService.fetchAllGames(id);
+	return (games);
   }
+
+  @Get('/status/:id')
+  async getPlayerStatus(@Param('id') id: number)
+  {
+    const user = await this.userService.getUserByID(id);
+    console.log("dans le back mdr:    ", user.status, "    fin dans le back ndrrrrr");
+    return (user.status);
+  }
+
+  // @Get('/scoresMG')
+  // async GetAllScores()
+  // {
+  //   console.log("bite");
+  // }
 
   // @Get('/friends/:id')
   // async getFriends(@Param('id') id: string) {

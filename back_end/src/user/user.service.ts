@@ -95,6 +95,7 @@ export class UserService {
 	{
 		const ret = merge(ret1, ret2);
 		console.log("AAAAA", ret);
+		return (ret);
 	}
   }
 
@@ -122,6 +123,26 @@ export class UserService {
       data: { status: newStatus,} 
     })
     return updateUser;
+  }
+
+  async updateScoreMiniGame(id: number, newScore: number)
+  {
+    const user = await prisma.user.findUnique({
+      where: { id: id },
+    });
+  
+    if (newScore > user.scoreMiniGame) {
+      const updatedUser = await prisma.user.update({
+        where: { id: id },
+        data: { scoreMiniGame: newScore },
+      });
+  
+      return updatedUser;
+    }
+    else
+    {
+      return user;
+    }
   }
 
   async updateGamePlayer(id: string)
@@ -197,6 +218,14 @@ export class UserService {
     });
   }
 
+  async usernameAuthChecker(username: string){
+    let tmpUser = await this.getUserByUsername(username);
+
+    if (tmpUser)
+      return true;
+    return false;
+  }
+
   async createUser(user: PrismaUserCreateInput): Promise<User> {
     let tmpUser: User;
 
@@ -207,15 +236,98 @@ export class UserService {
           email: user.email,
           username: user.username,
           pictureURL: user.pictureURL,
+          enabled2FA: false,
+		  log2FA: false,
+      gameplayed: 0,
+      scoreMiniGame: 0,
+      ELO: 1000,
+      level: 0,
+      xp: 0,
         }
       });
       return tmpUser;
     } catch (err) {
+		//TODO: return the accurate error
       // doc here : https://www.prisma.io/docs/reference/api-reference/error-reference
       console.log('Error creating user:', err);
       //throw err;
     }
   }
 
+  async enable2FA(id: number) {
+    const updateUser = await prisma.user.update({
+      where: { id: id},
+      data: { enabled2FA:true, },
+    });
+    return (updateUser);
+  }
+
+  async disable2FA(id:number) {
+    const updateUser = await prisma.user.update({
+      where: {id: id},
+      data: { enabled2FA:false, },
+    });
+    return (updateUser);
+  }
+
+  async add2FAKey(hash: string, id:number){
+    const updateUser = await prisma.user.update({
+      where: {id: id},
+      data: { totpKey: hash, },
+    });
+    return updateUser;
+  }
+
+  async setLog2FA(user: any, bool: boolean){
+	const updateUser = await prisma.user.update({
+		where: {id: user.id},
+		data: { log2FA: bool, },
+	});
+	return updateUser;
+  }
+
+  exclude<User, Key extends keyof User>( user: User, keys: Key[]): Omit<User, Key> {
+	return Object.fromEntries(
+		Object.entries(user).filter(([key]) => !(keys as String[]).includes(key))
+		) as Omit<User, Key>;
+  }
+
+  async calculateLevel(xp: number): Promise<number> {
+    return Math.floor(xp / 10) + 1;
+  }
+  
+
+  async updateLevelExpELO(loserID: number, winnerID: number)
+  {
+
+    console.log(winnerID);
+    console.log(loserID);
+    
+    const updateLoser = await prisma.user.update({
+      where: { id : loserID},
+      data: { xp: {increment: 1},} 
+    })
+    const updateWinner = await prisma.user.update({
+      where: { id : winnerID},
+      data: { xp: {increment: 2},} 
+    })
+
+    const loserLevel = this.calculateLevel(updateLoser.xp);
+    if (await loserLevel !== updateLoser.level)
+    {
+      const updateLoser = await prisma.user.update({
+        where: { id : loserID},
+        data: { level: {increment: 1},} 
+      })
+    }
+    const winnerLevel = this.calculateLevel(updateWinner.xp);
+    if (await winnerLevel !== updateWinner.level)
+    {
+      const updateWinner = await prisma.user.update({
+        where: { id : winnerID},
+        data: { level: {increment: 1},} 
+      })
+    }
+  }
 
 }

@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import '../../style/Profile.css'
-import icon from "../../img/buttoncomp.png"
-import logo from "../../img/logo42.png"
-import { useAuth } from '../../AuthProvider';
-//import { useParams } from 'react-router-dom';
+import '../../style/Profile.css';
+import '../../style/twoFA.css';
+import icon from "../../img/buttoncomp.png";
+import logo from "../../img/logo42.png";
+import { useAuth } from '../auth/AuthProvider';
+import { twoFAEnable, twoFADisable } from '../auth/2faComp';
+import api from '../../AxiosInstance';
+import { Logout } from './../auth/Logout';
+import { useNavigate } from 'react-router-dom';
 
 
 export const UserSetting: React.FC = () => {
@@ -12,10 +16,13 @@ export const UserSetting: React.FC = () => {
 	let [ImgUrl, setImgUrl] = useState<string>('');
 	const [error, setError] = useState<string | null>(null);
 	const { user, setUser } = useAuth();
+	const navigate = useNavigate();
+	const [gameData, setGameData] = useState<Game[]>([]);
 
 	useEffect(() => {
 		displayPic();
-	});
+		fetchGames();
+	}, []);
 	
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -23,7 +30,7 @@ export const UserSetting: React.FC = () => {
 		const userId = user?.id;
 		console.log("dans front user id = ", userId);
 		try {
-			const response = await fetch(`http://localhost:3000/users/${userId}/update-username`, {
+			const response = await fetch(`http://localhost:3001/users/${userId}/update-username`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -44,7 +51,7 @@ export const UserSetting: React.FC = () => {
 		const userId = user?.id;
 
 		try {
-			const response = await fetch(`http://localhost:3000/users/${userId}/avatar`, {
+			const response = await fetch(`http://localhost:3001/users/${userId}/avatar`, {
 				method: 'GET',
 			});
 			if (response.ok) {
@@ -56,7 +63,7 @@ export const UserSetting: React.FC = () => {
 				}
 				else {
 					try {
-					const response = await fetch(`http://localhost:3000/users/uploads/${pictureURL}`, {
+					const response = await fetch(`http://localhost:3001/users/uploads/${pictureURL}`, {
 						method: 'GET',
 					});
 					if (response.ok) {
@@ -104,7 +111,7 @@ export const UserSetting: React.FC = () => {
 		  console.log(formData);
 	  
 		  try {
-			const response = await fetch(`http://localhost:3000/users/${userId}/update-avatar`, {
+			const response = await fetch(`http://localhost:3001/users/${userId}/update-avatar`, {
 			  method: 'POST',
 			  body: formData,
 			});
@@ -115,7 +122,7 @@ export const UserSetting: React.FC = () => {
 				console.log("DDDDDDDDDDDDDDDDDDDDDD", result.pictureURL);
 				alert('profil picture mise à jour avec succès !');
 				displayPic();
-				
+
 			} else {
 				console.log("kkkkkkkkkk");
 				const backError = await response.json();
@@ -132,18 +139,61 @@ export const UserSetting: React.FC = () => {
 			}
 		}
 		}
-	  };
+	  }
+	// async function twoFAEnable() {
+    //     try {
+    //         //mettre ici bonne route finale 
+    //         const res = await api.get('/auth/2FAenable');
+    //         console.log(res.data.code);
+    //         return navigate(`/totpSave?qrCodeImg=${encodeURIComponent(res.data.code)}`)
+    //     } catch (error) {
+    //         console.log('Error while 2fa-ing : ', error);
+    //     }
+    // }
+
+	interface Game {
+		id: number;
+		start_at: string;
+		userId1: number;
+		userId2: number;
+		scrP1: number;
+		scrP2: number;
+	  }
 
 	  const fetchGames = async () => {
 		const userId = user?.id;
 
 		try {
-			const response = await fetch(`http://localhost:3000/users/${userId}/games-data`, {
+			const response = await fetch(`http://localhost:3001/users/${userId}/games-data`, {
 				method: "GET",
 			});
-			if (response.ok) {
+			if (response.ok)
+			{
 				const data = await response.json();
-				console.log(data);
+				if (data.game1 || data.game2)
+				{
+					const allGames: Game[] = [...data.game1, ...data.game2].sort(
+						(a, b) => Date.parse(a.start_at) - Date.parse(b.start_at)
+					);
+					setGameData(allGames.reverse());
+				}
+				//console.log(data.game2);
+				//console.log(data.game2.length);
+				// if (data.game1.length > 0)
+				// {
+				// 	const player1 = data.game1;
+				// 	const gameInfo = player1.map((test: {winnerId: number, end_at: any, userId1: any, userId2: any}) => ({
+				// 		end_at: test.end_at,
+				// 		winnerId: test.winnerId,
+				// 		userId1: test.userId1,
+				// 		userId2: test.userId2,
+						
+				// 	}));
+				// 	//console.log("ICICICI ndendoendoendoeindoendoenodneondeondeondeondoendeondeondeondeonod");	
+				// 	setGameData(gameInfo);
+				// }
+				//if (data.game1)
+				//	setGameData(data.game1);
 			}
 			else
 			{
@@ -209,6 +259,10 @@ export const UserSetting: React.FC = () => {
 		<div className="navbarsmallbox">
 			<p className="boxtitle"> 2FAC AUTH </p>
 		</div>
+		<div className="twoFA">
+			<button className="twoFAenabled" onClick={() => twoFAEnable(navigate)}>enable</button>
+			<button className="twoFAdisabled" onClick={() => twoFADisable({user, setUser})}>disable</button>
+		</div>
 		<div className="footersmallbox">
 			<br></br>
 		</div>
@@ -220,8 +274,40 @@ export const UserSetting: React.FC = () => {
 		<div className="navbarsmallbox">
 			<p className="boxtitle"> GAME HISTORY </p>
 		</div>
+		tqtqtqtqtqtq
 		<div>
+			<table>
+			<thead>
+				<tr>
+				<th>game id</th>
+				<th>Joueur 1</th>
+				<th></th>
+				<th></th>
+				<th>Joueur 2</th>
+				</tr>
+			</thead>
+			<tbody>
+				{gameData.map((game: Game, index: number) => (
+				<tr key={index}>
+					<td>{game.id}</td>
+					<td>{game.userId1}</td>
+					<td>{game.scrP1}</td>
+					<td>{game.scrP2}</td>
+					<td>{game.userId2}</td>
+				</tr>
+				))}
+			</tbody>
+			</table>
 		</div>
+		{/* <div className="test">
+            {gameData.map((game, index) => (
+                <div>
+					<p>{test.userId1}</p>
+					<p>{test.userId2}</p>
+					TOTOTOTOTO
+                </div>
+            ))} 
+        </div> */}
 		<div className="footersmallbox">
 			<br></br>
 		</div>
@@ -231,6 +317,7 @@ export const UserSetting: React.FC = () => {
 	</div>
 	<div className="footerprofilsettings">
 		{/* <br></br> */}
+		<button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
 		<img src={logo} className="logo" alt="icon" />
 	</div>
 	</div>

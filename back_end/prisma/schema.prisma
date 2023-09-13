@@ -22,7 +22,12 @@ model User {
 	game1		Game[] @relation("player1")
 	game2		Game[] @relation("player2")
 	gameplayed	Int?
+	scoreMiniGame	Int?
 	pictureURL	String?
+	enabled2FA	Boolean?
+	totpKey		String?
+	log2FA		Boolean?
+	ELO			Int?
 
 	friends		User[] @relation ("Friends")
 	friendsOf	User[] @relation ("Friends")
@@ -93,4 +98,5 @@ model Game {
 	scrP1		Int?
 	scrP2		Int?
 	roomId		Int?
+	superGame	Int?
 }

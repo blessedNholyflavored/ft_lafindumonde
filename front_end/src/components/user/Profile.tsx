@@ -16,7 +16,7 @@ export const Profile = () =>
 
   const fetchUserTab = async (id: string | undefined) => {
     try {
-      const response =  await fetch(`http://localhost:3000/users/${id}`, {
+      const response =  await fetch(`http://localhost:3001/users/${id}`, {
         method: "GET",
         //ici il faudra rajouter des trucs de header grace a lauth (pour verifier que lutilisateur connecte a bien les droits pour cette route)
       })
