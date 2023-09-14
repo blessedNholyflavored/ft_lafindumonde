@@ -100,7 +100,7 @@ export class UserService {
     }
   }
 
-  async addFriendOnTable(id1: number, id2: number) {
+  async addFriends(id1: number, id2: number) {
     const updateUser = await prisma.user.update({
       where: {
         id: id1,
@@ -108,6 +108,15 @@ export class UserService {
       include: { friends: true, friendsOf: true },
       data: {
         friends: { connect: { id: id2 } },
+      },
+    });
+    const updateUser1 = await prisma.user.update({
+      where: {
+        id: id2,
+      },
+      include: { friends: true, friendsOf: true },
+      data: {
+        friends: { connect: { id: id1 } },
       },
     });
   }

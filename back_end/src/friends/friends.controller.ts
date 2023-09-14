@@ -17,6 +17,16 @@ export class FriendsController {
     return this.friendsService.findInvSend(id);
   }
 
+  @Get('invRequest/:id')
+  invRequest(@Param('id') id: string) {
+    return this.friendsService.findInvRequest(id);
+  }
+
+  @Post('accept/:id')
+  acceptFriend(@Param('id') id: string) {
+    return this.friendsService.acceptRequest(id);
+  }
+
   @Post('/:id/:id1')
   async createFriendRequest(@Param('id') id: string,@Param('id1') id1: string) {
     const senderId = id;

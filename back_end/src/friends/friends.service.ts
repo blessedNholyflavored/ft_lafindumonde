@@ -40,6 +40,40 @@ export class FriendsService {
     }
   }
 
+
+  async findInvRequest(id: string) {
+    try {
+      const friends = await this.prisma.user.findMany({
+        where: { id: parseInt(id) },
+        select: { InvitFriendReceived: true},
+      });
+      console.log(friends[0]);
+      return friends[0].InvitFriendReceived;
+    } catch (error) {
+      throw new BadRequestException('invsend recup friends error : ' + error);
+    }
+  }
+
+
+  async acceptRequest(id: string)
+  {
+    const friendShipUpdate = await prisma.friendship.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+			  status: "ACCEPTED",
+			},
+    })
+    const friendShip = await prisma.friendship.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    })
+    
+    this.userService.addFriends(friendShip.senderId, friendShip.recipientId);
+  }
+
   async sendFriendRequest(senderId: string, recipientId: string)
     {
     const p1 = await prisma.user.findUnique({
