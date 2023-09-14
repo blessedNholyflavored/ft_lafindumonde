@@ -16,8 +16,11 @@ import { AuthProvider, useAuth } from './components/auth/AuthProvider';
 import { socket, WebsocketProvider } from './WebsocketContext';
 import { Websocket } from './Websocket';
 import SuperPong from './SuperPong';
+import { Profile } from './components/user/Profile';
+import { FriendsPage } from './components/friends/friendsPage';
 import SoloPong from './SoloPong';
 import MiniGame from './SoloPong';
+import Classement from './leaderboard';
 
 export const App: React.FC = () => {
   //const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
@@ -49,11 +52,13 @@ export const App: React.FC = () => {
 		  <Route path="/settings" element={<ProtectedRoute><UserSetting /></ProtectedRoute>} />
           <Route path="/totpSave" element={<ProtectedRoute><SaveTotp /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
-          <Route path="/auth" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/users/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/sock" element={<ProtectedRoute><Websocket /></ProtectedRoute>} />
 		  <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+		  <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
         <Route path="/SuperGame" element={<ProtectedRoute><SuperPong socket={socket} /></ProtectedRoute>} />
 		  <Route path="/solopong" element={<ProtectedRoute><MiniGame /></ProtectedRoute>} />
+		   <Route path="/leaderboard" element={<ProtectedRoute><Classement /></ProtectedRoute>} />
         </Routes>
     </AuthProvider>
       </WebsocketProvider>
@@ -61,23 +66,23 @@ export const App: React.FC = () => {
 };
 
 //TODO: remove this before prod
-function  Profile() {
-  const { user, setUser } =useAuth();
-  const navigate = useNavigate();
+// function  Profile() {
+//   const navigate = useNavigate();
+//   const { user, setUser } =useAuth();
 
-	const navigateToHome = () => {
-		navigate('/');
-	};
+// 	const navigateToHome = () => {
+// 		navigate('/');
+// 	};
 
-  return (
-    <div className="Salut">
-      <h1>{user!.username}</h1>
-      <img src={user!.pictureURL} alt="profile picture" />
-      <p>{ JSON.stringify(user) }</p>
-      <button onClick={() => Logout({user, setUser})}>LOG OUT </button>
-	  <button onClick={navigateToHome}>HOME</button>
-    </div>
-  );
-};
+//   return (
+//     <div className="Salut">
+//       <h1>{user!.username}</h1>
+//       <img src={user!.pictureURL} alt="profile picture" />
+//       <p>{ JSON.stringify(user) }</p>
+//       <button onClick={() => Logout({user, setUser})}>LOG OUT </button>
+// 	  <button onClick={navigateToHome}>HOME</button>
+//     </div>
+//   );
+// };
 
 export default App;

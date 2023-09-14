@@ -113,6 +113,10 @@ const handlePlayerSelect222 = async (player: string) => {
     navigate('/solopong');
     };
 
+  const navigateToFriends = () => {
+    navigate('/friends');
+    };
+
 
   return (
 	<>
@@ -137,6 +141,14 @@ const handlePlayerSelect222 = async (player: string) => {
 				</div>
 				<div className="chat_btn">
 					<button onClick={ navigateToChat }>Chat Now !</button>
+				</div>
+			</div>
+      <div className="group_box chat_box">
+				<div className="navbarsmallbox">
+					<p className="boxtitle"> FRIENDS </p>
+				</div>
+				<div className="chat_btn">
+					<button onClick={ navigateToFriends }>Friends !</button>
 				</div>
 			</div>
 			{/* troisieme */}

@@ -5,6 +5,7 @@ import './App.css'
 import { useAuth } from './components/auth/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { WebsocketContext } from './WebsocketContext';
+import { count } from 'console';
 
 
 
@@ -23,8 +24,26 @@ const PongGame: React.FC = () => {
   const [SpeedBallX, setSpeedBallX] = useState<number>(-5);
   const [SpeedBallY, setSpeedBallY] = useState<number>(0);
   const [updatelvl, setUpdatelvl] = useState<number>(0);
+  const [countdown, setCountdown] = useState(3);
 
 
+  const startCountdown = () => {
+    const countdownInterval = setInterval(() => {
+      setCountdown((prevCountdown) => prevCountdown - 1);
+    }, 1000);
+  
+    // Ajoutez une vérification en dehors de l'intervalle
+    setTimeout(() => {
+      clearInterval(countdownInterval);
+      startGameFCT();
+    }, 4000); // Arrêtez le compte à rebours après 3 secondes
+  };
+  useEffect(() => {
+    if (countdown !== 0) {
+      startCountdown();
+    }
+  }, [counter]);
+  
 
   const handleKeyDown = (event: KeyboardEvent) => {
 
@@ -42,41 +61,6 @@ const PongGame: React.FC = () => {
     };
   }, [socket, room, user]);
 
-//   useEffect(() => {
-//     let intervalId: NodeJS.Timeout;
-//     if (socket && counter === 1 && !end) {
-//       intervalId = setInterval(() => {
-//         socket.emit('ballMoovEMIT', room?.roomID);
-//     }, 1000 / 60);
-//   }
-//   return () => {
-//     if (intervalId) {
-//       clearInterval(intervalId);
-//     }
-//   };
-// }, [socket, room]);
-
-
-
-//   useEffect(() => {
-//     let intervalId: NodeJS.Timeout;
-//     if (socket && !end) {
-//       intervalId = setInterval(() => {
-
-//         setBallXPos((prevXPos) => prevXPos + SpeedBallX);
-//         setBallYPos((prevYPos) => prevYPos + SpeedBallY);
-
-//     }, 1000 / 60);
-//   }
-//   return () => {
-//     if (intervalId) {
-//       clearInterval(intervalId);
-//     }
-//   };
-// }, [BallXpos, BallYpos]);
-
-
-
 
 const NavHome = () => {
   socket.emit('changeStatus', (socket: Socket) => {
@@ -86,36 +70,44 @@ const NavHome = () => {
 
 }
 
+const startGameFCT = () =>
+{
+  if (socket && counter === 0)
+  {
+    socket?.emit('startGame');
+    setCounter(1);
+  }
+}
+
 useEffect(() => {
 
-
-
-      //      CREATION DU MODEL DE LA GAME DANS LA DB
-
+  
+  //      CREATION DU MODEL DE LA GAME DANS LA DB
+  
   if (socket && !startFlag && room && counter === 1) {
     setStartflag(1);
     socket.emit('CreateGame', (room: Room) => {
     });
   }
 
-      //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
+  //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
+  
+  // if (socket && counter === 0 && countdown === 0) {
+  //   socket?.emit('startGame');
+  //   setCounter(1);
+  // }
 
-  if (socket && counter === 0) {
-    let t = user?.id;
-    socket?.emit('startGame');
-    setCounter(1);
-  }
-
-      //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
-
+  //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
+  
   if (socket) {
     socket.on('startGame2', async (updateroom: Room) => {
-        setCounter(1);
-        setRoom(updateroom);
+      setCounter(1);
+      setRoom(updateroom);
     });
   }
 
-  if (socket && !end) {
+
+  if (socket && !end && countdown <= 0) {
     socket.on('recupMoov', (updatedRoom: Room) => {
       if (room)
       {
@@ -128,7 +120,7 @@ useEffect(() => {
 
         //      RECUP DES DATAS DES PLAYER MOVES ET DES DEPLACEMENTS DE LA BALLE DEPUIS LE BACK VERS LE FRONT
 
-  if (socket && !end) {
+  if (socket && !end && countdown <= 0) {
     socket.on('ballMoovON', (updateRoom: Room) => {
       if (updateRoom.player1 && updateRoom.player2 && updateRoom.player1 !== undefined) {
         setRoom(updateRoom);
@@ -196,13 +188,25 @@ useEffect(() => {
 
   return (
 <div className="pong-game">
+
+{/* <div className="countdown-container"> */}
+{countdown > 1 && (
+    <div className="countdown">{countdown}</div>
+  )}
+  {countdown === 1 && (
+    <div className="countdown ready">Ready ?</div>
+  )}
+  {countdown === 0 && (
+    <div className="countdown start">Start</div>
+  )}
+{/* </div> */}
   {user && (
     <h2>Vous êtes connecté en tant que {user.username}</h2>
     )}
     {!end && (
-    <button onClick={NavHome}>Quitter la partie</button>
-)}
-  {room && room.player1 && room.player2 &&  (
+      <button onClick={NavHome}>Quitter la partie</button>
+      )}
+  {room && room.player1 && room.player2 &&(
     <div>
       <p>La partie commence entre {room.player1} et {room.player2} !</p>
       <div style={{ textAlign: 'center', fontSize: '24px', marginBottom: '10px' }}>
