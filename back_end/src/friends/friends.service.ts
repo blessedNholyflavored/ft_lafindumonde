@@ -55,16 +55,75 @@ export class FriendsService {
   }
 
 
+async deleteFriend(sender: string, recipient: string)
+{
+
+  const user1 = await this.prisma.user.findUnique({
+    where: {
+      id: parseInt(sender),
+    },
+  });
+
+  const user2 = await this.prisma.user.findUnique({
+    where: {
+      id: parseInt(recipient),
+    },
+  });
+
+  await this.prisma.user.update({
+    where: {
+      id: parseInt(sender),
+    },
+    data: {
+      friends: {
+        disconnect: {
+          id: parseInt(recipient),
+        },
+      },
+    },
+  });
+  await this.prisma.user.update({
+    where: {
+      id: parseInt(recipient),
+    },
+    data: {
+      friends: {
+        disconnect: {
+          id: parseInt(sender),
+        },
+      },
+    },
+  });
+
+  await this.prisma.user.update({
+    where: {
+      id: parseInt(recipient),
+    },
+    data: {
+      friendsOf: {
+        disconnect: {
+          id: parseInt(sender),
+        },
+      },
+    },
+  });
+  await this.prisma.user.update({
+    where: {
+      id: parseInt(sender),
+    },
+    data: {
+      friendsOf: {
+        disconnect: {
+          id: parseInt(recipient),
+        },
+      },
+    },
+  });
+}
+
   async acceptRequest(id: string)
   {
-    const friendShipUpdate = await prisma.friendship.update({
-      where: {
-        id: parseInt(id),
-      },
-      data: {
-			  status: "ACCEPTED",
-			},
-    })
+
     const friendShip = await prisma.friendship.findUnique({
       where: {
         id: parseInt(id),
@@ -72,6 +131,11 @@ export class FriendsService {
     })
     
     this.userService.addFriends(friendShip.senderId, friendShip.recipientId);
+    const friendShipUpdate = await prisma.friendship.delete({
+      where: {
+        id: parseInt(id),
+      },
+    })
   }
 
   async refuseRequest(id: string)

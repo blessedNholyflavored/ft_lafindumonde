@@ -33,6 +33,7 @@ export class JwtGuard extends AuthGuard('jwt'){
 					// on verif la signature du jwt --> est ce que le token est valide ?
 					const payload = this.jwt.verify(token, {secret: this.config.get('JWT_SECURE_KEY')});
 					socket.user = await this.userService.getUserByID(payload.sub) ?? {};
+					console.log("newttoie bien ta queuq");
 					return true;
 				} catch (err) {
 					throw new WsException('Unauthorized access');

@@ -5,6 +5,8 @@ import {
   WebSocketGateway,
   WebSocketServer,
   ConnectedSocket,
+  OnGatewayDisconnect,
+  OnGatewayInit
 } from '@nestjs/websockets';
 import { Server} from 'socket.io';
 // ici on import le type Socket qui extends socket de socket.io mais avec l'user
@@ -27,7 +29,7 @@ import { disconnect } from 'process';
   path: "",
 })
 @UseGuards(...AuthenticatedGuard)
-export class GameGateway implements OnModuleInit {
+export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
 
   @WebSocketServer()
   server: Server;
@@ -45,19 +47,32 @@ export class GameGateway implements OnModuleInit {
   private room: Room;
   private roomIntervals: Record<string, NodeJS.Timeout> = {};
 
-// init connection avec le websocket + deconnection avec le websocket
-  onModuleInit() {
-    this.server.on('connection', (socket) => {
-      console.log(socket.id);
-      console.log('Connected');
-      socket.on('disconnect', () => {
-          this.playerQueue.splice(0, 1);
-          this.playerQueue2.splice(0, 1);
-          this.socketQueue.splice(0, 1);
-      });
-    });
+
+  afterInit(server: Server) {
+		void server;
+		console.log("Gateway initialized.");
+	}
+
+
+	handleConnection(@ConnectedSocket() socket: Socket) {
+      socket.emit("coucou");
+      console.log("connected:   ", socket.user)
   }
   
+  
+	handleDisconnect(@ConnectedSocket() socket: Socket) {
+
+    this.playerQueue.splice(0, 1);
+    this.playerQueue2.splice(0, 1);
+    this.socketQueue.splice(0, 1);
+    console.log(socket.user);
+
+  }
+
+  @SubscribeMessage('coucou')
+  async coucou(@ConnectedSocket() socket: Socket)
+  {}
+
 // gestion des differentes listes d'attentes (partie classique ou partie bonus)
   @SubscribeMessage('joinQueue')
   async onJoinQueue(@MessageBody() data: {player: number, type: number}, @ConnectedSocket() socket: Socket,){

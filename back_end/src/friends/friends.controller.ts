@@ -26,9 +26,15 @@ export class FriendsController {
   acceptFriend(@Param('id') id: string) {
     return this.friendsService.acceptRequest(id);
   }
+
   @Post('refuse/:id')
   refuseFriend(@Param('id') id: string) {
     return this.friendsService.refuseRequest(id);
+  }
+  
+  @Post('delete/:id/:id1')
+  async deleteFriend(@Param('id') id1: string,@Param('id1') id2: string) {
+    return this.friendsService.deleteFriend(id1, id2);
   }
 
   @Post('/:id/:id1')

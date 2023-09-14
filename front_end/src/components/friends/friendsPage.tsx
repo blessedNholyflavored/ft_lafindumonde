@@ -90,9 +90,12 @@ const [friends, setFriends] = useState<friendsSend[]>([]);
               const data = await response.json();
                 if (data.length > 0) { 
                     const friendObjects = data[0].friends;
-                    const friendInfo = friendObjects.map((friend: { username: any; status: any; }) => ({
+                    console.log("aaaaa:   ", friendObjects);
+                    const friendInfo = friendObjects.map((friend: {id:number; username: any; status: any; }) => ({
                         username: friend.username,
-                        status: friend.status
+                        status: friend.status,
+                        senderId: user?.id,
+                        recipientId: friend.id,
                     }));
                     setFriends(friendInfo);
                     console.log(friendInfo);
@@ -165,6 +168,23 @@ const [friends, setFriends] = useState<friendsSend[]>([]);
         window.location.reload();
       }
 
+      async function deleteFriend(sender: string, recipient: string) {
+
+        console.log(sender);
+        console.log(recipient);
+        try {
+          const response = await fetch(`http://localhost:3001/friends/delete/${sender}/${recipient}`, {
+            method: 'POST',
+          });
+          if (!response.ok) {
+              throw new Error('Erreur lors de la récupération des scores.');
+          }
+        } catch (error) {
+          console.error('Erreur:', error);
+        }
+        window.location.reload();
+      }
+
 
       return (
 
@@ -179,6 +199,8 @@ const [friends, setFriends] = useState<friendsSend[]>([]);
 
                     <div>{friend.username}</div>
                     <div>{friend.status}</div>
+                    <button onClick={() => deleteFriend(friend.senderId.toString(), friend.recipientId.toString())}>Delete</button>
+
                 </div>
             ))
         ) : (

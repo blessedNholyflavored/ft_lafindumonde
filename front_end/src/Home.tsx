@@ -72,6 +72,13 @@ const Home: React.FC<HomeProps> = () => {
     };
 }
 
+if (socket)
+{
+  socket.on("coucou", () => {
+    socket.emit("coucou");
+  })
+}
+
 
 const handlePlayerSelect222 = async (player: string) => {
   setSelectedPlayer(player);
