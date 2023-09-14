@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import star from "../../img/iconscore.png";
@@ -32,7 +33,7 @@ const ScoreList = (props: any) => {
           setAchievementGame(getAchievementByGames(data.gameplayed));
           // console.log("assignation", gameplayed);
         } else {
-          console.log("error : wrong data");
+          console.log("error : wrong data scorelist");
         }
       }
     } catch (error) {

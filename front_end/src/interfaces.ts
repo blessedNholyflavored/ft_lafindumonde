@@ -9,15 +9,17 @@ export interface User {
   export class Room {
     player1?: string;
     player2?: string;
-    ballX?: number;
-    ballY?: number;
+    ballX!: number;
+    ballY!: number;
     scoreP1?: number;
     scoreP2?: number;
-    player1Y?: number;
-    player2Y?: number;
+    player1Y!: number;
+    player2Y!: number;
     winner?: string;
     end?: number;
     roomID?: number;
+    speedX!: number;
+    speedY!: number;
   }
 
   export interface Point {

@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { FriendsService } from './friends.service';
-import { UserService } from 'src/user/user.service';
-import { Friend } from './types/friends';
-import { Response } from 'express';
+import { CreateFriendRequestDto } from './dto/friend.dto';
+import { Friend } from './friends.interface';
 
 @Controller('friends')
 export class FriendsController {
@@ -12,40 +11,69 @@ export class FriendsController {
   findAll(@Param('id') id: string) {
     return this.friendsService.findAll(id);
   }
- 
-  // @Post('/')
-  // async addFriends(@Body() usersId: any) {
-  //   const { senderId, recipientId } = usersId;
-  //   const newFriendship = await this.friendsService.openFriendship(
-  //     parseInt(senderId),
-  //     recipientId,
-  //   );
-  //   return newFriendship;
-  // }
+
+  @Get('invSend/:id')
+  invSend(@Param('id') id: string) {
+    return this.friendsService.findInvSend(id);
+  }
+
+  @Get('invRequest/:id')
+  invRequest(@Param('id') id: string) {
+    return this.friendsService.findInvRequest(id);
+  }
+
+  @Post('accept/:id')
+  acceptFriend(@Param('id') id: string) {
+    return this.friendsService.acceptRequest(id);
+  }
+  @Post('refuse/:id')
+  refuseFriend(@Param('id') id: string) {
+    return this.friendsService.refuseRequest(id);
+  }
+
+  @Post('/:id/:id1')
+  async createFriendRequest(@Param('id') id: string,@Param('id1') id1: string) {
+    const senderId = id;
+    const recipientId = id1;
+    const amitie = await this.friendsService.sendFriendRequest(senderId, recipientId);
+    return amitie;
+  }
   
-  @Post('/create')
-  async addNewFriendship(@Body() usersId: any) {
-    const { senderId, recipientId } = usersId;
-    const newFriendship = await this.friendsService.addNewFriendship(
-      parseInt(senderId),
-      recipientId,
-    );
-    return newFriendship;
+  @Get('/status/:id/:id1')
+  async getFriendRequest(@Param('id') id: string,@Param('id1') id1: string) {
+    const senderId = id;
+    const recipientId = id1;
+    const statut = await this.friendsService.getfriendrequestStatus(senderId, recipientId);
+    
+    // const amitie = await this.friendsService.sendFriendRequest(senderId, recipientId);
+    if (statut)
+      return statut.status;
+    return ("not")
   }
 
-  @Post('received')
-  async getReceived(@Body() userId: number) {
-    const demands = await this.friendsService.getReceivedFriendships(userId);
-    return demands;
-  }
-
-  @Post('friends/')
-  async showFriends(@Body() userId: any) {
-    const { id } = userId;
-    const friends = await this.friendsService.showFriends(id);
-    if (friends.friendsOf) {
-      return friends.friendsOf;
+  @Get('/already/:id/:id1')
+  async checkAlreadyFriend(@Param('id') id: string,@Param('id1') id1: string) {
+    const senderId = id;
+    const recipientId = id1;
+    const statut = await this.friendsService.alreadyFriendGetStatus(senderId, recipientId);
+    
+    console.log(statut);
+    // const amitie = await this.friendsService.sendFriendRequest(senderId, recipientId);
+    if (statut != 0)
+      return "ACCEPTED";
+    return "Add friend";
     }
-    return null;
-  }
+
+//   @Post('/update')
+//   async updatestatus( request: string) {
+//     const reqstatus = await this.friendsService.updatingstatus(request);
+//     if (reqstatus.status == ACCEPTED) {
+// 			await this.friendsService.addFriend(Request);
+//     } else if (reqstatus.status == REFUSED) {
+// 			await this.friendsService.deleteFriend(request);
+//   }
+//   return reqstatus;
+// }
+
+
 }

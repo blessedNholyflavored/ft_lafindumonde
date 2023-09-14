@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import io, { Socket } from 'socket.io-client';
 import { User } from './interfaces';
@@ -10,43 +10,95 @@ import "./style/Home.css";
 import "./style/Logout.css";
 import { Logout } from './components/auth/Logout';
 import { useAuth } from './components/auth/AuthProvider';
+import { WebsocketContext } from './WebsocketContext';
+
 
 interface HomeProps {
   socket: Socket | null;
 }
 
-const Home: React.FC<HomeProps> = ({ socket }) => {
+const Home: React.FC<HomeProps> = () => {
   const navigate = useNavigate();
+  const socket = useContext(WebsocketContext);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [queueCount, setQueueCount] = useState<number>(0);
+  const [queueCountBonus, setQueueCountBonus] = useState<number>(0);
   const { user, setUser } =useAuth();
+  // const [recupStatus, setStatus] = useState<string>('');
+  let recupStatus = '';
+  const [inGame, setInGame] = useState<number>(0);
 
-  if (socket)
-    console.log(socket.id);
-  if (user)
-    console.log(user.id);
 
   const handlePlayerSelect = async (player: string) => {
     setSelectedPlayer(player);
 
     try {
-      // const response = await fetch(`http://localhost:3000/users/${player}`);
-      // const user = await response.json();
+      const response = await fetch(`http://localhost:3001/users/status/${user?.id}`, {
+        method: 'GET',
+      });
+      if (response.ok) {
+        const recup = await response.text();
+        // setStatus(recup);
+        recupStatus = recup;
+        console.log(recupStatus);
+      }
+      if (recupStatus !== "INGAME")
+      {
       if (user)
-      socket?.emit('joinQueue', user.id);
+      socket?.emit('joinQueue', user.id, 0);
       setUser(user);
 
       socket?.on('queueUpdate', (count: number) => {
         setQueueCount(count);
         if (count === 2) {
-         // socket?.emit('updateUserIG', user?.id);
+         socket?.emit('updateUserIG', user?.id);
           navigate('/game');
         }
+      
       });
+    }
+    else if (recupStatus === "INGAME")
+    {
+      setInGame(1);
+    }
     } catch (error) {
       console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
     }
+
+    return () => {
+      if (socket) {
+        socket.off('queueUpdate');
+      }
+    };
+}
+
+
+const handlePlayerSelect222 = async (player: string) => {
+  setSelectedPlayer(player);
+
+
+  try {
+      if (user)
+    socket?.emit('joinQueue', user.id, 1);
+    setUser(user);
+
+    socket?.on('queueUpdateBonus', (count: number) => {
+      setQueueCountBonus(count);
+      if (count === 2) {  
+       socket?.emit('updateUserIG', user?.id);
+        navigate('/SuperGame');
+      }
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+  }
+
+  return () => {
+    if (socket) {
+      socket.off('queueUpdate');
+    }
   };
+}
 
 
   const navigateToProfPage = () => {
@@ -56,6 +108,15 @@ const Home: React.FC<HomeProps> = ({ socket }) => {
   const navigateToChat = () => {
 	navigate('/chat');
   };
+
+  const NavToSoloPong = () => {
+    navigate('/solopong');
+    };
+
+  const navigateToFriends = () => {
+    navigate('/friends');
+    };
+
 
   return (
 	<>
@@ -82,6 +143,14 @@ const Home: React.FC<HomeProps> = ({ socket }) => {
 					<button onClick={ navigateToChat }>Chat Now !</button>
 				</div>
 			</div>
+      <div className="group_box chat_box">
+				<div className="navbarsmallbox">
+					<p className="boxtitle"> FRIENDS </p>
+				</div>
+				<div className="chat_btn">
+					<button onClick={ navigateToFriends }>Friends !</button>
+				</div>
+			</div>
 			{/* troisieme */}
 			<div className="group_box game_box">
 				<div className="navbarsmallbox">
@@ -89,13 +158,18 @@ const Home: React.FC<HomeProps> = ({ socket }) => {
 				</div>
 				<div className="game_img">
 				    <button onClick={() => handlePlayerSelect('1')} className="game_img_btn">RECHERCHE DE PARTIE</button>
+				    <button onClick={() => handlePlayerSelect222('1')} className="game_img_btn">RECHERCHE DE SUPER PARTIE</button>
+				    <button onClick={() => NavToSoloPong()} className="game_img_btn">Mini Jeu</button>
 					<button onClick={navigateToProfPage} className="game_img_btn">Aller à la page Prof</button>
-				    	{queueCount > 0 && (
+				    	{(queueCount > 0 || queueCountBonus > 0) &&  (
     						<p>En attente d'autres joueurs...</p>
   						)}
   						{queueCount === 2 && (
     						<p>La partie commence entre Ldinaut et Mcouppe !</p>
   						)}
+              { inGame === 1 && (
+                <p>Deja en game mon reuf !</p>
+              )}
 			    </div>
 			</div>
 			{/* quatrieme */}
@@ -119,6 +193,8 @@ const Home: React.FC<HomeProps> = ({ socket }) => {
       <h2>Les WebSocket c'est dla merde</h2>
       <button onClick={() => handlePlayerSelect('1')}>RECHERCHE DE PARTIE</button>
       <button onClick={navigateToProfPage}>Aller à la page Prof</button>
+      <button onClick={() => handlePlayerSelect222('1')}>Rdfsfvdsvfdsvfdfd</button>
+
 
       {queueCount > 0 && (
         <p>En attente d'autres joueurs...</p>

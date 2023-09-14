@@ -1,0 +1,159 @@
+
+.Salut img {
+    max-height: 360px;
+  }
+  
+  .Salut button:hover {
+    cursor: pointer;
+    background-color: #F082AC;
+  }
+  
+  .Salut button {
+    background-color: #EA4C89;
+    border-radius: 8px;
+    border-style: none;
+    color: #FFFFFF;
+    height: 40px;
+    padding: 10px 16px;
+  }
+  
+  body {
+    text-align: center;
+    color: #EA4C89;
+    background-color: black;
+    height: 90%;
+    /* background-image: url("./sphere.png"); */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: auto 80%;
+    margin: 0;
+    min-height: 100vh;
+  }
+  
+  .App {
+    padding: 7em 2em;
+  }
+  
+  .App {
+    text-align: center;
+    background-color: black;
+    height: 90%;
+    /* background-image: url("img/sphere.png"); */
+    background-position: 50%;
+    background-size: cover;
+  }
+  
+  
+  .App-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+  
+  @media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+      animation: App-logo-spin infinite 20s linear;
+    }
+  }
+  
+  .App-header {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* font-size: calc(10px + 2vmin); */
+    /* color: white; */
+    margin: 0;
+  }
+  
+  .App-link {
+    color: #61dafb;
+  }
+  
+  @keyframes App-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  #moncercle{
+    position:absolute;
+    background:#ffee02;
+    border-radius:50%;
+    width:8px;
+    height:8px;
+    border:2px solid #679403;
+  }
+  
+  .player-point {
+    width: 10px;
+    height: 10px;
+    background-color: blue; /* Couleur du point du joueur */
+    position: absolute;
+  }
+  
+  .ball {
+    width: 10px;
+    height: 10px;
+    background-color: red; /* Couleur de la balle */
+    position: absolute;
+  }
+  
+  .player-rect {
+    position: absolute;
+    width: 10px;
+    height: 80px;
+  }
+  
+  .player-rect.player1 {
+    left: 0;
+    background-color: rgb(255, 0, 221);
+  
+  }
+  
+  .player-rect.player2 {
+    right: 0;
+    background-color: rgb(43, 255, 0);
+  
+  }
+  
+  
+  .pong-game {
+    position: relative;
+    width: 700px;
+    height: 400px;
+    background-color: black;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  
+  /* Style pour le terrain de jeu */
+.game-container {
+    background-color: black;
+    position: relative;
+    width: 800px; /* Ajustez la taille en fonction de vos préférences */
+    height: 400px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  
+  /* Style pour les raquettes */
+  .player-rect {
+    width: 10px;
+    height: 80px;
+    background-color: white;
+    position: absolute;
+  }
+  
+  /* Style pour le halo de surbrillance */
+  .player-highlight {
+    width: 20px;
+    height: 100px;
+    border: 2px solid white;
+    position: absolute;
+    z-index: -1; /* Placez-le derrière les raquettes */
+  }
+  

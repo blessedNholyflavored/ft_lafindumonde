@@ -23,7 +23,6 @@ const Box = (props: any) => {
 
 return (
     
-    // <div className={`Box ${ProfileBox}`}>
     <div className="mainpage">
         <div className="navbarmainpage">
         <img src={icon} className="buttonnav" alt="icon" />

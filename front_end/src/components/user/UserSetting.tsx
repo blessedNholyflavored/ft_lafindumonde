@@ -16,10 +16,13 @@ export const UserSetting: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const { user, setUser } = useAuth();
 	const navigate = useNavigate();
+	const [gameData, setGameData] = useState<Game[]>([]);
 
 	useEffect(() => {
 		displayPic();
-	});
+		FetchGames();
+	}, []);
+	
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -44,8 +47,8 @@ export const UserSetting: React.FC = () => {
 	};
 
 	const displayPic = async() => {
-		const userId = user?.id;
 
+		const userId = user?.id;
 		try {
 			const response = await fetch(`http://localhost:3001/users/${userId}/avatar`, {
 				method: 'GET',
@@ -53,7 +56,7 @@ export const UserSetting: React.FC = () => {
 			if (response.ok) {
 				const pictureURL = await response.text();
 				//console.log("aaaaaaA",pictureURL);
-				if (!pictureURL.includes("https"))
+				if (pictureURL.includes("https"))
 				{
 					setImgUrl(pictureURL);
 				}
@@ -63,19 +66,13 @@ export const UserSetting: React.FC = () => {
 						method: 'GET',
 					});
 					if (response.ok) {
-						// const backPath = 'http://localhost:3000/users';
-						// const absoluteURL = `${backPath}/${pictureURL}`
-						//setImgUrl(pictureURL);
 						const blob = await response.blob();
 						const absoluteURL = URL.createObjectURL(blob);
 						setImgUrl(absoluteURL);
-						//console.log("FOFOFOFOFOFOFOF", absoluteURL);
-						//setImgUrl(URL.createObjectURL(blob));
-						//console.log("dans front", pictureURL);
 					}
 					}
 					catch (error) {
-						//console.error(error);
+						console.error(error);
 					}
 				}
 			}
@@ -118,7 +115,7 @@ export const UserSetting: React.FC = () => {
 				console.log("DDDDDDDDDDDDDDDDDDDDDD", result.pictureURL);
 				alert('profil picture mise à jour avec succès !');
 				displayPic();
-				
+
 			} else {
 				console.log("kkkkkkkkkk");
 				const backError = await response.json();
@@ -140,6 +137,59 @@ export const UserSetting: React.FC = () => {
 		navigate('/');
 	};
 
+	interface Game {
+		id: number;
+		start_at: string;
+		userId1: number;
+		userId2: number;
+		username1: string;
+		username2: string;
+		scrP1: number;
+		scrP2: number;
+	  }
+
+	  const FetchGames = async () => {
+
+		const userId = user?.id;
+		try {
+			const response = await fetch(`http://localhost:3001/users/${userId}/games-data`, {
+				method: "GET",
+			});
+			if (response.ok)
+			{
+				const data = await response.json();
+				const updatedGameData = [...data];
+				let i: number = 0;
+				while (i < updatedGameData.length)
+				{
+					try {
+						const response = await fetch(`http://localhost:3001/users/${updatedGameData[i].userId1}/username`, {
+							method: "GET",
+						});
+						const response2 = await fetch(`http://localhost:3001/users/${updatedGameData[i].userId2}/username`, {
+							method: "GET",
+						});
+						if (response.ok)
+							updatedGameData[i].username1 = await response.text();
+						if (response2.ok)
+							updatedGameData[i].username2 = await response2.text();
+					}
+					catch (error) {
+						console.log (error);
+					}
+					i++;
+				}
+				setGameData(updatedGameData.reverse());
+			}
+			else
+			{
+				console.log("response pas ok");
+			}
+		} catch (error) {
+			console.error("error de get game data", error);
+		}
+	  };
+
   return (
 	<>
 	<div className="mainpage">
@@ -157,7 +207,7 @@ export const UserSetting: React.FC = () => {
 {/* premier */}
 	<div className="boxrowsettings">
 		<div className="navbarsmallbox">
-			<p className="boxtitle"> CHANGE USERNAME </p>
+			<p className="boxtitle"> USERNAME </p>
 		</div>
 		<form className='formsettings' onSubmit={handleSubmit}>
 			<label className='labelcss'>
@@ -178,7 +228,7 @@ export const UserSetting: React.FC = () => {
 	{/* deuxieme */}
 	<div className="boxrowsettings">
 		<div className="navbarsmallbox">
-			<p className="boxtitle"> CHANGE IMAGE </p>
+			<p className="boxtitle"> AVATAR </p>
 		</div>
 		<img src={ImgUrl} alt='user avatar'></img>
 		<div>
@@ -191,7 +241,7 @@ export const UserSetting: React.FC = () => {
 	</div>
 
 {/* troisieme */}
-	<div className="boxrowsettings">
+	{/* <div className="boxrowsettings">
 		<div className="navbarsmallbox">
 			<p className="boxtitle"> 2FAC AUTH </p>
 		</div>
@@ -202,8 +252,43 @@ export const UserSetting: React.FC = () => {
 		<div className="footersmallbox">
 			<br></br>
 		</div>
-	</div>
+	</div> */}
 
+
+{/* quatre juste pour test game history */}
+	<div className="boxrowsettings">
+		<div className="navbarsmallbox">
+			<p className="boxtitle"> GAME HISTORY </p>
+		</div>
+		<div>
+			<table>
+			<thead>
+				<tr>
+				<th>game id</th>
+				<th>Joueur 1</th>
+				<th></th>
+				<th></th>
+				<th>Joueur 2</th>
+				</tr>
+			</thead>
+			<tbody>
+				{gameData.slice(0, 5).map((game: Game, index: number) => (
+				<tr key={index}>
+					<td>{game.id}</td>
+					<td>{game.username1}</td>
+					<td>{game.scrP1}</td>
+					<td>{game.scrP2}</td>
+					<td>{game.username2}</td>
+				</tr>
+				))}
+			</tbody>
+			</table>
+		</div>
+
+		<div className="footersmallbox">
+			<br></br>
+		</div>
+	</div>
 	</div>
 
 	</div>

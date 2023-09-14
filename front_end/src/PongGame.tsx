@@ -1,99 +1,55 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { User, Room } from './interfaces'; // Assurez-vous d'importer les interfaces correctes
 import './App.css'
 import { useAuth } from './components/auth/AuthProvider';
 import { useNavigate } from 'react-router-dom';
+import { WebsocketContext } from './WebsocketContext';
+import { count } from 'console';
 
 
-interface PongGameProps {
-  socket: Socket | null;
-}
 
-const PongGame: React.FC<PongGameProps> = ({ socket }) => {
+const PongGame: React.FC = () => {
   const [room, setRoom] = useState<Room | null>(null);
-  const [roomData, setRoomData] = useState<Room>();
   const [counter, setCounter] = useState(0);
   const { user, setUser } =useAuth();
   const [end, setEnd] = useState<number>(0);
-  const [endflag, setEndflag] = useState<number>(0);
   const [startFlag, setStartflag] = useState<number>(0);
   const navigate = useNavigate();
+  const socket = useContext(WebsocketContext);
+  const [player1Pos, setPlayer1Pos] = useState<number>(200);
+  const [player2Pos, setPlayer2Pos] = useState<number>(200);
+  const [BallXpos, setBallXPos] = useState<number>(350);
+  const [BallYpos, setBallYPos] = useState<number>(200);
+  const [SpeedBallX, setSpeedBallX] = useState<number>(-5);
+  const [SpeedBallY, setSpeedBallY] = useState<number>(0);
+  const [updatelvl, setUpdatelvl] = useState<number>(0);
+  const [countdown, setCountdown] = useState(3);
 
 
-
-
+  const startCountdown = () => {
+    const countdownInterval = setInterval(() => {
+      setCountdown((prevCountdown) => prevCountdown - 1);
+    }, 1000);
+  
+    // Ajoutez une vérification en dehors de l'intervalle
+    setTimeout(() => {
+      clearInterval(countdownInterval);
+      startGameFCT();
+    }, 4000); // Arrêtez le compte à rebours après 3 secondes
+  };
   useEffect(() => {
-    if (socket && room && room.end)
-    {
-      setEnd(1);
+    if (countdown !== 0) {
+      startCountdown();
     }
-  }, [end,room,socket]);
-
-
-  useEffect(() => {
-    if (socket && counter === 0) {
-      let t = user?.id;
-      console.log(t);
-      socket?.emit('startGame', async (roomData: Room, t: number) => {
-        if (roomData.player1 && roomData.player2) {
-          setRoom(roomData);
-
-        }
-      });
-
-      return () => {
-        if (socket) socket.off('startGame');
-        // Nettoyage des autres effets...
-      };
-    }
-  }, [socket]);
-
-  useEffect(() => {
-    if (socket && !end) {
-      socket.on('recupMoov', (updatedRoom: Room) => {
-        setRoom(updatedRoom);
-      });
-      return () => {
-        if (socket) socket.off('recupMoov');
-      };
-
-    }
-  }, [socket]);
-
-  useEffect(() => {
-    if (socket) {
-      socket.on('startGame2', async (room: Room) => {
-          setRoom(room);
-          // if (room && room.player1 && user?.username === room.player1)
-          // {  
-          //   room.player1.id = user.id;
-          // }
-          // if (room && room.player2 && user?.id === room.player2.id)
-          // {
-          //   room.player2.socketid = socket.id;
-          //   room.player2.id = user.id;
-          // }
-
-
-          setCounter(1);
-      });
-
-      // D'autres effets et nettoyages...
-
-      return () => {
-        if (socket) socket.off('startGame2');
-        // Nettoyage des autres effets...
-      };
-    }
-  }, [socket]);
+  }, [counter]);
+  
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    console.log(event.key);
 
     if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !end)
     {
-      socket?.emit("movePoint", user?.username, event.key);
+      socket?.emit("movePoint", user?.username, event.key, room?.roomID);
     }
   };
   
@@ -105,51 +61,152 @@ const PongGame: React.FC<PongGameProps> = ({ socket }) => {
     };
   }, [socket, room, user]);
 
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-    if (socket && counter === 1 && !end) {
-      intervalId = setInterval(() => {
-        socket.emit('ballMoovEMIT');
-    }, 1000 / 60);
-  }
-  return () => {
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
-  };
-}, [socket, room]);
-
-useEffect(() => {
-
-if (socket && !end) {
-  socket.on('ballMoovON', (room: Room) => {
-    if (room.player1 && room.player2 && room.player1 !== undefined) {
-      setRoom(room);
-    }
-  });
-}
-});
-
-useEffect(() => {
-
-if (socket && !startFlag && room && counter === 1) {
-  setStartflag(1);
-  socket.emit('CreateGame', (room: Room) => {
-  });
-}
-});
 
 const NavHome = () => {
+  socket.emit('changeStatus', (socket: Socket) => {
+  });
   navigate('/');
+  window.location.reload();
 
 }
+
+const startGameFCT = () =>
+{
+  if (socket && counter === 0)
+  {
+    socket?.emit('startGame');
+    setCounter(1);
+  }
+}
+
+useEffect(() => {
+
+  
+  //      CREATION DU MODEL DE LA GAME DANS LA DB
+  
+  if (socket && !startFlag && room && counter === 1) {
+    setStartflag(1);
+    socket.emit('CreateGame', (room: Room) => {
+    });
+  }
+
+  //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
+  
+  // if (socket && counter === 0 && countdown === 0) {
+  //   socket?.emit('startGame');
+  //   setCounter(1);
+  // }
+
+  //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
+  
+  if (socket) {
+    socket.on('startGame2', async (updateroom: Room) => {
+      setCounter(1);
+      setRoom(updateroom);
+    });
+  }
+
+
+  if (socket && !end && countdown <= 0) {
+    socket.on('recupMoov', (updatedRoom: Room) => {
+      if (room)
+      {
+      setPlayer1Pos(updatedRoom.player1Y);
+      setPlayer2Pos(updatedRoom.player2Y);
+      }
+      // setRoom(updatedRoom);
+    });
+  }
+
+        //      RECUP DES DATAS DES PLAYER MOVES ET DES DEPLACEMENTS DE LA BALLE DEPUIS LE BACK VERS LE FRONT
+
+  if (socket && !end && countdown <= 0) {
+    socket.on('ballMoovON', (updateRoom: Room) => {
+      if (updateRoom.player1 && updateRoom.player2 && updateRoom.player1 !== undefined) {
+        setRoom(updateRoom);
+        setSpeedBallX(updateRoom.speedX);
+        setSpeedBallY(updateRoom.speedY);
+        setBallXPos(updateRoom.ballX);
+        setBallYPos(updateRoom.ballY);
+      }
+    });
+  }
+
+  if (socket && room && room.end)
+  setEnd(1);
+
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+
+    socket?.emit('leaveGame');
+    socket?.emit('changeStatus');
+    setEnd(1);
+  };
+  
+  window.addEventListener('beforeunload', handleBeforeUnload);
+  
+  
+      //      CLEAR DES DIFFERENTS EVENT
+      
+  return () => {
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+    if (socket) {
+      socket.off('recupMoov');
+      socket.off('ballMoovON');
+      socket.off('recupMoov');
+      socket.off('startGame2');
+      socket.off('startGame');
+
+
+    }
+  };
+}, [socket, room, end, BallXpos, BallYpos, SpeedBallX, SpeedBallY]);
+
+
+
+useEffect(() => {
+
+  if (socket && !end) {
+    socket.on('playerLeave', (room: Room) => {
+      setRoom(room)
+    });
+  }
+  });
+
+  useEffect(() => {
+
+    if (socket && end) {
+      if (user?.username !== room?.winner && updatelvl === 0)
+      {
+        console.log(room?.winner);
+        socket?.emit('updateLevelExpELO', user?.id, room?.roomID);
+        setUpdatelvl(1);
+      }
+    }
+  });
+
+
 
   return (
 <div className="pong-game">
+
+{/* <div className="countdown-container"> */}
+{countdown > 1 && (
+    <div className="countdown">{countdown}</div>
+  )}
+  {countdown === 1 && (
+    <div className="countdown ready">Ready ?</div>
+  )}
+  {countdown === 0 && (
+    <div className="countdown start">Start</div>
+  )}
+{/* </div> */}
   {user && (
     <h2>Vous êtes connecté en tant que {user.username}</h2>
-  )}
-  {room && room.player1 && room.player2 &&  (
+    )}
+    {!end && (
+      <button onClick={NavHome}>Quitter la partie</button>
+      )}
+  {room && room.player1 && room.player2 &&(
     <div>
       <p>La partie commence entre {room.player1} et {room.player2} !</p>
       <div style={{ textAlign: 'center', fontSize: '24px', marginBottom: '10px' }}>
@@ -167,9 +224,9 @@ const NavHome = () => {
               </div>
               )}
           </div>
-      <div className={`player-rect player1`} style={{ top: room.player1Y }}></div>
-      <div className={`player-rect player2`} style={{ top: room.player2Y }}></div>
-      <div className="ball" style={{ left: room.ballX, top: room.ballY }}></div>
+      <div className={`player-rect player1`} style={{ top: player1Pos }}></div>
+      <div className={`player-rect player2`} style={{ top: player2Pos }}></div>
+      <div className="ball" style={{ left: BallXpos, top: BallYpos }}></div>
     </div>
   )}
 </div>
