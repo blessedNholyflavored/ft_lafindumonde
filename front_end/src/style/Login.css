@@ -51,3 +51,8 @@
     font-size: 2vh;
     font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
+
+.boxAuthContent button {
+	cursor: pointer;
+	margin: auto 15px;
+}

@@ -8,6 +8,8 @@ import { UserSetting } from './components/user/UserSetting';
 //import { User } from './interfaces';
 import './App.css';
 import { Login } from './components/auth/Login';
+import { LocalLogin } from './components/auth/LocalLogin';
+import { Register } from './components/auth/Register';
 import { Chat } from './components/chat/Chat';
 import { Logout } from './components/auth/Logout';
 import { SaveTotp } from './components/auth/SaveTotp';
@@ -46,6 +48,8 @@ export const App: React.FC = () => {
 		  <Route path="/settings" element={<ProtectedRoute><UserSetting /></ProtectedRoute>} />
           <Route path="/totpSave" element={<ProtectedRoute><SaveTotp /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
+		  <Route path="/local_login" element={<LocalLogin />} />
+		  <Route path="/register" element={<Register />} />
           <Route path="/auth" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/sock" element={<ProtectedRoute><Websocket /></ProtectedRoute>} />
 		  <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />

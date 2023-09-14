@@ -54,11 +54,17 @@ export class AuthController{
      *      
      * 
      * *********************/
-    @Post('login')
-    async login(@Body() loginDto:any){
-        return ;
+    @Post('locallogin')
+    async login(@Body() body: {username: string, password: string}, @Res() res: any, @Req() req: any){
+		console.log("IN AUTH CONTROLLER\nbody is : ",body);
+        return res;
     }
 
+	@Post('register')
+	async register(@Body() body: {username: string, password: string, email: string}, @Req() req: any, @Res() res: any){
+		console.log("InAUTH CONTROLLER\n body in register is : ", body);
+		return res;
+	}
     /************************
      * 
      * 

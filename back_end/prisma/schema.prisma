@@ -97,3 +97,24 @@ model Game {
 	scrP2		Int?
 	roomId		Int?
 }
+
+//model ChatRoom {
+//	id			Int		@id @default(autoincrement())
+//	name		String?
+//	users		User[]
+//	admins		User[]
+//	isPrivate		Boolean
+//	password	String?
+//	createdAt	DateTime	@default(now())
+//	updatedAt	DateTime	@updatedAt()
+//	messages	Message[]
+//}
+
+//model Message {
+//    id			Int		@id @default(autoincrement())
+//	createdAt	DateTime	@default(now())
+//	content		String
+//	sender		User
+//	receiver	User
+//	room		ChatRoom
+//}
