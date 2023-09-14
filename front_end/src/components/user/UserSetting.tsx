@@ -39,6 +39,8 @@ export const UserSetting: React.FC = () => {
 			});
 			if (response.ok) {
 				alert('Nom d\'utilisateur mis à jour avec succès !');
+				//window.location.reload();
+				FetchGames();
 			} else {
 				alert('Une erreur s\'est produite lors de la mise à jour du nom d\'utilisateur.');
 			}
