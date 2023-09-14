@@ -12,7 +12,7 @@ export class GameService {
 
 
   
-  async CreateGame(id1: number, id2: number): Promise<Game> {
+  async CreateGame(id1: number, id2: number, type: number): Promise<Game> {
     if (id1 && id2)
     {
       try {
@@ -29,6 +29,7 @@ export class GameService {
         const createdGame = await prisma.game.create({
           data: {
             roomId: 0,
+            superGame: type,
             start_at: new Date(),
             end_at: new Date(),
             player1: {
@@ -80,4 +81,6 @@ async getGameByID(id: number): Promise<Game | undefined> {
     },
   });
 }
+
+
 }

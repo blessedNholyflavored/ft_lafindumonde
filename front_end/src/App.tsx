@@ -18,6 +18,9 @@ import { Websocket } from './Websocket';
 import SuperPong from './SuperPong';
 import { Profile } from './components/user/Profile';
 import { FriendsPage } from './components/friends/friendsPage';
+import SoloPong from './SoloPong';
+import MiniGame from './SoloPong';
+import Classement from './leaderboard';
 
 export const App: React.FC = () => {
   //const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
@@ -53,6 +56,9 @@ export const App: React.FC = () => {
           <Route path="/sock" element={<ProtectedRoute><Websocket /></ProtectedRoute>} />
 		  <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
 		  <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
+        <Route path="/SuperGame" element={<ProtectedRoute><SuperPong socket={socket} /></ProtectedRoute>} />
+		  <Route path="/solopong" element={<ProtectedRoute><MiniGame /></ProtectedRoute>} />
+		   <Route path="/leaderboard" element={<ProtectedRoute><Classement /></ProtectedRoute>} />
         </Routes>
     </AuthProvider>
       </WebsocketProvider>

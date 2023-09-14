@@ -128,7 +128,28 @@ export class UserService {
     return updateUser;
   }
 
-  async updateGamePlayer(id: string) {
+  async updateScoreMiniGame(id: number, newScore: number)
+  {
+    const user = await prisma.user.findUnique({
+      where: { id: id },
+    });
+  
+    if (newScore > user.scoreMiniGame) {
+      const updatedUser = await prisma.user.update({
+        where: { id: id },
+        data: { scoreMiniGame: newScore },
+      });
+  
+      return updatedUser;
+    }
+    else
+    {
+      return user;
+    }
+  }
+
+  async updateGamePlayer(id: string)
+  {
     const updateUser = await prisma.user.update({
       where: { id: parseInt(id) },
       data: { gameplayed: { increment: 1 } },
@@ -219,8 +240,13 @@ export class UserService {
           username: user.username,
           pictureURL: user.pictureURL,
           enabled2FA: false,
-          log2FA: false,
-        },
+		  log2FA: false,
+      gameplayed: 0,
+      scoreMiniGame: 0,
+      ELO: 1000,
+      level: 0,
+      xp: 0,
+        }
       });
       return tmpUser;
     } catch (err) {
@@ -271,4 +297,73 @@ export class UserService {
       Object.entries(user).filter(([key]) => !(keys as string[]).includes(key)),
     ) as Omit<User, Key>;
   }
+
+  async calculateLevel(xp: number): Promise<number> {
+    return Math.floor(xp / 10) + 1;
+  }
+
+  async calculateEloChange(winnerElo: number, loserElo: number, result: number) {
+    const expectedScoreA = 1 / (1 + 10 ** ((loserElo - winnerElo) / 400));
+    const eloChange = 32 * (result - expectedScoreA);
+    return eloChange;
+  }
+  
+
+  async updateLevelExpELO(loserID: number, winnerID: number)
+  {
+
+    console.log("lalaalalal:  ", winnerID);
+    console.log("iicicicicic:  ", loserID);
+    
+    const updateLoser = await prisma.user.update({
+      where: { id : loserID},
+      data: { xp: {increment: 1},} 
+    })
+    const updateWinner = await prisma.user.update({
+      where: { id : winnerID},
+      data: { xp: {increment: 2},} 
+    })
+
+    const loserLevel = this.calculateLevel(updateLoser.xp);
+    if (await loserLevel !== updateLoser.level)
+    {
+      const updateLoser = await prisma.user.update({
+        where: { id : loserID},
+        data: { level: {increment: 1},} 
+      })
+    }
+    const winnerLevel = this.calculateLevel(updateWinner.xp);
+    if (await winnerLevel !== updateWinner.level)
+    {
+      const updateWinner = await prisma.user.update({
+        where: { id : winnerID},
+        data: { level: {increment: 1},} 
+      })
+    }
+
+
+
+    const k = 32;
+    const eloDifference = updateWinner.ELO - updateLoser.ELO;
+    
+    const expectedScoreWinner = 1 / (1 + Math.pow(10, -eloDifference / 400));
+    const expectedScoreLoser = 1 - expectedScoreWinner;
+    
+    const eloChangeWinner = k * (1 - expectedScoreWinner);
+    const eloChangeLoser = k * (0 - expectedScoreLoser);
+
+
+    
+    const updateWinner1 = await prisma.user.update({
+      where: { id: winnerID },
+      data: { ELO: Number(updateWinner.ELO + eloChangeWinner) }
+    });
+    
+    const updateLoser1 = await prisma.user.update({
+      where: { id: loserID },
+      data: { ELO: Number(updateLoser.ELO + eloChangeLoser) }
+    });
+    console.log(updateWinner1.ELO);
+  }
+
 }

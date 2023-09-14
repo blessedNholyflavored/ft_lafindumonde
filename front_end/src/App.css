@@ -104,9 +104,15 @@ body {
   height: 80px;
 }
 
+.player-rectMG {
+  position: absolute;
+  width: 10px;
+  height: 80px;
+}
+
 .player-rect.player1 {
   left: 0;
-  background-color: rgb(255, 0, 221);
+  background-color: rgb(255, 0, 242);
 
 }
 
@@ -124,5 +130,62 @@ body {
   background-color: black;
   margin: 0 auto;
   overflow: hidden;
+}
+
+
+.countdown-container {
+  position: relative;
+  width: 100px; /* Ajustez la taille selon vos besoins */
+  height: 100px;
+}
+
+.countdown {
+  font-size: 36px;
+  font-weight: bold;
+  color: #ff5733; /* Couleur du texte */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: countdownAnimation 3s linear forwards;
+}
+
+@keyframes countdownAnimation {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+.explosion {
+  background-image: url('mmhaya.jpg'); /* Remplacez 'explosion.gif' par votre image d'explosion */
+  width: 700px; /* Ajustez la largeur selon vos besoins */
+  height: 700px; /* Ajustez la hauteur selon vos besoins */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: explosionAnimation 1s linear forwards;
+  opacity: 0;
+}
+
+
+@keyframes explosionAnimation {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
 }
 
