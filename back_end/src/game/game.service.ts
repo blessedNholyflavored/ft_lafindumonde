@@ -32,6 +32,8 @@ export class GameService {
             superGame: type,
             start_at: new Date(),
             end_at: new Date(),
+			username1: p1.username,
+			username2: p2.username,
             player1: {
               connect: {
                 id: p1.id,

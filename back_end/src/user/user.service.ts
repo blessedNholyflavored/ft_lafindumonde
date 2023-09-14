@@ -2,6 +2,8 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { PrismaClient, User, USER_STATUS } from '@prisma/client'; // Renommez "User" en "PrismaUser"
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaUserCreateInput } from './user-create.input';
+import { Game } from '../interfaces';
+
 //import { createUserDto } from 'src/dto/createUserDto.dto';
 // import { UserAchievements } from '../user/user.interface';
 import { merge } from 'lodash';
@@ -81,21 +83,31 @@ export class UserService {
 	return (updateUser.pictureURL);
   }
 
+  async getUsernameById(id: string) {
+	const User = await prisma.user.findUnique({
+		where: { id: parseInt(id) },
+	});
+	return (User.username);
+  }
+
   async fetchAllGames(id: string)
   {
-	const ret1 = await prisma.user.findUnique({
-		where: { id: parseInt(id) },
-		select: { game1: true },
-	});
-	const ret2 = await prisma.user.findUnique({
-		where: { id: parseInt(id) },
-		select: { game2: true },
-	});
-	if (ret1 && ret2)
-	{
-		const ret = merge(ret1, ret2);
-		console.log("AAAAA", ret);
-		return (ret);
+	  const ret1 = await prisma.user.findUnique({
+		  where: { id: parseInt(id) },
+		  select: { game1: true },
+		});
+		const ret2 = await prisma.user.findUnique({
+			where: { id: parseInt(id) },
+			select: { game2: true },
+		});
+		if (ret1 && ret2)
+		{
+			const ret = merge(ret1, ret2);
+			const allGames: Game[] = [...ret.game1, ...ret.game2].sort(
+				(a, b) => Date.parse(a.start_at) - Date.parse(b.start_at)
+			);
+		//console.log("AAAAA", allGames);
+		return (allGames);
 	}
   }
 

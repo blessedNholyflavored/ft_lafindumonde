@@ -81,6 +81,13 @@ export class UsersController {
 		return { test };
   }
 
+  @Get('/:id/username')
+  async getUsernameById(@Param('id') id: string)
+  {
+	const user = this.userService.getUsernameById(id);
+	return user;
+  }
+
   @Get('/:id')
   async getUserById(@Param('id') id: number){
     const ret = await this.userService.getID(id);

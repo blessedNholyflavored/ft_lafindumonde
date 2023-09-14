@@ -99,4 +99,6 @@ model Game {
 	scrP2		Int?
 	roomId		Int?
 	superGame	Int?
+	username1	String?
+	username2	String?
 }

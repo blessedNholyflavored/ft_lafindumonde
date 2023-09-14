@@ -58,4 +58,13 @@ export interface Ball {
   speed: number;
 }
 
-  
+export interface Game {
+	id: number;
+	start_at: string;
+	userId1: number;
+	userId2: number;
+	username1: string;
+	username2: string;
+	scrP1: number;
+	scrP2: number;
+  }

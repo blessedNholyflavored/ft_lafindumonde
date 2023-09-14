@@ -21,7 +21,7 @@ export const UserSetting: React.FC = () => {
 
 	useEffect(() => {
 		displayPic();
-		fetchGames();
+		FetchGames();
 	}, []);
 	
 
@@ -56,7 +56,6 @@ export const UserSetting: React.FC = () => {
 			});
 			if (response.ok) {
 				const pictureURL = await response.text();
-				//console.log("aaaaaaA",pictureURL);
 				if (pictureURL.includes("https"))
 				{
 					setImgUrl(pictureURL);
@@ -67,19 +66,13 @@ export const UserSetting: React.FC = () => {
 						method: 'GET',
 					});
 					if (response.ok) {
-						// const backPath = 'http://localhost:3000/users';
-						// const absoluteURL = `${backPath}/${pictureURL}`
-						//setImgUrl(pictureURL);
 						const blob = await response.blob();
 						const absoluteURL = URL.createObjectURL(blob);
 						setImgUrl(absoluteURL);
-						//console.log("FOFOFOFOFOFOFOF", absoluteURL);
-						//setImgUrl(URL.createObjectURL(blob));
-						//console.log("dans front", pictureURL);
 					}
 					}
 					catch (error) {
-						//console.error(error);
+						console.error(error);
 					}
 				}
 			}
@@ -156,11 +149,13 @@ export const UserSetting: React.FC = () => {
 		start_at: string;
 		userId1: number;
 		userId2: number;
+		username1: string;
+		username2: string;
 		scrP1: number;
 		scrP2: number;
 	  }
 
-	  const fetchGames = async () => {
+	  const FetchGames = async () => {
 		const userId = user?.id;
 
 		try {
@@ -170,30 +165,28 @@ export const UserSetting: React.FC = () => {
 			if (response.ok)
 			{
 				const data = await response.json();
-				if (data.game1 || data.game2)
+				const updatedGameData = [...data];
+				let i: number = 0;
+				while (i < updatedGameData.length)
 				{
-					const allGames: Game[] = [...data.game1, ...data.game2].sort(
-						(a, b) => Date.parse(a.start_at) - Date.parse(b.start_at)
-					);
-					setGameData(allGames.reverse());
+					try {
+						const response = await fetch(`http://localhost:3001/users/${updatedGameData[i].userId1}/username`, {
+							method: "GET",
+						});
+						const response2 = await fetch(`http://localhost:3001/users/${updatedGameData[i].userId2}/username`, {
+							method: "GET",
+						});
+						if (response.ok)
+							updatedGameData[i].username1 = await response.text();
+						if (response2.ok)
+							updatedGameData[i].username2 = await response2.text();
+					}
+					catch (error) {
+						console.log (error);
+					}
+					i++;
 				}
-				//console.log(data.game2);
-				//console.log(data.game2.length);
-				// if (data.game1.length > 0)
-				// {
-				// 	const player1 = data.game1;
-				// 	const gameInfo = player1.map((test: {winnerId: number, end_at: any, userId1: any, userId2: any}) => ({
-				// 		end_at: test.end_at,
-				// 		winnerId: test.winnerId,
-				// 		userId1: test.userId1,
-				// 		userId2: test.userId2,
-						
-				// 	}));
-				// 	//console.log("ICICICI ndendoendoendoeindoendoenodneondeondeondeondoendeondeondeondeonod");	
-				// 	setGameData(gameInfo);
-				// }
-				//if (data.game1)
-				//	setGameData(data.game1);
+				setGameData(updatedGameData.reverse());
 			}
 			else
 			{
@@ -279,7 +272,7 @@ export const UserSetting: React.FC = () => {
 			<table>
 			<thead>
 				<tr>
-				<th>game id</th>
+				{/* <th>game id</th> */}
 				<th>Joueur 1</th>
 				<th></th>
 				<th></th>
@@ -289,11 +282,11 @@ export const UserSetting: React.FC = () => {
 			<tbody>
 				{gameData.map((game: Game, index: number) => (
 				<tr key={index}>
-					<td>{game.id}</td>
-					<td>{game.userId1}</td>
+					{/* <td>{game.id}</td> */}
+					<td>{game.username1}</td>
 					<td>{game.scrP1}</td>
 					<td>{game.scrP2}</td>
-					<td>{game.userId2}</td>
+					<td>{game.username2}</td>
 				</tr>
 				))}
 			</tbody>
