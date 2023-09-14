@@ -48,8 +48,8 @@ export const UserSetting: React.FC = () => {
 	};
 
 	const displayPic = async() => {
-		const userId = user?.id;
 
+		const userId = user?.id;
 		try {
 			const response = await fetch(`http://localhost:3001/users/${userId}/avatar`, {
 				method: 'GET',
@@ -156,8 +156,8 @@ export const UserSetting: React.FC = () => {
 	  }
 
 	  const FetchGames = async () => {
-		const userId = user?.id;
 
+		const userId = user?.id;
 		try {
 			const response = await fetch(`http://localhost:3001/users/${userId}/games-data`, {
 				method: "GET",
@@ -267,12 +267,11 @@ export const UserSetting: React.FC = () => {
 		<div className="navbarsmallbox">
 			<p className="boxtitle"> GAME HISTORY </p>
 		</div>
-		tqtqtqtqtqtq
 		<div>
 			<table>
 			<thead>
 				<tr>
-				{/* <th>game id</th> */}
+				<th>game id</th>
 				<th>Joueur 1</th>
 				<th></th>
 				<th></th>
@@ -280,9 +279,9 @@ export const UserSetting: React.FC = () => {
 				</tr>
 			</thead>
 			<tbody>
-				{gameData.map((game: Game, index: number) => (
+				{gameData.slice(0, 5).map((game: Game, index: number) => (
 				<tr key={index}>
-					{/* <td>{game.id}</td> */}
+					<td>{game.id}</td>
 					<td>{game.username1}</td>
 					<td>{game.scrP1}</td>
 					<td>{game.scrP2}</td>
@@ -292,15 +291,7 @@ export const UserSetting: React.FC = () => {
 			</tbody>
 			</table>
 		</div>
-		{/* <div className="test">
-            {gameData.map((game, index) => (
-                <div>
-					<p>{test.userId1}</p>
-					<p>{test.userId2}</p>
-					TOTOTOTOTO
-                </div>
-            ))} 
-        </div> */}
+
 		<div className="footersmallbox">
 			<br></br>
 		</div>
