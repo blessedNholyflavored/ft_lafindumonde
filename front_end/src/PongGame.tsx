@@ -72,7 +72,7 @@ const NavHome = () => {
 
 const startGameFCT = () =>
 {
-  if (socket)
+  if (socket && counter === 0)
   {
     socket?.emit('startGame');
     setCounter(1);

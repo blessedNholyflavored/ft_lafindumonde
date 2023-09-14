@@ -74,6 +74,25 @@ export class FriendsService {
     this.userService.addFriends(friendShip.senderId, friendShip.recipientId);
   }
 
+  async refuseRequest(id: string)
+  {
+    const friendShipUpdate = await prisma.friendship.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+			  status: "REFUSED",
+			},
+    })
+    const friendShip = await prisma.friendship.delete({
+      where: {
+        id: parseInt(id),
+      },
+    })
+    
+   // this.userService.addFriends(friendShip.senderId, friendShip.recipientId);
+  }
+
   async sendFriendRequest(senderId: string, recipientId: string)
     {
     const p1 = await prisma.user.findUnique({
@@ -106,8 +125,32 @@ export class FriendsService {
         status: 'PENDING',
       },
     });
-
+    
     return newFriendRequest;
+  }
+  
+  
+  async alreadyFriendGetStatus(sender: string, recipient: string)
+  { 
+    const friendslist = await prisma.user.findUnique({
+      where: {
+        id: parseInt(sender),
+      },
+      select: { friends: true
+      },
+    })
+
+    if (friendslist) {
+      // Recherche de l'index de l'élément correspondant
+      const index = friendslist.friends.findIndex((friend) => {
+        return friend.id === parseInt(recipient);
+      });
+      if (index <= -1)
+      {
+        return 0;
+      }
+    }
+    return 1;
   }
 
   async getfriendrequestStatus(sender: string, recipient: string)
@@ -128,7 +171,8 @@ export class FriendsService {
     });
 
 
-    console.log(p1.InvitFriendSent);
+
+    // console.log(p1.InviFriendSent);
 
 
     const existingFriendship = await prisma.friendship.findFirst({

@@ -148,6 +148,21 @@ const [friends, setFriends] = useState<friendsSend[]>([]);
         } catch (error) {
           console.error('Erreur:', error);
         }
+        window.location.reload();
+      }
+
+      async function RefuseFriend(id: string) {
+        try {
+          const response = await fetch(`http://localhost:3001/friends/refuse/${id}`, {
+            method: 'POST',
+          });
+          if (!response.ok) {
+              throw new Error('Erreur lors de la récupération des scores.');
+          }
+        } catch (error) {
+          console.error('Erreur:', error);
+        }
+        window.location.reload();
       }
 
 
@@ -182,6 +197,7 @@ const [friends, setFriends] = useState<friendsSend[]>([]);
             <div>Sender ID: {user?.username}</div>
             <div>recipientId ID: {friend.username}</div>
             <button onClick={() => AcceptFriend(friend.id)}>Accepter</button>
+            <button onClick={() => RefuseFriend(friend.id)}>Refuser</button>
 
           </li>
               )}

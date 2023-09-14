@@ -52,6 +52,22 @@ fetchFriendshipStatus();
         }
     };
 
+    const checkAlreadyFriend = async () => {
+        try {
+            const response = await fetch(`http://localhost:3001/friends/already/${user?.id}/${id}`);
+            if (response.ok) {
+                let status = await response.text();
+                setFriendshipStatus(status);
+            } else {
+                console.log("Error fetching friendship status. Status code:", response.status);
+                const errorText = await response.text();
+                console.error("Error details:", errorText);
+            }
+        } catch (error) {
+            console.error('Error fetching friendship status:', error);
+        }
+    }
+
 
     const fetchFriendshipStatus = async () => {
 
@@ -61,18 +77,32 @@ fetchFriendshipStatus();
         try {
             const response = await fetch(`http://localhost:3001/friends/status/${user?.id}/${id}`);
             if (response.ok) {
-                const status = await response.text();
+                let status = await response.text();
+                console.log("qqqqqqq: ", friendshipStatus);
+                if (status === "not")
+                {
+                    await checkAlreadyFriend();
+                    return ;
+                }
                 setFriendshipStatus(status);
-                console.log("qqqqqqq: ", status);
             } else {
                 console.log("Error fetching friendship status. Status code:", response.status);
                 const errorText = await response.text();
                 console.error("Error details:", errorText);
+                
             }
         } catch (error) {
             console.error('Error fetching friendship status:', error);
         }
     };
+
+    const chekButton = () => {
+    
+        if (friendshipStatus === "PENDING" || friendshipStatus === "ACCEPTED")
+            return true
+        return false;
+    }
+
 // 
     return (
         <form onSubmit={handleSubmit}>
@@ -86,8 +116,8 @@ fetchFriendshipStatus();
                     Recipient ID: {recipientId}
                 </label>
             </div>
-            <button type="submit" disabled={friendshipStatus as string === 'PENDING'}>
-                {friendshipStatus as string=== 'PENDING' ? 'PENDING' : 'Add Friend'}
+            <button type="submit" disabled={chekButton()}>
+                {friendshipStatus}
             </button>
         </form>
     );

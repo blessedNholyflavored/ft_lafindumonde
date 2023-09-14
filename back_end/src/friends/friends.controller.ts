@@ -26,6 +26,10 @@ export class FriendsController {
   acceptFriend(@Param('id') id: string) {
     return this.friendsService.acceptRequest(id);
   }
+  @Post('refuse/:id')
+  refuseFriend(@Param('id') id: string) {
+    return this.friendsService.refuseRequest(id);
+  }
 
   @Post('/:id/:id1')
   async createFriendRequest(@Param('id') id: string,@Param('id1') id1: string) {
@@ -44,8 +48,21 @@ export class FriendsController {
     // const amitie = await this.friendsService.sendFriendRequest(senderId, recipientId);
     if (statut)
       return statut.status;
-    else return "pp";
+    return ("not")
   }
+
+  @Get('/already/:id/:id1')
+  async checkAlreadyFriend(@Param('id') id: string,@Param('id1') id1: string) {
+    const senderId = id;
+    const recipientId = id1;
+    const statut = await this.friendsService.alreadyFriendGetStatus(senderId, recipientId);
+    
+    console.log(statut);
+    // const amitie = await this.friendsService.sendFriendRequest(senderId, recipientId);
+    if (statut != 0)
+      return "ACCEPTED";
+    return "Add friend";
+    }
 
 //   @Post('/update')
 //   async updatestatus( request: string) {
