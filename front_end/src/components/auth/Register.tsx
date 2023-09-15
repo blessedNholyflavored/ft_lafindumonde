@@ -26,28 +26,39 @@ export function Register () {
     const handleSubmit = async(e: React.FormEvent) => {
 		e.preventDefault();
 		console.log("handle submit de register:");
-		try {
-			const response = await fetch(`http://localhost:3001/auth/register`, {
+		fetch(`http://localhost:3001/auth/register`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ username: inputUsername, password: inputPassword, email: inputEmail }),
-			});
+				body: JSON.stringify({
+					email: inputEmail,
+					password: inputPassword,
+					username: inputUsername,
+					pictureURL: "http://localhost:8080/pepe.png",
+					// enabled2FA: false,
+					// totpKey: "",
+					// log2FA: false,
+				}),
+				credentials: "include",
+			})
+				.then(async (res: any) => { 
+					// console.log(await res.json() );
+					const data = await res.json();
+					setUser(data.user);
+					console.log("OUII ?",data);
+				})
+				.catch((error:any) => {window.alert("ouinnnn");});
+			/*}
+			else {
+				window.alert("Something went wrong ! Are you sure your input are correct ?");
+			}
 			//TODO: add control of response to check if it went right
 		} catch(error) {
 			console.error("Error: ", error);
-		}
+		}*/
     }
-/*
-	const register = () => {
-		return <Navigate to="/register">;
-	}
 
-	const localSignIn = () => {
-		return <Navigate to="/local_login">;
-	}
-*/
     return (
         <div className="Login">
             <div className="logoAuth">

@@ -61,6 +61,12 @@ export class AuthService {
 		return secret;
 	}
 
+	idGenerator(){
+		const test = Math.floor(Math.random() * 99999);
+		// console.log("**************\nTESTETSTESTEST\n",test);
+		return test;
+	}
+
 	async generate2FAkey(user: any){
 		const totpSecret = this.keyGenerator();
 

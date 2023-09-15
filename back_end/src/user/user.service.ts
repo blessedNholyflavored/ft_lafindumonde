@@ -272,11 +272,11 @@ export class UserService {
           pictureURL: user.pictureURL,
           enabled2FA: false,
 		  log2FA: false,
-      gameplayed: 0,
-      scoreMiniGame: 0,
-      ELO: 1000,
-      level: 0,
-      xp: 0,
+      	  gameplayed: 0,
+      	  scoreMiniGame: 0,
+      	  ELO: 1000,
+      	  level: 0,
+      	  xp: 0,
         }
       });
       return tmpUser;

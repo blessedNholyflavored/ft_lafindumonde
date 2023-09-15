@@ -57,13 +57,33 @@ export class AuthController{
     @Post('locallogin')
     async login(@Body() body: {username: string, password: string}, @Res() res: any, @Req() req: any){
 		console.log("IN AUTH CONTROLLER\nbody is : ",body);
+		
         return res;
     }
 
 	@Post('register')
-	async register(@Body() body: {username: string, password: string, email: string}, @Req() req: any, @Res() res: any){
+	async register(@Body() body: {username: string, password: string, email: string, id: number, pictureURL: string}, @Res() res: any){
 		console.log("InAUTH CONTROLLER\n body in register is : ", body);
-		return res;
+		if (!body.username || !body.password || !body.email || !body.pictureURL){
+			console.log("ooops: ", body);
+			throw new BadRequestException("password, username or email is missing");
+		}
+		let newID = await this.authService.idGenerator();
+		// console.log("HERE POST ID GENERATE : newID =", newID);
+		while (await this.userService.getUserByID(newID))
+			newID = await this.authService.idGenerator();
+		body.id = newID;
+		// console.log("ICICICICIICIC final body: ", body);
+		if (await this.userService.usernameAuthChecker(body.username) == true){
+			// in case someone already have this username
+			body.username =  body.username + '_';
+		}
+		console.log("BODYBODYBODY:", body);
+		const user = await this.userService.createUser(body);
+		const token = await this.authService.login(user);
+		console.log("HEREHEREHERE: ", user, token);
+		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user, ['totpKey']), token});
+		//return res;
 	}
     /************************
      * 
@@ -108,18 +128,7 @@ export class AuthController{
             await this.userService.disable2FA(req.user.id);
         }
         const { qrCodeImg, user } = await this.authService.generate2FAkey(req.user);
-            // here --> redirect user to a page with a generated QR code made with the secret 2fa key made for him
-            // he will have to scan the code to get second auth code. If and only IF everything here went well,
-            // we enable his 2FA by setting enabled2FA to true
-      //  return res.redirect(`http://localhost:8080//totpSave?qrCodeImg=${encodeURIComponent(qrCodeImg)}&userId=${user.id}`);
         return res.json({code: qrCodeImg});
-      /*  if (updtUser.enabled2FA == true){
-                console.log("2FA correctly enabled !");
-                return updtUser;
-        } else {
-                console.log("An issue happened enabling 2fa ???");
-        }*/
-        //return req.user;
     }
 
     @Get('2FAdisable')
@@ -138,25 +147,6 @@ export class AuthController{
         }
         return this.userService.exclude(req.user, ['totpKey']);
     }
-
-    // @Get('2FAtester')
-    // @UseGuards(...AuthenticatedGuard)
-    // async tester2FA(@Req() req:any){
-    //     console.log("user here is :", req.user.username);
-    //     if (req.user.enabled2FA == true)
-    //        console.log("his 2fa is ENABLED !");
-    //     else
-    //         console.log("his 2fa is NOT enabled >< .....");
-        
-    //     const updtUser = await this.userService.enable2FA(req.user.id);
-        
-    //     console.log("user updated is :", updtUser.username);
-    //     if (updtUser.enabled2FA == true)
-    //         console.log("his 2fa is ENABLED !");
-    //     else
-    //         console.log("his 2fa is NOT enabled >< .....");
-    //     return this.userService.exclude(updtUser, ['totpKey']);
-    // }
 
     /************************
      * 
