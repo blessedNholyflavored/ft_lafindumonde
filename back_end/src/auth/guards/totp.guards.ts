@@ -22,5 +22,4 @@ export class TotpGuard {
 		//if (user.enabled2FA == true && user.log2FA == false)
 		return user.enabled2FA == false || user.log2FA;
 	}
-
 }

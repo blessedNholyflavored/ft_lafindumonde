@@ -1,4 +1,4 @@
-import { OnModuleInit, UseGuards } from '@nestjs/common';
+import { OnModuleInit } from '@nestjs/common';
 import {
   MessageBody,
   SubscribeMessage,
@@ -6,7 +6,8 @@ import {
   WebSocketServer,
   ConnectedSocket,
   OnGatewayDisconnect,
-  OnGatewayInit
+  OnGatewayInit,
+  OnGatewayConnection
 } from '@nestjs/websockets';
 import { Server} from 'socket.io';
 // ici on import le type Socket qui extends socket de socket.io mais avec l'user
@@ -17,8 +18,8 @@ import { UserService } from 'src/user/user.service';
 import { RoomMapService } from './room_map.service';
 import SocketWithUser from 'src/gateway/types/socket';
 import { Interval } from '@nestjs/schedule';
-import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
 import { disconnect } from 'process';
+import { AuthService } from 'src/auth/auth.service';
 
 // ici add de l'authorisation de recup des credentials du front (le token)
 @WebSocketGateway({
@@ -28,7 +29,6 @@ import { disconnect } from 'process';
   },
   path: "",
 })
-@UseGuards(...AuthenticatedGuard)
 export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
 
   @WebSocketServer()
@@ -43,7 +43,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
   private p1;
   private p2;
   constructor(private readonly gameService: GameService, private readonly userService: UserService,
-  private readonly roomMapService: RoomMapService) {}
+  private readonly roomMapService: RoomMapService,
+  private readonly authService: AuthService) {}
   private room: Room;
   private roomIntervals: Record<string, NodeJS.Timeout> = {};
 
@@ -53,9 +54,19 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
 		console.log("Gateway initialized.");
 	}
 
-
-	handleConnection(@ConnectedSocket() socket: Socket) {
-      socket.emit("coucou");
+/*
+  j'enleve le decorateur @ConnectedSocket parce que c'est justement le probleme :
+  les decorateurs guards etc ne fonctionnent pas sur handleConnection
+*/
+	async handleConnection(socket: Socket) {
+    /*
+      ici j'appelle une fonction ds authservice qui en gros va faire ce que faisait le guard
+      et si aucun user n'est trouve je return undefined et donc je disconnect illico
+    */
+      const user = await this.authService.getUserBySocket(socket);
+      if (!user)
+        socket.disconnect(true);
+    //  socket.emit("coucou");
       console.log("connected:   ", socket.user)
   }
   

@@ -2,10 +2,13 @@ import { Injectable, HttpException, UnauthorizedException } from '@nestjs/common
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { ConfigService } from '@nestjs/config';
+import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
+import * as cookie from 'cookie';
 import { encode } from 'hi-base32';
 import * as qrcode from 'qrcode';
+import Socket from 'src/gateway/types/socket';
 
 @Injectable()
 export class AuthService {
@@ -72,7 +75,18 @@ export class AuthService {
 
 		return {qrCodeImg, user};
 	}
-/*	async launch2FA(user: any){
+
+	async getUserBySocket(socket: Socket) : Promise<User | undefined> {
+		try {
+			const token = cookie.parse(socket.handshake.headers?.cookie)['access_token'];
+			// on verif la signature du jwt --> est ce que le token est valide ?
+			const payload = this.jwtService.verify(token, {secret: this.config.get('JWT_SECURE_KEY')});
+			socket.user = await this.userService.getUserByID(payload.sub);
+			return (socket.user);
+		} catch {
+			return undefined;
+		}
+	}/*	async launch2FA(user: any){
 		if (user.enabled2FA == false)
 			return true;
 		

@@ -4,9 +4,7 @@ import { AuthService } from "./auth.service";
 //TODO: careful aux .guardSSSS
 import { FortyTwoAuthGuard } from "./guards/FortyTwo-auth.guard";
 import { ConfigService } from '@nestjs/config';
-//import { JwtAuthGuard } from "./guards/jwt-auth.guards";
 import { AuthGuard } from "@nestjs/passport";
-import { JwtGuard } from "./guards/jwt.guards";
 import { AuthenticatedGuard } from "./guards/authenticated.guards";
 import * as bcrypt from 'bcrypt';
 import * as speakeasy from 'speakeasy';
@@ -81,7 +79,7 @@ export class AuthController{
     }
 
     @Get('me')
-    @UseGuards(JwtGuard)
+    @UseGuards(AuthGuard('jwt'))
     async protected(@Req() req: any) {
         return this.userService.exclude(req.user, ['totpKey']);
     }
@@ -161,7 +159,7 @@ export class AuthController{
      * *********************/
 
     @Post('submitCode')
-    @UseGuards(JwtGuard, AuthGuard('totp'))
+    @UseGuards(AuthGuard('jwt'), AuthGuard('totp'))
     async codeChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
         // console.log("SALUT SALUT SALUT OPUTDJSHFJKU");
         /*if (!body.userInput || !body.userID){
@@ -176,7 +174,7 @@ export class AuthController{
 
 	// submit input during auth login
 	@Post('submitInput')
-	@UseGuards(JwtGuard, AuthGuard('totp'))
+	@UseGuards(AuthGuard('jwt'), AuthGuard('totp'))
 	async inputChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
 		// console.log('inside submitInput controller');
 		const user = await this.userService.getUserByID(req.user.id);
