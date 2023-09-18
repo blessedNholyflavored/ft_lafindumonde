@@ -13,7 +13,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UserService } from './user.service';
-import { User } from '.prisma/client';
+import { User } from '@prisma/client';
 import * as path from 'path';
 import { join } from 'path';
 import { Response } from 'express';
@@ -24,19 +24,22 @@ export class UsersController {
   friendService: any;
   constructor(private userService: UserService) {}
 
+  //cette function est commentée parce que pas sécurisée
+  // si besoin de l'utiliser pour une feature definitive
+  // il faudra trouver comment virer les champs totpKey et pwd
+/*
   @Get('/')
   findAll() {
     const users = this.userService.findUser();
     return users;
   }
-
+*/
   @Post('/:id/update-username')
   updating_username(@Param('id') id: string, @Body() username: string) {
     //console.log(username);
     console.log('service update username ', id);
     const newUsername = username['username'];
-    const user = this.userService.updateUsername(id, newUsername);
-    return user;
+    this.userService.updateUsername(id, newUsername);
   }
   @Get('/:id/avatar')
   returnPic(@Param('id') id: string) {
@@ -109,7 +112,7 @@ export class UsersController {
   @Get('/:id')
   async getUserById(@Param('id') id: number) {
     const ret = await this.userService.getID(id.toString());
-    return ret;
+    return this.userService.exclude(ret, ['totpKey', 'password']);
   }
 
   @Get('/:id/games-data')

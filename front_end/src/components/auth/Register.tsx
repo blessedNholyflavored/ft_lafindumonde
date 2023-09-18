@@ -4,6 +4,7 @@ import "./../../style/Profile.css";
 import "./../../style/Login.css";
 import logo from "../../img/logo42.png";
 import icon from "../../img/buttoncomp.png"
+import champi from "../../img/champi.png";
 import { useAuth } from "./AuthProvider";
 import { Login } from "./Login";
 import { useNavigate } from 'react-router-dom';
@@ -35,7 +36,7 @@ export function Register () {
 					email: inputEmail,
 					password: inputPassword,
 					username: inputUsername,
-					pictureURL: "http://localhost:8080/pepe.png",
+					pictureURL: champi.toString(),
 					// enabled2FA: false,
 					// totpKey: "",
 					// log2FA: false,
@@ -50,6 +51,10 @@ export function Register () {
 				})
 				.catch((error:any) => {window.alert("One or severals of your inputs aren't right !");});
     }
+
+	const returnHome = () => {
+		navigate("/");
+	}
 
     return (
         <div className="Login">
@@ -89,7 +94,7 @@ export function Register () {
 						<button className="submitLogIn" type="submit">LET ME IN !</button>
 					</form>
 					<p> I changed my mind I want to be logged through 42 !</p>
-					<button onClick={ Login }>LOG W/ 42</button>	
+					<button onClick={ returnHome}>LOG W/ 42</button>	
 		        </div>
             </div>
         </div>

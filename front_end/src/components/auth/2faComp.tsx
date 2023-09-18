@@ -5,7 +5,9 @@ import "./../../style/Login.css";
 //import { useAuth } from "./AuthProvider";
 import api from '../../AxiosInstance';
 
-export async function twoFAEnable(navigate: any) {
+export async function twoFAEnable(navigate: any, user: any) {
+	if (user.loginLoc == true)
+		return (window.alert("Sorry :(( You can't enable 2FA with this type of account !"));
 	if (window.confirm("Are you ready to save your unique QR code ?")){
 		try {
 			const res = await api.get('/auth/2FAenable');	

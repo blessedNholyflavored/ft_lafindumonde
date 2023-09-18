@@ -8,7 +8,7 @@ import { PrismaClient, User, USER_STATUS } from '@prisma/client'; // Renommez "U
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaUserCreateInput } from './user-create.input';
 import { Game } from '../interfaces';
-
+import * as bcrypt from 'bcrypt';
 //import { createUserDto } from 'src/dto/createUserDto.dto';
 // import { UserAchievements } from '../user/user.interface';
 import { merge } from 'lodash';
@@ -259,19 +259,29 @@ export class UserService {
     return false;
   }
 
-  async createUser(user: PrismaUserCreateInput): Promise<User> {
-    let tmpUser: User;
+  async passwordHasher(input: string){
+	if (!input)
+		return null;
+	const saltOrRounds = 10;
+	const hash = await bcrypt.hash(input, saltOrRounds);
+	//console.log("hashed pass = ", hash);
+	return hash.toString();
+  }
 
+  async createUser(user: PrismaUserCreateInput, boolLocal: boolean): Promise<User> {
+    let tmpUser: User;
+	let hashedPwd = await this.passwordHasher(user.password)
     try {
       tmpUser = await prisma.user.create({
         data: {
           id: user.id,
           email: user.email,
-          password: user.password,
+          password: hashedPwd,
           username: user.username,
           pictureURL: user.pictureURL,
           enabled2FA: false,
 		  log2FA: false,
+		  loginLoc: boolLocal,
       	  gameplayed: 0,
       	  scoreMiniGame: 0,
       	  ELO: 1000,

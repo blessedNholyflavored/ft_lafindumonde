@@ -43,7 +43,7 @@ export class AuthController{
 		}
 		const user = await this.authService.retrieveUser(body);
 		const token = await this.authService.login(user);
-		res.cookie('access_token', token.access_token, {httpOnly: true}).json({user: this.userService.exclude(user, ['totpKey']), token}).statusCode(200).send();
+		res.cookie('access_token', token.access_token, {httpOnly: true}).json({user: this.userService.exclude(user, ['totpKey', 'password']), token}).statusCode(200).send();
 
 	}
 
@@ -68,11 +68,11 @@ export class AuthController{
 			throw new UnauthorizedException("Wrong password");
 		// sinn throw error
 		const token = await this.authService.login(user);
-		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user,['totpKey']), token});
+		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user,['totpKey', 'password']), token});
     }
 
 	@Post('register')
-	async register(@Body() body: {username: string, password: string, email: string, id: number, pictureURL: string}, @Res() res: any){
+	async register(@Req() req: any, @Body() body: {username: string, password: string, email: string, id: number, pictureURL: string}, @Res() res: any){
 		console.log("InAUTH CONTROLLER\n body in register is : ", body);
 		if (!body.username || !body.password || !body.email || !body.pictureURL){
 			console.log("ooops: ", body);
@@ -88,11 +88,12 @@ export class AuthController{
 			// in case someone already have this username
 			body.username =  body.username + '_';
 		}
-		console.log("BODYBODYBODY:", body);
-		const user = await this.userService.createUser(body);
+	//	console.log("BODYBODYBODY:", body);
+		const user = await this.userService.createUser(body, true);
 		const token = await this.authService.login(user);
-		console.log("HEREHEREHERE: ", user, token);
-		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user, ['totpKey']), token});
+		await this.userService.setLog2FA(user, false);
+		//console.log("HEREHEREHERE: ", user, token);
+		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user, ['totpKey', 'password']), token});
 		//return res;
 	}
     /************************
@@ -119,7 +120,7 @@ export class AuthController{
     @Get('me')
     @UseGuards(AuthGuard('jwt'))
     async protected(@Req() req: any) {
-        return this.userService.exclude(req.user, ['totpKey']);
+        return this.userService.exclude(req.user, ['totpKey', 'password']);
     }
 
     /************************
@@ -153,9 +154,9 @@ export class AuthController{
                 console.log("2FA correctly disabled !");
             else
                 console.log("An issue happened disabling 2fa ???");
-            return this.userService.exclude(updtUser, ['totpKey']);
+            return this.userService.exclude(updtUser, ['totpKey', 'password']);
         }
-        return this.userService.exclude(req.user, ['totpKey']);
+        return this.userService.exclude(req.user, ['totpKey', 'password']);
     }
 
     /************************
@@ -177,7 +178,7 @@ export class AuthController{
         const user = await this.userService.getUserByID(req.user.id);
         await this.userService.enable2FA(user.id);
 		await this.userService.setLog2FA(user, true);
-        return res.status(200).json(this.userService.exclude(user, ['totpKey']));
+        return res.status(200).json(this.userService.exclude(user, ['totpKey', 'password']));
     }
 
 	// submit input during auth login
@@ -188,7 +189,7 @@ export class AuthController{
 		const user = await this.userService.getUserByID(req.user.id);
 		//set user.log2FA a true
 		const updtUser = await this.userService.setLog2FA(user, true);
-		return res.status(200).json(this.userService.exclude(updtUser, ['totpKey']));
+		return res.status(200).json(this.userService.exclude(updtUser, ['totpKey', 'password']));
 	}
     /************************
      * 

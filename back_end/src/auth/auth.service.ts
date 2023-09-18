@@ -13,9 +13,9 @@ import Socket from 'src/gateway/types/socket';
 @Injectable()
 export class AuthService {
 	constructor(
-		private userService: UserService,
-		private jwtService: JwtService,
-		private config: ConfigService
+		private readonly userService: UserService,
+		private readonly jwtService: JwtService,
+		private  config: ConfigService
 	){}
 
 	async login(user: any) {
@@ -36,7 +36,7 @@ export class AuthService {
 				// in case someone already have this username
 				data.username =  data.username + '_';
 			}
-			return await this.userService.createUser(data);
+			return await this.userService.createUser(data, false);
 		}
 		return user;
 	}
@@ -72,12 +72,16 @@ export class AuthService {
 		}
 	}
 
-	async passwordChecker(input: string, user: User){
-		console.log("input :", input);
-		console.log("user.password:", user.password);
-		if (user.password === input)
-			return true;
-		else
-			return false;
+	// passwordHasher(input: string){
+	// 	const saltOrRounds = 10;
+	// 	const hash = bcrypt.hash(input, saltOrRounds);
+	// 	console.log("hashed pass = ", hash);
+	// 	return hash;
+	// }
+
+	passwordChecker(input: string, user: User){
+	//	console.log("input :", input);
+	//	console.log("user.password:", user.password);
+		return (bcrypt.compare(input, user.password));
 	}
 }

@@ -246,7 +246,7 @@ export const UserSetting: React.FC = () => {
 			<p className="boxtitle"> 2FAC AUTH </p>
 		</div>
 		<div className="twoFA">
-			<button className="twoFAenabled" onClick={() => twoFAEnable(navigate)}>enable</button>
+			<button className="twoFAenabled" onClick={() => twoFAEnable(navigate, user)}>enable</button>
 			<button className="twoFAdisabled" onClick={() => twoFADisable({user, setUser})}>disable</button>
 		</div>
 		<div className="footersmallbox">

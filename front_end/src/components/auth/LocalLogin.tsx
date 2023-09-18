@@ -44,8 +44,8 @@ export function LocalLogin () {
 			//TODO: add control of response to check if it went right
     }
 
-	const register = () => {
-		navigate("/register");
+	const returnHome = () => {
+		navigate("/");
 	}
     return (
         <div className="Login">
@@ -77,9 +77,9 @@ export function LocalLogin () {
 						<button className="submitLogIn" type="submit">LET ME IN !</button>
 					</form>
 					<p> I changed my mind I want to be logged through 42 !</p>
-					<button onClick={ Login }>LOG W/ 42</button>	
+					<button onClick={ returnHome }>LOG W/ 42</button>	
 					<p> I don't have any account ....</p>
-					<button onClick={ register }>/REGISTER</button>
+					<button onClick={ returnHome }>/REGISTER</button>
 		        </div>
             </div>
         </div>
