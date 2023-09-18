@@ -6,45 +6,47 @@ import logo from "../../img/logo42.png";
 import icon from "../../img/buttoncomp.png"
 import { useAuth } from "./AuthProvider";
 import { Login } from "./Login";
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export function LocalLogin () {
     const { user, setUser } = useAuth();
 	const [inputUsername, setInputUsername] = useState('');
 	const [inputPassword, setInputPassword] = useState('');
+	const navigate = useNavigate();
 
     // si user a ete set (donc est log)
     // on peut acceder a Home
     if (user){
-        return <Navigate to="/" />;
+        navigate("/")
     }
 
     //on fait appel au service d'auth dans le back
     const handleSubmit = async(e: React.FormEvent) => {
 		e.preventDefault();
 		console.log("handle submit du login");
-		try {
-			const response = await fetch(`http://localhost:3001/auth/locallogin`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ username: inputUsername, password: inputPassword }),
-			});
+		fetch(`http://localhost:3001/auth/local_login`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				username: inputUsername,
+				password: inputPassword,
+			}),
+			credentials: "include",
+		})
+			.then(async (res: any) => {
+				const data = await res.json();
+				setUser(data.user);
+				console.log("Ouii dans locallog:", data);
+			})
+			.catch((error:any) => {window.alert("Wrong Password or Username !");});
 			//TODO: add control of response to check if it went right
-		} catch(error) {
-			console.error("Error: ", error);
-		}
     }
-/*
-	const register = () => {
-		return <Navigate to="/register">;
-	}
 
-	const localSignIn = () => {
-		return <Navigate to="/local_login">;
+	const register = () => {
+		navigate("/register");
 	}
-*/
     return (
         <div className="Login">
             <div className="logoAuth">
@@ -76,6 +78,8 @@ export function LocalLogin () {
 					</form>
 					<p> I changed my mind I want to be logged through 42 !</p>
 					<button onClick={ Login }>LOG W/ 42</button>	
+					<p> I don't have any account ....</p>
+					<button onClick={ register }>/REGISTER</button>
 		        </div>
             </div>
         </div>

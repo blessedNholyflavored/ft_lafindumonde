@@ -5,6 +5,9 @@ import {
   WebSocketGateway,
   WebSocketServer,
   ConnectedSocket,
+  OnGatewayDisconnect,
+  OnGatewayInit,
+  OnGatewayConnection
 } from '@nestjs/websockets';
 import { Server} from 'socket.io';
 // ici on import le type Socket qui extends socket de socket.io mais avec l'user
@@ -13,10 +16,9 @@ import { GameService } from 'src/game/game.service';
 import { Room, User, roomSend } from 'src/interfaces';
 import { UserService } from 'src/user/user.service';
 import { RoomMapService } from './room_map.service';
-import SocketWithUser from 'src/gateway/types/socket';
 import { Interval } from '@nestjs/schedule';
-import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
 import { disconnect } from 'process';
+import { AuthService } from 'src/auth/auth.service';
 
 // ici add de l'authorisation de recup des credentials du front (le token)
 @WebSocketGateway({
@@ -26,8 +28,7 @@ import { disconnect } from 'process';
   },
   path: "",
 })
-@UseGuards(...AuthenticatedGuard)
-export class GameGateway implements OnModuleInit {
+export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
 
   @WebSocketServer()
   server: Server;
@@ -41,12 +42,12 @@ export class GameGateway implements OnModuleInit {
   private p1;
   private p2;
   constructor(private readonly gameService: GameService, private readonly userService: UserService,
-  private readonly roomMapService: RoomMapService) {}
+  private readonly roomMapService: RoomMapService, private readonly authService: AuthService) {}
   private room: Room;
   private roomIntervals: Record<string, NodeJS.Timeout> = {};
 
 // init connection avec le websocket + deconnection avec le websocket
-  onModuleInit() {
+ /* onModuleInit() {
     this.server.on('connection', (socket) => {
       console.log(socket.id);
       console.log('Connected');
@@ -57,7 +58,23 @@ export class GameGateway implements OnModuleInit {
       });
     });
   }
-  
+*/
+
+	afterInit(server: Server){
+		void server;
+		console.log("Gateway initialized.");
+	}
+
+	async handleConnection(socket: Socket){
+	const user = await this.authService.getUserBySocket(socket);
+	if (!user)
+		socket.disconnect(true);
+	}
+
+	async handleDisconnect(socket: Socket){
+		const user = await this.authService.getUserBySocket(socket);
+		//jsp ensuite
+	}
 // gestion des differentes listes d'attentes (partie classique ou partie bonus)
   @SubscribeMessage('joinQueue')
   async onJoinQueue(@MessageBody() data: {player: number, type: number}, @ConnectedSocket() socket: Socket,){

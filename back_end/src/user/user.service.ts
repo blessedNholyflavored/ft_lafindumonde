@@ -267,7 +267,7 @@ export class UserService {
         data: {
           id: user.id,
           email: user.email,
-          //   hash: "",
+          password: user.password,
           username: user.username,
           pictureURL: user.pictureURL,
           enabled2FA: false,

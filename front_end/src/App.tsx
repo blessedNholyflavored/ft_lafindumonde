@@ -49,7 +49,7 @@ export const App: React.FC = () => {
   // }, []);
 
   return (
-        <WebsocketProvider value={socket}>
+    <WebsocketProvider value={socket}>
     <AuthProvider>
         <Routes>
           <Route path="/" element={<ProtectedRoute><Home socket={socket} /></ProtectedRoute>} />

@@ -4,8 +4,11 @@ import { UserService } from 'src/user/user.service';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
+import * as cookie from 'cookie';
 import { encode } from 'hi-base32';
 import * as qrcode from 'qrcode';
+import { User } from '@prisma/client';
+import Socket from 'src/gateway/types/socket';
 
 @Injectable()
 export class AuthService {
@@ -15,23 +18,8 @@ export class AuthService {
 		private config: ConfigService
 	){}
 
-// local login
-/*	async validateUser(username: string, password: string): Promise<User> {
-		throw new UnauthorizedException("Invalid credentials");
-	}*/
-
-	//ici faudra add 2FA boolean ds param
 	async login(user: any) {
-	/*	console.log('in login from auth service !!!')
-		console.log('username is :', user.username);
-		console.log('pictureURl is :', user.pictureURL);*/
 		const payload = {sub: user.id};
-	/*	if (await this.launch2FA(user) == false) {
-			return {
-				access_token:'access failed',
-				message: 'Authentication with 2FA failed'
-			}
-		}*/
 		return {
 			access_token: this.jwtService.sign(payload,{
 				secret: this.config.get('JWT_SECURE_KEY'),
@@ -55,32 +43,41 @@ export class AuthService {
 
 	keyGenerator(): string {
 		const buffer = crypto.randomBytes(20);
-	//	console.log("DEBUGDEBUG buffer from crypto = ", buffer);
 		const secret = encode(buffer);
-	//	console.log("DEBUGDEBUGDEBUG buffer encoded in b32 : ", secret);
 		return secret;
 	}
 
 	idGenerator(){
 		const test = Math.floor(Math.random() * 99999);
-		// console.log("**************\nTESTETSTESTEST\n",test);
 		return test;
 	}
 
 	async generate2FAkey(user: any){
 		const totpSecret = this.keyGenerator();
-
-		//console.log("COUCOUCOCOUC TOTP SECRET: ", totpSecret);
-		// generate QR code
+		// TODO: find a better name
 		const issuer =  'AwesomeLameApp';
 		const qrCodeImg = await qrcode.toDataURL(`otpauth://totp/${issuer}:${user.id}?secret=${totpSecret}&issuer=${issuer}`);
 		await this.userService.add2FAKey(totpSecret, user.id);
-
 		return {qrCodeImg, user};
 	}
-/*	async launch2FA(user: any){
-		if (user.enabled2FA == false)
+
+	async getUserBySocket(socket: Socket) : Promise<User | undefined> {
+		try {
+			const token = cookie.parse(socket.handshake.headers?.cookie)['access_token'];
+			const payload = this.jwtService.verify(token, {secret: this.config.get('JWT_SECRET')});
+			socket.user = await this.userService.getUserByID(payload.sub);
+			return (socket.user);
+		} catch {
+			return undefined;
+		}
+	}
+
+	async passwordChecker(input: string, user: User){
+		console.log("input :", input);
+		console.log("user.password:", user.password);
+		if (user.password === input)
 			return true;
-		
-	}*/
+		else
+			return false;
+	}
 }

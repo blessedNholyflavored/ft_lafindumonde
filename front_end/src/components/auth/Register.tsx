@@ -48,15 +48,7 @@ export function Register () {
 					setUser(data.user);
 					console.log("OUII ?",data);
 				})
-				.catch((error:any) => {window.alert("ouinnnn");});
-			/*}
-			else {
-				window.alert("Something went wrong ! Are you sure your input are correct ?");
-			}
-			//TODO: add control of response to check if it went right
-		} catch(error) {
-			console.error("Error: ", error);
-		}*/
+				.catch((error:any) => {window.alert("One or severals of your inputs aren't right !");});
     }
 
     return (

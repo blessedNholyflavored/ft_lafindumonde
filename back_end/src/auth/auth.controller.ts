@@ -6,7 +6,7 @@ import { FortyTwoAuthGuard } from "./guards/FortyTwo-auth.guard";
 import { ConfigService } from '@nestjs/config';
 //import { JwtAuthGuard } from "./guards/jwt-auth.guards";
 import { AuthGuard } from "@nestjs/passport";
-import { JwtGuard } from "./guards/jwt.guards";
+// import { JwtGuard } from "./guards/jwt.guards";
 import { AuthenticatedGuard } from "./guards/authenticated.guards";
 import * as bcrypt from 'bcrypt';
 import * as speakeasy from 'speakeasy';
@@ -54,11 +54,21 @@ export class AuthController{
      *      
      * 
      * *********************/
-    @Post('locallogin')
+    @Post('local_login')
     async login(@Body() body: {username: string, password: string}, @Res() res: any, @Req() req: any){
 		console.log("IN AUTH CONTROLLER\nbody is : ",body);
-		
-        return res;
+		if (!body.username || !body.password){
+			throw new BadRequestException("One field is missing");
+		}
+		const user = await this.userService.getUserByUsername(body.username);
+		if (!user)
+			throw new BadRequestException("Username doesn't exist");
+		// check du password
+		if (await this.authService.passwordChecker(body.password, user) == false)
+			throw new UnauthorizedException("Wrong password");
+		// sinn throw error
+		const token = await this.authService.login(user);
+		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user,['totpKey']), token});
     }
 
 	@Post('register')
@@ -107,7 +117,7 @@ export class AuthController{
     }
 
     @Get('me')
-    @UseGuards(JwtGuard)
+    @UseGuards(AuthGuard('jwt'))
     async protected(@Req() req: any) {
         return this.userService.exclude(req.user, ['totpKey']);
     }
@@ -157,7 +167,7 @@ export class AuthController{
      * *********************/
 
     @Post('submitCode')
-    @UseGuards(JwtGuard, AuthGuard('totp'))
+    @UseGuards(AuthGuard('jwt'), AuthGuard('totp'))
     async codeChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
         // console.log("SALUT SALUT SALUT OPUTDJSHFJKU");
         /*if (!body.userInput || !body.userID){
@@ -172,7 +182,7 @@ export class AuthController{
 
 	// submit input during auth login
 	@Post('submitInput')
-	@UseGuards(JwtGuard, AuthGuard('totp'))
+	@UseGuards(AuthGuard('jwt'), AuthGuard('totp'))
 	async inputChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
 		// console.log('inside submitInput controller');
 		const user = await this.userService.getUserByID(req.user.id);
