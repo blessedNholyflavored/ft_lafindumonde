@@ -38,6 +38,9 @@ model User {
 	// achievements		UserAchievement[]
 	// @@map("users")
 
+	block		User[] @relation ("Block")
+	blockOf		User[] @relation ("Block")
+
 }
 
 model Friendship {

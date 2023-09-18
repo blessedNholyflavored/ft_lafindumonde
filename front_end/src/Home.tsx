@@ -11,6 +11,7 @@ import "./style/Logout.css";
 import { Logout } from './components/auth/Logout';
 import { useAuth } from './components/auth/AuthProvider';
 import { WebsocketContext } from './WebsocketContext';
+import Notify from './Notify';
 
 
 interface HomeProps {
@@ -27,6 +28,7 @@ const Home: React.FC<HomeProps> = () => {
   // const [recupStatus, setStatus] = useState<string>('');
   let recupStatus = '';
   const [inGame, setInGame] = useState<number>(0);
+  const [showNotification, setShowNotification] = useState(false);
 
 
   const handlePlayerSelect = async (player: string) => {
@@ -79,6 +81,13 @@ if (socket)
   })
 }
 
+if (socket)
+{
+  socket.on("yooo", () => {
+    setShowNotification(true);
+  })
+}
+
 
 const handlePlayerSelect222 = async (player: string) => {
   setSelectedPlayer(player);
@@ -108,6 +117,8 @@ const handlePlayerSelect222 = async (player: string) => {
 }
 
 
+
+
   const navigateToProfPage = () => {
     navigate('/settings');
   };
@@ -124,9 +135,17 @@ const handlePlayerSelect222 = async (player: string) => {
     navigate('/friends');
     };
 
-
+    const handleCloseNotification = () => {
+      setShowNotification(false);
+    };
+  
   return (
 	<>
+      <div>
+      {showNotification && (
+        <Notify message="Vous avez une nouvelle demande d'ami" onClose={handleCloseNotification} />
+      )}
+    </div>
 	<div className="main_box">
 		<div className="navbarmainpage">
 			<img src={icon} className="buttonnav" alt="icon" />

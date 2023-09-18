@@ -22,6 +22,33 @@ export class FriendsController {
     return this.friendsService.findInvRequest(id);
   }
 
+  @Get('blocked/:id/:id1')
+  async checkBlocked(@Param('id') id1: string,@Param('id1') id2: string) {
+    return this.friendsService.checkBlocked(id1, id2);
+  }
+
+  @Get('blockedStatus/:id/:id1')
+  async checkBlockedStatus(@Param('id') id1: string,@Param('id1') id2: string) {
+    const isBlocked = await this.friendsService.checkBlockedStatus(id1, id2);
+    if (isBlocked == true)
+    {
+      return "BLOCKED"
+    }
+    return "Add friend";
+  }
+
+  @Get('blockedList/:id')
+  listBlocked(@Param('id') id: string) {
+    const test = this.friendsService.listBlocked(id);
+    return test;
+  }
+
+  @Get('online/:id')
+  listOnliePlayers(@Param('id') id: string) {
+    const test = this.friendsService.getOnlinePlayers(id);
+    return test;
+  }
+
   @Post('accept/:id')
   acceptFriend(@Param('id') id: string) {
     return this.friendsService.acceptRequest(id);
@@ -35,6 +62,16 @@ export class FriendsController {
   @Post('delete/:id/:id1')
   async deleteFriend(@Param('id') id1: string,@Param('id1') id2: string) {
     return this.friendsService.deleteFriend(id1, id2);
+  }
+
+  @Post('block/:id/:id1')
+  async blockFriend(@Param('id') id1: string,@Param('id1') id2: string) {
+    return this.friendsService.blockFriend(id1, id2);
+  }
+
+  @Post('unblock/:id/:id1')
+  async unBlock(@Param('id') id1: string,@Param('id1') id2: string) {
+    return this.friendsService.unBlock(id1, id2);
   }
 
   @Post('/:id/:id1')
@@ -52,7 +89,7 @@ export class FriendsController {
     const statut = await this.friendsService.getfriendrequestStatus(senderId, recipientId);
     
     // const amitie = await this.friendsService.sendFriendRequest(senderId, recipientId);
-    if (statut)
+    if (statut && statut.status)
       return statut.status;
     return ("not")
   }
@@ -63,7 +100,6 @@ export class FriendsController {
     const recipientId = id1;
     const statut = await this.friendsService.alreadyFriendGetStatus(senderId, recipientId);
     
-    console.log(statut);
     // const amitie = await this.friendsService.sendFriendRequest(senderId, recipientId);
     if (statut != 0)
       return "ACCEPTED";

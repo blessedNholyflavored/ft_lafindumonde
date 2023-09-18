@@ -47,6 +47,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
   private readonly authService: AuthService) {}
   private room: Room;
   private roomIntervals: Record<string, NodeJS.Timeout> = {};
+  private playerConnections: Map<number, Socket> = new Map<number, Socket>();
 
 
   afterInit(server: Server) {
@@ -67,7 +68,10 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       if (!user)
         socket.disconnect(true);
     //  socket.emit("coucou");
-      console.log("connected:   ", socket.user)
+      console.log("connected");
+      this.playerConnections.set(socket.user.id, socket);
+      this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');
+
   }
   
   
@@ -76,13 +80,32 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     this.playerQueue.splice(0, 1);
     this.playerQueue2.splice(0, 1);
     this.socketQueue.splice(0, 1);
-    console.log(socket.user);
+    // console.log(socket.user);
+    console.log("diconnected");
+    this.playerConnections.delete(socket.user.id);
+    this.userService.updateUserStatuIG(socket.user.id, 'OFFLINE');
+
 
   }
+
+  
 
   @SubscribeMessage('coucou')
   async coucou(@ConnectedSocket() socket: Socket)
   {}
+
+  @SubscribeMessage('notifyFriendShip')
+  async notifyFriendShip(@MessageBody() userId: number, @ConnectedSocket() socket: Socket)
+  {
+    let user1;
+    const NuserId = Number(userId);
+    this.playerConnections.forEach((value, key) => {
+      if (key === NuserId)
+        user1 = value;
+    });
+    console.log(user1.user);
+    user1.emit("yooo");
+  }
 
 // gestion des differentes listes d'attentes (partie classique ou partie bonus)
   @SubscribeMessage('joinQueue')

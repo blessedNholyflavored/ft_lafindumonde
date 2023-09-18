@@ -151,6 +151,7 @@ export class UserService {
       },
     });
   }
+  
   async updateUserStatuIG(id: number, newStatus: USER_STATUS) {
     const updateUser = await prisma.user.update({
       where: { id: id },
