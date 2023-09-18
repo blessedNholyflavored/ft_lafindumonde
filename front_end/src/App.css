@@ -13,7 +13,7 @@
 body {
   background-color: black;
   height: 90%;
-  background-image: url("./sphere.png");
+  background-image: url("img/sphere.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: auto 85%;
