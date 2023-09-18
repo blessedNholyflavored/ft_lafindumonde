@@ -222,6 +222,7 @@ export const UserSetting: React.FC = () => {
 		<form className='formsettings' onSubmit={handleSubmit}>
 			<label className='labelcss'>
 			<input
+				maxLength={9}
 				className='inputcss'
 				type="text"
 				value={newUsername}
@@ -242,7 +243,7 @@ export const UserSetting: React.FC = () => {
 		</div>
 		<img src={ImgUrl} alt='user avatar'></img>
 		<div>
-			<input type="file" accept="image/.jpg,.jpeg,.png" onChange={handleFileChange} />
+			<input type="file" accept="image/*" onChange={handleFileChange} />
 			<button onClick={changePic}>Upload</button>
 		</div>
 		<div className="footersmallbox">
