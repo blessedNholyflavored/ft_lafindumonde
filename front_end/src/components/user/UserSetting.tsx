@@ -153,7 +153,7 @@ export const UserSetting: React.FC = () => {
 {/* premier */}
 	<div className="boxrowsettings">
 		<div className="navbarsmallbox">
-			<p className="boxtitle"> USERNAME </p>
+			<p className="boxtitle"> CHANGE USERNAME </p>
 		</div>
 		<form className='formsettings' onSubmit={handleSubmit}>
 			<label className='labelcss'>
@@ -175,7 +175,7 @@ export const UserSetting: React.FC = () => {
 	{/* deuxieme */}
 	<div className="boxrowsettings">
 		<div className="navbarsmallbox">
-			<p className="boxtitle"> AVATAR </p>
+			<p className="boxtitle"> CHANGE AVATAR </p>
 		</div>
 		<img src={ImgUrl} alt='user avatar'></img>
 		<div>

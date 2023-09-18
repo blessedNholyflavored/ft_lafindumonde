@@ -18,6 +18,8 @@ export const GameHistory = (props: any) => {
 		username2: string;
 		scrP1: number;
 		scrP2: number;
+		superGame: number;
+		super: string;
 	  }
 
 	  const FetchGames = async () => {
@@ -31,14 +33,18 @@ export const GameHistory = (props: any) => {
 			{
 				const data = await response.json();
 				const updatedGameData = [...data];
+				console.log("ICI", updatedGameData);
 				let i: number = 0;
 				while (i < updatedGameData.length)
 				{
 					let date:string = updatedGameData[i].start_at.split("T");
 					let day: string = date[0].replace(/-/g, "/");
-					let hour: string = date[1].split(".")[0];
+					let hour = date[1].split(".")[0];
 					updatedGameData[i].start_at = day + " " + hour;
-					console.log("DAAAAAATE", date);
+					if (updatedGameData[i].superGame === 1)
+					{
+						updatedGameData[i].super = "☆";
+					}
 					try {
 						const response = await fetch(`http://localhost:3001/users/${updatedGameData[i].userId1}/username`, {
 							method: "GET",
@@ -57,6 +63,8 @@ export const GameHistory = (props: any) => {
 					i++;
 				}
 				setGameData(updatedGameData.reverse());
+				console.log("update", gameData);
+				console.log("update", typeof gameData[0].superGame);
 			}
 			else
 			{
@@ -73,7 +81,8 @@ export const GameHistory = (props: any) => {
 				<table>
 				<thead>
 					<tr>
-					<th>game id</th>
+					<th></th>
+					<th>date</th>
 					<th>Joueur 1</th>
 					<th></th>
 					<th></th>
@@ -83,6 +92,7 @@ export const GameHistory = (props: any) => {
 				<tbody>
 					{gameData.slice(0, 5).map((game: Game, index: number) => (
 					<tr key={index}>
+						<td>{game.super}</td>
 						<td>{game.start_at}</td>
 						<td>{game.username1}</td>
 						<td>{game.scrP1}</td>
