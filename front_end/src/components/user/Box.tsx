@@ -6,6 +6,7 @@ import logo from "../../img/logo42.png"
 import domo from "../../img/domo.png"
 import ScoreList from "./ScoreList";
 import Friends from "./FriendsList";
+import { GameHistory } from "./GameHistory";
 
 const Box = (props: any) => {
 
@@ -49,9 +50,9 @@ return (
             </div>
             <div className="boxrow">
                 <div className="navbarsmallbox">
-                    <p className="boxtitle"> Friends </p>
+                    <p className="boxtitle"> Game History </p>
                 </div>
-                    <Friends type="info"/>
+                    <GameHistory type="info"/>
                     <div className="footersmallbox">
                     <br></br>
                 </div>
