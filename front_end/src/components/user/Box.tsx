@@ -6,12 +6,16 @@ import logo from "../../img/logo42.png"
 import domo from "../../img/domo.png"
 import ScoreList from "./ScoreList";
 import Friends from "./FriendsList";
+import { useAuth } from "../auth/AuthProvider";
 
 const Box = (props: any) => {
 
     const [info, setInfo] = useState<any>(null);
+	let [ImgUrl, setImgUrl] = useState<string>('');
+	const { user, setUser } = useAuth();
 
     useEffect(() => {
+		displayPic();
         if (props.type === 'info') {
             setInfo(<ProfileBox type={props.type}/>)
         } else if  (props.type === 'friends') {
@@ -20,6 +24,42 @@ const Box = (props: any) => {
             setInfo(<ScoreList type={props.type}/>)
     
 }, [props.type])
+
+const displayPic = async() => {
+
+    const userId = user?.id;
+    try {
+        const response = await fetch(`http://localhost:3001/users/${userId}/avatar`, {
+            method: 'GET',
+        });
+        if (response.ok) {
+            const pictureURL = await response.text();
+            //console.log("aaaaaaA",pictureURL);
+            if (pictureURL.includes("https"))
+            {
+                setImgUrl(pictureURL);
+            }
+            else {
+                try {
+                const response = await fetch(`http://localhost:3001/users/uploads/${pictureURL}`, {
+                    method: 'GET',
+                });
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const absoluteURL = URL.createObjectURL(blob);
+                    setImgUrl(absoluteURL);
+                }
+                }
+                catch (error) {
+                    console.error(error);
+                }
+            }
+        }
+    }
+    catch (error) {
+        console.error(error);
+    }
+}
 
 return (
     
@@ -36,7 +76,7 @@ return (
 
         <div className="threerow">
             <div className="color">
-            <img src={domo} className="profilepic" alt="profilepic" />
+            <img src={ImgUrl} alt='user avatar'></img>
             </div>
             <div className="boxrow">
                 <div className="navbarsmallbox">

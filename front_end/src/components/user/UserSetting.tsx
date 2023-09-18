@@ -8,7 +8,12 @@ import { twoFAEnable, twoFADisable } from '../auth/2faComp';
 import api from '../../AxiosInstance';
 import { Logout } from './../auth/Logout';
 import { useNavigate } from 'react-router-dom';
-
+import "../../../src/style/Home.css";
+import folder4 from "../../img/folder5.png";
+import folder3 from "../../img/folder3.png";
+import folder2 from "../../img/folder2.png";
+import folder1 from "../../img/folder0.png";
+import nav from "../../img/buttoncomp.png"
 
 export const UserSetting: React.FC = () => {
 	const [newUsername, setNewUsername] = useState('');
@@ -198,18 +203,55 @@ export const UserSetting: React.FC = () => {
 		}
 	  };
 
+
+	  const navigateToProfPage = () => {
+		navigate(`/users/profile/${user?.id}`);
+	  };
+	
+	  const navigateToChat = () => {
+		navigate('/chat');
+	  };
+	
+	  const NavToSoloPong = () => {
+		navigate('/solopong');
+		};
+	
+	  const navigateToFriends = () => {
+		navigate('/friends');
+		};
+	
+	
+	  const navigateToSettings = () => {
+		navigate('/settings');
+		};
+
+		const navigateToHome = () => {
+			navigate('/');
+			};
+
+		
   return (
 	<>
-	<div className="mainpage">
-		<div className="navbarmainpage">
+  <body>
+
+	<header>
+        <div>
+            <img src={nav} alt="Menu 1"/>
+        </div>
+        <h1>TRANSCENDENCE</h1>
+    </header>
+    
+    <div className="flex-bg">
+	{/* <div className="mainpage"> */}
+		{/* <div className="navbarmainpage">
 			<img src={icon} className="buttonnav" alt="icon" />
 			<p className="titlemainpage"> TRANSCENDENCE </p>
-		</div>
-		<div className="Insidemain">
+		</div> */}
+		{/* <div className="Insidemain">
 			<div className="navbarbox">
 				<img src={icon} className="buttonnav" alt="icon" />
 				<p className="titlebox"> SETTINGS </p>
-			</div>
+			</div> */}
 		<div className="threerow">
 
 {/* premier */}
@@ -249,7 +291,7 @@ export const UserSetting: React.FC = () => {
 	</div>
 
 {/* troisieme */}
-	{/* <div className="boxrowsettings">
+	<div className="boxrowsettings">
 		<div className="navbarsmallbox">
 			<p className="boxtitle"> 2FAC AUTH </p>
 		</div>
@@ -260,52 +302,49 @@ export const UserSetting: React.FC = () => {
 		<div className="footersmallbox">
 			<br></br>
 		</div>
-	</div> */}
-
-
-{/* quatre juste pour test game history */}
-	<div className="boxrowsettings">
-		<div className="navbarsmallbox">
-			<p className="boxtitle"> GAME HISTORY </p>
-		</div>
-		<div>
-			<table>
-			<thead>
-				<tr>
-				<th>game id</th>
-				<th>Joueur 1</th>
-				<th></th>
-				<th></th>
-				<th>Joueur 2</th>
-				</tr>
-			</thead>
-			<tbody>
-				{gameData.slice(0, 5).map((game: Game, index: number) => (
-				<tr key={index}>
-					<td>{game.id}</td>
-					<td>{game.username1}</td>
-					<td>{game.scrP1}</td>
-					<td>{game.scrP2}</td>
-					<td>{game.username2}</td>
-				</tr>
-				))}
-			</tbody>
-			</table>
-		</div>
-
-		<div className="footersmallbox">
-			<br></br>
-		</div>
 	</div>
+
+
+
+	<nav>
+            <ul>
+                <li className="menu-item">
+				<a onClick={() => navigateToHome()}>
+                        <img src={folder4} alt="Menu 1"/>
+                        <p  >Home</p>
+                    </a>
+                </li>
+                
+                <li className="menu-item">
+                    <a onClick={() => NavToSoloPong()}>
+                        <img src={folder3} alt="Menu 3"/>
+                        <p  >Tiny Game</p>
+                    </a>
+                </li>
+                <li className="menu-item">
+                    <a onClick={navigateToProfPage}>
+                        <img src={folder2} alt="Menu 3"/>
+                        <p >Profile</p>
+                    </a>
+                </li>
+                <li className="menu-item">
+                    <a onClick={navigateToSettings}>
+                        <img src={folder1} alt="Menu 3"/>
+                        <p  >Settings</p>
+                    </a>
+                    
+                </li>
+            </ul>
+        </nav>
 	</div>
 
 	</div>
-	<div className="footerprofilsettings">
-		{/* <br></br> */}
-		<button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
-		<img src={logo} className="logo" alt="icon" />
-	</div>
-	</div>
+	<footer>
+        <button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
+			<img src={logo} className="logo" alt="icon" />
+    </footer>
+	</body>
+
 	</>
   );
 };
