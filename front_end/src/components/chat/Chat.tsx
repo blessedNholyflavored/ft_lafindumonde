@@ -86,8 +86,8 @@ export const Chat:React.FC = () => {
 			  {
           const scores = await fetchPrivMessageList();
         }
-		  fetchPrivMessage();
 	}
+	fetchPrivMessage();
       }, []);
 
 	const onSubmit = () => {
