@@ -57,6 +57,7 @@ export const App: React.FC = () => {
           <Route path="/users/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/sock" element={<ProtectedRoute><Websocket /></ProtectedRoute>} />
 		  <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+		  <Route path="/chat/priv/:recipient" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
 		  <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
         <Route path="/SuperGame" element={<ProtectedRoute><SuperPong socket={socket} /></ProtectedRoute>} />
 		  <Route path="/solopong" element={<ProtectedRoute><MiniGame /></ProtectedRoute>} />

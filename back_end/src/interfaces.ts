@@ -68,3 +68,8 @@ export interface Game {
 	scrP1: number;
 	scrP2: number;
   }
+
+  export interface privateMessage {
+    id: number;
+    start_at: string;
+    }

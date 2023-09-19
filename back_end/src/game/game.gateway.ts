@@ -505,5 +505,4 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
         this.server.to(this.res.id.toString()).emit('startGame2', Sroom);
     }
 
-  
 }

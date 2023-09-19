@@ -219,7 +219,7 @@ async function checkBlockedForNotify(senderId:string, recipientId: string) {
                 Block ?
                 </button>
                 )}
-                            { friendshipStatus === "Add friend" && user && user.id.toString() !== recipientId && (
+                            { user && user.id.toString() !== recipientId && (
 
                 <button onClick={() => inviteToMatch(user?.id as any, id as string)}>
                     inviter en match ?

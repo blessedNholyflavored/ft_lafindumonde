@@ -367,6 +367,11 @@ if (socket)
 }
 
 
+async function messagePage(recipientId: string) {
+  navigate(`/chat/priv/${recipientId}`);
+
+}
+
       return (
 
       
@@ -388,6 +393,9 @@ if (socket)
                     <div>{friend.status}</div>
                     <button onClick={() => deleteFriend(friend.senderId.toString(), friend.recipientId.toString())}>Delete</button>
                     <button onClick={() => BlockFriend(friend.senderId.toString(), friend.recipientId.toString())}>Bloquer</button>
+                    <button onClick={() => navToProfil(friend.recipientId.toString())}>Voir Profile</button>
+                    <button onClick={() => messagePage(friend.recipientId.toString())}>Envoyer un message</button>
+
 
                 </div>
             ))
@@ -425,6 +433,7 @@ if (socket)
                     <button onClick={() => addSomeone(friend.id.toString())}>Ajouter</button>
                     <button onClick={() => BlockFriend(user.id.toString(), friend.id.toString())}>Bloquer</button>
                     <button onClick={() => navToProfil(friend.id.toString())}>Voir Profile</button>
+                    <button onClick={() => messagePage(friend.id.toString())}>Envoyer un message</button>
 
 
                 </div>
