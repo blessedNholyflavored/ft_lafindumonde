@@ -64,10 +64,11 @@ export class AuthService {
 	async getUserBySocket(socket: Socket) : Promise<User | undefined> {
 		try {
 			const token = cookie.parse(socket.handshake.headers?.cookie)['access_token'];
-			const payload = this.jwtService.verify(token, {secret: this.config.get('JWT_SECRET')});
+			const payload = this.jwtService.verify(token, {secret: this.config.get('JWT_SECURE_KEY')});
 			socket.user = await this.userService.getUserByID(payload.sub);
 			return (socket.user);
-		} catch {
+		} catch (e) {
+			console.log(e);
 			return undefined;
 		}
 	}
