@@ -20,10 +20,14 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = () => {
   const navigate = useNavigate();
-  const socket = useContext(WebsocketContext);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [queueCount, setQueueCount] = useState<number>(0);
   const [queueCountBonus, setQueueCountBonus] = useState<number>(0);
+  const [notifyMSG, setNotifyMSG] = useState<string>('');
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const [sender, setSender] = useState<number>(0);
+  const socket = useContext(WebsocketContext);
+
   const { user, setUser } =useAuth();
   // const [recupStatus, setStatus] = useState<string>('');
   let recupStatus = '';
@@ -83,8 +87,20 @@ if (socket)
 
 if (socket)
 {
-  socket.on("yooo", () => {
+  socket.on("friendShipNotif", () => {
     setShowNotification(true);
+    setNotifyMSG("Tu as recu une demande d'ami")
+    setNotifyType(0);
+  })
+}
+
+if (socket)
+{
+  socket.on("receiveInvite", (sender: number) => {
+    setShowNotification(true);
+    setNotifyMSG("Tu as recu une invitation pour une partie")
+    setNotifyType(1);
+    setSender(sender);
   })
 }
 
@@ -143,7 +159,7 @@ const handlePlayerSelect222 = async (player: string) => {
 	<>
       <div>
       {showNotification && (
-        <Notify message="Vous avez une nouvelle demande d'ami" onClose={handleCloseNotification} />
+        <Notify message={notifyMSG} type={notifyType} senderId={sender} onClose={handleCloseNotification} />
       )}
     </div>
 	<div className="main_box">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import '../../style/Profile.css'
 import ProfileBox from "./ProfileBox"
 import icon from "../../img/buttoncomp.png"
@@ -6,10 +6,18 @@ import logo from "../../img/logo42.png"
 import domo from "../../img/domo.png"
 import ScoreList from "./ScoreList";
 import Friends from "./FriendsList";
+import Notify from '../../Notify';
+import { WebsocketContext } from "../../WebsocketContext";
 
 const Box = (props: any) => {
 
     const [info, setInfo] = useState<any>(null);
+    const [notifyMSG, setNotifyMSG] = useState<string>('');
+    const [notifyType, setNotifyType] = useState<number>(0);
+    const [sender, setSender] = useState<number>(0);
+    const socket = useContext(WebsocketContext);
+    const [showNotification, setShowNotification] = useState(false);
+
 
     useEffect(() => {
         if (props.type === 'info') {
@@ -21,8 +29,36 @@ const Box = (props: any) => {
     
 }, [props.type])
 
+
+const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
+
+  
+  if (socket)
+{
+socket.on("receiveInvite", (sender: number) => {
+setShowNotification(true);
+setNotifyMSG("Tu as recu une invitation pour une partie")
+setNotifyType(1);
+setSender(sender);
+})
+}
+
+if (socket)
+{
+  socket.on("friendShipNotif", () => {
+    setShowNotification(true);
+    setNotifyMSG("Tu as recu une demande d'ami")
+    setNotifyType(0);
+  })
+}
+
 return (
-    
+<div>
+      {showNotification && (
+        <Notify message={notifyMSG} type={notifyType} senderId={sender} onClose={handleCloseNotification} />
+      )}
     <div className="mainpage">
         <div className="navbarmainpage">
         <img src={icon} className="buttonnav" alt="icon" />
@@ -76,6 +112,7 @@ return (
         {/* // <Friendslist type="friends"/> */}
         {/* // <Scorelist type ="scorelist"/> */}
     
+    </div>
     </div>
 )
 }

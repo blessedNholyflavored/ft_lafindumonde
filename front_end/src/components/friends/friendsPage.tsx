@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useAuth } from '../auth/AuthProvider';
 import { useParams } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
+import { WebsocketContext } from '../../WebsocketContext';
+import Notify from '../../Notify';
+
 
 
 
@@ -26,6 +29,10 @@ export const FriendsPage: React.FC = () => {
     const { user, setUser } =useAuth();
     const [ username, setUsername] = useState<string>('');
     const navigate = useNavigate();
+    const [notifyMSG, setNotifyMSG] = useState<string>('');
+    const [notifyType, setNotifyType] = useState<number>(0);
+    const [sender, setSender] = useState<number>(0);
+    const socket = useContext(WebsocketContext);
 
 
 
@@ -39,6 +46,8 @@ const [friendsRequest, setfriendsRequest] = useState<friendsSend[]>([]);
 const [friends, setFriends] = useState<friendsSend[]>([]);
 const [blocked, setBlocked] = useState<friendsSend[]>([]);
 const [onlinePlayers, setOnlinePlayers] = useState<onlinePlayers[]>([]);
+const [showNotification, setShowNotification] = useState(false);
+
 
 
 
@@ -343,12 +352,30 @@ const [onlinePlayers, setOnlinePlayers] = useState<onlinePlayers[]>([]);
         navigate(`/users/profile/${id}`);
 
       }
+      const handleCloseNotification = () => {
+        setShowNotification(false);
+      };
+
+if (socket)
+{
+  socket.on("receiveInvite", (sender: number) => {
+    setShowNotification(true);
+    setNotifyMSG("Tu as recu une invitation pour une partie")
+    setNotifyType(1);
+    setSender(sender);
+  })
+}
 
 
       return (
 
       
         <div>
+                <div>
+      {showNotification && (
+        <Notify message={notifyMSG} type={notifyType} senderId={sender} onClose={handleCloseNotification} />
+      )}
+    </div>
 
           <ul>
 
@@ -438,25 +465,9 @@ const [onlinePlayers, setOnlinePlayers] = useState<onlinePlayers[]>([]);
               <div>Status: {friend.status}</div>
               <div>Sender ID: {user?.username}</div>
               <div>recipientId ID: {friend.username}</div>
+              <button onClick={() => RefuseFriend(friend.id)}>Cancel</button>
+
             </li>
-              )}
-                { friend.status === "ACCEPTED" && (
-                <li key={friend.id}>
-                  <h1>Liste des requetes ACCEPTED :</h1>
-                <div>ID: {friend.id}</div>
-                <div>Status: {friend.status}</div>
-                <div>Sender ID: {user?.username}</div>
-                <div>Recipient ID: {friend.username}</div>
-              </li>
-              )}
-                { friend.status === "BLOQUE" && (
-                <li key={friend.id}>
-                  <h1>Liste des requetes en attente :</h1>
-                <div>ID: {friend.id}</div>
-                <div>Status: {friend.status}</div>
-                <div>Sender ID: {user?.username}</div>
-                <div>Recipient ID: {friend.username}</div>
-              </li>
               )}
               </div>
             ))}

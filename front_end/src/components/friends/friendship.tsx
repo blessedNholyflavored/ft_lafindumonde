@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useAuth } from '../auth/AuthProvider';
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { WebsocketContext } from '../../WebsocketContext';
 // 
 
@@ -16,6 +16,8 @@ export const FriendshipComponent = ({ recipientId }: { recipientId?: string }) =
 // 
     const [friendshipStatus, setFriendshipStatus] = useState<string | null>();
      const socket = useContext(WebsocketContext);
+    const navigate = useNavigate();
+
 
 // 
 // 
@@ -178,6 +180,20 @@ async function checkBlockedForNotify(senderId:string, recipientId: string) {
         window.location.reload();
       }
 
+      async function inviteToMatch(sender: string, recipient: string) {
+        if (user && await checkBlockedForNotify(user?.id.toString(), recipient) === false)
+            socket.emit("inviteToMatch", recipient);
+      }
+
+      if (socket)
+      {
+        socket?.on('matchStart', () => {
+             socket?.emit('updateUserIG', user?.id);
+              navigate('/gamefriend');
+          
+          });
+        }
+
 // 
     return (
         <div>
@@ -203,6 +219,13 @@ async function checkBlockedForNotify(senderId:string, recipientId: string) {
                 Block ?
                 </button>
                 )}
+                            { friendshipStatus === "Add friend" && user && user.id.toString() !== recipientId && (
+
+                <button onClick={() => inviteToMatch(user?.id as any, id as string)}>
+                    inviter en match ?
+                </button>
+                )}
+
                 </div>
             );
 }

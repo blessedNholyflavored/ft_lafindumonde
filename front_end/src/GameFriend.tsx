@@ -9,7 +9,7 @@ import { count } from 'console';
 
 
 
-const PongGame: React.FC = () => {
+const GameFriend: React.FC = () => {
   const [room, setRoom] = useState<Room | null>(null);
   const [counter, setCounter] = useState(0);
   const [end, setEnd] = useState<number>(0);
@@ -74,7 +74,7 @@ const startGameFCT = () =>
 {
   if (socket && counter === 0)
   {
-    socket?.emit('startGame');
+    socket?.emit('startGameFriend');
     setCounter(1);
   }
 }
@@ -235,4 +235,4 @@ useEffect(() => {
   );
 };
 
-export default PongGame;
+export default GameFriend;

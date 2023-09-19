@@ -42,6 +42,15 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
   private res;
   private p1;
   private p2;
+  private playerQueueFriend: number[] = [];
+  private playerQueue2Friend: number[] = [];
+  private socketQueueFriend: Socket[] = [];
+  private playerQueueBonusFriend: number[] = [];
+  private playerQueue2BonusFriend: number[] = [];
+  private socketQueueBonusFriend: Socket[] = [];
+  // private res;
+  private p1Friend;
+  private p2Friend;
   constructor(private readonly gameService: GameService, private readonly userService: UserService,
   private readonly roomMapService: RoomMapService,
   private readonly authService: AuthService) {}
@@ -69,8 +78,11 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
         socket.disconnect(true);
     //  socket.emit("coucou");
       console.log("connected");
-      this.playerConnections.set(socket.user.id, socket);
-      this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');
+      if (socket && socket.user)
+      {
+        this.playerConnections.set(socket.user.id, socket);
+        this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');
+      }
 
   }
   
@@ -82,8 +94,11 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     this.socketQueue.splice(0, 1);
     // console.log(socket.user);
     console.log("diconnected");
-    this.playerConnections.delete(socket.user.id);
-    this.userService.updateUserStatuIG(socket.user.id, 'OFFLINE');
+    if (socket && socket.user)
+    {
+      this.playerConnections.delete(socket.user.id);
+      this.userService.updateUserStatuIG(socket.user.id, 'OFFLINE');
+    }
 
 
   }
@@ -104,7 +119,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
         user1 = value;
     });
     console.log(user1.user);
-    user1.emit("yooo");
+    user1.emit("friendShipNotif");
   }
 
 // gestion des differentes listes d'attentes (partie classique ou partie bonus)
@@ -424,4 +439,71 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
   this.userService.updateScoreMiniGame(socket.user.id, newScore);
 
   }
+
+  @SubscribeMessage('inviteToMatch')
+  async onInviteToMatch(@MessageBody() recipient: number, @ConnectedSocket() socket: Socket) {
+
+    let user1;
+    const NuserId = Number(recipient);
+    this.playerConnections.forEach((value, key) => {
+      if (key === NuserId)
+        user1 = value;
+    });
+    if (user1)
+      user1.emit("receiveInvite", socket.user.id);
+  }
+
+  @SubscribeMessage('matchAccepted')
+  async onMatchAccepted(@MessageBody() recipient: number, @ConnectedSocket() socket: Socket) {
+
+    let user1;
+    const NuserId = Number(recipient);
+    this.playerConnections.forEach((value, key) => {
+      if (key === NuserId)
+        user1 = value;
+    });
+    this.res = await this.gameService.CreateGame(socket.user.id, NuserId, 0);
+
+    this.p1Friend = socket.user.id;
+    this.p2Friend = NuserId;
+    this.playerQueue2Friend.push(socket.user.id);
+    this.playerQueue2Friend.push(NuserId);
+
+    user1.emit("matchStart");
+    socket.emit("matchStart");
+
+  }
+
+    // init des valeurs pour le jeu + creation de la Room de jeu dasn la db
+    @SubscribeMessage('startGameFriend')
+    async onStartGameFriend(@ConnectedSocket() socket: Socket)
+    {
+        const firstPlayer = this.playerQueue2Friend.shift()!;
+        const secondPlayer = this.playerQueue2Friend.shift()!;
+        
+        const Bp1 = await this.userService.getUserByID(this.p1Friend);
+        const Bp2 = await this.userService.getUserByID(this.p2Friend);
+        
+        const user1: User = { id: this.p1Friend, username: Bp1.username, point: { x: 0, y: 200 }, socketid: '' };
+        const user2: User = { id: this.p2Friend, username: Bp2.username, point: { x: 700, y: 200 }, socketid: '' };
+        
+        this.room = { player1: user1, player2: user2, ball: {
+          x: 350, y: 200, speedX: -5, speedY: 0, speed: 5,
+          radius: 0
+        }, idRoom: this.res.id, scorePlayer1: 0, scorePlayer2: 0, end: 0, winner: null, idP1: this.p1Friend,
+        idP2: this.p2Friend };
+        const Sroom: roomSend = {player1: Bp1.username, player2: Bp2.username,
+          ballX: 350,
+          ballY: 200, scoreP1: 0,
+          scoreP2: 0, player1Y: 200, player2Y: 200, winner: '',
+          roomID: this.res.id};
+          this.roomMapService.addRoom(this.res.id.toString(), this.room);
+          socket.join(this.res.id.toString());
+          if (socket.user.id === this.room.idP1)
+            this.startLoop(Sroom.roomID);
+  
+        this.server.to(this.res.id.toString()).emit('startGame2', Sroom);
+    }
+
+  
 }
