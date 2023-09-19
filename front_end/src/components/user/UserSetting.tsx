@@ -5,7 +5,6 @@ import icon from "../../img/buttoncomp.png";
 import logo from "../../img/logo42.png";
 import { useAuth } from '../auth/AuthProvider';
 import { twoFAEnable, twoFADisable } from '../auth/2faComp';
-import api from '../../AxiosInstance';
 import { Logout } from './../auth/Logout';
 import { useNavigate } from 'react-router-dom';
 
@@ -134,16 +133,9 @@ export const UserSetting: React.FC = () => {
 		}
 		}
 	  }
-	// async function twoFAEnable() {
-    //     try {
-    //         //mettre ici bonne route finale 
-    //         const res = await api.get('/auth/2FAenable');
-    //         console.log(res.data.code);
-    //         return navigate(`/totpSave?qrCodeImg=${encodeURIComponent(res.data.code)}`)
-    //     } catch (error) {
-    //         console.log('Error while 2fa-ing : ', error);
-    //     }
-    // }
+	const navigateToHome = () => {
+		navigate('/');
+	};
 
 	interface Game {
 		id: number;
@@ -254,7 +246,7 @@ export const UserSetting: React.FC = () => {
 			<p className="boxtitle"> 2FAC AUTH </p>
 		</div>
 		<div className="twoFA">
-			<button className="twoFAenabled" onClick={() => twoFAEnable(navigate)}>enable</button>
+			<button className="twoFAenabled" onClick={() => twoFAEnable(navigate, user)}>enable</button>
 			<button className="twoFAdisabled" onClick={() => twoFADisable({user, setUser})}>disable</button>
 		</div>
 		<div className="footersmallbox">
@@ -303,6 +295,7 @@ export const UserSetting: React.FC = () => {
 	<div className="footerprofilsettings">
 		{/* <br></br> */}
 		<button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
+		<button className="logoutBtn" onClick={navigateToHome}>HOME</button>
 		<img src={logo} className="logo" alt="icon" />
 	</div>
 	</div>

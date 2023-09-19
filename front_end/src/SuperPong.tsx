@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { User, Room } from './interfaces'; // Assurez-vous d'importer les interfaces correctes
-import './AppTest.css'
+//import './AppTest.css'
+import './App.css';
 import { useAuth } from './components/auth/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { WebsocketContext } from './WebsocketContext';

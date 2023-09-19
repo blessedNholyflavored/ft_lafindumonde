@@ -41,7 +41,7 @@ export class AuthController{
 		}
 		const user = await this.authService.retrieveUser(body);
 		const token = await this.authService.login(user);
-		res.cookie('access_token', token.access_token, {httpOnly: true}).json({user: this.userService.exclude(user, ['totpKey']), token}).statusCode(200).send();
+		res.cookie('access_token', token.access_token, {httpOnly: true}).json({user: this.userService.exclude(user, ['totpKey', 'password']), token}).statusCode(200).send();
 
 	}
 
@@ -52,11 +52,48 @@ export class AuthController{
      *      
      * 
      * *********************/
-    @Post('login')
-    async login(@Body() loginDto:any){
-        return ;
+    @Post('local_login')
+    async login(@Body() body: {username: string, password: string}, @Res() res: any, @Req() req: any){
+		console.log("IN AUTH CONTROLLER\nbody is : ",body);
+		if (!body.username || !body.password){
+			throw new BadRequestException("One field is missing");
+		}
+		const user = await this.userService.getUserByUsername(body.username);
+		if (!user)
+			throw new BadRequestException("Username doesn't exist");
+		// check du password
+		if (await this.authService.passwordChecker(body.password, user) == false)
+			throw new UnauthorizedException("Wrong password");
+		// sinn throw error
+		const token = await this.authService.login(user);
+		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user,['totpKey', 'password']), token});
     }
 
+	@Post('register')
+	async register(@Req() req: any, @Body() body: {username: string, password: string, email: string, id: number, pictureURL: string}, @Res() res: any){
+		console.log("InAUTH CONTROLLER\n body in register is : ", body);
+		if (!body.username || !body.password || !body.email || !body.pictureURL){
+			console.log("ooops: ", body);
+			throw new BadRequestException("password, username or email is missing");
+		}
+		let newID = await this.authService.idGenerator();
+		// console.log("HERE POST ID GENERATE : newID =", newID);
+		while (await this.userService.getUserByID(newID))
+			newID = await this.authService.idGenerator();
+		body.id = newID;
+		// console.log("ICICICICIICIC final body: ", body);
+		if (await this.userService.usernameAuthChecker(body.username) == true){
+			// in case someone already have this username
+			body.username =  body.username + '_';
+		}
+	//	console.log("BODYBODYBODY:", body);
+		const user = await this.userService.createUser(body, true);
+		const token = await this.authService.login(user);
+		await this.userService.setLog2FA(user, false);
+		//console.log("HEREHEREHERE: ", user, token);
+		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user, ['totpKey', 'password']), token});
+		//return res;
+	}
     /************************
      * 
      * 
@@ -81,7 +118,7 @@ export class AuthController{
     @Get('me')
     @UseGuards(AuthGuard('jwt'))
     async protected(@Req() req: any) {
-        return this.userService.exclude(req.user, ['totpKey']);
+        return this.userService.exclude(req.user, ['totpKey', 'password']);
     }
 
     /************************
@@ -100,18 +137,7 @@ export class AuthController{
             await this.userService.disable2FA(req.user.id);
         }
         const { qrCodeImg, user } = await this.authService.generate2FAkey(req.user);
-            // here --> redirect user to a page with a generated QR code made with the secret 2fa key made for him
-            // he will have to scan the code to get second auth code. If and only IF everything here went well,
-            // we enable his 2FA by setting enabled2FA to true
-      //  return res.redirect(`http://localhost:8080//totpSave?qrCodeImg=${encodeURIComponent(qrCodeImg)}&userId=${user.id}`);
         return res.json({code: qrCodeImg});
-      /*  if (updtUser.enabled2FA == true){
-                console.log("2FA correctly enabled !");
-                return updtUser;
-        } else {
-                console.log("An issue happened enabling 2fa ???");
-        }*/
-        //return req.user;
     }
 
     @Get('2FAdisable')
@@ -126,29 +152,10 @@ export class AuthController{
                 console.log("2FA correctly disabled !");
             else
                 console.log("An issue happened disabling 2fa ???");
-            return this.userService.exclude(updtUser, ['totpKey']);
+            return this.userService.exclude(updtUser, ['totpKey', 'password']);
         }
-        return this.userService.exclude(req.user, ['totpKey']);
+        return this.userService.exclude(req.user, ['totpKey', 'password']);
     }
-
-    // @Get('2FAtester')
-    // @UseGuards(...AuthenticatedGuard)
-    // async tester2FA(@Req() req:any){
-    //     console.log("user here is :", req.user.username);
-    //     if (req.user.enabled2FA == true)
-    //        console.log("his 2fa is ENABLED !");
-    //     else
-    //         console.log("his 2fa is NOT enabled >< .....");
-        
-    //     const updtUser = await this.userService.enable2FA(req.user.id);
-        
-    //     console.log("user updated is :", updtUser.username);
-    //     if (updtUser.enabled2FA == true)
-    //         console.log("his 2fa is ENABLED !");
-    //     else
-    //         console.log("his 2fa is NOT enabled >< .....");
-    //     return this.userService.exclude(updtUser, ['totpKey']);
-    // }
 
     /************************
      * 
@@ -169,7 +176,7 @@ export class AuthController{
         const user = await this.userService.getUserByID(req.user.id);
         await this.userService.enable2FA(user.id);
 		await this.userService.setLog2FA(user, true);
-        return res.status(200).json(this.userService.exclude(user, ['totpKey']));
+        return res.status(200).json(this.userService.exclude(user, ['totpKey', 'password']));
     }
 
 	// submit input during auth login
@@ -180,7 +187,7 @@ export class AuthController{
 		const user = await this.userService.getUserByID(req.user.id);
 		//set user.log2FA a true
 		const updtUser = await this.userService.setLog2FA(user, true);
-		return res.status(200).json(this.userService.exclude(updtUser, ['totpKey']));
+		return res.status(200).json(this.userService.exclude(updtUser, ['totpKey', 'password']));
 	}
     /************************
      * 
