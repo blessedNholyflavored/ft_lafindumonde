@@ -34,6 +34,7 @@ export const MiniGame = () => {
     try {
       const response = await fetch(`http://localhost:3000/users/`, {
         method: 'GET',
+        credentials: 'include',
       });
       if (!response.ok) {
         throw new Error('Erreur lors de la récupération des scores.');

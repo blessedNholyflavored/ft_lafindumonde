@@ -35,6 +35,7 @@ export const UserSetting: React.FC = () => {
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({ username: newUsername }),
+				credentials: 'include',
 			});
 			if (response.ok) {
 				alert('Nom d\'utilisateur mis à jour avec succès !');
@@ -52,6 +53,7 @@ export const UserSetting: React.FC = () => {
 		try {
 			const response = await fetch(`http://localhost:3000/users/${userId}/avatar`, {
 				method: 'GET',
+				credentials: 'include',
 			});
 			if (response.ok) {
 				const pictureURL = await response.text();
@@ -64,6 +66,7 @@ export const UserSetting: React.FC = () => {
 					try {
 					const response = await fetch(`http://localhost:3000/users/uploads/${pictureURL}`, {
 						method: 'GET',
+						credentials: 'include',
 					});
 					if (response.ok) {
 						const blob = await response.blob();
@@ -107,6 +110,7 @@ export const UserSetting: React.FC = () => {
 			const response = await fetch(`http://localhost:3000/users/${userId}/update-avatar`, {
 			  method: 'POST',
 			  body: formData,
+				credentials: 'include',
 			});
 			if (response.ok) {
 				const result = await response.json();
@@ -154,6 +158,7 @@ export const UserSetting: React.FC = () => {
 		try {
 			const response = await fetch(`http://localhost:3000/users/${userId}/games-data`, {
 				method: "GET",
+				credentials: 'include',
 			});
 			if (response.ok)
 			{
@@ -165,9 +170,11 @@ export const UserSetting: React.FC = () => {
 					try {
 						const response = await fetch(`http://localhost:3000/users/${updatedGameData[i].userId1}/username`, {
 							method: "GET",
+							credentials: 'include',
 						});
 						const response2 = await fetch(`http://localhost:3000/users/${updatedGameData[i].userId2}/username`, {
 							method: "GET",
+							credentials: 'include',
 						});
 						if (response.ok)
 							updatedGameData[i].username1 = await response.text();

@@ -5,7 +5,7 @@ import "./../../style/Login.css";
 import logo from "../../img/logo42.png";
 import icon from "../../img/buttoncomp.png"
 import { useAuth } from "./AuthProvider";
-import { Login } from "./Login";
+//import { Login } from "./Login";
 import { useNavigate } from 'react-router-dom';
 
 export function LocalLogin () {

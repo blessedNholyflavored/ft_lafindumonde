@@ -41,6 +41,7 @@ const Home: React.FC<HomeProps> = () => {
     try {
       const response = await fetch(`http://localhost:3000/users/status/${user?.id}`, {
         method: 'GET',
+        credentials: 'include',
       });
       if (response.ok) {
         const recup = await response.text();

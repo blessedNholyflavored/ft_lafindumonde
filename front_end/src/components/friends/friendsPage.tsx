@@ -55,6 +55,7 @@ const [showNotification, setShowNotification] = useState(false);
         try {
           const response = await fetch(`http://localhost:3000/friends/invSend/${user?.id}`, {
             method: 'GET',
+            credentials: 'include',
           });
           if (!response.ok) {
               throw new Error('Erreur lors de la récupération des scores.');
@@ -79,6 +80,7 @@ const [showNotification, setShowNotification] = useState(false);
         try {
           const response = await fetch(`http://localhost:3000/friends/invRequest/${user?.id}`, {
             method: 'GET',
+            credentials: 'include',
           });
           if (!response.ok) {
               throw new Error('Erreur lors de la récupération des scores.');
@@ -104,7 +106,7 @@ const [showNotification, setShowNotification] = useState(false);
         try {
             const response = await fetch(`http://localhost:3000/friends/${user?.id}`, {
                 method: "GET",
-                // les trucs dauth
+                credentials: 'include',
             });
 
             if (response.ok) {
@@ -132,6 +134,7 @@ const [showNotification, setShowNotification] = useState(false);
       try {
           const response = await fetch(`http://localhost:3000/friends/blockedList/${user?.id}`, {
               method: "GET",
+              credentials: 'include',
           });
 
           if (response.ok) {
@@ -158,6 +161,7 @@ const [showNotification, setShowNotification] = useState(false);
     try {
         const response = await fetch(`http://localhost:3000/friends/online/${user?.id}`, {
             method: "GET",
+            credentials: 'include',
         });
 
         if (response.ok) {
@@ -209,6 +213,7 @@ const [showNotification, setShowNotification] = useState(false);
         try {
             const response = await fetch(`http://localhost:3000/users/${id}`, {
               method: 'GET',
+              credentials: 'include',
             });
             if (!response.ok) {
                 throw new Error('Erreur lors de la récupération des scores.');
@@ -225,6 +230,7 @@ const [showNotification, setShowNotification] = useState(false);
         try {
           const response = await fetch(`http://localhost:3000/friends/accept/${id}`, {
             method: 'POST',
+            credentials: 'include',
           });
           if (!response.ok) {
               throw new Error('Erreur lors de la récupération des scores.');
@@ -239,6 +245,7 @@ const [showNotification, setShowNotification] = useState(false);
         try {
           const response = await fetch(`http://localhost:3000/friends/refuse/${id}`, {
             method: 'POST',
+            credentials: 'include',
           });
           if (!response.ok) {
               throw new Error('Erreur lors de la récupération des scores.');
@@ -256,6 +263,7 @@ const [showNotification, setShowNotification] = useState(false);
         try {
           const response = await fetch(`http://localhost:3000/friends/delete/${sender}/${recipient}`, {
             method: 'POST',
+            credentials: 'include',
           });
           if (!response.ok) {
               throw new Error('Erreur lors de la récupération des scores.');
@@ -273,6 +281,7 @@ const [showNotification, setShowNotification] = useState(false);
         try {
           const response = await fetch(`http://localhost:3000/friends/unblock/${sender}/${recipient}`, {
             method: 'POST',
+            credentials: 'include',
           });
           if (!response.ok) {
               throw new Error('Erreur lors de la récupération des scores.');
@@ -291,6 +300,7 @@ const [showNotification, setShowNotification] = useState(false);
         try {
           const response = await fetch(`http://localhost:3000/friends/block/${sender}/${recipient}`, {
             method: 'POST',
+            credentials: 'include',
           });
           if (!response.ok) {
               throw new Error('Erreur lors de la récupération des scores.');
@@ -305,6 +315,7 @@ const [showNotification, setShowNotification] = useState(false);
         try {
           const response = await fetch(`http://localhost:3000/friends/blocked/${senderId}/${recipientId}`, {
             method: 'GET',
+            credentials: 'include',
           });
       
           if (!response.ok) {
@@ -332,6 +343,7 @@ const [showNotification, setShowNotification] = useState(false);
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({recipientId: parseInt(recipientId) }),
+                credentials: 'include',
             });
             if (response.ok) {
                 // if (user && await checkBlockedForNotify(user?.id.toString(), recipientId) === false)

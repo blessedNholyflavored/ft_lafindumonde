@@ -31,6 +31,7 @@ async function checkBlockedForNotify(senderId:string, recipientId: string) {
     try {
       const response = await fetch(`http://localhost:3000/friends/blocked/${senderId}/${recipientId}`, {
         method: 'GET',
+        credentials: 'include',
       });
   
       if (!response.ok) {
@@ -59,6 +60,7 @@ async function checkBlockedForNotify(senderId:string, recipientId: string) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({recipientId: parseInt(recipientId) }),
+                credentials: 'include',
             });
             if (response.ok) {
                 setFriendshipStatus('PENDING');
@@ -76,7 +78,9 @@ async function checkBlockedForNotify(senderId:string, recipientId: string) {
 
     const checkAlreadyFriend = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/friends/already/${user?.id}/${id}`);
+            const response = await fetch(`http://localhost:3000/friends/already/${user?.id}/${id}`, {
+                credentials: 'include',
+            });
             if (response.ok) {
                 let status = await response.text();
                 if (status === "Add friend")
@@ -98,7 +102,9 @@ async function checkBlockedForNotify(senderId:string, recipientId: string) {
 
     const checkBlocked = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/friends/blockedStatus/${id}/${user?.id}/`);
+            const response = await fetch(`http://localhost:3000/friends/blockedStatus/${id}/${user?.id}/`, {
+                credentials: 'include',
+            });
             if (response.ok) {
                 let status = await response.text();
                 setFriendshipStatus(status);
@@ -116,7 +122,9 @@ async function checkBlockedForNotify(senderId:string, recipientId: string) {
     const fetchFriendshipStatus = async () => {
 
             try {
-            const response = await fetch(`http://localhost:3000/friends/status/${user?.id}/${id}`);
+            const response = await fetch(`http://localhost:3000/friends/status/${user?.id}/${id}`, {
+                credentials: 'include',
+            });
             if (response.ok) {
                 let status = await response.text();
                 console.log("qqqqqqq: ", status);
@@ -152,6 +160,7 @@ async function checkBlockedForNotify(senderId:string, recipientId: string) {
         try {
           const response = await fetch(`http://localhost:3000/friends/delete/${sender}/${recipient}`, {
             method: 'POST',
+            credentials: 'include',
           });
           if (!response.ok) {
               throw new Error('Erreur lors de la récupération des scores.');
@@ -170,6 +179,7 @@ async function checkBlockedForNotify(senderId:string, recipientId: string) {
         try {
           const response = await fetch(`http://localhost:3000/friends/block/${sender}/${recipient}`, {
             method: 'POST',
+            credentials: 'include',
           });
           if (!response.ok) {
               throw new Error('Erreur lors de la récupération des scores.');

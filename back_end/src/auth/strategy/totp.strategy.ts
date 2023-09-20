@@ -6,7 +6,6 @@ import { decode } from 'hi-base32';
 
 function getTotpKey(this: null, user:any, done: (err: any, key: Buffer, period: number) => any): any {
   const key = {
-    //ici decrypt totpkey
     key: Buffer.from(decode.asBytes(user.totpKey)),
     period: 30,
   }

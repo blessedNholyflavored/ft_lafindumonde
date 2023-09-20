@@ -14,7 +14,7 @@ export class AuthController{
     constructor(
         private readonly authService: AuthService,
         private readonly userService: UserService,
-	    private config: ConfigService,
+	    private readonly config: ConfigService,
     ){}
 
     /************************
@@ -36,7 +36,6 @@ export class AuthController{
 	@Post('test')
 	async loginTest(@Body() body: {username: string, id: number, email: string}, @Res() res: any){
 		if (!body.username || !body.id || !body.email){
-			console.log(body);
 			throw new BadRequestException("id, username or email is missing");
 		}
 		const user = await this.authService.retrieveUser(body);
@@ -54,7 +53,6 @@ export class AuthController{
      * *********************/
     @Post('local_login')
     async login(@Body() body: {username: string, password: string}, @Res() res: any, @Req() req: any){
-		console.log("IN AUTH CONTROLLER\nbody is : ",body);
 		if (!body.username || !body.password){
 			throw new BadRequestException("One field is missing");
 		}
@@ -71,28 +69,21 @@ export class AuthController{
 
 	@Post('register')
 	async register(@Req() req: any, @Body() body: {username: string, password: string, email: string, id: number, pictureURL: string}, @Res() res: any){
-		console.log("InAUTH CONTROLLER\n body in register is : ", body);
 		if (!body.username || !body.password || !body.email || !body.pictureURL){
-			console.log("ooops: ", body);
 			throw new BadRequestException("password, username or email is missing");
 		}
 		let newID = await this.authService.idGenerator();
-		// console.log("HERE POST ID GENERATE : newID =", newID);
 		while (await this.userService.getUserByID(newID))
 			newID = await this.authService.idGenerator();
 		body.id = newID;
-		// console.log("ICICICICIICIC final body: ", body);
 		if (await this.userService.usernameAuthChecker(body.username) == true){
 			// in case someone already have this username
 			body.username =  body.username + '_';
 		}
-	//	console.log("BODYBODYBODY:", body);
 		const user = await this.userService.createUser(body, true);
 		const token = await this.authService.login(user);
 		await this.userService.setLog2FA(user, false);
-		//console.log("HEREHEREHERE: ", user, token);
 		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user, ['totpKey', 'password']), token});
-		//return res;
 	}
     /************************
      * 
@@ -168,7 +159,6 @@ export class AuthController{
     @Post('submitCode')
     @UseGuards(AuthGuard('jwt'), AuthGuard('totp'))
     async codeChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
-        // console.log("SALUT SALUT SALUT OPUTDJSHFJKU");
         /*if (!body.userInput || !body.userID){
             console.log(body);
             throw new BadRequestException("input is missing or user is invalid");
@@ -183,7 +173,6 @@ export class AuthController{
 	@Post('submitInput')
 	@UseGuards(AuthGuard('jwt'), AuthGuard('totp'))
 	async inputChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
-		// console.log('inside submitInput controller');
 		const user = await this.userService.getUserByID(req.user.id);
 		//set user.log2FA a true
 		const updtUser = await this.userService.setLog2FA(user, true);
@@ -198,7 +187,6 @@ export class AuthController{
      * *********************/
     @Get('logout')
     async   logout(@Res() res: any){
-		// console.log("")
         res.clearCookie('access_token').status(200).send();
 		//TODO: set log2FA false hihihi
 		//TODO: wipe all user data en fait

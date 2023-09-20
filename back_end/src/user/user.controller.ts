@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -18,8 +19,10 @@ import * as path from 'path';
 import { join } from 'path';
 import { Response } from 'express';
 import * as mimetype from 'mime-types';
+import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
 
 @Controller('users')
+@UseGuards(...AuthenticatedGuard)
 export class UsersController {
   friendService: any;
   constructor(private userService: UserService) {}
