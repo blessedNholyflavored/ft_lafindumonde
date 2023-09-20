@@ -32,7 +32,7 @@ export const MiniGame = () => {
 
   async function fetchPlayerScores() {
     try {
-      const response = await fetch(`http://localhost:3001/users/`, {
+      const response = await fetch(`http://localhost:3000/users/`, {
         method: 'GET',
       });
       if (!response.ok) {

@@ -25,7 +25,7 @@ export const ProfileBox = (props: any) => {
 
     const fetchUserTab = async (id: string | undefined) => {
         try {
-            const response = await fetch(`http://localhost:3001/users/${id}`, {
+            const response = await fetch(`http://localhost:3000/users/${id}`, {
                 method: "GET",
                 // ici il faudra rajouter des trucs de header grace a lauth (pour verifier que lutilisateur connecte a bien les droits pour cette route)
             });
@@ -56,7 +56,7 @@ export const ProfileBox = (props: any) => {
         console.log("id         :", id);
         console.log("user?id    :", user?.id);
         try {
-            const response = await fetch(`http://localhost:3001/friends/status/${user?.id}/${id}`);
+            const response = await fetch(`http://localhost:3000/friends/status/${user?.id}/${id}`);
             if (response.ok) {
                 const status = await response.text();
                 setFriendshipStatus(status as FriendsInvitationStatus);

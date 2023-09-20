@@ -24,7 +24,7 @@ export function LocalLogin () {
     const handleSubmit = async(e: React.FormEvent) => {
 		e.preventDefault();
 		console.log("handle submit du login");
-		fetch(`http://localhost:3001/auth/local_login`, {
+		fetch(`http://localhost:3000/auth/local_login`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

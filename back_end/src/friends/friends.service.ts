@@ -21,6 +21,7 @@ export class FriendsService {
         where: { id: parseInt(id) },
         include: { friends: true, friendsOf: true },
       });
+	  console.log("FRIENDS OBJECT :",friends);
       return friends;
     } catch (error) {
       throw new BadRequestException('getfriends error : ' + error);

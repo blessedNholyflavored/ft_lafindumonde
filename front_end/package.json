@@ -2,7 +2,7 @@
   "name": "front_end",
   "version": "0.1.0",
   "type": "module",
-  "proxy": "http://localhost:3001",
+  "proxy": "http://localhost:3000",
   "private": true,
   "dependencies": {
     "@nestjs/platform-socket.io": "^10.1.2",

@@ -63,8 +63,10 @@ export class AuthService {
 
 	async getUserBySocket(socket: Socket) : Promise<User | undefined> {
 		try {
-			const token = cookie.parse(socket.handshake.headers?.cookie)['access_token'];
-			const payload = this.jwtService.verify(token, {secret: this.config.get('JWT_SECURE_KEY')});
+			const token_test = socket.handshake.headers?.cookie?.split("; ")?.find((row) => row.startsWith("access_token"))?.split("=")[1];
+		//	console.log("TOKENTEST=", token_test);
+			//const token = cookie.parse(socket.handshake.headers?.cookie)['access_token'];
+			const payload = this.jwtService.verify(token_test, {secret: this.config.get('JWT_SECURE_KEY')});
 			socket.user = await this.userService.getUserByID(payload.sub);
 			return (socket.user);
 		} catch (e) {
