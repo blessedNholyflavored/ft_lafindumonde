@@ -103,7 +103,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
 
   }
 
-  
+
 
   @SubscribeMessage('coucou')
   async coucou(@ConnectedSocket() socket: Socket)
@@ -505,4 +505,17 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
         this.server.to(this.res.id.toString()).emit('startGame2', Sroom);
     }
 
+
+    @SubscribeMessage('reloadMessages')
+    async onNewMessage(@MessageBody() data: {message:string, recipient:string},@ConnectedSocket() socket: Socket)
+    {
+      let user1;
+      const NuserId = Number(data[1]);
+      this.playerConnections.forEach((value, key) => {
+        if (key === NuserId)
+          user1 = value;
+      });
+      user1.emit("refreshMessages");
+      socket.emit("refreshMessages");
+    }
 }

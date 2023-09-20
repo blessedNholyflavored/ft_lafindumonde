@@ -140,13 +140,24 @@ export const Chat = () => {
 
 			}
 			fetchPrivMessage();
+
+			if (socket)
+			{
+				socket.on('refreshMessages', () => {
+					fetchPrivMessage();
+				}
+	  )};
       }, []);
 
 	const onSubmit = () => {
 		if (value.length > 0)
+		{
 			socket.emit('newMessage', value, recipient);
+			setTimeout(() => {
+				socket.emit('reloadMessages', value, recipient);
+			  }, 100);
 		setValue('');
-	  };
+	  };}
 
 	  const checkRoomAlreadyExist = async () => {
 	
