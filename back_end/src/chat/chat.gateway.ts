@@ -45,4 +45,23 @@ export class ChatGateway {
     this.chatService.CreateMessage(data[0], socket.user.id.toString(), data[1])
   }
 
+  @SubscribeMessage('createChatRoom')
+  async onCreateChatRoom(@MessageBody() data: {nameRoom:string, option:string, hash:string},@ConnectedSocket() socket: Socket)
+  {
+    this.chatService.CreateRoom(data[0], data[1], data[2], socket.user.id.toString())
+  }
+
+  @SubscribeMessage('joinChatRoom')
+  async onJoinChatRoom(@MessageBody() data: {nameRoom:string, option:string, hash:string},@ConnectedSocket() socket: Socket)
+  {
+    this.chatService.JoinRoom(data[0], data[1], data[2], socket.user.id.toString())
+  }
+
+
+  @SubscribeMessage('newMessageRoom')
+  async onNewMessageRoom(@MessageBody() data: {message:string, roomId:string},@ConnectedSocket() socket: Socket)
+  {
+    this.chatService.CreateMessageRoom(data[0], socket.user.id.toString(), data[1])
+  }
+
 }

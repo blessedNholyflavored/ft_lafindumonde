@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Room, privateMessage } from 'src/interfaces';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Chatroom, UserChannelVisibility } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
 import { merge } from 'lodash';
 const prisma = new PrismaClient();
@@ -10,7 +10,24 @@ const prisma = new PrismaClient();
 export class ChatService {
   prisma: any;
 
-  async CreateMessage(newMessage: string, id1:string, id2:string) {
+  async getAllChatRooms(): Promise<Chatroom[]> {
+    const chatRooms = await prisma.chatroom.findMany();
+    return chatRooms;
+  }
+  
+
+  async getAllChatRoomNames(): Promise<string[]> {
+    const chatRooms = await prisma.chatroom.findMany({
+      select: {
+        name: true,
+      },
+    });
+
+    return chatRooms.map((chatRoom) => chatRoom.name);
+  }
+
+
+  async CreateMessage(newMessage: string, id1: string, id2:string) {
     if (id1 && id2)
     {
       try {
@@ -53,6 +70,128 @@ export class ChatService {
     } 
   }
 
+  async CreateMessageRoom(newMessage: string, sender: string, roomId:string) {
+      try {
+        const p1 = await prisma.user.findUnique({
+          where: {
+            id: parseInt(sender),
+          },
+        });
+        const p2 = await prisma.user.findUnique({
+          where: {
+            id: parseInt(roomId),
+          },
+        });
+        const createdMessage = await prisma.chatroomMessage.create({
+          data: {
+            content: newMessage,
+            sender: {
+              connect: {
+                id: p1.id,
+                email: p1.email,
+                username: p1.username
+              }
+            },
+            chatroom: {
+              connect: {
+                id: parseInt(roomId)
+              }
+            }
+          }
+        });
+        return createdMessage;
+      }
+       catch (err) {
+        console.log('Error creating chatmess:', err);
+        throw err;
+      }
+  }
+
+  async CreateRoom(nameRoom: string, option: string, hash:string, id: string) {
+
+    console.log("nameRoom: ", nameRoom, "   option: ", option, "   hash: ", hash);
+    let visibility: UserChannelVisibility;
+
+    if (option == "public")
+      visibility = UserChannelVisibility.PUBLIC;
+    if (option == "private")
+      visibility = UserChannelVisibility.PRIVATE;
+    if (option == "protected")
+      visibility = UserChannelVisibility.PWD_PROTECTED;
+    const newChannel = await prisma.chatroom.create({
+      data: {
+        name: nameRoom,
+        visibility: visibility,
+        hash: hash,
+      },
+    });
+    const userOnChannel = await prisma.userOnChannel.create({
+      data: {
+        channelId: newChannel.id,
+        userId: parseInt(id),
+        role: "OWNER"
+      }
+    });
+    return newChannel;
+  }
+
+  async checkRoomExist(nameRoom: string) {
+
+    const roomNames = await this.getAllChatRoomNames();
+    return roomNames.includes(nameRoom);
+  }
+
+    async recupYourRooms(userId: string) {
+      
+      const userRooms = await prisma.userOnChannel.findMany({
+        where: {
+          userId: parseInt(userId),
+        },
+        select: {
+          channel: {
+            select: {
+              id: true,
+              name: true,
+              visibility: true,
+            },
+          },
+        },
+      });
+  
+      console.log(userRooms)
+      return userRooms.map((userRoom) => userRoom.channel);
+    }
+
+    async JoinRoom(nameRoom: string, option: UserChannelVisibility, hash: string, userId: string): Promise<void> {
+      const allChatRooms = await this.getAllChatRooms();
+      const chatRoom = allChatRooms.find((room) => room.name === nameRoom);
+  
+      const existingUserRoom = await prisma.userOnChannel.findFirst({
+        where: {
+          userId: parseInt(userId, 10),
+          channelId: chatRoom.id,
+        },
+      });
+  
+      if (existingUserRoom) {
+        return ;
+      }
+
+      if (chatRoom.visibility == UserChannelVisibility.PWD_PROTECTED)
+      {
+        if (chatRoom.hash != hash)
+          return ;
+      }
+  
+      await prisma.userOnChannel.create({
+        data: {
+          userId: parseInt(userId, 10),
+          channelId: chatRoom.id,
+          role: 'USER',
+        },
+      });
+    }
+  
   // async fetchAllGames(id: string)
   // {
   //     const ret1 = await prisma.user.findUnique({
@@ -73,7 +212,7 @@ export class ChatService {
   //   }
   // }
 
-  async recupMessById(recipient:string, sender:string)
+async recupMessById(recipient:string, sender:string)
 {
   const ret1 = await prisma.user.findUnique({
     where: {
@@ -102,4 +241,41 @@ const ret2 = await prisma.user.findUnique({
         return (allGames);
 }
 }
+
+async recupRoomMess(roomId:string)
+{
+  const ret1 = await prisma.chatroom.findUnique({
+    where: {
+      id: parseInt(roomId),
+    },
+    select: {
+      roomMess : true,
+    }
+});
+
+      if (ret1)
+        {
+            const ret = merge(ret1);
+            const allGames: privateMessage[] = [...ret.roomMess].sort(
+                (a, b) => Date.parse(a.start_at) - Date.parse(b.start_at)
+            );
+        return (allGames);
+}
+}
+
+async getRole(senderId: string, roomId: string) {
+
+  const userRole = await prisma.userOnChannel.findFirst({
+    where: {
+      userId: parseInt(senderId),
+      channelId: parseInt(roomId),
+    },
+    select: {
+      role: true,
+    },
+  });
+
+  return userRole.role;
+}
+
 }

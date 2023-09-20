@@ -8,6 +8,8 @@ import icon from "../../img/buttoncomp.png";
 import logo from "../../img/logo42.png";
 import { Logout } from './../auth/Logout';
 import { WebsocketContext } from '../../WebsocketContext';
+import { useNavigate } from 'react-router-dom';
+
 
 type MessagePayload = {
 	content: string;
@@ -22,13 +24,28 @@ type MessagePayload = {
 	recipientUsername: string;
   }
 
-export const Chat:React.FC = () => {
+  interface channels {
+	name: string;
+	visibility: string;
+	id: number;
+  }
+
+export const Chat = () => {
 	const { user, setUser } = useAuth();
     const { recipient } = useParams();
 	const [value, setValue] = useState('');
+	const [valueRoom, setValueRoom] = useState('');
 	const [messages, setMessages] = useState<MessagePayload[]>([]);
-	const socket = useContext(WebsocketContext);
 	const [messageListSend, setMessageList] = useState<messages[]>([]);
+	const [selectedOption, setSelectedOption] = useState('public');
+	const [password, setPassword] = useState('');
+	const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+	const [channelsJoin, setChannelsJoin] = useState<channels[]>([]);
+	const navigate = useNavigate();
+	const socket = useContext(WebsocketContext);
+
+
+
 
 	
 	async function fetchPrivMessageList() {
@@ -43,7 +60,6 @@ export const Chat:React.FC = () => {
 		  
 		  const data = await response.json();
 	  
-		  // Créez un tableau de promesses pour récupérer les noms d'utilisateur en parallèle
 		  const usernamePromises = data.map(async (message: { senderId: any; recipientId: any; senderUsername: string; recipientUsername: string; }) => {
 			try {
 			  const senderResponse = await fetch(`http://localhost:3001/users/${message.senderId}/username`, {
@@ -57,7 +73,6 @@ export const Chat:React.FC = () => {
 				const senderUsername = await senderResponse.text();
 				const recipientUsername = await recipientResponse.text();
 	  
-				// Ajoutez les noms d'utilisateur au message
 				message.senderUsername = senderUsername;
 				message.recipientUsername = recipientUsername;
 			  }
@@ -78,16 +93,53 @@ export const Chat:React.FC = () => {
 		  return [];
 		}
 	  }
+
+	  async function fetchYourRoomsList() {
+		
+		try {
+		  const response = await fetch(`http://localhost:3001/chat/recupYourRooms/${user?.id}`, {
+			method: 'GET',
+		  });
+		  
+		  if (!response.ok) {
+			throw new Error('Erreur lors de la récupération des messages privés.');
+		  }
+		  
+		  const data = await response.json();
+		  if (data.length > 0) { 
+			const friendObjects = data;
+			const friendInfo = friendObjects.map((friend: {name:string; visibility:string;id:number; }) => ({
+				name: friend.name,
+				visibility: friend.visibility,
+				id: friend.id
+			}));
+			setChannelsJoin(friendInfo);
+		}
+		}
+		  catch (error) {
+			console.error('Erreur :', error);
+			return [];
+		  }
+		}
+
+		useEffect(() => {
+			async function fetchYourRooms() {
+				  const scores = await fetchYourRoomsList();
+			}
+			fetchYourRooms();
+
+		}, []);
 	  
 
 	  useEffect(() => {
 		  async function fetchPrivMessage() {
-		if (recipient)
+			if (recipient)
 			  {
-          const scores = await fetchPrivMessageList();
-        }
-	}
-	fetchPrivMessage();
+          	const scores = await fetchPrivMessageList();
+        	}
+
+			}
+			fetchPrivMessage();
       }, []);
 
 	const onSubmit = () => {
@@ -96,13 +148,78 @@ export const Chat:React.FC = () => {
 		setValue('');
 	  };
 
-	  const createRoom = () => {
-		console.log(value);
+	  const checkRoomAlreadyExist = async () => {
+	
+		try {
+			const response = await fetch(`http://localhost:3001/chat/checkRoomName/${valueRoom}`, {
+			  method: 'GET',
+			});
+			
+			if (!response.ok) {
+			  throw new Error('Erreur lors de la récupération des messages privés.');
+			}
+			
+			const data = await response.json();
+
+			return data;
+			}
+			catch (error) {
+				console.error('Erreur :', error);
+				return [];
+			  }
+	}
+
+
+	  const createRoom = async () => {
+		
+		if (await checkRoomAlreadyExist() === false)
+			socket.emit("createChatRoom", valueRoom, selectedOption, password);
+		else
+			alert("Name room already taken");
 		return '';
 	  };
+
+	  const joinRoom = async () => {
+		if (await checkRoomAlreadyExist() === true)
+			socket.emit("joinChatRoom", valueRoom, selectedOption, password);
+		else
+			alert("room existe po");
+		return '';
+	  };
+
+	  const navToChan = (id: number) => {
+		navigate(`/chat/chan/${id}`);
+	  }
+
+
+	  const handleOptionChange = (e: { target: { value: string; }; }) => {
+		setSelectedOption(e.target.value);
+		if (e.target.value !== 'protected') {
+		  setPassword('');
+		}
+	  };
+	
+	  const handleInputChange = (e: { target: { value: string; }; }) => {
+		setValueRoom(e.target.value);
+		setIsButtonDisabled(e.target.value === '');
+	  };
+
 	return (
 		<div className="main_chat_box">
 			<div>
+			<ul>
+
+<h1>Liste des channels join :</h1>
+{channelsJoin.map((chan) => (
+
+	<div>
+
+<button onClick={() => navToChan(chan.id)}>
+        <div>id: {chan.id} --- name chan: {chan.name} --- options: {chan.visibility}</div>
+      </button>
+  </div>
+))}
+</ul>
 					{recipient && (
 			<ul>
 <h1>Liste des msgs envoyes :</h1>
@@ -166,13 +283,35 @@ messageListSend.map((friend, index) => (
 		  )}
         </div>
 		<div>
-          <input
-            type="text"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-          />
-          <button onClick={() => createRoom()}>nom de la room</button>
-		  </div>
+      <input
+        type="text"
+        placeholder="Nom de la room"
+        value={valueRoom}
+        onChange={handleInputChange}
+      />
+      <select
+        value={selectedOption}
+        onChange={handleOptionChange}
+      >
+        <option value="public">Public</option>
+        <option value="private">Private</option>
+        <option value="protected">Protected</option>
+      </select>
+      {selectedOption === 'protected' && (
+        <input
+          type="password"
+          placeholder="Mot de passe"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      )}
+      <button onClick={createRoom} disabled={isButtonDisabled}>
+        Créer une nouvelle room
+      </button>
+      <button onClick={joinRoom} disabled={isButtonDisabled}>
+        Rejoindre une room existante
+      </button>
+    </div>
 		</div>
 	);
 };

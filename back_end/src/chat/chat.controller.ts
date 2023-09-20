@@ -19,4 +19,30 @@ export class ChatController {
   {
     return this.chatService.recupMessById(id.toString(), id1.toString());
   }
+
+  @Get('/recupRoomMess/:id/')
+  async recupRoomMess(@Param('id') id: number)
+  {
+    return this.chatService.recupRoomMess(id.toString());
+  }
+
+  @Get('/getRole/:id/:id1')
+  async getRole(@Param('id') senderId: number,@Param('id1') roomId: number)
+  {
+    return this.chatService.getRole(senderId.toString(), roomId.toString());
+  }
+  
+  @Get('/checkRoomName/:name')
+  async checkRoomName(@Param('name') name: string)
+  {
+    return this.chatService.checkRoomExist(name);
+  }
+
+  @Get('/recupYourRooms/:id')
+  async recupYourRooms(@Param('id') id: string)
+  {
+    return this.chatService.recupYourRooms(id);
+  }
+
+  
 }

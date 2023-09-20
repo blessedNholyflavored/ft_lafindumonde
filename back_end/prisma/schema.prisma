@@ -45,6 +45,9 @@ model User {
 	PrivMessEmited       privateMessage[] @relation(name: "sender")
   	PrivMessReceived     privateMessage[] @relation(name: "recipient")
 
+	userOnChanel		UserOnChannel[]
+	RoomMessSent		ChatroomMessage[]
+
 }
 
 model Friendship {
@@ -110,8 +113,6 @@ model Game {
 	username2	String?
 }
 
-
-
 model privateMessage {
 	id			Int			@id @default(autoincrement())
 	start_at	DateTime	@default(now())
@@ -120,4 +121,53 @@ model privateMessage {
 	sender		User @relation("sender", fields: [senderId], references: [id])
   	recipientId Int
 	recipient	User @relation("recipient", fields: [recipientId], references: [id])
+}
+
+model Chatroom {
+	id				Int						@id @default(autoincrement())
+	visibility		UserChannelVisibility	@default(PUBLIC)
+	name			String
+	users	UserOnChannel[]
+	hash			String?
+	roomMess		ChatroomMessage[]
+}
+
+model ChatroomMessage {
+  id				Int     @id @default(autoincrement())
+  start_at			DateTime  @default(now())
+  content			String?
+  chatroomId		Int
+  chatroom			Chatroom @relation(fields: [chatroomId], references: [id])
+  senderId			Int
+  sender			User    @relation(fields: [senderId], references: [id])
+}
+
+model UserOnChannel {
+	id			Int					@id @default(autoincrement())
+	role		UserRoleInChannel	@default(USER)
+	status		UserStatusOnChannel	@default(CLEAN)
+	userId		Int
+	user		User				@relation(fields: [userId], references: [id])
+	channelId	Int
+	channel		Chatroom			@relation(fields: [channelId], references: [id])
+
+	@@unique([channelId, userId])
+}
+
+enum UserChannelVisibility {
+	PUBLIC
+	PRIVATE
+	PWD_PROTECTED
+}
+
+enum UserRoleInChannel {
+	USER
+	ADMIN
+	OWNER
+}
+
+enum UserStatusOnChannel {
+	CLEAN
+	MUTE
+	BAN
 }
