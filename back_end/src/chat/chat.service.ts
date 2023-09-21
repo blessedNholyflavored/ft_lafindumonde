@@ -14,7 +14,25 @@ export class ChatService {
     const chatRooms = await prisma.chatroom.findMany();
     return chatRooms;
   }
-  
+
+  async recupRooms(userId: string): Promise<Chatroom[]> {
+    const chatRooms = await prisma.chatroom.findMany({
+      where: {
+        NOT: {
+          users: {
+            some: {
+              userId: parseInt(userId, 10),
+            },
+          },
+        },
+        visibility: {
+          not: UserChannelVisibility.PRIVATE,
+        },
+      },
+    });
+
+    return chatRooms;
+  }
 
   async getAllChatRoomNames(): Promise<string[]> {
     const chatRooms = await prisma.chatroom.findMany({
@@ -263,6 +281,40 @@ async recupRoomMess(roomId:string)
 }
 }
 
+async recupPrivate(userId: string){
+  const user = await prisma.user.findUnique({
+    where: {
+      id: parseInt(userId),
+    },
+    include: {
+      PrivMessEmited: {
+        select: {
+          recipientId: true,
+        },
+      },
+      PrivMessReceived: {
+        select: {
+          senderId: true,
+        },
+      },
+    },
+  });
+
+  // Utilisez Set pour éliminer les doublons des IDs des utilisateurs
+  const privateMessageRecipients = new Set(
+    user.PrivMessEmited.map((message) => message.recipientId)
+  );
+  const privateMessageSenders = new Set(
+    user.PrivMessReceived.map((message) => message.senderId)
+  );
+
+  // Fusionnez les deux ensembles pour obtenir toutes les IDs des utilisateurs avec qui l'utilisateur a eu des messages privés
+  const privateMessageUsers = new Set([
+    ...privateMessageRecipients,
+    ...privateMessageSenders,
+  ]);
+  return Array.from(privateMessageUsers);}
+
 async getRole(senderId: string, roomId: string) {
 
   const userRole = await prisma.userOnChannel.findFirst({
@@ -276,6 +328,19 @@ async getRole(senderId: string, roomId: string) {
   });
 
   return userRole.role;
+}
+
+async getUsersInRoom(roomId: string): Promise<number[]> {
+  const usersInRoom = await prisma.userOnChannel.findMany({
+    where: {
+      channelId: parseInt(roomId),
+    },
+    select: {
+      userId: true,
+    },
+  });
+
+  return usersInRoom.map((user) => user.userId);
 }
 
 }

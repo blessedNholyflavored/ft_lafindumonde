@@ -81,14 +81,25 @@ export const ChatChannel = () => {
     async function fetchRoomMessage() {
       const scores = await fetchRoomMessageList();
     }
+    if (socket)
+    {
+        socket.on('refreshMessagesRoom', () => {
+          fetchRoomMessage();
+        }
+)};
     fetchRoomMessage();
   }, []);
 
 
 	const onSubmit = () => {
 		if (value.length > 0)
+    {
       socket.emit('newMessageRoom', value, id);
-		setValue('');
+      setTimeout(() => {
+        socket.emit('reloadMessRoom', id);
+      }, 100);
+  }
+      setValue('');
 	};
 
   return (
@@ -138,6 +149,7 @@ export const ChatChannel = () => {
       )}
     </div>
   );
+  
 }
 
 export default ChatChannel;

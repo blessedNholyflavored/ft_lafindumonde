@@ -20,6 +20,7 @@ import SocketWithUser from 'src/gateway/types/socket';
 import { Interval } from '@nestjs/schedule';
 import { disconnect } from 'process';
 import { AuthService } from 'src/auth/auth.service';
+import { ChatService } from 'src/chat/chat.service';
 
 // ici add de l'authorisation de recup des credentials du front (le token)
 @WebSocketGateway({
@@ -53,7 +54,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
   private p2Friend;
   constructor(private readonly gameService: GameService, private readonly userService: UserService,
   private readonly roomMapService: RoomMapService,
-  private readonly authService: AuthService) {}
+  private readonly authService: AuthService, private readonly chatService: ChatService,) {}
   private room: Room;
   private roomIntervals: Record<string, NodeJS.Timeout> = {};
   private playerConnections: Map<number, Socket> = new Map<number, Socket>();
@@ -517,5 +518,21 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       });
       user1.emit("refreshMessages");
       socket.emit("refreshMessages");
+    }
+
+    @SubscribeMessage('reloadMessRoom')
+    async onNewMessageRoom(@MessageBody() id: string,@ConnectedSocket() socket: Socket)
+    {
+      let user1;
+      const Ids = this.chatService.getUsersInRoom(id);
+      (await Ids).forEach((userId) => {
+        this.playerConnections.forEach((value, key) => {
+          if (key === userId)
+            user1 = value;
+          if (user1) {
+            user1.emit("refreshMessagesRoom");
+          }
+        });
+      });
     }
 }

@@ -46,5 +46,17 @@ export class ChatController {
     return this.chatService.recupYourRooms(id);
   }
 
+  @Get('/recupRooms/:id')
+  async recupRooms(@Param('id') id: string)
+  {
+    return this.chatService.recupRooms(id);
+  }
+
+  @Get('/recupPrivate/:id')
+  async recupPrivate(@Param('id') id: string)
+  {
+    return this.chatService.recupPrivate(id);
+  }
+
   
 }

@@ -28,6 +28,7 @@ export const GameHistory = (props: any) => {
 		try {
 			const response = await fetch(`http://localhost:3001/users/${userId}/games-data`, {
 				method: "GET",
+				credentials: 'include',
 			});
 			if (response.ok)
 			{
@@ -48,9 +49,11 @@ export const GameHistory = (props: any) => {
 					try {
 						const response = await fetch(`http://localhost:3001/users/${updatedGameData[i].userId1}/username`, {
 							method: "GET",
+							credentials: 'include',
 						});
 						const response2 = await fetch(`http://localhost:3001/users/${updatedGameData[i].userId2}/username`, {
 							method: "GET",
+							credentials: 'include',
 						});
 						if (response.ok)
 							updatedGameData[i].username1 = await response.text();

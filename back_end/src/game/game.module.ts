@@ -6,11 +6,12 @@ import { UserService } from 'src/user/user.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { GameGateway } from './game.gateway';
 import { RoomMapService } from './room_map.service';
+import { ChatService } from 'src/chat/chat.service';
 
 @Module({
   imports: [AuthModule],
   controllers: [GameController],
-  providers: [GameService, UserService, RoomMapService, GameGateway],
+  providers: [GameService, UserService, RoomMapService, GameGateway, ChatService],
   exports: [GameService],
 })
 export class GameModule {}

@@ -10,6 +10,11 @@
   background-size: cover;*/
 }
 
+.active-channel {
+  background-color: gray;
+}
+
+
 body {
   background-color: black;
   height: 90%;
