@@ -8,6 +8,7 @@ import ScoreList from "./ScoreList";
 import Friends from "./FriendsList";
 import Notify from '../../Notify';
 import { WebsocketContext } from "../../WebsocketContext";
+import { GameHistory } from "./GameHistory";
 
 const Box = (props: any) => {
 
@@ -85,9 +86,9 @@ return (
             </div>
             <div className="boxrow">
                 <div className="navbarsmallbox">
-                    <p className="boxtitle"> Friends </p>
+                    <p className="boxtitle"> Game History </p>
                 </div>
-                    <Friends type="info"/>
+                    <GameHistory type="info"/>
                     <div className="footersmallbox">
                     <br></br>
                 </div>

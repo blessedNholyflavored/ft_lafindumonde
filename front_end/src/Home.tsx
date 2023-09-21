@@ -46,7 +46,7 @@ const Home: React.FC<HomeProps> = () => {
         const recup = await response.text();
         // setStatus(recup);
         recupStatus = recup;
-        console.log(recupStatus);
+        console.log("ICICICICICICIC", recupStatus);
       }
       if (recupStatus !== "INGAME")
       {

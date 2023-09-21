@@ -16,11 +16,9 @@ export const UserSetting: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const { user, setUser } = useAuth();
 	const navigate = useNavigate();
-	const [gameData, setGameData] = useState<Game[]>([]);
 
 	useEffect(() => {
 		displayPic();
-		FetchGames();
 	}, []);
 	
 
@@ -38,6 +36,7 @@ export const UserSetting: React.FC = () => {
 			});
 			if (response.ok) {
 				alert('Nom d\'utilisateur mis à jour avec succès !');
+				//window.location.reload();
 			} else {
 				alert('Une erreur s\'est produite lors de la mise à jour du nom d\'utilisateur.');
 			}
@@ -137,59 +136,6 @@ export const UserSetting: React.FC = () => {
 		navigate('/');
 	};
 
-	interface Game {
-		id: number;
-		start_at: string;
-		userId1: number;
-		userId2: number;
-		username1: string;
-		username2: string;
-		scrP1: number;
-		scrP2: number;
-	  }
-
-	  const FetchGames = async () => {
-
-		const userId = user?.id;
-		try {
-			const response = await fetch(`http://localhost:3001/users/${userId}/games-data`, {
-				method: "GET",
-			});
-			if (response.ok)
-			{
-				const data = await response.json();
-				const updatedGameData = [...data];
-				let i: number = 0;
-				while (i < updatedGameData.length)
-				{
-					try {
-						const response = await fetch(`http://localhost:3001/users/${updatedGameData[i].userId1}/username`, {
-							method: "GET",
-						});
-						const response2 = await fetch(`http://localhost:3001/users/${updatedGameData[i].userId2}/username`, {
-							method: "GET",
-						});
-						if (response.ok)
-							updatedGameData[i].username1 = await response.text();
-						if (response2.ok)
-							updatedGameData[i].username2 = await response2.text();
-					}
-					catch (error) {
-						console.log (error);
-					}
-					i++;
-				}
-				setGameData(updatedGameData.reverse());
-			}
-			else
-			{
-				console.log("response pas ok");
-			}
-		} catch (error) {
-			console.error("error de get game data", error);
-		}
-	  };
-
   return (
 	<>
 	<div className="mainpage">
@@ -207,11 +153,12 @@ export const UserSetting: React.FC = () => {
 {/* premier */}
 	<div className="boxrowsettings">
 		<div className="navbarsmallbox">
-			<p className="boxtitle"> USERNAME </p>
+			<p className="boxtitle"> CHANGE USERNAME </p>
 		</div>
 		<form className='formsettings' onSubmit={handleSubmit}>
 			<label className='labelcss'>
 			<input
+				maxLength={9}
 				className='inputcss'
 				type="text"
 				value={newUsername}
@@ -228,11 +175,11 @@ export const UserSetting: React.FC = () => {
 	{/* deuxieme */}
 	<div className="boxrowsettings">
 		<div className="navbarsmallbox">
-			<p className="boxtitle"> AVATAR </p>
+			<p className="boxtitle"> CHANGE AVATAR </p>
 		</div>
 		<img src={ImgUrl} alt='user avatar'></img>
 		<div>
-			<input type="file" accept="image/.jpg,.jpeg,.png" onChange={handleFileChange} />
+			<input type="file" accept="image/*" onChange={handleFileChange} />
 			<button onClick={changePic}>Upload</button>
 		</div>
 		<div className="footersmallbox">
@@ -241,7 +188,7 @@ export const UserSetting: React.FC = () => {
 	</div>
 
 {/* troisieme */}
-	{/* <div className="boxrowsettings">
+	<div className="boxrowsettings">
 		<div className="navbarsmallbox">
 			<p className="boxtitle"> 2FAC AUTH </p>
 		</div>
@@ -252,43 +199,6 @@ export const UserSetting: React.FC = () => {
 		<div className="footersmallbox">
 			<br></br>
 		</div>
-	</div> */}
-
-
-{/* quatre juste pour test game history */}
-	<div className="boxrowsettings">
-		<div className="navbarsmallbox">
-			<p className="boxtitle"> GAME HISTORY </p>
-		</div>
-		<div>
-			<table>
-			<thead>
-				<tr>
-				<th>game id</th>
-				<th>Joueur 1</th>
-				<th></th>
-				<th></th>
-				<th>Joueur 2</th>
-				</tr>
-			</thead>
-			<tbody>
-				{gameData.slice(0, 5).map((game: Game, index: number) => (
-				<tr key={index}>
-					<td>{game.id}</td>
-					<td>{game.username1}</td>
-					<td>{game.scrP1}</td>
-					<td>{game.scrP2}</td>
-					<td>{game.username2}</td>
-				</tr>
-				))}
-			</tbody>
-			</table>
-		</div>
-
-		<div className="footersmallbox">
-			<br></br>
-		</div>
-	</div>
 	</div>
 
 	</div>
@@ -297,6 +207,7 @@ export const UserSetting: React.FC = () => {
 		<button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
 		<button className="logoutBtn" onClick={navigateToHome}>HOME</button>
 		<img src={logo} className="logo" alt="icon" />
+	</div>
 	</div>
 	</div>
 	</>

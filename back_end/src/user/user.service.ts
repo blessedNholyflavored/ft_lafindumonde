@@ -109,7 +109,6 @@ export class UserService {
 			const allGames: Game[] = [...ret.game1, ...ret.game2].sort(
 				(a, b) => Date.parse(a.start_at) - Date.parse(b.start_at)
 			);
-		//console.log("AAAAA", allGames);
 		return (allGames);
 	}
   }
