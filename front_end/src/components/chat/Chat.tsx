@@ -138,8 +138,9 @@ export const Chat = () => {
 			setTimeout(() => {
 				socket.emit('reloadMessages', value, recipient);
 			  }, 100);
-		setValue('');
-	};
+			setValue('');
+		};
+	}
 
 	const checkRoomAlreadyExist = async () => {
 		try {
