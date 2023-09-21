@@ -63,8 +63,8 @@ export const GameHistory = (props: any) => {
 					i++;
 				}
 				setGameData(updatedGameData.reverse());
-				console.log("update", gameData);
-				console.log("update", typeof gameData[0].superGame);
+				//console.log("update", gameData);
+				//console.log("update", typeof gameData[0].superGame);
 			}
 			else
 			{
@@ -83,10 +83,10 @@ export const GameHistory = (props: any) => {
 					<tr>
 					<th></th>
 					<th>date</th>
-					<th>Joueur 1</th>
+					<th>Player1</th>
 					<th></th>
 					<th></th>
-					<th>Joueur 2</th>
+					<th>Player2</th>
 					</tr>
 				</thead>
 				<tbody>
