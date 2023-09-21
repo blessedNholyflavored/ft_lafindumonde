@@ -6,7 +6,7 @@ import logo from "../../img/logo42.png";
 import icon from "../../img/buttoncomp.png"
 import champi from "../../img/champi.png";
 import { useAuth } from "./AuthProvider";
-import { Login } from "./Login";
+//import { Login } from "./Login";
 import { useNavigate } from 'react-router-dom';
 
 export function Register () {
@@ -27,7 +27,7 @@ export function Register () {
     const handleSubmit = async(e: React.FormEvent) => {
 		e.preventDefault();
 		console.log("handle submit de register:");
-		fetch(`http://localhost:3001/auth/register`, {
+		fetch(`http://localhost:3000/auth/register`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

@@ -5,7 +5,7 @@ import "./../../style/Login.css";
 import logo from "../../img/logo42.png";
 import icon from "../../img/buttoncomp.png"
 import { useAuth } from "./AuthProvider";
-import { Login } from "./Login";
+//import { Login } from "./Login";
 import { useNavigate } from 'react-router-dom';
 
 export function LocalLogin () {
@@ -24,7 +24,7 @@ export function LocalLogin () {
     const handleSubmit = async(e: React.FormEvent) => {
 		e.preventDefault();
 		console.log("handle submit du login");
-		fetch(`http://localhost:3001/auth/local_login`, {
+		fetch(`http://localhost:3000/auth/local_login`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

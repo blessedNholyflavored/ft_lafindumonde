@@ -48,7 +48,6 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
                 setLoading(false);
             });
     }, []);
-// TODO: faire un joli front pour le loading....
     if (loading) {
         return (
             <div className='loadingPage'>

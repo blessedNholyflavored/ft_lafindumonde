@@ -19,7 +19,7 @@ export function Login () {
 
     //on fait appel au service d'auth dans le back
     const fortyTwoLogin = () => {
-        window.location.href = 'http://localhost:3001/auth/login42';
+        window.location.href = 'http://localhost:3000/auth/login42';
     }
 
 	const register = () => {

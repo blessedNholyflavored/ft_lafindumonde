@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { FriendsService } from './friends.service';
 import { CreateFriendRequestDto } from './dto/friend.dto';
 import { Friend } from './friends.interface';
+import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
 
 @Controller('friends')
+@UseGuards(...AuthenticatedGuard)
 export class FriendsController {
   constructor(private friendsService: FriendsService) {}
 

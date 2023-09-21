@@ -264,7 +264,6 @@ export class UserService {
 		return null;
 	const saltOrRounds = 10;
 	const hash = await bcrypt.hash(input, saltOrRounds);
-	//console.log("hashed pass = ", hash);
 	return hash.toString();
   }
 
@@ -280,8 +279,8 @@ export class UserService {
           username: user.username,
           pictureURL: user.pictureURL,
           enabled2FA: false,
-		  log2FA: false,
-		  loginLoc: boolLocal,
+		      log2FA: false,
+		      loginLoc: boolLocal,
       	  gameplayed: 0,
       	  scoreMiniGame: 0,
       	  ELO: 1000,
@@ -293,7 +292,7 @@ export class UserService {
     } catch (err) {
       //TODO: return the accurate error
       // doc here : https://www.prisma.io/docs/reference/api-reference/error-reference
-      console.log('Error creating user:', err);
+      console.error('Error creating user:', err);
       //throw err;
     }
   }

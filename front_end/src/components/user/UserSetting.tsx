@@ -27,12 +27,13 @@ export const UserSetting: React.FC = () => {
 		const userId = user?.id;
 		console.log("dans front user id = ", userId);
 		try {
-			const response = await fetch(`http://localhost:3001/users/${userId}/update-username`, {
+			const response = await fetch(`http://localhost:3000/users/${userId}/update-username`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({ username: newUsername }),
+				credentials: 'include',
 			});
 			if (response.ok) {
 				alert('Nom d\'utilisateur mis à jour avec succès !');
@@ -49,8 +50,9 @@ export const UserSetting: React.FC = () => {
 
 		const userId = user?.id;
 		try {
-			const response = await fetch(`http://localhost:3001/users/${userId}/avatar`, {
+			const response = await fetch(`http://localhost:3000/users/${userId}/avatar`, {
 				method: 'GET',
+				credentials: 'include',
 			});
 			if (response.ok) {
 				const pictureURL = await response.text();
@@ -61,8 +63,9 @@ export const UserSetting: React.FC = () => {
 				}
 				else {
 					try {
-					const response = await fetch(`http://localhost:3001/users/uploads/${pictureURL}`, {
+					const response = await fetch(`http://localhost:3000/users/uploads/${pictureURL}`, {
 						method: 'GET',
+						credentials: 'include',
 					});
 					if (response.ok) {
 						const blob = await response.blob();
@@ -103,9 +106,10 @@ export const UserSetting: React.FC = () => {
 		  console.log(formData);
 	  
 		  try {
-			const response = await fetch(`http://localhost:3001/users/${userId}/update-avatar`, {
+			const response = await fetch(`http://localhost:3000/users/${userId}/update-avatar`, {
 			  method: 'POST',
 			  body: formData,
+				credentials: 'include',
 			});
 			if (response.ok) {
 				const result = await response.json();

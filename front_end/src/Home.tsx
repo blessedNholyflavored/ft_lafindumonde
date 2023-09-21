@@ -39,8 +39,9 @@ const Home: React.FC<HomeProps> = () => {
     setSelectedPlayer(player);
 
     try {
-      const response = await fetch(`http://localhost:3001/users/status/${user?.id}`, {
+      const response = await fetch(`http://localhost:3000/users/status/${user?.id}`, {
         method: 'GET',
+        credentials: 'include',
       });
       if (response.ok) {
         const recup = await response.text();

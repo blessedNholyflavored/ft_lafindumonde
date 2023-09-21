@@ -18,8 +18,9 @@ const ScoreList = (props: any) => {
 
   const fetchScorelist = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/users/${id}`, {
+      const response = await fetch(`http://localhost:3000/users/${id}`, {
         method: "GET",
+        credentials: 'include',
       });
       if (response.ok) {
         const data = await response.json();

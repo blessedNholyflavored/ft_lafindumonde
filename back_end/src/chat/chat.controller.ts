@@ -1,4 +1,4 @@
-import { Controller, Get , Post , Body, Res , Param, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get , Post , Body, Res , Param, UploadedFile, UseInterceptors, UseGuards } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { User } from '.prisma/client';
@@ -7,9 +7,11 @@ import { join } from 'path';
 import { Response } from 'express';
 import { UserService } from 'src/user/user.service';
 import { ChatService } from './chat.service';
+import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
 
 
 @Controller('chat')
+@UseGuards(...AuthenticatedGuard)
 export class ChatController {
   friendService: any;
   constructor(private chatService: ChatService,private readonly userService: UserService) {}

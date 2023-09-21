@@ -6,7 +6,7 @@ import "./../../style/Login.css";
 import api from '../../AxiosInstance';
 
 export async function twoFAEnable(navigate: any, user: any) {
-	if (user.loginLoc == true)
+	if (user.loginLoc === true)
 		return (window.alert("Sorry :(( You can't enable 2FA with this type of account !"));
 	if (window.confirm("Are you ready to save your unique QR code ?")){
 		try {
