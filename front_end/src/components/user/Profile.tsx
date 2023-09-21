@@ -13,14 +13,12 @@ export const Profile = () => {
   
 	useEffect(() => {
 	  const checkId = async () => {
-		console.log("DANS CHECKID DANS PROFILE.TSX");
 		try {
 		  const response = await fetch(`http://localhost:3000/users/${id}`, {
 			method: 'GET',
 			credentials: 'include',
 		  });
 		  if (response.ok) {
-			console.log("USER PAS DANS LA DB ", response.text);
 			setUserExists(true);
 		  } else {
 			navigate('/404');
@@ -29,7 +27,6 @@ export const Profile = () => {
 		  console.log(error);
 		}
 	  };
-  
 	  checkId();
 	}, [id, navigate, setUserExists]);
   

@@ -118,7 +118,7 @@ export class UsersController {
     const ret = await this.userService.getID(id.toString());
     return this.userService.exclude(ret, ['totpKey', 'password']);
   }
-
+  
   @Get('/:id/games-data')
   async fetchGameData(@Param('id') id: string)
   {
