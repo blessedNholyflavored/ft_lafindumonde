@@ -126,7 +126,6 @@ export const UserSetting: React.FC = () => {
 				alert(backError.message);
 			}
 		  } catch (error) {
-			//console.log("icicicci   ",error);
 			if (error instanceof Response) {
 				const backError = await error.json();
 				setError(backError.message);

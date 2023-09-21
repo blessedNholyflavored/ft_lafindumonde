@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate, Navigate } from 'react-router-dom';
 import Home from './Home';
 import PongGame from './PongGame';
 import { UserSetting } from './components/user/UserSetting';
@@ -30,6 +30,7 @@ import AcceptMatch from './acceptMatch';
 import GameFriend from './GameFriend';
 import { twoFAEnable, twoFADisable } from './components/auth/2faComp';
 import ChatChannel from './components/chat/ChatChannel';
+import PageNotFound from './PageNotFound';
 
 export const App: React.FC = () => {
   //const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
@@ -76,6 +77,8 @@ export const App: React.FC = () => {
 		      <Route path="/leaderboard" element={<ProtectedRoute><Classement /></ProtectedRoute>} />
 		      <Route path="/acceptMatch/:id" element={<ProtectedRoute><AcceptMatch /></ProtectedRoute>} />
 		      <Route path="/gameFriend" element={<ProtectedRoute><GameFriend /></ProtectedRoute>} />
+		      <Route path="/404" element={<ProtectedRoute><PageNotFound /></ProtectedRoute>} />
+		      <Route path="/*" element={<ProtectedRoute><Navigate to="/404" /></ProtectedRoute>} />
         </Routes>
     </AuthProvider>
     </WebsocketProvider>

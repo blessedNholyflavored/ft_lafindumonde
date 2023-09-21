@@ -28,6 +28,7 @@ export const GameHistory = (props: any) => {
 		try {
 			const response = await fetch(`http://localhost:3001/users/${userId}/games-data`, {
 				method: "GET",
+				credentials: 'include',
 			});
 			if (response.ok)
 			{

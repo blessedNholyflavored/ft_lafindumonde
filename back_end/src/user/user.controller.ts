@@ -79,6 +79,7 @@ export class UsersController {
           console.log('IFFFFFFFFFFFFFFFFF');
           cb(null, true);
         } else {
+			console.log(file.mimetype);
           console.log('ELSSEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
           cb(
             new HttpException(
