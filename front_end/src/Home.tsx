@@ -16,6 +16,7 @@ import folder1 from "./img/folder2.png";
 import folder2 from "./img/folder3.png";
 import folder3 from "./img/folder4.png";
 import folder4 from "./img/folder5.png";
+import folder0 from "./img/folder1.png";
 import nav from "./img/buttoncomp.png"
 import gaming from "./img/gamingpreview.png"
 import love from "./img/42lov.png"
@@ -213,7 +214,6 @@ const handlePlayerSelect222 = async (player: string) => {
     navigate('/settings');
     };
 
-
   return (
 	<>
   <body>
@@ -298,7 +298,12 @@ const handlePlayerSelect222 = async (player: string) => {
                         <img src={folder} alt="Menu 3"/>
                         <p  >Settings</p>
                     </a>
-                    
+                </li>
+                <li className="menu-item">
+                    <a onClick={navigateToFriends}>
+                        <img src={folder0} alt="Menu 3"/>
+                        <p  >Friends</p>
+                    </a>
                 </li>
             </ul>
         </nav>
