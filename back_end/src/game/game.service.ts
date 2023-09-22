@@ -30,10 +30,9 @@ export class GameService {
           data: {
             roomId: 0,
             superGame: type,
-            start_at: new Date(),
             end_at: new Date(),
-			username1: p1.username,
-			username2: p2.username,
+            username1: p1.username,
+            username2: p2.username,
             player1: {
               connect: {
                 id: p1.id,

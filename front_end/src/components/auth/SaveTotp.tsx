@@ -24,7 +24,7 @@ export const SaveTotp: React.FC = () => {
         e.preventDefault();
         if (user) {
             try{
-                const response = await api.post(`/auth/submitCode?code=${receivedCode}`);
+                const response = await api.post(`http://localhost:3000/auth/submitCode?code=${receivedCode}`);
 
 
                 if (response.status === 200){

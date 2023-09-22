@@ -12,4 +12,6 @@ export class UserDto {
 
   xp: number;
   level: number;
+  password: string;
+  totpKey: string;
 }

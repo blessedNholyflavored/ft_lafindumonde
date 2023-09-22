@@ -26,6 +26,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
     const context =  useContext(AuthContext);
+//	console.log("USE AUTH context=", context);
     if (!context){
         throw new Error('called to useAuth must be inside an AuthProvider');
     }
@@ -47,7 +48,6 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
                 setLoading(false);
             });
     }, []);
-// TODO: faire un joli front pour le loading....
     if (loading) {
         return (
             <div className='loadingPage'>

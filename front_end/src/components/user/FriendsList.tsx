@@ -11,9 +11,9 @@ export const FriendsList = (props: any) => {
 
     const fetchFriendsList = async () => {
         try {
-            const response = await fetch(`http://localhost:3001/friends/${id}`, {
+            const response = await fetch(`http://localhost:3000/friends/${id}`, {
                 method: "GET",
-                // les trucs dauth
+                credentials: 'include',
             });
 
             if (response.ok) {

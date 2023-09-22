@@ -12,9 +12,9 @@ import { count } from 'console';
 const PongGame: React.FC = () => {
   const [room, setRoom] = useState<Room | null>(null);
   const [counter, setCounter] = useState(0);
-  const { user, setUser } =useAuth();
   const [end, setEnd] = useState<number>(0);
   const [startFlag, setStartflag] = useState<number>(0);
+  const { user, setUser } =useAuth();
   const navigate = useNavigate();
   const socket = useContext(WebsocketContext);
   const [player1Pos, setPlayer1Pos] = useState<number>(200);

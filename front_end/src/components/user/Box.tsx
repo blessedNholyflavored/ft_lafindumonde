@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import '../../style/Profile.css'
 import ProfileBox from "./ProfileBox"
 import icon from "../../img/buttoncomp.png"
@@ -7,12 +7,21 @@ import domo from "../../img/domo.png"
 import ScoreList from "./ScoreList";
 import Friends from "./FriendsList";
 import { useAuth } from "../auth/AuthProvider";
+import Notify from '../../Notify';
+import { WebsocketContext } from "../../WebsocketContext";
+import { GameHistory } from "./GameHistory";
 
 const Box = (props: any) => {
 
     const [info, setInfo] = useState<any>(null);
 	let [ImgUrl, setImgUrl] = useState<string>('');
 	const { user, setUser } = useAuth();
+    const [notifyMSG, setNotifyMSG] = useState<string>('');
+    const [notifyType, setNotifyType] = useState<number>(0);
+    const [sender, setSender] = useState<number>(0);
+    const socket = useContext(WebsocketContext);
+    const [showNotification, setShowNotification] = useState(false);
+
 
     useEffect(() => {
 		displayPic();
@@ -59,10 +68,36 @@ const displayPic = async() => {
     catch (error) {
         console.error(error);
     }
+
+const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
+
+  
+  if (socket)
+{
+socket.on("receiveInvite", (sender: number) => {
+setShowNotification(true);
+setNotifyMSG("Tu as recu une invitation pour une partie")
+setNotifyType(1);
+setSender(sender);
+})
+}
+
+if (socket)
+{
+  socket.on("friendShipNotif", () => {
+    setShowNotification(true);
+    setNotifyMSG("Tu as recu une demande d'ami")
+    setNotifyType(0);
+  })
 }
 
 return (
-    
+<div>
+      {showNotification && (
+        <Notify message={notifyMSG} type={notifyType} senderId={sender} onClose={handleCloseNotification} />
+      )}
     <div className="mainpage">
         <div className="navbarmainpage">
         <img src={icon} className="buttonnav" alt="icon" />
@@ -89,9 +124,9 @@ return (
             </div>
             <div className="boxrow">
                 <div className="navbarsmallbox">
-                    <p className="boxtitle"> Friends </p>
+                    <p className="boxtitle"> Game History </p>
                 </div>
-                    <Friends type="info"/>
+                    <GameHistory type="info"/>
                     <div className="footersmallbox">
                     <br></br>
                 </div>
@@ -117,7 +152,9 @@ return (
         {/* // <Scorelist type ="scorelist"/> */}
     
     </div>
+    </div>
 )
+}
 }
 
 export default Box;

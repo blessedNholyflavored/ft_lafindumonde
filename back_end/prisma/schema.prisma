@@ -27,6 +27,7 @@ model User {
 	enabled2FA	Boolean?
 	totpKey		String?
 	log2FA		Boolean?
+	loginLoc	Boolean?
 	ELO			Int?
 
 	friends		User[] @relation ("Friends")
@@ -37,6 +38,15 @@ model User {
 
 	// achievements		UserAchievement[]
 	// @@map("users")
+
+	block		User[] @relation ("Block")
+	blockOf		User[] @relation ("Block")
+
+	PrivMessEmited       privateMessage[] @relation(name: "sender")
+  	PrivMessReceived     privateMessage[] @relation(name: "recipient")
+
+	userOnChanel		UserOnChannel[]
+	RoomMessSent		ChatroomMessage[]
 
 }
 
@@ -88,7 +98,7 @@ enum USER_STATUS{
 
 model Game {
 	id			Int			@id @default(autoincrement())
-	start_at	DateTime
+	start_at	DateTime	@default(now())
 	end_at		DateTime
   	userId1		Int
 	player1		User @relation("player1", fields: [userId1], references: [id])
@@ -101,4 +111,63 @@ model Game {
 	superGame	Int?
 	username1	String?
 	username2	String?
+}
+
+model privateMessage {
+	id			Int			@id @default(autoincrement())
+	start_at	DateTime	@default(now())
+	content		String?
+  	senderId    Int
+	sender		User @relation("sender", fields: [senderId], references: [id])
+  	recipientId Int
+	recipient	User @relation("recipient", fields: [recipientId], references: [id])
+}
+
+model Chatroom {
+	id				Int						@id @default(autoincrement())
+	visibility		UserChannelVisibility	@default(PUBLIC)
+	name			String
+	users	UserOnChannel[]
+	hash			String?
+	roomMess		ChatroomMessage[]
+}
+
+model ChatroomMessage {
+  id				Int     @id @default(autoincrement())
+  start_at			DateTime  @default(now())
+  content			String?
+  chatroomId		Int
+  chatroom			Chatroom @relation(fields: [chatroomId], references: [id])
+  senderId			Int
+  sender			User    @relation(fields: [senderId], references: [id])
+}
+
+model UserOnChannel {
+	id			Int					@id @default(autoincrement())
+	role		UserRoleInChannel	@default(USER)
+	status		UserStatusOnChannel	@default(CLEAN)
+	userId		Int
+	user		User				@relation(fields: [userId], references: [id])
+	channelId	Int
+	channel		Chatroom			@relation(fields: [channelId], references: [id])
+
+	@@unique([channelId, userId])
+}
+
+enum UserChannelVisibility {
+	PUBLIC
+	PRIVATE
+	PWD_PROTECTED
+}
+
+enum UserRoleInChannel {
+	USER
+	ADMIN
+	OWNER
+}
+
+enum UserStatusOnChannel {
+	CLEAN
+	MUTE
+	BAN
 }

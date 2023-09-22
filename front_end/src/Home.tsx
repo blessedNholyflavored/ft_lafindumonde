@@ -21,6 +21,8 @@ import gaming from "./img/gamingpreview.png"
 import love from "./img/42lov.png"
 import chatpic from "./img/chatpic.png"
 import gradient from "./img/gradient.png"
+import Notify from './Notify';
+
 
 interface HomeProps {
   socket: Socket | null;
@@ -28,15 +30,20 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = () => {
   const navigate = useNavigate();
-  const socket = useContext(WebsocketContext);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [queueCount, setQueueCount] = useState<number>(0);
   const [queueCountBonus, setQueueCountBonus] = useState<number>(0);
+  const [notifyMSG, setNotifyMSG] = useState<string>('');
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const [sender, setSender] = useState<number>(0);
+  const socket = useContext(WebsocketContext);
+
   const { user, setUser } =useAuth();
   // const [recupStatus, setStatus] = useState<string>('');
   let recupStatus = '';
   const [inGame, setInGame] = useState<number>(0);
 	let [ImgUrl, setImgUrl] = useState<string>('');
+  const [showNotification, setShowNotification] = useState(false);
 
 
   useEffect(() => {
@@ -84,14 +91,15 @@ const Home: React.FC<HomeProps> = () => {
     setSelectedPlayer(player);
 
     try {
-      const response = await fetch(`http://localhost:3001/users/status/${user?.id}`, {
+      const response = await fetch(`http://localhost:3000/users/status/${user?.id}`, {
         method: 'GET',
+        credentials: 'include',
       });
       if (response.ok) {
         const recup = await response.text();
         // setStatus(recup);
         recupStatus = recup;
-        console.log(recupStatus);
+        console.log("ICICICICICICIC", recupStatus);
       }
       if (recupStatus !== "INGAME")
       {
@@ -123,6 +131,32 @@ const Home: React.FC<HomeProps> = () => {
     };
 }
 
+if (socket)
+{
+  socket.on("coucou", () => {
+    socket.emit("coucou");
+  })
+}
+
+if (socket)
+{
+  socket.on("friendShipNotif", () => {
+    setShowNotification(true);
+    setNotifyMSG("Tu as recu une demande d'ami")
+    setNotifyType(0);
+  })
+}
+
+if (socket)
+{
+  socket.on("receiveInvite", (sender: number) => {
+    setShowNotification(true);
+    setNotifyMSG("Tu as recu une invitation pour une partie")
+    setNotifyType(1);
+    setSender(sender);
+  })
+}
+
 
 const handlePlayerSelect222 = async (player: string) => {
   setSelectedPlayer(player);
@@ -152,6 +186,8 @@ const handlePlayerSelect222 = async (player: string) => {
 }
 
 
+
+
   const navigateToProfPage = () => {
     navigate(`/users/profile/${user?.id}`);
   };
@@ -166,6 +202,10 @@ const handlePlayerSelect222 = async (player: string) => {
 
   const navigateToFriends = () => {
     navigate('/friends');
+    };
+
+    const handleCloseNotification = () => {
+      setShowNotification(false);
     };
 
 
@@ -183,7 +223,11 @@ const handlePlayerSelect222 = async (player: string) => {
         </div>
         <h1>TRANSCENDENCE</h1>
     </header>
-    
+    <div>
+      {showNotification && (
+        <Notify message={notifyMSG} type={notifyType} senderId={sender} onClose={handleCloseNotification} />
+      )}
+    </div>
     <div className="flex-bg">
         <main>
             <div className="home">

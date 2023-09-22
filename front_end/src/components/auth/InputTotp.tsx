@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import './../../App.css';
 import './../../style/Login.css';
-// temporaire le tps d'avoir un vrai qr generator
-import qrCode from '../../img/qrCode.png';
 import icon from "../../img/buttoncomp.png";
 import { useAuth } from './AuthProvider';
 import { useNavigate, Navigate } from 'react-router-dom';

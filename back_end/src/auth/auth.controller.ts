@@ -4,9 +4,7 @@ import { AuthService } from "./auth.service";
 //TODO: careful aux .guardSSSS
 import { FortyTwoAuthGuard } from "./guards/FortyTwo-auth.guard";
 import { ConfigService } from '@nestjs/config';
-//import { JwtAuthGuard } from "./guards/jwt-auth.guards";
 import { AuthGuard } from "@nestjs/passport";
-import { JwtGuard } from "./guards/jwt.guards";
 import { AuthenticatedGuard } from "./guards/authenticated.guards";
 import * as bcrypt from 'bcrypt';
 import * as speakeasy from 'speakeasy';
@@ -16,7 +14,7 @@ export class AuthController{
     constructor(
         private readonly authService: AuthService,
         private readonly userService: UserService,
-	    private config: ConfigService,
+	    private readonly config: ConfigService,
     ){}
 
     /************************
@@ -38,12 +36,11 @@ export class AuthController{
 	@Post('test')
 	async loginTest(@Body() body: {username: string, id: number, email: string}, @Res() res: any){
 		if (!body.username || !body.id || !body.email){
-			console.log(body);
 			throw new BadRequestException("id, username or email is missing");
 		}
 		const user = await this.authService.retrieveUser(body);
 		const token = await this.authService.login(user);
-		res.cookie('access_token', token.access_token, {httpOnly: true}).json({user: this.userService.exclude(user, ['totpKey']), token}).statusCode(200).send();
+		res.cookie('access_token', token.access_token, {httpOnly: true}).json({user: this.userService.exclude(user, ['totpKey', 'password']), token}).statusCode(200).send();
 
 	}
 
@@ -54,11 +51,40 @@ export class AuthController{
      *      
      * 
      * *********************/
-    @Post('login')
-    async login(@Body() loginDto:any){
-        return ;
+    @Post('local_login')
+    async login(@Body() body: {username: string, password: string}, @Res() res: any, @Req() req: any){
+		if (!body.username || !body.password){
+			throw new BadRequestException("One field is missing");
+		}
+		const user = await this.userService.getUserByUsername(body.username);
+		if (!user)
+			throw new BadRequestException("Username doesn't exist");
+		// check du password
+		if (await this.authService.passwordChecker(body.password, user) == false)
+			throw new UnauthorizedException("Wrong password");
+		// sinn throw error
+		const token = await this.authService.login(user);
+		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user,['totpKey', 'password']), token});
     }
 
+	@Post('register')
+	async register(@Req() req: any, @Body() body: {username: string, password: string, email: string, id: number, pictureURL: string}, @Res() res: any){
+		if (!body.username || !body.password || !body.email || !body.pictureURL){
+			throw new BadRequestException("password, username or email is missing");
+		}
+		let newID = await this.authService.idGenerator();
+		while (await this.userService.getUserByID(newID))
+			newID = await this.authService.idGenerator();
+		body.id = newID;
+		if (await this.userService.usernameAuthChecker(body.username) == true){
+			// in case someone already have this username
+			body.username =  body.username + '_';
+		}
+		const user = await this.userService.createUser(body, true);
+		const token = await this.authService.login(user);
+		await this.userService.setLog2FA(user, false);
+		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user, ['totpKey', 'password']), token});
+	}
     /************************
      * 
      * 
@@ -81,9 +107,9 @@ export class AuthController{
     }
 
     @Get('me')
-    @UseGuards(JwtGuard)
+    @UseGuards(AuthGuard('jwt'))
     async protected(@Req() req: any) {
-        return this.userService.exclude(req.user, ['totpKey']);
+        return this.userService.exclude(req.user, ['totpKey', 'password']);
     }
 
     /************************
@@ -102,18 +128,7 @@ export class AuthController{
             await this.userService.disable2FA(req.user.id);
         }
         const { qrCodeImg, user } = await this.authService.generate2FAkey(req.user);
-            // here --> redirect user to a page with a generated QR code made with the secret 2fa key made for him
-            // he will have to scan the code to get second auth code. If and only IF everything here went well,
-            // we enable his 2FA by setting enabled2FA to true
-      //  return res.redirect(`http://localhost:8080//totpSave?qrCodeImg=${encodeURIComponent(qrCodeImg)}&userId=${user.id}`);
         return res.json({code: qrCodeImg});
-      /*  if (updtUser.enabled2FA == true){
-                console.log("2FA correctly enabled !");
-                return updtUser;
-        } else {
-                console.log("An issue happened enabling 2fa ???");
-        }*/
-        //return req.user;
     }
 
     @Get('2FAdisable')
@@ -128,29 +143,10 @@ export class AuthController{
                 console.log("2FA correctly disabled !");
             else
                 console.log("An issue happened disabling 2fa ???");
-            return this.userService.exclude(updtUser, ['totpKey']);
+            return this.userService.exclude(updtUser, ['totpKey', 'password']);
         }
-        return this.userService.exclude(req.user, ['totpKey']);
+        return this.userService.exclude(req.user, ['totpKey', 'password']);
     }
-
-    // @Get('2FAtester')
-    // @UseGuards(...AuthenticatedGuard)
-    // async tester2FA(@Req() req:any){
-    //     console.log("user here is :", req.user.username);
-    //     if (req.user.enabled2FA == true)
-    //        console.log("his 2fa is ENABLED !");
-    //     else
-    //         console.log("his 2fa is NOT enabled >< .....");
-        
-    //     const updtUser = await this.userService.enable2FA(req.user.id);
-        
-    //     console.log("user updated is :", updtUser.username);
-    //     if (updtUser.enabled2FA == true)
-    //         console.log("his 2fa is ENABLED !");
-    //     else
-    //         console.log("his 2fa is NOT enabled >< .....");
-    //     return this.userService.exclude(updtUser, ['totpKey']);
-    // }
 
     /************************
      * 
@@ -161,9 +157,8 @@ export class AuthController{
      * *********************/
 
     @Post('submitCode')
-    @UseGuards(JwtGuard, AuthGuard('totp'))
+    @UseGuards(AuthGuard('jwt'), AuthGuard('totp'))
     async codeChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
-        // console.log("SALUT SALUT SALUT OPUTDJSHFJKU");
         /*if (!body.userInput || !body.userID){
             console.log(body);
             throw new BadRequestException("input is missing or user is invalid");
@@ -171,18 +166,17 @@ export class AuthController{
         const user = await this.userService.getUserByID(req.user.id);
         await this.userService.enable2FA(user.id);
 		await this.userService.setLog2FA(user, true);
-        return res.status(200).json(this.userService.exclude(user, ['totpKey']));
+        return res.status(200).json(this.userService.exclude(user, ['totpKey', 'password']));
     }
 
 	// submit input during auth login
 	@Post('submitInput')
-	@UseGuards(JwtGuard, AuthGuard('totp'))
+	@UseGuards(AuthGuard('jwt'), AuthGuard('totp'))
 	async inputChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
-		// console.log('inside submitInput controller');
 		const user = await this.userService.getUserByID(req.user.id);
 		//set user.log2FA a true
 		const updtUser = await this.userService.setLog2FA(user, true);
-		return res.status(200).json(this.userService.exclude(updtUser, ['totpKey']));
+		return res.status(200).json(this.userService.exclude(updtUser, ['totpKey', 'password']));
 	}
     /************************
      * 
@@ -193,7 +187,6 @@ export class AuthController{
      * *********************/
     @Get('logout')
     async   logout(@Res() res: any){
-		// console.log("")
         res.clearCookie('access_token').status(200).send();
 		//TODO: set log2FA false hihihi
 		//TODO: wipe all user data en fait
