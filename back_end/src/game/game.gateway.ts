@@ -61,15 +61,15 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
 
 
   afterInit(server: Server) {
-		void server;
-		console.log("Gateway initialized.");
-	}
+    void server;
+    console.log("Gateway initialized.");
+  }
 
 /*
   j'enleve le decorateur @ConnectedSocket parce que c'est justement le probleme :
   les decorateurs guards etc ne fonctionnent pas sur handleConnection
 */
-	async handleConnection(socket: Socket) {
+  async handleConnection(socket: Socket) {
     /*
       ici j'appelle une fonction ds authservice qui en gros va faire ce que faisait le guard
       et si aucun user n'est trouve je return undefined et donc je disconnect illico

@@ -68,11 +68,11 @@ const displayPic = async() => {
     catch (error) {
         console.error(error);
     }
+}
 
 const handleCloseNotification = () => {
     setShowNotification(false);
   };
-
   
   if (socket)
 {
@@ -95,10 +95,10 @@ if (socket)
 
 return (
 <div>
+    <div className="mainpage">
       {showNotification && (
         <Notify message={notifyMSG} type={notifyType} senderId={sender} onClose={handleCloseNotification} />
       )}
-    <div className="mainpage">
         <div className="navbarmainpage">
         <img src={icon} className="buttonnav" alt="icon" />
            <p className="titlemainpage"> TRANSCENDENCE </p>
@@ -154,7 +154,6 @@ return (
     </div>
     </div>
 )
-}
 }
 
 export default Box;
