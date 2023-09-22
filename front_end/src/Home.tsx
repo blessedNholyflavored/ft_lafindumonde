@@ -23,6 +23,7 @@ import love from "./img/42lov.png"
 import chatpic from "./img/chatpic.png"
 import gradient from "./img/gradient.png"
 import Notify from './Notify';
+import folder6 from "./img/folder6.png";
 
 
 interface HomeProps {
@@ -120,7 +121,9 @@ if (socket)
 
 
 
-
+const navigateToHome = () => {
+	navigate('/');
+  };
 
   const navigateToProfPage = () => {
     navigate(`/users/profile/${user?.id}`);

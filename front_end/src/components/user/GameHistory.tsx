@@ -26,7 +26,7 @@ export const GameHistory = (props: any) => {
 
 		const userId = user?.id;
 		try {
-			const response = await fetch(`http://localhost:3001/users/${userId}/games-data`, {
+			const response = await fetch(`http://localhost:3000/users/${userId}/games-data`, {
 				method: "GET",
 				credentials: 'include',
 			});
@@ -47,11 +47,11 @@ export const GameHistory = (props: any) => {
 						updatedGameData[i].super = "☆";
 					}
 					try {
-						const response = await fetch(`http://localhost:3001/users/${updatedGameData[i].userId1}/username`, {
+						const response = await fetch(`http://localhost:3000/users/${updatedGameData[i].userId1}/username`, {
 							method: "GET",
 							credentials: 'include',
 						});
-						const response2 = await fetch(`http://localhost:3001/users/${updatedGameData[i].userId2}/username`, {
+						const response2 = await fetch(`http://localhost:3000/users/${updatedGameData[i].userId2}/username`, {
 							method: "GET",
 							credentials: 'include',
 						});
