@@ -281,6 +281,43 @@ async recupRoomMess(roomId:string)
 }
 }
 
+async recupUserNotInChan(roomId: string)
+{
+  try {
+    const usersInChannel = await prisma.userOnChannel.findMany({
+      where: {
+        channelId: parseInt(roomId),
+      },
+      select: {
+        userId: true,
+      },
+    });
+
+    const userIdsInChannel = usersInChannel.map((user) => user.userId);
+
+    const usersNotInChannel = await prisma.user.findMany({
+      where: {
+        NOT: {
+          id: {
+            in: userIdsInChannel,
+          },
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+      },
+    });
+
+    return usersNotInChannel.map((user) => ({ id: user.id, username: user.username }));
+  } catch (error) {
+    console.error('Erreur lors de la récupération des IDs et des usernames des utilisateurs non présents dans la salle de discussion :', error);
+    throw error;
+  }
+}
+
+
+
 async recupPrivate(userId: string){
   const user = await prisma.user.findUnique({
     where: {

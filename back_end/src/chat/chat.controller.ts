@@ -58,5 +58,11 @@ export class ChatController {
     return this.chatService.recupPrivate(id);
   }
 
+  @Get('/usersNotInRoom/:id')
+  async recupUserNotInChan(@Param('id') id: number)
+  {
+    return this.chatService.recupUserNotInChan(id.toString());
+  }
+
   
 }
