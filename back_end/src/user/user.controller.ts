@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Res,
+	Req,
   Param,
   UploadedFile,
   UseInterceptors,
@@ -37,12 +38,12 @@ export class UsersController {
     return users;
   }
 */
-  @Post('/:id/update-username')
-  updating_username(@Param('id') id: string, @Body() username: string) {
+  @Post('/update-username')
+  updating_username(@Req() req: any, @Body() username: string) {
     //console.log(username);
-    console.log('service update username ', id);
+    console.log('service update username ', req.user.id);
     const newUsername = username['username'];
-    this.userService.updateUsername(id, newUsername);
+    this.userService.updateUsername(req.user.id, newUsername);
   }
   @Get('/:id/avatar')
   returnPic(@Param('id') id: string) {
@@ -58,7 +59,7 @@ export class UsersController {
     return res.sendFile(filename, { root: 'uploads/' });
   }
 
-  @Post('/:id/update-avatar')
+  @Post('/update-avatar')
   @UseInterceptors(
     FileInterceptor('userpic', {
       storage: diskStorage({
@@ -95,13 +96,13 @@ export class UsersController {
     }),
   )
   async updatePic(
-    @Param('id') id: string,
+    @Req() req: any,
     @UploadedFile() file: any, //: Express.Multer.File)
   ) {
     //const name = file.originalname.split('.')[0];
     //const picPath = file.path;
     const test = file.filename;
-    await this.userService.updatePicture(id, file.filename);
+    await this.userService.updatePicture(req.user.id, file.filename);
     return { test };
   }
 

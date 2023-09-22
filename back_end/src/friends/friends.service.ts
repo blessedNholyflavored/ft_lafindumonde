@@ -55,6 +55,8 @@ export class FriendsService {
 
 async unBlock(senderId: string, recipientId: string)
 {
+	console.log("IN FRONT UNBLOCK //// senderID:", senderId);
+	console.log("recipientId = ", recipientId);
   await prisma.user.update({
     where: {
       id: parseInt(senderId),
@@ -169,7 +171,6 @@ async getOnlinePlayers(userId: string) {
     if (!user) {
       throw new Error('Utilisateur non trouvé');
     }
-
     const usersOnline = await prisma.user.findMany({
       where: {
         status: 'ONLINE',

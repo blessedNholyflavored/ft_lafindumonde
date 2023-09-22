@@ -35,7 +35,6 @@ export const ChatChannel = () => {
           credentials: "include",
         }
       );
-
       if (!response.ok) {
         throw new Error("Erreur lors de la récupération des messages privés.");
       }

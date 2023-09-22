@@ -1,220 +1,248 @@
-import React, { useState, useEffect } from 'react';
-import '../../style/Profile.css';
-import '../../style/twoFA.css';
+import React, { useState, useEffect } from "react";
+import "../../style/Profile.css";
+import "../../style/twoFA.css";
 import icon from "../../img/buttoncomp.png";
 import logo from "../../img/logo42.png";
-import { useAuth } from '../auth/AuthProvider';
-import { twoFAEnable, twoFADisable } from '../auth/2faComp';
-import { Logout } from './../auth/Logout';
-import { useNavigate } from 'react-router-dom';
-
+import { useAuth } from "../auth/AuthProvider";
+import { twoFAEnable, twoFADisable } from "../auth/2faComp";
+import { Logout } from "./../auth/Logout";
+import { useNavigate } from "react-router-dom";
 
 export const UserSetting: React.FC = () => {
-	const [newUsername, setNewUsername] = useState('');
-	const [newPicture, setNewPicture] = useState<File | null>(null);
-	let [ImgUrl, setImgUrl] = useState<string>('');
-	const [error, setError] = useState<string | null>(null);
-	const { user, setUser } = useAuth();
-	const navigate = useNavigate();
+  const [newUsername, setNewUsername] = useState("");
+  const [newPicture, setNewPicture] = useState<File | null>(null);
+  let [ImgUrl, setImgUrl] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const { user, setUser } = useAuth();
+  const navigate = useNavigate();
 
-	useEffect(() => {
-		displayPic();
-	}, []);
-	
+  useEffect(() => {
+    displayPic();
+  }, []);
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		const userId = user?.id;
-		console.log("dans front user id = ", userId);
-		try {
-			const response = await fetch(`http://localhost:3000/users/${userId}/update-username`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ username: newUsername }),
-				credentials: 'include',
-			});
-			if (response.ok) {
-				alert('Nom d\'utilisateur mis à jour avec succès !');
-				//window.location.reload();
-			} else {
-				alert('Une erreur s\'est produite lors de la mise à jour du nom d\'utilisateur.');
-			}
-		} catch (error) {
-			console.error('Erreur:', error);
-		}
-	};
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const userId = user?.id;
+    console.log("dans front user id = ", userId);
+    try {
+      const response = await fetch(
+        `http://localhost:3000/users/update-username`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: newUsername }),
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        alert("Nom d'utilisateur mis à jour avec succès !");
+        //window.location.reload();
+      } else {
+        alert(
+          "Une erreur s'est produite lors de la mise à jour du nom d'utilisateur."
+        );
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+  };
 
-	const displayPic = async() => {
+  const displayPic = async () => {
+    const userId = user?.id;
+    try {
+      const response = await fetch(
+        `http://localhost:3000/users/${userId}/avatar`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        const pictureURL = await response.text();
+        //console.log("aaaaaaA",pictureURL);
+        if (pictureURL.includes("https")) {
+          setImgUrl(pictureURL);
+        } else {
+          try {
+            const response = await fetch(
+              `http://localhost:3000/users/uploads/${pictureURL}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            if (response.ok) {
+              const blob = await response.blob();
+              const absoluteURL = URL.createObjectURL(blob);
+              setImgUrl(absoluteURL);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-		const userId = user?.id;
-		try {
-			const response = await fetch(`http://localhost:3000/users/${userId}/avatar`, {
-				method: 'GET',
-				credentials: 'include',
-			});
-			if (response.ok) {
-				const pictureURL = await response.text();
-				//console.log("aaaaaaA",pictureURL);
-				if (pictureURL.includes("https"))
-				{
-					setImgUrl(pictureURL);
-				}
-				else {
-					try {
-					const response = await fetch(`http://localhost:3000/users/uploads/${pictureURL}`, {
-						method: 'GET',
-						credentials: 'include',
-					});
-					if (response.ok) {
-						const blob = await response.blob();
-						const absoluteURL = URL.createObjectURL(blob);
-						setImgUrl(absoluteURL);
-					}
-					}
-					catch (error) {
-						console.error(error);
-					}
-				}
-			}
-		}
-		catch (error) {
-			console.error(error);
-		}
-	}
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const file = e.target.files?.[0];
+    if (file) {
+      console.log(file.type);
+      console.log("QQQQQQQQQQQQQQQQQ", file);
+      setNewPicture(file);
+    }
+  };
 
-	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		e.preventDefault();
-		const file = e.target.files?.[0];
-		if (file) {
-			console.log(file.type);
-			console.log("QQQQQQQQQQQQQQQQQ", file);
-			setNewPicture(file);
-		}
-	};
+  const changePic = async () => {
+    console.log("DANS CHANGE PIC");
+    const userId = user?.id;
+    if (newPicture) {
+      const blob = new Blob([newPicture], { type: newPicture.type });
+      const formData = new FormData();
 
-	const changePic = async () => {
-		console.log("DANS CHANGE PIC");
-		const userId = user?.id;
-		if (newPicture) {
-		  const blob = new Blob([newPicture], { type: newPicture.type });
-		  const formData = new FormData();
-		  
-		  formData.append("userpic", blob, newPicture.name);
-	  
-		  console.log(formData);
-	  
-		  try {
-			const response = await fetch(`http://localhost:3000/users/${userId}/update-avatar`, {
-			  method: 'POST',
-			  body: formData,
-				credentials: 'include',
-			});
-			if (response.ok) {
-				const result = await response.json();
-				setImgUrl(result.pictureURL);
-				//setImgUrl(URL.createObjectURL(blob));
-				console.log("DDDDDDDDDDDDDDDDDDDDDD", result.pictureURL);
-				alert('profil picture mise à jour avec succès !');
-				displayPic();
+      formData.append("userpic", blob, newPicture.name);
 
-			} else {
-				console.log("kkkkkkkkkk");
-				const backError = await response.json();
-				setError(backError.message);
-				alert(backError.message);
-			}
-		  } catch (error) {
-			//console.log("icicicci   ",error);
-			if (error instanceof Response) {
-				const backError = await error.json();
-				setError(backError.message);
-				alert(backError.message);
-				console.log("llalalalaal   ", backError)
-			}
-		}
-		}
-	  }
-	const navigateToHome = () => {
-		navigate('/');
-	};
+      console.log(formData);
+
+      try {
+        const response = await fetch(
+          `http://localhost:3000/users/update-avatar`,
+          {
+            method: "POST",
+            body: formData,
+            credentials: "include",
+          }
+        );
+        if (response.ok) {
+          const result = await response.json();
+          setImgUrl(result.pictureURL);
+          //setImgUrl(URL.createObjectURL(blob));
+          console.log("DDDDDDDDDDDDDDDDDDDDDD", result.pictureURL);
+          alert("profil picture mise à jour avec succès !");
+          displayPic();
+        } else {
+          console.log("kkkkkkkkkk");
+          const backError = await response.json();
+          setError(backError.message);
+          alert(backError.message);
+        }
+      } catch (error) {
+        //console.log("icicicci   ",error);
+        if (error instanceof Response) {
+          const backError = await error.json();
+          setError(backError.message);
+          alert(backError.message);
+          console.log("llalalalaal   ", backError);
+        }
+      }
+    }
+  };
+  const navigateToHome = () => {
+    navigate("/");
+  };
 
   return (
-	<>
-	<div className="mainpage">
-		<div className="navbarmainpage">
-			<img src={icon} className="buttonnav" alt="icon" />
-			<p className="titlemainpage"> TRANSCENDENCE </p>
-		</div>
-		<div className="Insidemain">
-			<div className="navbarbox">
-				<img src={icon} className="buttonnav" alt="icon" />
-				<p className="titlebox"> SETTINGS </p>
-			</div>
-		<div className="threerow">
+    <>
+      <div className="mainpage">
+        <div className="navbarmainpage">
+          <img src={icon} className="buttonnav" alt="icon" />
+          <p className="titlemainpage"> TRANSCENDENCE </p>
+        </div>
+        <div className="Insidemain">
+          <div className="navbarbox">
+            <img src={icon} className="buttonnav" alt="icon" />
+            <p className="titlebox"> SETTINGS </p>
+          </div>
+          <div className="threerow">
+            {/* premier */}
+            <div className="boxrowsettings">
+              <div className="navbarsmallbox">
+                <p className="boxtitle"> CHANGE USERNAME </p>
+              </div>
+              <form className="formsettings" onSubmit={handleSubmit}>
+                <label className="labelcss">
+                  <input
+                    maxLength={9}
+                    className="inputcss"
+                    type="text"
+                    value={newUsername}
+                    placeholder="type new username"
+                    onChange={(e) => setNewUsername(e.target.value)}
+                  />
+                </label>
+                <button className="buttonsettings" type="submit">
+                  update
+                </button>
+              </form>
+              <div className="footersmallbox">
+                <br></br>
+              </div>
+            </div>
 
-{/* premier */}
-	<div className="boxrowsettings">
-		<div className="navbarsmallbox">
-			<p className="boxtitle"> CHANGE USERNAME </p>
-		</div>
-		<form className='formsettings' onSubmit={handleSubmit}>
-			<label className='labelcss'>
-			<input
-				maxLength={9}
-				className='inputcss'
-				type="text"
-				value={newUsername}
-				placeholder="type new username"
-				onChange={(e) => setNewUsername(e.target.value)} />
-			</label>
-			<button className='buttonsettings' type="submit">update</button>
-		</form>
-		<div className="footersmallbox">
-			<br></br>
-		</div>
-	</div>
+            {/* deuxieme */}
+            <div className="boxrowsettings">
+              <div className="navbarsmallbox">
+                <p className="boxtitle"> CHANGE AVATAR </p>
+              </div>
+              <img src={ImgUrl} alt="user avatar"></img>
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+                <button onClick={changePic}>Upload</button>
+              </div>
+              <div className="footersmallbox">
+                <br></br>
+              </div>
+            </div>
 
-	{/* deuxieme */}
-	<div className="boxrowsettings">
-		<div className="navbarsmallbox">
-			<p className="boxtitle"> CHANGE AVATAR </p>
-		</div>
-		<img src={ImgUrl} alt='user avatar'></img>
-		<div>
-			<input type="file" accept="image/*" onChange={handleFileChange} />
-			<button onClick={changePic}>Upload</button>
-		</div>
-		<div className="footersmallbox">
-			<br></br>
-		</div>
-	</div>
-
-{/* troisieme */}
-	<div className="boxrowsettings">
-		<div className="navbarsmallbox">
-			<p className="boxtitle"> 2FAC AUTH </p>
-		</div>
-		<div className="twoFA">
-			<button className="twoFAenabled" onClick={() => twoFAEnable(navigate, user)}>enable</button>
-			<button className="twoFAdisabled" onClick={() => twoFADisable({user, setUser})}>disable</button>
-		</div>
-		<div className="footersmallbox">
-			<br></br>
-		</div>
-	</div>
-
-	</div>
-	<div className="footerprofilsettings">
-		{/* <br></br> */}
-		<button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
-		<button className="logoutBtn" onClick={navigateToHome}>HOME</button>
-		<img src={logo} className="logo" alt="icon" />
-	</div>
-	</div>
-	</div>
-	</>
+            {/* troisieme */}
+            <div className="boxrowsettings">
+              <div className="navbarsmallbox">
+                <p className="boxtitle"> 2FAC AUTH </p>
+              </div>
+              <div className="twoFA">
+                <button
+                  className="twoFAenabled"
+                  onClick={() => twoFAEnable(navigate, user)}
+                >
+                  enable
+                </button>
+                <button
+                  className="twoFAdisabled"
+                  onClick={() => twoFADisable({ user, setUser })}
+                >
+                  disable
+                </button>
+              </div>
+              <div className="footersmallbox">
+                <br></br>
+              </div>
+            </div>
+          </div>
+          <div className="footerprofilsettings">
+            {/* <br></br> */}
+            <button
+              className="logoutBtn"
+              onClick={() => Logout({ user, setUser })}
+            >
+              LOG OUT{" "}
+            </button>
+            <button className="logoutBtn" onClick={navigateToHome}>
+              HOME
+            </button>
+            <img src={logo} className="logo" alt="icon" />
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

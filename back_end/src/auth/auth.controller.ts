@@ -186,9 +186,11 @@ export class AuthController{
      * 
      * *********************/
     @Get('logout')
-    async   logout(@Res() res: any){
-        res.clearCookie('access_token').status(200).send();
-		//TODO: set log2FA false hihihi
-		//TODO: wipe all user data en fait
+		@UseGuards(...AuthenticatedGuard)
+    async   logout(@Res() res: any, @Req() req: any){
+			//console.log("IN LOGOUT:", req, req.user);
+			await this.userService.updateUserStatuIG(req.user.id, 'OFFLINE');
+			await this.userService.setLog2FA(req.user, false);
+      res.clearCookie('access_token').status(200).send();
     }
 }
