@@ -31,6 +31,7 @@ import GameFriend from './GameFriend';
 import { twoFAEnable, twoFADisable } from './components/auth/2faComp';
 import ChatChannel from './components/chat/ChatChannel';
 import PrivateChat from './components/chat/PrivateChat';
+import GamePage from './gamePage';
 
 export const App: React.FC = () => {
   //const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
@@ -77,6 +78,7 @@ export const App: React.FC = () => {
 		      <Route path="/leaderboard" element={<ProtectedRoute><Classement /></ProtectedRoute>} />
 		      <Route path="/acceptMatch/:id" element={<ProtectedRoute><AcceptMatch /></ProtectedRoute>} />
 		      <Route path="/gameFriend" element={<ProtectedRoute><GameFriend /></ProtectedRoute>} />
+		      <Route path="/gamePage" element={<ProtectedRoute><GamePage /></ProtectedRoute>} />
         </Routes>
     </AuthProvider>
     </WebsocketProvider>

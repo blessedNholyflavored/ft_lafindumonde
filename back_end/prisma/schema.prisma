@@ -36,6 +36,9 @@ model User {
 	InvitFriendSent		Friendship[]			@relation("SentFriendships")
 	InvitFriendReceived	Friendship[]			@relation("ReceivedFriendships")
 
+	sentInvitations		ChatroomInvitations[]	@relation("SentInvitations")
+	receivedInvitations	ChatroomInvitations[]	@relation("ReceidedInvitations")
+
 	// achievements		UserAchievement[]
 	// @@map("users")
 
@@ -130,6 +133,8 @@ model Chatroom {
 	users	UserOnChannel[]
 	hash			String?
 	roomMess		ChatroomMessage[]
+	invitations		ChatroomInvitations[]
+
 }
 
 model ChatroomMessage {
@@ -140,6 +145,19 @@ model ChatroomMessage {
   chatroom			Chatroom @relation(fields: [chatroomId], references: [id])
   senderId			Int
   sender			User    @relation(fields: [senderId], references: [id])
+}
+
+model ChatroomInvitations {
+	id			Int					@id @default(autoincrement())
+	status		InvitationsStatus	@default(PENDING)
+	chatroomId	Int
+	chatroom	Chatroom			@relation(fields: [chatroomId], references: [id])
+	senderId	Int
+	sender		User				@relation(name: "SentInvitations", fields: [senderId], references: [id])
+	receiverId	Int
+	receiver	User				@relation(name: "ReceidedInvitations", fields: [receiverId], references: [id])
+	createdAt	DateTime			@default(now())
+	@@unique([chatroomId, senderId, receiverId])
 }
 
 model UserOnChannel {
@@ -170,4 +188,10 @@ enum UserStatusOnChannel {
 	CLEAN
 	MUTE
 	BAN
+}
+
+enum InvitationsStatus {
+	PENDING
+	ACCEPTED
+	REJECTED
 }

@@ -30,19 +30,15 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = () => {
-  const navigate = useNavigate();
-  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
-  const [queueCount, setQueueCount] = useState<number>(0);
-  const [queueCountBonus, setQueueCountBonus] = useState<number>(0);
+
   const [notifyMSG, setNotifyMSG] = useState<string>('');
   const [notifyType, setNotifyType] = useState<number>(0);
   const [sender, setSender] = useState<number>(0);
+  
   const socket = useContext(WebsocketContext);
-
+  const navigate = useNavigate();
   const { user, setUser } =useAuth();
   // const [recupStatus, setStatus] = useState<string>('');
-  let recupStatus = '';
-  const [inGame, setInGame] = useState<number>(0);
 	let [ImgUrl, setImgUrl] = useState<string>('');
   const [showNotification, setShowNotification] = useState(false);
 
@@ -56,8 +52,10 @@ const Home: React.FC<HomeProps> = () => {
 
 		const userId = user?.id;
 		try {
-			const response = await fetch(`http://localhost:3001/users/${userId}/avatar`, {
+			const response = await fetch(`http://localhost:3000/users/${userId}/avatar`, {
 				method: 'GET',
+        credentials: 'include',
+
 			});
 			if (response.ok) {
 				const pictureURL = await response.text();
@@ -68,8 +66,10 @@ const Home: React.FC<HomeProps> = () => {
 				}
 				else {
 					try {
-					const response = await fetch(`http://localhost:3001/users/uploads/${pictureURL}`, {
+					const response = await fetch(`http://localhost:3000/users/uploads/${pictureURL}`, {
 						method: 'GET',
+            credentials: 'include',
+
 					});
 					if (response.ok) {
 						const blob = await response.blob();
@@ -88,49 +88,7 @@ const Home: React.FC<HomeProps> = () => {
 		}
 	}
 
-  const handlePlayerSelect = async (player: string) => {
-    setSelectedPlayer(player);
 
-    try {
-      const response = await fetch(`http://localhost:3000/users/status/${user?.id}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const recup = await response.text();
-        // setStatus(recup);
-        recupStatus = recup;
-        console.log("ICICICICICICIC", recupStatus);
-      }
-      if (recupStatus !== "INGAME")
-      {
-      if (user)
-      socket?.emit('joinQueue', user.id, 0);
-      setUser(user);
-
-      socket?.on('queueUpdate', (count: number) => {
-        setQueueCount(count);
-        if (count === 2) {
-         socket?.emit('updateUserIG', user?.id);
-          navigate('/game');
-        }
-      
-      });
-    }
-    else if (recupStatus === "INGAME")
-    {
-      setInGame(1);
-    }
-    } catch (error) {
-      console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
-    }
-
-    return () => {
-      if (socket) {
-        socket.off('queueUpdate');
-      }
-    };
-}
 
 if (socket)
 {
@@ -159,32 +117,7 @@ if (socket)
 }
 
 
-const handlePlayerSelect222 = async (player: string) => {
-  setSelectedPlayer(player);
 
-
-  try {
-      if (user)
-    socket?.emit('joinQueue', user.id, 1);
-    setUser(user);
-
-    socket?.on('queueUpdateBonus', (count: number) => {
-      setQueueCountBonus(count);
-      if (count === 2) {  
-       socket?.emit('updateUserIG', user?.id);
-        navigate('/SuperGame');
-      }
-    });
-  } catch (error) {
-    console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
-  }
-
-  return () => {
-    if (socket) {
-      socket.off('queueUpdate');
-    }
-  };
-}
 
 
 
@@ -213,6 +146,9 @@ const handlePlayerSelect222 = async (player: string) => {
   const navigateToSettings = () => {
     navigate('/settings');
     };
+    const navToGamePage = () => {
+      navigate('/gamePage');
+      };
 
   return (
 	<>
@@ -251,7 +187,7 @@ const handlePlayerSelect222 = async (player: string) => {
 
             </div>
 
-            <div className="game" onClick={() => handlePlayerSelect('1')} >
+            <div className="game" onClick={() => navToGamePage()} >
 					<p> PLAY THE GAME </p>
           <img src={gaming} />
             </div>
@@ -259,7 +195,7 @@ const handlePlayerSelect222 = async (player: string) => {
         </main>
         <nav>
             <ul>
-                <li className="menu-item">
+                {/* <li className="menu-item">
                     <a onClick={() => handlePlayerSelect('1')}>
                         <img src={folder4} alt="Menu 1"/>
                         <p  >Matchmaking</p>
@@ -273,14 +209,14 @@ const handlePlayerSelect222 = async (player: string) => {
                 <p>Deja en game mon reuf !</p>
               )}
                     </a>
-                </li>
-                <li className="menu-item">
+                </li> */}
+                {/* <li className="menu-item">
                     <a onClick={() => handlePlayerSelect222('1')}>
                         <img src={folder3} alt="Menu 2"/>
                         <p  >Big Game</p>
                         
                     </a>
-                </li>
+                </li> */}
                 <li className="menu-item">
                     <a onClick={() => NavToSoloPong()}>
                         <img src={folder2} alt="Menu 3"/>

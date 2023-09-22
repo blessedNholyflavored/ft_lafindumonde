@@ -326,7 +326,7 @@ export const Chat = () => {
   const clickToInvite = async (id: number) => {};
 
   return (
-    <div className="main_chat_box">
+    <div className="main_chat_box" style={{background:'darkgreen'}}>
       <div>
         <ul>
           <h1>Liste des channels disponible :</h1>
