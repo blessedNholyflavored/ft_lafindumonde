@@ -13,6 +13,7 @@ import folder2 from "./../../img/folder3.png";
 import folder3 from "./../../img/folder4.png";
 import folder4 from "./../../img/folder5.png";
 import folder0 from "./../../img/folder1.png";
+import folder6 from "./../../img/folder6.png";
 
 
 interface friendsSend {
@@ -406,6 +407,10 @@ const navigateToFriends = () => {
   navigate('/friends');
   };
 
+  const navigateToHome = () => {
+    navigate('/');
+    };
+  
   // const handleCloseNotification = () => {
   //   setShowNotification(false);
   // };
@@ -536,6 +541,12 @@ const navigateToSettings = () => {
         </main>
         <nav>
             <ul>
+            <li className="menu-item">
+                    <a onClick={navigateToHome}>
+                        <img src={folder6} alt="Menu 3"/>
+                        <p  >Home</p>
+                    </a>
+                </li>
                 <li className="menu-item">
                     {/* <a > onClick={() => handlePlayerSelect('1')}> */}
                     <a>

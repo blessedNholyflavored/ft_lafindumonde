@@ -8,10 +8,13 @@ import { twoFAEnable, twoFADisable } from '../auth/2faComp';
 import { Logout } from './../auth/Logout';
 import { useNavigate } from 'react-router-dom';
 import "../../../src/style/Home.css";
-import folder4 from "../../img/folder5.png";
-import folder3 from "../../img/folder3.png";
-import folder2 from "../../img/folder2.png";
-import folder1 from "../../img/folder0.png";
+import folder from "./../../img/folder0.png";
+import folder1 from "./../../img/folder2.png";
+import folder2 from "./../../img/folder3.png";
+import folder3 from "./../../img/folder4.png";
+import folder4 from "./../../img/folder5.png";
+import folder0 from "./../../img/folder1.png";
+import folder6 from "./../../img/folder6.png";
 import nav from "../../img/buttoncomp.png"
 
 export const UserSetting: React.FC = () => {
@@ -181,6 +184,7 @@ export const UserSetting: React.FC = () => {
     </header>
     
     <div className="flex-bg">
+		<main>
 	{/* <div className="mainpage"> */}
 		{/* <div className="navbarmainpage">
 			<img src={icon} className="buttonnav" alt="icon" />
@@ -243,54 +247,77 @@ export const UserSetting: React.FC = () => {
 			<br></br>
 		</div>
 	</div>
+	</div>
 
-
+			</main>
 
 	<nav>
             <ul>
-                <li className="menu-item">
-				<a onClick={() => navigateToHome()}>
-                        <img src={folder4} alt="Menu 1"/>
+            <li className="menu-item">
+                    <a onClick={navigateToHome}>
+                        <img src={folder6} alt="Menu 3"/>
                         <p  >Home</p>
                     </a>
                 </li>
-                
+                <li className="menu-item">
+                    {/* <a > onClick={() => handlePlayerSelect('1')}> */}
+                    <a>
+                        <img src={folder4} alt="Menu 1"/>
+                        <p  >Matchmaking</p>
+                       {/* {(queueCount > 0 || queueCountBonus > 0) &&  (
+    						<p>En attente d'autres joueurs...</p>
+  						)}
+  						{queueCount === 2 && (
+    						<p>La partie commence entre Ldinaut et Mcouppe !</p>
+  						)}
+              { inGame === 1 && (
+                <p>Deja en game mon reuf !</p>
+              )} */}
+                    </a>
+                </li>
+                <li className="menu-item">
+                    {/* <a onClick={() => handlePlayerSelect222('1')}> */}
+                    <a>
+                        <img src={folder3} alt="Menu 2"/>
+                        <p  >Big Game</p>
+                        
+                    </a>
+                </li>
                 <li className="menu-item">
                     <a onClick={() => NavToSoloPong()}>
-                        <img src={folder3} alt="Menu 3"/>
+                        <img src={folder2} alt="Menu 3"/>
                         <p  >Tiny Game</p>
                     </a>
                 </li>
                 <li className="menu-item">
                     <a onClick={navigateToProfPage}>
-                        <img src={folder2} alt="Menu 3"/>
+                        <img src={folder1} alt="Menu 3"/>
                         <p >Profile</p>
                     </a>
                 </li>
                 <li className="menu-item">
                     <a onClick={navigateToSettings}>
-                        <img src={folder1} alt="Menu 3"/>
+                        <img src={folder} alt="Menu 3"/>
                         <p  >Settings</p>
                     </a>
-                    
+                </li>
+                <li className="menu-item">
+                    <a onClick={navigateToFriends}>
+                        <img src={folder0} alt="Menu 3"/>
+                        <p  >Friends</p>
+                    </a>
                 </li>
             </ul>
         </nav>
 	</div>
 
-	</div>
 	<footer>
         <button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
 			<img src={logo} className="logo" alt="icon" />
     </footer>
 	</body>
 
-	<div className="footerprofilsettings">
-		{/* <br></br> */}
-		<button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
-		<button className="logoutBtn" onClick={navigateToHome}>HOME</button>
-		<img src={logo} className="logo" alt="icon" />
-	</div>
+
 	</>
   );
 };

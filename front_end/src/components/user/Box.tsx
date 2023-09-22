@@ -38,7 +38,7 @@ const displayPic = async() => {
 
     const userId = user?.id;
     try {
-        const response = await fetch(`http://localhost:3001/users/${userId}/avatar`, {
+        const response = await fetch(`http://localhost:3000/users/${userId}/avatar`, {
             method: 'GET',
         });
         if (response.ok) {
@@ -50,7 +50,7 @@ const displayPic = async() => {
             }
             else {
                 try {
-                const response = await fetch(`http://localhost:3001/users/uploads/${pictureURL}`, {
+                const response = await fetch(`http://localhost:3000/users/uploads/${pictureURL}`, {
                     method: 'GET',
                 });
                 if (response.ok) {

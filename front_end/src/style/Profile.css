@@ -85,16 +85,15 @@
 
 .threerow{
     display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    margin-top: -50px;
+    margin-left: -50px;
 }
 
-.boxrow {
-    width: 200px;
-    /* height: 500px; */
-    border: 1px solid black;
-    box-shadow: 10px 12px 0px 0px #000;
-    margin: 15px;
-    border-bottom: 1rem solid ;
-  }
+
 
 
   .boxrowsettings:nth-child(1)
@@ -107,10 +106,6 @@
     background-color:#FF90FF;
   }
 
-  /* .boxrowsettings:nth-child(3)
-  {
-    background-color:#FFFF50;
-  } */
 
 
   /* TEMPORAIRE */
@@ -207,13 +202,16 @@
 
 
 .boxrowsettings {
-  width: 250px;
-  height: 200px;
+  width: 400px;
+  height: 400px;
   border: 1px solid black;
   box-shadow: 10px 12px 0px 0px #000;
   margin: 25px;
   border-bottom: 1rem solid ;
+ 
 }
+
+
 .boxrowsettings img {
 	height: 120px;
 }

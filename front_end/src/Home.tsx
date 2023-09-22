@@ -23,6 +23,7 @@ import love from "./img/42lov.png"
 import chatpic from "./img/chatpic.png"
 import gradient from "./img/gradient.png"
 import Notify from './Notify';
+import folder6 from "./img/folder6.png";
 
 
 interface HomeProps {
@@ -56,7 +57,7 @@ const Home: React.FC<HomeProps> = () => {
 
 		const userId = user?.id;
 		try {
-			const response = await fetch(`http://localhost:3001/users/${userId}/avatar`, {
+			const response = await fetch(`http://localhost:3000/users/${userId}/avatar`, {
 				method: 'GET',
 			});
 			if (response.ok) {
@@ -68,7 +69,7 @@ const Home: React.FC<HomeProps> = () => {
 				}
 				else {
 					try {
-					const response = await fetch(`http://localhost:3001/users/uploads/${pictureURL}`, {
+					const response = await fetch(`http://localhost:3000/users/uploads/${pictureURL}`, {
 						method: 'GET',
 					});
 					if (response.ok) {
@@ -187,7 +188,9 @@ const handlePlayerSelect222 = async (player: string) => {
 }
 
 
-
+const navigateToHome = () => {
+	navigate('/');
+  };
 
   const navigateToProfPage = () => {
     navigate(`/users/profile/${user?.id}`);
@@ -259,6 +262,12 @@ const handlePlayerSelect222 = async (player: string) => {
         </main>
         <nav>
             <ul>
+                <li className="menu-item">
+                    <a onClick={navigateToHome}>
+                        <img src={folder6} alt="Menu 3"/>
+                        <p  >Home</p>
+                    </a>
+                </li>
                 <li className="menu-item">
                     <a onClick={() => handlePlayerSelect('1')}>
                         <img src={folder4} alt="Menu 1"/>
