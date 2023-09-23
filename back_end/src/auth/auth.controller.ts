@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards, BadRequestException, UnauthorizedException } from "@nestjs/common";
+import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards, UsePipes, ValidationPipe, BadRequestException, UnauthorizedException } from "@nestjs/common";
 import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
 import { FortyTwoAuthGuard } from "./guards/FortyTwo-auth.guard";
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from "@nestjs/passport";
 import { AuthenticatedGuard } from "./guards/authenticated.guards";
+import { AuthDto } from "src/user/dto/auth.dto";
 //import * as bcrypt from 'bcrypt';
 //import * as speakeasy from 'speakeasy';
 
@@ -68,19 +69,15 @@ export class AuthController{
     }
 
 	@Post('register')
-	async register(@Req() req: any, @Body() body: {username: string, password: string, email: string, id: number, pictureURL: string}, @Res() res: any){
-		if (!body.username || !body.password || !body.email || !body.pictureURL){
-			throw new BadRequestException("password, username or email is missing");
-		}
+	@UsePipes(new ValidationPipe())
+	async register(@Req() req: any, @Body() authDtos: AuthDto, @Res() res: any){
+		//generating ID and checking if ID is already used
 		let newID = await this.authService.idGenerator();
 		while (await this.userService.getUserByID(newID))
 			newID = await this.authService.idGenerator();
-		body.id = newID;
-		if (await this.userService.usernameAuthChecker(body.username) == true){
-			// in case someone already have this username
-			body.username =  body.username + '_';
-		}
-		const user = await this.userService.createUser(body, true);
+		//using specific DTO for locallogin
+		const user = await this.userService.createLocalUser(authDtos, newID);
+		//setting token and ending registering
 		const token = await this.authService.login(user);
 		await this.userService.setLog2FA(user, false);
 		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user, ['totpKey', 'password']), token});

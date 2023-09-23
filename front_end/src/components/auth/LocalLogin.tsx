@@ -65,6 +65,7 @@ export function LocalLogin() {
               type="text"
               value={inputUsername}
               placeholder="toto"
+              required
               onChange={(e) => setInputUsername(e.target.value)}
             />
             <label>Password</label>
@@ -73,6 +74,7 @@ export function LocalLogin() {
               type="password"
               value={inputPassword}
               placeholder="********"
+              required
               onChange={(e) => setInputPassword(e.target.value)}
             />
             <button className="submitLogIn" type="submit">
