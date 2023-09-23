@@ -1,13 +1,12 @@
 import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards, BadRequestException, UnauthorizedException } from "@nestjs/common";
 import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
-//TODO: careful aux .guardSSSS
 import { FortyTwoAuthGuard } from "./guards/FortyTwo-auth.guard";
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from "@nestjs/passport";
 import { AuthenticatedGuard } from "./guards/authenticated.guards";
-import * as bcrypt from 'bcrypt';
-import * as speakeasy from 'speakeasy';
+//import * as bcrypt from 'bcrypt';
+//import * as speakeasy from 'speakeasy';
 
 @Controller("auth")
 export class AuthController{
@@ -58,11 +57,12 @@ export class AuthController{
 		}
 		const user = await this.userService.getUserByUsername(body.username);
 		if (!user)
-			throw new BadRequestException("Username doesn't exist");
-		// check du password
+			return res.status(404).json({ message: { statusCode: 404, error: 'Not Found', message: "User doesn't exist" } }).send();
+		// check if password is correct
+		// else returns HTTP401 as RFC 7235 recommends
 		if (await this.authService.passwordChecker(body.password, user) == false)
 			throw new UnauthorizedException("Wrong password");
-		// sinn throw error
+		//creates JWT
 		const token = await this.authService.login(user);
 		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user,['totpKey', 'password']), token});
     }

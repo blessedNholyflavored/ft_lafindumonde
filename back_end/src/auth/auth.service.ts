@@ -15,10 +15,11 @@ export class AuthService {
 	constructor(
 		private readonly userService: UserService,
 		private readonly jwtService: JwtService,
-		private  config: ConfigService
+		private readonly config: ConfigService
 	){}
 
 	async login(user: any) {
+		// JWT creation
 		const payload = {sub: user.id};
 		return {
 			access_token: this.jwtService.sign(payload,{
@@ -29,9 +30,9 @@ export class AuthService {
 	}
 
 	async retrieveUser(data: any){
+		//check if user already exists, else user creation
 		const user = await this.userService.getUserByID(data.id);
 		if (!user){
-		// TODO: check what happens if data is empty
 			if (await this.userService.usernameAuthChecker(data.username) == true){
 				// in case someone already have this username
 				data.username =  data.username + '_';
@@ -42,17 +43,25 @@ export class AuthService {
 	}
 
 	keyGenerator(): string {
+		//generates totpKey
 		const buffer = crypto.randomBytes(20);
 		const secret = encode(buffer);
 		return secret;
 	}
 
-	idGenerator(){
-		const test = Math.floor(Math.random() * 99999);
-		return test;
+	async idGenerator(){
+		// generates random ID for local login
+		let idCreated = Math.floor(Math.random() * 99999);
+		const userTest = await this.userService.getUserByID(idCreated);
+		if (userTest){
+			idCreated = await this.idGenerator();
+		}
+		return idCreated;
 	}
 
 	async generate2FAkey(user: any){
+		// creates QR code from TotpKey generated
+		// + add key to user
 		const totpSecret = this.keyGenerator();
 		// TODO: find a better name
 		const issuer =  'AwesomeLameApp';
@@ -63,6 +72,7 @@ export class AuthService {
 
 	async getUserBySocket(socket: Socket) : Promise<User | undefined> {
 		try {
+			//gets user by cookie
 			const token = socket.handshake.headers?.cookie?.split("; ")?.find((row) => row.startsWith("access_token"))?.split("=")[1];
 			const payload = this.jwtService.verify(token, {secret: this.config.get('JWT_SECURE_KEY')});
 			socket.user = await this.userService.getUserByID(payload.sub);
