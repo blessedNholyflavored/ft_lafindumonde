@@ -55,8 +55,6 @@ export class FriendsService {
 
 async unBlock(senderId: string, recipientId: string)
 {
-	console.log("IN FRONT UNBLOCK //// senderID:", senderId);
-	console.log("recipientId = ", recipientId);
   await prisma.user.update({
     where: {
       id: parseInt(senderId),
