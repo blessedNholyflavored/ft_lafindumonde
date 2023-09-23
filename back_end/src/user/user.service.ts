@@ -8,7 +8,7 @@ import { PrismaClient, User, USER_STATUS } from '@prisma/client'; // Renommez "U
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaUserCreateInput } from './user-create.input';
 import { Game } from '../interfaces';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt'; 
 //import { createUserDto } from 'src/dto/createUserDto.dto';
 // import { UserAchievements } from '../user/user.interface';
 import { merge } from 'lodash';

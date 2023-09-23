@@ -36,6 +36,16 @@ interface channels {
   id: number;
 }
 
+interface invSend {
+  id: string;
+  status: string;
+  senderId: number;
+  recipientId: number;
+  username: string;
+  isBlocked: boolean;
+  chatRoomName: string;
+}
+
 export const Chat = () => {
   const { user, setUser } = useAuth();
   const { recipient } = useParams();
@@ -61,6 +71,8 @@ export const Chat = () => {
   const [isPrivatechan, setIsPrivatechan] = useState<number | null>(null);
   const [isPrivateConvButtonDisabled, setIsPrivateConvButtonDisabled] =
     useState(false);
+  const [invSend, setInvSend] = useState<invSend[]>([]);
+  const [invReceive, setInvReceive] = useState<invSend[]>([]);
 
   async function fetchYourRoomsList() {
     try {
@@ -128,7 +140,7 @@ export const Chat = () => {
   async function fetchUsernameById(userId: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/users/${user?.id}/username`,
+        `http://localhost:3000/users/${userId}/username`,
         {
           method: "GET",
           credentials: "include",
@@ -140,6 +152,29 @@ export const Chat = () => {
         );
       }
       const userData = await response.text();
+      return userData;
+    } catch (error) {
+      console.error("Erreur :", error);
+      return null; // En cas d'erreur, renvoyez null ou une valeur par défaut
+    }
+  }
+
+  async function fetchRoomNameById(roomId: string) {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/chat/roomName/${roomId}/`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error(
+          `Erreur lors de la récupération de l'utilisateur avec l'ID ${roomId}.`
+        );
+      }
+      const userData = await response.text();
+      console.log("ciicicic:  ", userData);
       return userData;
     } catch (error) {
       console.error("Erreur :", error);
@@ -191,11 +226,19 @@ export const Chat = () => {
     async function fetchPossibleInvite() {
       const scores = await fetchPossibleInviteList();
     }
+    async function fetchInviteSend() {
+      const scores = await fetchInviteSendList();
+    }
+    async function fetchInviteReceive() {
+      const scores = await fetchInviteReceiveList();
+    }
 
     fetchYourRooms();
     fetchRooms();
     fetchPrivateConv();
     fetchPossibleInvite();
+    fetchInviteSend();
+    fetchInviteReceive();
   }, [activeChannel]);
 
   const checkRoomAlreadyExist = async () => {
@@ -323,10 +366,192 @@ export const Chat = () => {
     }
   };
 
-  const clickToInvite = async (id: number) => {};
+  async function fetchInviteSendList() {
+    if (activeChannel) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/chat/invSend/${user?.id}/${activeChannel}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Erreur lors de la récupération des scores.");
+        }
+        const data = await response.json();
+        const updatedData = await Promise.all(
+          data.map(
+            async (invSend: {
+              username: any;
+              status: string;
+              receiverId: number;
+              senderId: number;
+            }) => {
+              // Utilisez recupUsername pour obtenir le nom d'utilisateur
+              invSend.username = await fetchUsernameById(
+                invSend.receiverId.toString()
+              );
+              return invSend; // Retournez l'ami mis à jour
+            }
+          )
+        );
+        setInvSend(updatedData);
+        return data[0];
+      } catch (error) {
+        console.error("Erreur:", error);
+        return [];
+      }
+    }
+  }
+
+  async function checkBlocked(senderId: string, recipientId: string) {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/friends/blocked/${senderId}/${recipientId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des données.");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Erreur:", error);
+      return false;
+    }
+  }
+
+  async function fetchInviteReceiveList() {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/chat/invReceive/${user?.id}/`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+      const data = await response.json();
+      const updatedData = await Promise.all(
+        data.map(
+          async (invSend: {
+            chatRoomName: string | null;
+            chatroomId: number;
+            username: any;
+            status: string;
+            receiverId: number;
+            senderId: number;
+            isBlocked: boolean;
+          }) => {
+            // Utilisez recupUsername pour obtenir le nom d'utilisateur
+            invSend.username = await fetchUsernameById(
+              invSend.senderId.toString()
+            );
+            invSend.chatRoomName = await fetchRoomNameById(
+              invSend.chatroomId.toString()
+            );
+            invSend.isBlocked = await checkBlocked(
+              invSend.senderId.toString(),
+              invSend.receiverId.toString()
+            );
+            return invSend;
+          }
+        )
+      );
+      console.log("for see:  ", updatedData);
+      setInvReceive(updatedData);
+      return data[0];
+    } catch (error) {
+      console.error("Erreur:", error);
+      return [];
+    }
+  }
+
+  const clickToInvite = async (id: number) => {
+    if (!activeChannel) {
+      alert("Recipient ID is missing.");
+      return;
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3000/chat/invite/${user?.id}/${id}/${activeChannel}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        console.log(response);
+        // if (user && await checkBlockedForNotify(user?.id.toString(), recipientId) === false)
+        // socket.emit('notifyFriendShip', id);
+        alert("Invitation created successfully.");
+      } else {
+        console.error("Error creating friendship: request is pending");
+        alert("Error creating friendship: request is pending");
+      }
+    } catch (error) {
+      console.error("Error creating friendship:", error);
+    }
+  };
+
+  async function refuseInvite(id: string) {
+    try {
+      const response = await fetch(`http://localhost:3000/chat/refuse/${id}`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+    window.location.reload();
+  }
 
   return (
-    <div className="main_chat_box" style={{background:'darkgreen'}}>
+    <div className="main_chat_box" style={{ background: "darkgreen" }}>
+      <div>
+        <ul>
+          <h1>Liste des invitations recues :</h1>
+          {invReceive.map((chan) => (
+            <div key={chan.id}>
+              {!chan.isBlocked && (
+                <div>
+                  <button
+                    onClick={() =>
+                      clickToJoinChan(
+                        parseInt(chan.id),
+                        chan.chatRoomName,
+                        "PUBLIC"
+                      )
+                    }
+                  >
+                    <div>
+                      inviter par: {chan.username} pour le chan:{" "}
+                      {chan.chatRoomName}
+                    </div>
+                  </button>
+                  <button onClick={() => refuseInvite(chan.id.toString())}>
+                    Cancel invite
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </ul>
+      </div>
       <div>
         <ul>
           <h1>Liste des channels disponible :</h1>
@@ -413,6 +638,21 @@ export const Chat = () => {
                       </div>
                       <button onClick={() => clickToInvite(chan.id)}>
                         Invite to chan
+                      </button>
+                    </div>
+                  ))}
+                </ul>
+                <ul>
+                  <h1>Liste des gens que as inviter :</h1>
+                  {invSend.map((invsend) => (
+                    <div key={invsend.id}>
+                      <div>
+                        id: {invsend.id} - user {invsend.username}
+                      </div>
+                      <button
+                        onClick={() => refuseInvite(invsend.id.toString())}
+                      >
+                        Cancel invite
                       </button>
                     </div>
                   ))}

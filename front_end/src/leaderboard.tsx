@@ -1,6 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
-import { useAuth } from './components/auth/AuthProvider';
-import { WebsocketContext } from './WebsocketContext';
+import React, { useState, useEffect } from 'react';
 
 
 interface PlayerScore {

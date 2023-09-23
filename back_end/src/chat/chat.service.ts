@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Room, privateMessage } from 'src/interfaces';
-import { PrismaClient, Chatroom, UserChannelVisibility } from '@prisma/client';
+import { PrismaClient, Chatroom, UserChannelVisibility, InvitationsStatus } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
 import { merge } from 'lodash';
 const prisma = new PrismaClient();
@@ -21,7 +21,7 @@ export class ChatService {
         NOT: {
           users: {
             some: {
-              userId: parseInt(userId, 10),
+              userId: parseInt(userId),
             },
           },
         },
@@ -183,52 +183,50 @@ export class ChatService {
     async JoinRoom(nameRoom: string, option: UserChannelVisibility, hash: string, userId: string): Promise<void> {
       const allChatRooms = await this.getAllChatRooms();
       const chatRoom = allChatRooms.find((room) => room.name === nameRoom);
-  
+    
       const existingUserRoom = await prisma.userOnChannel.findFirst({
         where: {
-          userId: parseInt(userId, 10),
+          userId: parseInt(userId),
           channelId: chatRoom.id,
         },
       });
-  
+    
       if (existingUserRoom) {
-        return ;
+        return;
       }
-
-      if (chatRoom.visibility == UserChannelVisibility.PWD_PROTECTED)
-      {
-        if (chatRoom.hash != hash)
-          return ;
+    
+      if (chatRoom.visibility == UserChannelVisibility.PWD_PROTECTED) {
+        if (chatRoom.hash != hash) {
+          return;
+        }
       }
-  
+    
+      const pendingInvitation = await prisma.chatroomInvitations.findFirst({
+        where: {
+          receiverId: parseInt(userId),
+          chatroomId: chatRoom.id,
+          status: InvitationsStatus.PENDING,
+        },
+      });
+    
+      if (pendingInvitation) {
+        await prisma.chatroomInvitations.delete({
+          where: {
+            id: pendingInvitation.id,
+          },
+        });
+      }
+    
       await prisma.userOnChannel.create({
         data: {
-          userId: parseInt(userId, 10),
+          userId: parseInt(userId),
           channelId: chatRoom.id,
           role: 'USER',
         },
       });
     }
+    
   
-  // async fetchAllGames(id: string)
-  // {
-  //     const ret1 = await prisma.user.findUnique({
-  //         where: { id: parseInt(id) },
-  //         select: { game1: true },
-  //       });
-  //       const ret2 = await prisma.user.findUnique({
-  //           where: { id: parseInt(id) },
-  //           select: { game2: true },
-  //       });
-  //       if (ret1 && ret2)
-  //       {
-  //           const ret = merge(ret1, ret2);
-  //           const allGames: Game[] = [...ret.game1, ...ret.game2].sort(
-  //               (a, b) => Date.parse(a.start_at) - Date.parse(b.start_at)
-  //           );
-  //       return (allGames);
-  //   }
-  // }
 
 async recupMessById(recipient:string, sender:string)
 {
@@ -337,7 +335,6 @@ async recupPrivate(userId: string){
     },
   });
 
-  // Utilisez Set pour éliminer les doublons des IDs des utilisateurs
   const privateMessageRecipients = new Set(
     user.PrivMessEmited.map((message) => message.recipientId)
   );
@@ -345,7 +342,6 @@ async recupPrivate(userId: string){
     user.PrivMessReceived.map((message) => message.senderId)
   );
 
-  // Fusionnez les deux ensembles pour obtenir toutes les IDs des utilisateurs avec qui l'utilisateur a eu des messages privés
   const privateMessageUsers = new Set([
     ...privateMessageRecipients,
     ...privateMessageSenders,
@@ -378,6 +374,109 @@ async getUsersInRoom(roomId: string): Promise<number[]> {
   });
 
   return usersInRoom.map((user) => user.userId);
+}
+
+async recupInvSend(senderId: string, roomId: string) {
+  try {
+    const invitations = await prisma.chatroomInvitations.findMany({
+      where: {
+        senderId: parseInt(senderId),
+        chatroomId: parseInt(roomId),
+      },
+    });
+
+    console.log(invitations);
+    return invitations
+  } catch (error) {
+    console.error('Erreur lors de la récupération des invitations envoyées :', error);
+    throw error;
+  }
+}
+
+async recupInvReceive(userId: string) {
+  try {
+    const invitations = await prisma.chatroomInvitations.findMany({
+      where: {
+        receiverId: parseInt(userId),
+      },
+    });
+
+    return invitations;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des invitations reçues :', error);
+    throw error;
+  }
+}
+
+async getRoomName(id: string) {
+  const room = await prisma.chatroom.findUnique({
+    where: {
+      id: parseInt(id),
+    },
+    select: {
+      name: true,
+    },
+  });
+
+  return room.name;
+}
+
+
+async createInvite(senderId: string, recipientId: string, roomId: string): Promise<void> {
+  try {
+    // Vérifiez si une invitation similaire existe déjà
+    const existingInvitation = await prisma.chatroomInvitations.findFirst({
+      where: {
+        chatroomId: parseInt(roomId),
+        senderId: parseInt(senderId),
+        receiverId: parseInt(recipientId),
+        status: InvitationsStatus.PENDING,
+      },
+    });
+
+    if (!existingInvitation) {
+      // Si aucune invitation similaire n'existe, créez une invitation
+      await prisma.chatroomInvitations.create({
+        data: {
+          chatroomId: parseInt(roomId),
+          senderId: parseInt(senderId),
+          receiverId: parseInt(recipientId),
+          status: InvitationsStatus.PENDING,
+        },
+      });
+    }
+  } catch (error) {
+    console.error('Erreur lors de la création de l\'invitation :', error);
+    throw error;
+  }
+}
+
+async refuseInvite(id: string)
+{
+  const friendShipUpdate = await prisma.chatroomInvitations.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: {
+      status: InvitationsStatus.REJECTED,
+    },
+  })
+  const friendShip = await prisma.chatroomInvitations.delete({
+    where: {
+      id: parseInt(id),
+    },
+  })
+  
+}
+
+async leftChan(roomId: string, userId: string)
+{
+  await prisma.userOnChannel.deleteMany({
+    where: {
+      channelId: parseInt(roomId),
+      userId: parseInt(userId),
+    },
+  });
 }
 
 }

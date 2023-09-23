@@ -108,9 +108,27 @@ export const ChatChannel = () => {
     setValue("");
   };
 
+  const leftChannel = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/chat/leftChan/${id}/${user?.id}`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+    window.location.reload();
+  };
+
   return (
     <div>
       <div>
+      <button onClick={leftChannel}>
+          Quitter le channel ? 
+        </button>
         {id && (
           <ul>
             <h1>Liste des msgs envoyes :</h1>

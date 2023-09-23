@@ -46,6 +46,12 @@ export class ChatController {
     return this.chatService.recupYourRooms(id);
   }
 
+  @Get('/invSend/:id/:id1')
+  async invSend(@Param('id') id: string, @Param('id1') id1: string)
+  {
+    return this.chatService.recupInvSend(id, id1);
+  }
+
   @Get('/recupRooms/:id')
   async recupRooms(@Param('id') id: string)
   {
@@ -58,11 +64,38 @@ export class ChatController {
     return this.chatService.recupPrivate(id);
   }
 
+  @Get('/invReceive/:id')
+  async recupInvReceive(@Param('id') id: string)
+  {
+    return this.chatService.recupInvReceive(id);
+  }
+
+  @Get('/roomName/:id')
+  async getRoomName(@Param('id') id: string)
+  {
+    return this.chatService.getRoomName(id);
+  }
+
   @Get('/usersNotInRoom/:id')
   async recupUserNotInChan(@Param('id') id: number)
   {
     return this.chatService.recupUserNotInChan(id.toString());
   }
 
+  @Post('/invite/:id/:id1/:id2')
+  async invite(@Param('id') senderId: string,@Param('id1') recipientId: string,@Param('id2') roomId: string)
+  {
+    return this.chatService.createInvite(senderId.toString(),recipientId.toString(), roomId.toString());
+  }
+
+  @Post('refuse/:id')
+  refuseFriend(@Param('id') id: string) {
+    return this.chatService.refuseInvite(id);
+  }
+
+  @Post('leftChan/:id/:id1')
+  leftChan(@Param('id') roomId: string, @Param('id1') userId: string) {
+    return this.chatService.leftChan(roomId, userId);
+  }
   
 }
