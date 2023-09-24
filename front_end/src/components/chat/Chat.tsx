@@ -174,7 +174,6 @@ export const Chat = () => {
         );
       }
       const userData = await response.text();
-      console.log("ciicicic:  ", userData);
       return userData;
     } catch (error) {
       console.error("Erreur :", error);
@@ -213,6 +212,25 @@ export const Chat = () => {
     }
   }
 
+  // useEffect(() => {
+  //   async function fetchYourRooms() {
+  //     const scores = await fetchYourRoomsList();
+  //   }
+  //   async function fetchRooms() {
+  //     const scores = await fetchRoomsList();
+  //   }
+  //   async function fetchPossibleInvite() {
+  //     const scores = await fetchPossibleInviteList();
+  //   }
+  //   async function fetchInviteSend() {
+  //     const scores = await fetchInviteSendList();
+  //   }
+  //   async function fetchInviteReceive() {
+  //     const scores = await fetchInviteReceiveList();
+  //   }
+
+  // }, []);
+
   useEffect(() => {
     async function fetchYourRooms() {
       const scores = await fetchYourRoomsList();
@@ -231,6 +249,30 @@ export const Chat = () => {
     }
     async function fetchInviteReceive() {
       const scores = await fetchInviteReceiveList();
+    }
+    if (socket) {
+      socket.on("refreshListRoom", () => {
+        fetchPossibleInvite();
+        fetchInviteSend();
+        fetchInviteReceive();
+        fetchYourRooms();
+        fetchRooms();
+      });
+    }
+    if (socket) {
+      socket.on("refreshMessages", () => {
+        fetchPrivateConv();
+      });
+    }
+    if (socket) {
+      socket.on("refreshMessagesRoom", () => {
+        fetchPossibleInvite();
+      });
+    }
+    if (socket) {
+      socket.on("NotifyReceiveChannelInvit", () => {
+        fetchInviteReceive();
+      });
     }
 
     fetchYourRooms();
@@ -269,9 +311,12 @@ export const Chat = () => {
   };
 
   const joinRoom = async () => {
-    if ((await checkRoomAlreadyExist()) === true)
+    if ((await checkRoomAlreadyExist()) === true) {
       socket.emit("joinChatRoom", valueRoom, selectedOption, password);
-    else alert("room existe po");
+      setTimeout(() => {
+        socket.emit("reloadListRoom", activeChannel);
+      }, 100);
+    } else alert("room existe po");
     return "";
   };
 
@@ -299,6 +344,9 @@ export const Chat = () => {
         );
       }
     }
+    setTimeout(() => {
+      socket.emit("reloadListRoomAtJoin", name);
+    }, 100);
   };
 
   const handleOptionChange = (e: { target: { value: string } }) => {
@@ -335,7 +383,7 @@ export const Chat = () => {
     if (activeChannel) {
       try {
         const response = await fetch(
-          `http://localhost:3000/chat/usersNotInRoom/${activeChannel}`,
+          `http://localhost:3000/chat/usersNotInRoom/${activeChannel}/${user?.id}`,
           {
             method: "GET",
             credentials: "include",
@@ -357,7 +405,6 @@ export const Chat = () => {
             })
           );
           setNotInRoom(friendInfo);
-          console.log("dcscddsc   ", notInRoom);
         }
       } catch (error) {
         console.error("Erreur :", error);
@@ -388,11 +435,10 @@ export const Chat = () => {
               receiverId: number;
               senderId: number;
             }) => {
-              // Utilisez recupUsername pour obtenir le nom d'utilisateur
               invSend.username = await fetchUsernameById(
                 invSend.receiverId.toString()
               );
-              return invSend; // Retournez l'ami mis à jour
+              return invSend;
             }
           )
         );
@@ -503,6 +549,10 @@ export const Chat = () => {
     } catch (error) {
       console.error("Error creating friendship:", error);
     }
+    setTimeout(() => {
+      socket.emit("reloadListRoom", activeChannel);
+      socket.emit("NotifyInviteChannel", id);
+    }, 100);
   };
 
   async function refuseInvite(id: string) {
@@ -708,6 +758,7 @@ export const Chat = () => {
         </button>
       </div>
       {showChatChannel && <ChatChannel />}
+      {!showConv && recipient && <PrivateChat />}
       {showConv && <PrivateChat />}
     </div>
   );

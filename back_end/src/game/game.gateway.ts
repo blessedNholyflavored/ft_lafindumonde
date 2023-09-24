@@ -535,4 +535,51 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
         });
       });
     }
+
+    @SubscribeMessage('reloadListRoom')
+    async onNewListRoom(@MessageBody() id: string,@ConnectedSocket() socket: Socket)
+    {
+      let user1;
+      const Ids = this.chatService.getUsersInRoom(id);
+      (await Ids).forEach((userId) => {
+        this.playerConnections.forEach((value, key) => {
+          if (key === userId)
+            user1 = value;
+          if (user1) {
+            user1.emit("refreshListRoom");
+          }
+        });
+      });
+    }
+    @SubscribeMessage('reloadListRoomAtJoin')
+    async onNewListRoomAtJoin(@MessageBody() name: string,@ConnectedSocket() socket: Socket)
+      {
+        const allRooms = this.chatService.getAllChatRooms();
+        const goodRoom = (await allRooms).find((room) => room.name === name);
+        let user1;
+        const Ids = this.chatService.getUsersInRoom(goodRoom.id.toString());
+        (await Ids).forEach((userId) => {
+          this.playerConnections.forEach((value, key) => {
+            if (key === userId)
+              user1 = value;
+            if (user1) {
+              user1.emit("refreshListRoom");
+            }
+          });
+        });
+      }
+
+      @SubscribeMessage('NotifyInviteChannel')
+      async onNotifyInviteChannel(@MessageBody() id: number,@ConnectedSocket() socket: Socket)
+      {
+        let user1;
+        const NuserId = Number(id);
+        this.playerConnections.forEach((value, key) => {
+          if (key === NuserId)
+            user1 = value;
+        });
+        user1.emit("NotifyReceiveChannelInvit");
+      }
+
+      
 }

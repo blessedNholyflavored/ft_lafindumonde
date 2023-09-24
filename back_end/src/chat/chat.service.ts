@@ -127,7 +127,6 @@ export class ChatService {
 
   async CreateRoom(nameRoom: string, option: string, hash:string, id: string) {
 
-    console.log("nameRoom: ", nameRoom, "   option: ", option, "   hash: ", hash);
     let visibility: UserChannelVisibility;
 
     if (option == "public")
@@ -176,7 +175,6 @@ export class ChatService {
         },
       });
   
-      console.log(userRooms)
       return userRooms.map((userRoom) => userRoom.channel);
     }
 
@@ -279,9 +277,9 @@ async recupRoomMess(roomId:string)
 }
 }
 
-async recupUserNotInChan(roomId: string)
-{
+async  recupUserNotInChan(roomId: string, userId: string) {
   try {
+    // Récupérer les IDs des utilisateurs dans le canal
     const usersInChannel = await prisma.userOnChannel.findMany({
       where: {
         channelId: parseInt(roomId),
@@ -293,11 +291,25 @@ async recupUserNotInChan(roomId: string)
 
     const userIdsInChannel = usersInChannel.map((user) => user.userId);
 
-    const usersNotInChannel = await prisma.user.findMany({
+    // Récupérer les IDs des utilisateurs ayant reçu des invitations pour ce canal
+    const invitations = await prisma.chatroomInvitations.findMany({
+      where: {
+        chatroomId: parseInt(roomId),
+        receiverId: parseInt(userId),
+      },
+      select: {
+        senderId: true,
+      },
+    });
+
+    const userIdsWithInvitations = invitations.map((invitation) => invitation.senderId);
+
+    // Récupérer les utilisateurs qui ne sont ni dans le canal ni avec des invitations
+    const usersNotInChannelOrWithInvitations = await prisma.user.findMany({
       where: {
         NOT: {
           id: {
-            in: userIdsInChannel,
+            in: [...userIdsInChannel, ...userIdsWithInvitations],
           },
         },
       },
@@ -307,12 +319,13 @@ async recupUserNotInChan(roomId: string)
       },
     });
 
-    return usersNotInChannel.map((user) => ({ id: user.id, username: user.username }));
+    return usersNotInChannelOrWithInvitations.map((user) => ({ id: user.id, username: user.username }));
   } catch (error) {
-    console.error('Erreur lors de la récupération des IDs et des usernames des utilisateurs non présents dans la salle de discussion :', error);
+    console.error('Erreur lors de la récupération des IDs et des usernames des utilisateurs non présents dans la salle de discussion ou avec des invitations en attente :', error);
     throw error;
   }
 }
+
 
 
 
@@ -360,8 +373,34 @@ async getRole(senderId: string, roomId: string) {
     },
   });
 
-  return userRole.role;
+  if (userRole)
+    return userRole.role;
 }
+
+async getUsersInRoomForList(roomId: string) {
+  const usersInRoom = await prisma.userOnChannel.findMany({
+    where: {
+      channelId: parseInt(roomId),
+    },
+    select: {
+      userId: true,
+      role: true, 
+      user: {
+        select: {
+          username: true,
+        },
+      },
+    },
+  });
+
+  return usersInRoom.map((user) => ({
+    id: user.userId,
+    username: user.user.username,
+    role: user.role,
+  }));
+}
+
+
 
 async getUsersInRoom(roomId: string): Promise<number[]> {
   const usersInRoom = await prisma.userOnChannel.findMany({
@@ -385,7 +424,6 @@ async recupInvSend(senderId: string, roomId: string) {
       },
     });
 
-    console.log(invitations);
     return invitations
   } catch (error) {
     console.error('Erreur lors de la récupération des invitations envoyées :', error);
@@ -418,7 +456,9 @@ async getRoomName(id: string) {
     },
   });
 
-  return room.name;
+  if (room)
+    return room.name;
+  return null;
 }
 
 

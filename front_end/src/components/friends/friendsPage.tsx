@@ -328,8 +328,6 @@ export const FriendsPage: React.FC = () => {
   }
 
   async function removeBlocked(sender: string, recipient: string) {
-    console.log(sender);
-    console.log(recipient);
     try {
       const response = await fetch(
         `http://localhost:3000/friends/unblock/${sender}/${recipient}`,
@@ -348,8 +346,6 @@ export const FriendsPage: React.FC = () => {
   }
 
   async function BlockFriend(sender: string, recipient: string) {
-    console.log(sender);
-    console.log(recipient);
     deleteFriend(sender, recipient);
     try {
       const response = await fetch(

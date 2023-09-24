@@ -33,6 +33,12 @@ export class ChatController {
   {
     return this.chatService.getRole(senderId.toString(), roomId.toString());
   }
+
+  @Get('/getUserInRoom/:id/')
+  async getUserInRoom(@Param('id') roomId: number)
+  {
+    return this.chatService.getUsersInRoomForList(roomId.toString());
+  }
   
   @Get('/checkRoomName/:name')
   async checkRoomName(@Param('name') name: string)
@@ -76,10 +82,10 @@ export class ChatController {
     return this.chatService.getRoomName(id);
   }
 
-  @Get('/usersNotInRoom/:id')
-  async recupUserNotInChan(@Param('id') id: number)
+  @Get('/usersNotInRoom/:id/:id1')
+  async recupUserNotInChan(@Param('id') id: number, @Param('id1') userId: string)
   {
-    return this.chatService.recupUserNotInChan(id.toString());
+    return this.chatService.recupUserNotInChan(id.toString(), userId);
   }
 
   @Post('/invite/:id/:id1/:id2')

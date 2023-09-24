@@ -74,9 +74,7 @@ async function fetchPrivMessageList() {
               console.log(error);
             }
       });
-      // Attendez que toutes les promesses se terminent
       await Promise.all(usernamePromises);
-      // Mettez à jour la liste de messages avec les noms d'utilisateur
       setMessageList(data);
       return data[0];
     } catch (error) {
