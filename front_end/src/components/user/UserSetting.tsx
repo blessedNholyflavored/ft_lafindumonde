@@ -150,10 +150,7 @@ export const UserSetting: React.FC = () => {
         }
       }
     }
-  };
-  const navigateToHome = () => {
-    navigate("/");
-  };
+  }
 
   const navigateToProfPage = () => {
     navigate(`/users/profile/${user?.id}`);
@@ -174,6 +171,9 @@ export const UserSetting: React.FC = () => {
   const navigateToSettings = () => {
     navigate("/settings");
   };
+	const navigateToHome = () => {
+		navigate('/');
+	};
 
   return (
     <>

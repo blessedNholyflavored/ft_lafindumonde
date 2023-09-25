@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import '../../style/Profile.css'
 import  Box from "./Box";
 import { useAuth } from "../auth/AuthProvider";
-// import myimage from "../../img/buttoncomp.png";
+import { useParams, useNavigate } from 'react-router-dom';
 // import myicon from "../../img/iconpic.png";
 
 export const Profile = () =>
