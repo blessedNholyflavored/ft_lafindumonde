@@ -41,6 +41,7 @@ export function Register() {
       setInputPassword("");
       setInputUsername("");
     } else {
+      console.log("OUIOUIOUI REGISTERTSX");
       const data = await res.json();
       setUser(data.user);
     }
@@ -57,6 +58,10 @@ export function Register() {
     navigate("/");
   };
 
+  const fortyTwoLogin = () => {
+    window.location.href = "http://localhost:3000/auth/login42";
+  };
+
   return (
     <div className="Login">
       <div className="logoAuth">
@@ -65,47 +70,62 @@ export function Register() {
       <div className="boxAuth">
         <div className="navbarbox navAuth">
           <img src={icon} className="buttonnav" alt="icon" />
-          <p className="navTitle"> REGISTER </p>
+          <p className="navTitle"> /REGISTER </p>
           <p className="navTitle"> ▷</p>
         </div>
         <div className="boxAuthContent">
-          <form className="registerForm" onSubmit={handleSubmit}>
-            <label>Username:</label>
-            <input
-              className="registerInput"
-              type="text"
-              value={inputUsername}
-              placeholder="toto"
-              minLength={3}
-              required={true}
-              onChange={(e) => setInputUsername(e.target.value)}
-            />
-            <label>Password</label>
-            <input
-              className="registerInput"
-              type="password"
-              value={inputPassword}
-              placeholder="********"
-              minLength={8}
-              required={true}
-              onChange={(e) => setInputPassword(e.target.value)}
-            />
-            <label>E-mail:</label>
-            <input
-              className="registerInput"
-              type="email"
-              value={inputEmail}
-              placeholder="toto@cie.io"
-              required={true}
-              onChange={(e) => setInputEmail(e.target.value)}
-            />
-
-            <button className="submitLogIn" type="submit">
-              LET ME IN !
-            </button>
+          <form className="loginForm" onSubmit={handleSubmit}>
+            <div className="loginFormBox">
+              <label>Username:</label>
+              <input
+                className="registerInput"
+                type="text"
+                value={inputUsername}
+                placeholder="toto"
+                minLength={3}
+                required={true}
+                onChange={(e) => setInputUsername(e.target.value)}
+              />
+            </div>
+            <div className="loginFormBox">
+              <label>Password</label>
+              <input
+                className="registerInput"
+                type="password"
+                value={inputPassword}
+                placeholder="********"
+                minLength={8}
+                required={true}
+                onChange={(e) => setInputPassword(e.target.value)}
+              />
+            </div>
+            <div className="loginFormBox">
+              <label>E-mail:</label>
+              <input
+                className="registerInput"
+                type="email"
+                value={inputEmail}
+                placeholder="toto@cie.io"
+                required={true}
+                onChange={(e) => setInputEmail(e.target.value)}
+              />
+            </div>
+            <div className="loginFormBox">
+              <button className="submitLogIn" type="submit">
+                LET ME IN !
+              </button>
+            </div>
           </form>
-          <p> I changed my mind I want to be logged through 42 !</p>
-          <button onClick={returnHome}>LOG W/ 42</button>
+          <div className="otherLogin">
+            <div className="otherLoginBox">
+              <p> I changed my mind I want to be logged through 42 !</p>
+              <img
+                src="./login.png"
+                onClick={fortyTwoLogin}
+                alt="login with 42 button"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

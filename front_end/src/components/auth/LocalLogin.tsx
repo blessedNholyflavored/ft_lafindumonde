@@ -42,10 +42,18 @@ export function LocalLogin() {
       setUser(data.user);
     }
   };
+  const fortyTwoLogin = () => {
+    window.location.href = "http://localhost:3000/auth/login42";
+  };
 
   const returnHome = () => {
     navigate("/");
   };
+
+  const navigateRegister = () => {
+    navigate("/register");
+  };
+
   return (
     <div className="Login">
       <div className="logoAuth">
@@ -54,37 +62,57 @@ export function LocalLogin() {
       <div className="boxAuth">
         <div className="navbarbox navAuth">
           <img src={icon} className="buttonnav" alt="icon" />
-          <p className="navTitle"> LOG IN </p>
+          <p className="navTitle"> /LOG IN </p>
           <p className="navTitle"> ▷</p>
         </div>
         <div className="boxAuthContent">
           <form className="loginForm" onSubmit={handleSubmit}>
-            <label>Username:</label>
-            <input
-              className="loginInput"
-              type="text"
-              value={inputUsername}
-              placeholder="toto"
-              required
-              onChange={(e) => setInputUsername(e.target.value)}
-            />
-            <label>Password</label>
-            <input
-              className="passwordInput"
-              type="password"
-              value={inputPassword}
-              placeholder="********"
-              required
-              onChange={(e) => setInputPassword(e.target.value)}
-            />
-            <button className="submitLogIn" type="submit">
-              LET ME IN !
-            </button>
+            <div className="loginFormBox">
+              <label>Username:</label>
+              <input
+                className="loginInput"
+                type="text"
+                value={inputUsername}
+                placeholder="toto"
+                required
+                onChange={(e) => setInputUsername(e.target.value)}
+              />
+            </div>
+            <div className="loginFormBox">
+              <label>Password:</label>
+              <input
+                className="passwordInput"
+                type="password"
+                value={inputPassword}
+                placeholder="********"
+                required
+                onChange={(e) => setInputPassword(e.target.value)}
+              />
+            </div>
+            <div className="loginFormBox">
+              <button className="submitLogIn" type="submit">
+                LET ME IN !
+              </button>
+            </div>
           </form>
-          <p> I changed my mind I want to be logged through 42 !</p>
-          <button onClick={returnHome}>LOG W/ 42</button>
-          <p> I don't have any account ....</p>
-          <button onClick={returnHome}>/REGISTER</button>
+          <div className="otherLogin">
+            <div className="otherLoginBox">
+              <p> I changed my mind I want to be logged through 42 !</p>
+              <img
+                src="./login.png"
+                onClick={fortyTwoLogin}
+                alt="log with 42 button"
+              />
+            </div>
+            <div className="otherLoginBox">
+              <p> I don't have any account ....</p>
+              <img
+                src="./grey_login.png"
+                onClick={navigateRegister}
+                alt="register button"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
