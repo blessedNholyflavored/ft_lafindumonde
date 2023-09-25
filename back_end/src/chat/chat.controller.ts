@@ -54,6 +54,12 @@ export class ChatController {
 		}
     return this.chatService.getRole(senderId.toString(), roomId.toString());
   }
+
+  @Get('/getUserInRoom/:id/')
+  async getUserInRoom(@Param('id') roomId: number)
+  {
+    return this.chatService.getUsersInRoomForList(roomId.toString());
+  }
   
   @Get('/checkRoomName/:name')
   async checkRoomName(@Param('name') name: string)
@@ -73,6 +79,12 @@ export class ChatController {
 			console.log("/////ALERT ALERT ALERT ALERT IN RECUP YOUR ROOMS CONTROLLER/////");
 		// TODO: if alert is never raised : erase id of this route
     return this.chatService.recupYourRooms(req.user.id.toString());
+  }
+
+  @Get('/invSend/:id/:id1')
+  async invSend(@Param('id') id: string, @Param('id1') id1: string)
+  {
+    return this.chatService.recupInvSend(id, id1);
   }
 
   @Get('/recupRooms/:id')
@@ -101,11 +113,38 @@ export class ChatController {
     return this.chatService.recupPrivate(id);
   }
 
-  @Get('/usersNotInRoom/:id')
-  async recupUserNotInChan(@Param('id') id: number)
+  @Get('/invReceive/:id')
+  async recupInvReceive(@Param('id') id: string)
   {
-    return this.chatService.recupUserNotInChan(id.toString());
+    return this.chatService.recupInvReceive(id);
   }
 
+  @Get('/roomName/:id')
+  async getRoomName(@Param('id') id: string)
+  {
+    return this.chatService.getRoomName(id);
+  }
+
+  @Get('/usersNotInRoom/:id/:id1')
+  async recupUserNotInChan(@Param('id') id: number, @Param('id1') userId: string)
+  {
+    return this.chatService.recupUserNotInChan(id.toString(), userId);
+  }
+
+  @Post('/invite/:id/:id1/:id2')
+  async invite(@Param('id') senderId: string,@Param('id1') recipientId: string,@Param('id2') roomId: string)
+  {
+    return this.chatService.createInvite(senderId.toString(),recipientId.toString(), roomId.toString());
+  }
+
+  @Post('refuse/:id')
+  refuseFriend(@Param('id') id: string) {
+    return this.chatService.refuseInvite(id);
+  }
+
+  @Post('leftChan/:id/:id1')
+  leftChan(@Param('id') roomId: string, @Param('id1') userId: string) {
+    return this.chatService.leftChan(roomId, userId);
+  }
   
 }

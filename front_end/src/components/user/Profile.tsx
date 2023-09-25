@@ -1,6 +1,6 @@
 import { useState } from "react";
 import '../../style/Profile.css'
-import Box from "./Box";
+import  Box from "./Box";
 import { useAuth } from "../auth/AuthProvider";
 // import myimage from "../../img/buttoncomp.png";
 // import myicon from "../../img/iconpic.png";
@@ -10,12 +10,10 @@ export const Profile = () =>
   // const [user] = useState<any>(null);
   const { user, setUser } =useAuth();
 
-  return(
- 
-         <div className="lucie">
-        	<Box user={user} type="info" ></Box>
-        	{/* <Box type="friends" ></Box> */}
-       </div>
+  return (
+     <div className="lucie">
+      	<Box user={user} type="info" ></Box>
+     </div>
   )
 }
 

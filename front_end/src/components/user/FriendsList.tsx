@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+
 export const FriendsList = (props: any) => {
     const [friends, setFriends] = useState<{ name: string; status: string }[]>([]);
     const { id } = useParams();
@@ -36,6 +37,7 @@ export const FriendsList = (props: any) => {
     };
 
     return (
+	
         <div className="test">
         {friends.length > 0 ? (
             friends.map((friend, index) => (

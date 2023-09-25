@@ -30,28 +30,9 @@ import GameFriend from "./GameFriend";
 import { twoFAEnable, twoFADisable } from "./components/auth/2faComp";
 import ChatChannel from "./components/chat/ChatChannel";
 import PrivateChat from "./components/chat/PrivateChat";
+import GamePage from "./gamePage";
 
 export const App: React.FC = () => {
-  //const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
-  // const [user, setUser] = useState<User | null>(null);
-
-  // useEffect(() => {
-  //   const newSocket = io('http://localhost:3000', {
-  //     withCredentials: true,
-  //   });
-
-  //   newSocket.on('connect', () => {
-  //     console.log('Connecté au serveur WebSocket.');
-  //     setSocket(newSocket);
-  //   });
-
-  //   return () => {
-  //     if (socket) {
-  //       socket.disconnect();
-  //     }
-  //   };
-  // }, []);
-
   return (
     <WebsocketProvider value={socket}>
       <AuthProvider>
@@ -184,6 +165,14 @@ export const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <GameFriend />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/gamePage"
+            element={
+              <ProtectedRoute>
+                <GamePage />
               </ProtectedRoute>
             }
           />
