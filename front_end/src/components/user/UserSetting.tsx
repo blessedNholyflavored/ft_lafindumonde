@@ -203,7 +203,7 @@ export const UserSetting: React.FC = () => {
               {/* deuxieme */}
               <div className="boxrowsettings">
 				<div className="navbarsmallbox">
-					<p className="boxtitle"> USERNAME </p>
+					<p className="boxtitle"> CHANGE USERNAME </p>
 				</div>
 				<form className='formsettings' onSubmit={handleSubmit}>
 					<label className='labelcss'>

@@ -138,6 +138,14 @@ export class UsersController {
     return user.status;
   }
 
+  @Get('/leaderboard/:id')
+  async getLeaderboardData(@Param('id') id: number)
+  {
+	const data = await this.userService.getLeaderboard();
+	console.log(data);
+	return (data);
+  }
+
   // @Get('/scoresMG')
   // async GetAllScores()
   // {
