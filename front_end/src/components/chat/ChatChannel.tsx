@@ -159,21 +159,19 @@ export const ChatChannel = () => {
               role: string;
               isBlocked: string;
             }) => {
-              if (user)
-                {
-                  const isBlockedResponse = await fetch(
-                    `http://localhost:3000/friends/blocked/${friend.id}/${user?.id}`,
-                    {
-                      method: "GET",
-                      credentials: "include",
-                    }
-                  );
-                  if (isBlockedResponse.ok)
+              if (user) {
+                const isBlockedResponse = await fetch(
+                  `http://localhost:3000/friends/blocked/${friend.id}/${user?.id}`,
                   {
-                    const isBlocked = isBlockedResponse.text();
-                    friend.isBlocked = await isBlocked;
+                    method: "GET",
+                    credentials: "include",
                   }
+                );
+                if (isBlockedResponse.ok) {
+                  const isBlocked = isBlockedResponse.text();
+                  friend.isBlocked = await isBlocked;
                 }
+              }
               return friend;
             }
           )
@@ -243,7 +241,6 @@ export const ChatChannel = () => {
   };
 
   const leftChannel = async () => {
-
     try {
       const response = await fetch(
         `http://localhost:3000/chat/leftChan/${id}/${user?.id}`,
@@ -263,7 +260,31 @@ export const ChatChannel = () => {
     }, 100);
     setTimeout(() => {
       window.location.reload();
-  }, 100);
+    }, 100);
+  };
+
+  const kickFromChannel = async (userId: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/chat/leftChan/${id}/${userId}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+    setTimeout(() => {
+      socket.emit("reloadMessRoom", id);
+      socket.emit("kickFromChannel", userId, id);
+    }, 100);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 100);
   };
 
   const handleUserClick = (userId: number) => {
@@ -462,10 +483,24 @@ export const ChatChannel = () => {
                   {users.isBlocked === "true" && (
                     <button
                       onClick={() =>
-                        removeBlocked(user?.id.toString() as any, users.id.toString())
+                        removeBlocked(
+                          user?.id.toString() as any,
+                          users.id.toString()
+                        )
                       }
                     >
                       Debloquer
+                    </button>
+                  )}
+                  {yourRole === "OWNER" && (
+                    <button
+                      onClick={() =>
+                        kickFromChannel(
+                          users.id
+                        )
+                      }
+                    >
+                      kick
                     </button>
                   )}
                 </div>
@@ -473,11 +508,6 @@ export const ChatChannel = () => {
             </div>
           ))}
         </ul>
-      </div>
-      <div>
-        {/* { yourRole === "OWNER" && (
-
-      )} */}
       </div>
     </div>
   );

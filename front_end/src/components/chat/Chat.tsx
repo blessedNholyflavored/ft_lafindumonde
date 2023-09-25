@@ -260,6 +260,13 @@ export const Chat = () => {
       });
     }
     if (socket) {
+      socket.on("refreshAfterKick", (roomName: string) => {
+        alert("You have been kicked from "+ roomName);
+        window.location.reload();
+        
+      });
+    }
+    if (socket) {
       socket.on("refreshMessages", () => {
         fetchPrivateConv();
       });
@@ -304,9 +311,13 @@ export const Chat = () => {
   };
 
   const createRoom = async () => {
-    if ((await checkRoomAlreadyExist()) === false)
+    if ((await checkRoomAlreadyExist()) === false) {
       socket.emit("createChatRoom", valueRoom, selectedOption, password);
-    else alert("Name room already taken");
+      socket.emit("ActuAtRoomCreate", valueRoom, selectedOption);
+      setTimeout(() => {
+        socket.emit("reloadListRoomAtJoin", valueRoom);
+      }, 100);
+    } else alert("Name room already taken");
     return "";
   };
 
