@@ -260,10 +260,9 @@ export const Chat = () => {
       });
     }
     if (socket) {
-      socket.on("refreshAfterKick", (roomName: string) => {
-        alert("You have been kicked from "+ roomName);
+      socket.on("refreshAfterKick", (roomName: string, reason: string) => {
+        alert("You have been kicked from " + roomName + ". Raison: " + reason);
         window.location.reload();
-        
       });
     }
     if (socket) {

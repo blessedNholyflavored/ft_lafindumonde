@@ -589,7 +589,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
         });
       }
       @SubscribeMessage('kickFromChannel')
-      async onkickFromChannel(@MessageBody() data: {userId:number, roomId:number},@ConnectedSocket() socket: Socket)
+      async onkickFromChannel(@MessageBody() data: {userId:number, roomId:number, reason: string},@ConnectedSocket() socket: Socket)
       {
         const roomName = await this.chatService.getRoomName(data[1]);
         let user1;
@@ -598,7 +598,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (key === NuserId)
             user1 = value;
         });
-        user1.emit("refreshAfterKick", roomName);
+        user1.emit("refreshAfterKick", roomName, data[2]);
       }
       
 }

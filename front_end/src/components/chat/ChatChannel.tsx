@@ -264,6 +264,7 @@ export const ChatChannel = () => {
   };
 
   const kickFromChannel = async (userId: number) => {
+    const reason = window.prompt("Raison du kick ?");
     try {
       const response = await fetch(
         `http://localhost:3000/chat/leftChan/${id}/${userId}`,
@@ -280,11 +281,30 @@ export const ChatChannel = () => {
     }
     setTimeout(() => {
       socket.emit("reloadMessRoom", id);
-      socket.emit("kickFromChannel", userId, id);
+      socket.emit("kickFromChannel", userId, id, reason);
     }, 100);
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 100);
+  };
+
+  const MuteFromChannel = async (userId: number) => {
+    const time = window.prompt("Temps de mute?");
+    try {
+      const response = await fetch(
+        `http://localhost:3000/chat/leftChan/${id}/${userId}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+    setTimeout(() => {
+      socket.emit("reloadMessRoom", id);
+      socket.emit("kickFromChannel", userId, id, time);
+    }, 100);
   };
 
   const handleUserClick = (userId: number) => {
@@ -493,6 +513,7 @@ export const ChatChannel = () => {
                     </button>
                   )}
                   {yourRole === "OWNER" && (
+                    <div>
                     <button
                       onClick={() =>
                         kickFromChannel(
@@ -502,7 +523,18 @@ export const ChatChannel = () => {
                     >
                       kick
                     </button>
+                    <button
+                      onClick={() =>
+                        MuteFromChannel(
+                          users.id
+                        )
+                      }
+                    >
+                      Mute
+                    </button>
+                    </div>
                   )}
+
                 </div>
               )}
             </div>
