@@ -40,6 +40,7 @@ const displayPic = async() => {
     try {
         const response = await fetch(`http://localhost:3000/users/${userId}/avatar`, {
             method: 'GET',
+			credentials: 'include',
         });
         if (response.ok) {
             const pictureURL = await response.text();
@@ -52,6 +53,7 @@ const displayPic = async() => {
                 try {
                 const response = await fetch(`http://localhost:3000/users/uploads/${pictureURL}`, {
                     method: 'GET',
+					credentials: 'include',
                 });
                 if (response.ok) {
                     const blob = await response.blob();
