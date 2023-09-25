@@ -23,6 +23,13 @@ export function Register() {
   // sending input to back_end to verify and register
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let dogimg;
+    await fetch(`https://dog.ceo/api/breeds/image/random`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((responseData) => (dogimg = responseData.message.toString()))
+      .catch(() => (dogimg = champi.toString()));
     const res = await fetch(`http://localhost:3000/auth/register`, {
       method: "POST",
       headers: {
@@ -32,7 +39,7 @@ export function Register() {
         email: inputEmail,
         password: inputPassword,
         username: inputUsername,
-        pictureURL: champi.toString(),
+        pictureURL: dogimg,
       }),
       credentials: "include",
     });
@@ -41,17 +48,9 @@ export function Register() {
       setInputPassword("");
       setInputUsername("");
     } else {
-      console.log("OUIOUIOUI REGISTERTSX");
       const data = await res.json();
       setUser(data.user);
     }
-    /*	.then(async (res: any) => { 
-					// console.log(await res.json() );
-					const data = await res.json();
-					setUser(data.user);
-					console.log("OUII ?",data);
-				})
-				.catch((error:any) => {window.alert("One or severals of your inputs aren't right !");});*/
   };
 
   const returnHome = () => {
