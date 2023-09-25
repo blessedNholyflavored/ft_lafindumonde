@@ -73,3 +73,10 @@ export interface Game {
     id: number;
     start_at: string;
     }
+
+export interface Leaderboard {
+	username: string;
+	ELO: number;
+	id: number;
+	place: number;
+}
