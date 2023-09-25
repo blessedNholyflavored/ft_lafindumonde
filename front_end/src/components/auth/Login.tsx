@@ -11,13 +11,13 @@ export function Login() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // si user a ete set (donc est log)
-  // on peut acceder a Home
+  // if user is set
+  // we are redirected to home
   if (user) {
     navigate("/");
   }
 
-  //on fait appel au service d'auth dans le back
+  // call the login with 42 strategy from back end
   const fortyTwoLogin = () => {
     window.location.href = "http://localhost:3000/auth/login42";
   };
