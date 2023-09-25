@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Room, privateMessage } from 'src/interfaces';
-import { PrismaClient, Chatroom, UserChannelVisibility, InvitationsStatus } from '@prisma/client';
+import { PrismaClient,UserRoleInChannel, Chatroom, UserChannelVisibility, InvitationsStatus } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
 import { merge } from 'lodash';
 const prisma = new PrismaClient();
@@ -519,4 +519,104 @@ async leftChan(roomId: string, userId: string)
   });
 }
 
+async passAdmin(roomId: string, userId: string)
+{
+  await prisma.userOnChannel.updateMany({
+    where: {
+      channelId: parseInt(roomId),
+      userId: parseInt(userId),
+    },
+    data: {
+      role: UserRoleInChannel.ADMIN
+    }
+  });
+}
+
+async demoteAdmin(roomId: string, userId: string)
+{
+  await prisma.userOnChannel.updateMany({
+    where: {
+      channelId: parseInt(roomId),
+      userId: parseInt(userId),
+    },
+    data: {
+      role: UserRoleInChannel.USER
+    }
+  });
+}
+
+
+async muteSomeone(roomId: string, userId: string, time: number)
+{
+  const mutedUntil = new Date();
+  let timeAsNumber = parseInt(time.toString(), 10);
+  let minutes = mutedUntil.getMinutes();
+  minutes += timeAsNumber;
+  mutedUntil.setMinutes(minutes);
+
+  await prisma.userOnChannel.updateMany({
+    where: {
+        channelId: parseInt(roomId),
+        userId: parseInt(userId),
+    },
+    data: {
+      mutedUntil : mutedUntil,
+    },
+  });
+}
+
+
+async banUserTemporarily(roomId: string, userId: string, time: number){
+  const bannedUntil = new Date();
+  bannedUntil.setMinutes(bannedUntil.getMinutes() + time);
+
+  await prisma.userOnChannel.updateMany({
+    where: {
+      channelId: parseInt(roomId),
+      userId: parseInt(userId),
+    },
+    data: {
+      bannedUntil,
+    },
+  });
+}
+
+async checkUserStatus(roomId: string, userId: string) {
+  const userOnChannel = await prisma.userOnChannel.findUnique({
+    where: {
+      channelId_userId: {
+        channelId: parseInt(roomId),
+        userId: parseInt(userId),
+      },
+    },
+  });
+
+  if (userOnChannel) {
+    if (userOnChannel.bannedUntil && new Date() < userOnChannel.bannedUntil) {
+      // L'utilisateur est banni jusqu'à la date spécifiée.
+      // Ne permettez pas l'action souhaitée.
+    }
+  }
+  return userOnChannel;
+
+  
+}
+
+async getStatusMute(userId: string, roomId: string) {
+  const userOnChannel = await prisma.userOnChannel.findUnique({
+    where: {
+      channelId_userId: {
+        channelId: parseInt(roomId),
+        userId: parseInt(userId),
+      },
+    },
+  });
+
+  if (userOnChannel) {
+    if (userOnChannel.mutedUntil && new Date() < userOnChannel.mutedUntil) {
+      return "true";
+    }
+  }
+  return "false";
+}
 }

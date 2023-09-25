@@ -168,6 +168,8 @@ model UserOnChannel {
 	user		User				@relation(fields: [userId], references: [id])
 	channelId	Int
 	channel		Chatroom			@relation(fields: [channelId], references: [id])
+	bannedUntil	DateTime?
+	mutedUntil	DateTime?			@db.Timestamptz(1)
 
 	@@unique([channelId, userId])
 }

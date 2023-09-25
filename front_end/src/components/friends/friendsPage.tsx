@@ -308,8 +308,6 @@ export const FriendsPage: React.FC = () => {
   }
 
   async function deleteFriend(sender: string, recipient: string) {
-    console.log(sender);
-    console.log(recipient);
     try {
       const response = await fetch(
         `http://localhost:3000/friends/delete/${recipient}`,

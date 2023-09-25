@@ -24,6 +24,7 @@ interface users {
   username: string;
   role: string;
   isBlocked: string;
+  isMuted: string;
 }
 
 export const ChatChannel = () => {
@@ -37,7 +38,11 @@ export const ChatChannel = () => {
   const [yourRole, setYourRole] = useState("USER");
   const [showMenu, setShowMenu] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
+  const [userIsMuted, setUserIsMuted] = useState(false);
   const [selectedUser, setSelectedUser] = useState(0);
+  const [selectedUserRole, setSelectedUserRole] = useState("USER");
+
+  let test = 0;
 
   async function fetchUsernameById(userId: string) {
     try {
@@ -158,6 +163,7 @@ export const ChatChannel = () => {
               username: string;
               role: string;
               isBlocked: string;
+              isMuted: string;
             }) => {
               if (user) {
                 const isBlockedResponse = await fetch(
@@ -167,9 +173,18 @@ export const ChatChannel = () => {
                     credentials: "include",
                   }
                 );
-                if (isBlockedResponse.ok) {
+                const isMutedResponse = await fetch(
+                  `http://localhost:3000/chat/muted/${friend.id}/${id}`,
+                  {
+                    method: "GET",
+                    credentials: "include",
+                  }
+                );
+                if (isBlockedResponse.ok && isMutedResponse.ok) {
                   const isBlocked = isBlockedResponse.text();
                   friend.isBlocked = await isBlocked;
+                  const isMuted = isMutedResponse.text();
+                  friend.isMuted = await isMuted;
                 }
               }
               return friend;
@@ -183,10 +198,10 @@ export const ChatChannel = () => {
     }
   }
 
-  async function fetchYourRole() {
+  async function fetchYourRole(userId: number) {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/getRole/${user?.id}/${id}`,
+        `http://localhost:3000/chat/getRole/${userId}/${id}`,
         {
           method: "GET",
           credentials: "include",
@@ -197,11 +212,12 @@ export const ChatChannel = () => {
         throw new Error("Erreur lors de la récupération des messages privés.");
       } else {
         const data = await response.text();
-        setYourRole(data);
+        return data;
       }
     } catch (error: any) {
       console.log(error);
     }
+    return "";
   }
 
   useEffect(() => {
@@ -209,10 +225,16 @@ export const ChatChannel = () => {
       const scores = await fetchRoomMessageList();
     }
     async function fetchUserRole() {
-      const scores = await fetchYourRole();
+      if (user) {
+        const scores = await fetchYourRole(user?.id);
+        setYourRole(scores);
+      }
     }
     async function fetchUserInRoom() {
       const scores = await fectUserInRoomList();
+    }
+    async function UserIsmuted() {
+      const scores = await checkMuted();
     }
     if (socket) {
       socket.on("refreshMessagesRoom", () => {
@@ -223,11 +245,13 @@ export const ChatChannel = () => {
     if (socket) {
       socket.on("refreshListRoom", () => {
         fetchUserInRoom();
+        fetchUserRole();
       });
     }
     fetchRoomMessage();
     fetchUserRole();
     fetchUserInRoom();
+    UserIsmuted();
   }, []);
 
   const onSubmit = () => {
@@ -286,10 +310,11 @@ export const ChatChannel = () => {
   };
 
   const MuteFromChannel = async (userId: number) => {
-    const time = window.prompt("Temps de mute?");
+    const reason = window.prompt("Raison du mute ?");
+    const time = window.prompt("Temps de mute? (en min)");
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/leftChan/${id}/${userId}`,
+        `http://localhost:3000/chat/mute/${id}/${userId}/${time}`,
         {
           method: "POST",
           credentials: "include",
@@ -303,13 +328,15 @@ export const ChatChannel = () => {
     }
     setTimeout(() => {
       socket.emit("reloadMessRoom", id);
-      socket.emit("kickFromChannel", userId, id, time);
+      socket.emit("muteFromChannel", userId, id, reason, time);
     }, 100);
   };
 
-  const handleUserClick = (userId: number) => {
+  const handleUserClick = async (userId: number) => {
     setSelectedUser(userId);
     setShowMenu(true);
+    const role = await fetchYourRole(userId);
+    setSelectedUserRole(role);
   };
 
   const handleInvite = () => {
@@ -363,7 +390,7 @@ export const ChatChannel = () => {
   async function deleteFriend(sender: string, recipient: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/delete/${sender}/${recipient}`,
+        `http://localhost:3000/friends/delete/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -383,7 +410,7 @@ export const ChatChannel = () => {
     deleteFriend(sender, recipient);
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/block/${sender}/${recipient}`,
+        `http://localhost:3000/friends/block/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -404,7 +431,7 @@ export const ChatChannel = () => {
   async function removeBlocked(sender: string, recipient: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/unblock/${sender}/${recipient}`,
+        `http://localhost:3000/friends/unblock/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -420,6 +447,68 @@ export const ChatChannel = () => {
       socket.emit("reloadMessRoom", id);
     }, 100);
     // window.location.reload();
+  }
+
+  async function passAdminOfChannel(userId: number) {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/chat/admin/${userId}/${id}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+    setTimeout(() => {
+      socket.emit("reloadMessRoom", id);
+    }, 100);
+    // window.location.reload();
+  }
+
+  async function demoteAdminOfChannel(userId: number) {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/chat/demoteAdmin/${userId}/${id}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+    setTimeout(() => {
+      socket.emit("reloadMessRoom", id);
+    }, 100);
+    // window.location.reload();
+  }
+
+  async function checkMuted() {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/chat/muted/${user?.id}/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+      const data = await response.text();
+      if (data === "false") setUserIsMuted(false);
+      else setUserIsMuted(true);
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
   }
 
   return (
@@ -463,7 +552,17 @@ export const ChatChannel = () => {
           </ul>
         )}
       </div>
-      {id && (
+      {userIsMuted === true && (
+        <div>
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
+          <button disabled>Submit</button>
+        </div>
+      )}
+      {userIsMuted === false && (
         <div>
           <input
             type="text"
@@ -473,6 +572,7 @@ export const ChatChannel = () => {
           <button onClick={onSubmit}>Submit</button>
         </div>
       )}
+
       <div>
         <ul>
           <h1>Liste des utilisateurs :</h1>
@@ -514,27 +614,24 @@ export const ChatChannel = () => {
                   )}
                   {yourRole === "OWNER" && (
                     <div>
-                    <button
-                      onClick={() =>
-                        kickFromChannel(
-                          users.id
-                        )
-                      }
-                    >
-                      kick
-                    </button>
-                    <button
-                      onClick={() =>
-                        MuteFromChannel(
-                          users.id
-                        )
-                      }
-                    >
-                      Mute
-                    </button>
+                      {selectedUserRole === "USER" && (
+                        <button onClick={() => passAdminOfChannel(users.id)}>
+                          Promote Admin
+                        </button>
+                      )}
+                      {selectedUserRole === "ADMIN" && (
+                        <button onClick={() => demoteAdminOfChannel(users.id)}>
+                          Demote Admin
+                        </button>
+                      )}
+                      <button onClick={() => kickFromChannel(users.id)}>
+                        kick
+                      </button>
+                      <button onClick={() => MuteFromChannel(users.id)}>
+                        Mute
+                      </button>
                     </div>
                   )}
-
                 </div>
               )}
             </div>
