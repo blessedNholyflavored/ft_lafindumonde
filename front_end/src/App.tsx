@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./Home";
 import PongGame from "./PongGame";
 import { UserSetting } from "./components/user/UserSetting";
@@ -31,6 +31,7 @@ import { twoFAEnable, twoFADisable } from "./components/auth/2faComp";
 import ChatChannel from "./components/chat/ChatChannel";
 import PrivateChat from "./components/chat/PrivateChat";
 import GamePage from "./gamePage";
+import PageNotFound from "./PageNotFound";
 
 export const App: React.FC = () => {
   return (
@@ -173,6 +174,22 @@ export const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <GamePage />
+              </ProtectedRoute>
+            }
+          />
+		  <Route
+            path="/404"
+            element={
+              <ProtectedRoute>
+                <PageNotFound />
+              </ProtectedRoute>
+            }
+          />
+		  <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/404" />
               </ProtectedRoute>
             }
           />
