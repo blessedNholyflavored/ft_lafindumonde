@@ -592,6 +592,21 @@ async unMuteSomeone(roomId: string, userId: string)
   });
 }
 
+async unBanSomeone(roomId: string, userId: string)
+{
+  await prisma.userOnChannel.updateMany({
+    where: {
+        channelId: parseInt(roomId),
+        userId: parseInt(userId),
+    },
+    data: {
+      bannedUntil : null,
+    },
+  });
+}
+
+
+
 async banUserTemporarily(roomId: string, userId: string, time: number){
   const bannedUntil = new Date();
   bannedUntil.setMinutes(bannedUntil.getMinutes() + time);

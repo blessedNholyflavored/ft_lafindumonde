@@ -45,11 +45,10 @@ export const ChatChannel = () => {
   const [selectedUserIsMuted, setSelectedUserIsMuted] = useState<string | any>(
     "false"
   );
-  const [selectedUserIsBanned, setSelectedUserIsBanned] = useState<string | any>(
-    "false"
-  );
-  const [ reactu,setReactu ] = useState(0);
-
+  const [selectedUserIsBanned, setSelectedUserIsBanned] = useState<
+    string | any
+  >("false");
+  const [reactu, setReactu] = useState(0);
 
   async function fetchUsernameById(userId: string) {
     try {
@@ -228,20 +227,16 @@ export const ChatChannel = () => {
   }
 
   useEffect(() => {
-
-    if (reactu === 0)
-    {
-    setTimeout(() => {
-      setReactu(1);
-    }, 100);
-  }
-  },[reactu]);
+    if (reactu === 0) {
+      setTimeout(() => {
+        setReactu(1);
+      }, 100);
+    }
+  }, [reactu]);
 
   useEffect(() => {
-
     console.log(reactu);
-    if (reactu === 0)
-      return ;
+    if (reactu === 0) return;
 
     async function fetchRoomMessage() {
       const scores = await fetchRoomMessageList();
@@ -341,8 +336,10 @@ export const ChatChannel = () => {
   };
 
   const MuteFromChannel = async (userId: number) => {
-    const reason = window.prompt("Raison du mute ?");
-    const time = window.prompt("Temps de mute? (en min)");
+    let reason = window.prompt("Raison du mute ?");
+    let time = window.prompt("Temps de mute? (en min)");
+    if (!time) time = "0";
+    if (!reason) reason = "";
     try {
       const response = await fetch(
         `http://localhost:3000/chat/mute/${id}/${userId}/${time}`,
@@ -365,8 +362,10 @@ export const ChatChannel = () => {
   };
 
   const BanFromChannel = async (userId: number) => {
-    const reason = window.prompt("Raison du ban ?");
-    const time = window.prompt("Temps de ban? (en min)");
+    let reason = window.prompt("Raison du ban ?");
+    let time = window.prompt("Temps de ban? (en min)");
+    if (!time) time = "0";
+    if (!reason) reason = "";
     try {
       const response = await fetch(
         `http://localhost:3000/chat/ban/${id}/${userId}/${time}`,
@@ -385,6 +384,28 @@ export const ChatChannel = () => {
       socket.emit("reloadMessRoom", id);
       socket.emit("banFromChannel", userId, id, reason, time);
     }, 100);
+    setSelectedUser(0);
+  };
+
+  const UnbanFromChannel = async (userId: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/chat/unban/${id}/${userId}}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+    // setTimeout(() => {
+    //   socket.emit("reloadMessRoom", id);
+    //   socket.emit("banFromChannel", userId, id, reason, time);
+    // }, 100);
     setSelectedUser(0);
   };
 
@@ -415,8 +436,10 @@ export const ChatChannel = () => {
     setShowMenu(true);
     const role = await fetchYourRole(userId);
     setSelectedUserRole(role);
-    const bool = await checkMuted(userId);
-    setSelectedUserIsMuted(bool);
+    const mute = await checkMuted(userId);
+    setSelectedUserIsMuted(mute);
+    const ban = await checkBanned(userId);
+    setSelectedUserIsBanned(ban);
   };
 
   const handleInvite = () => {
@@ -598,7 +621,7 @@ export const ChatChannel = () => {
   async function checkBanned(userId: number) {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/muted/${userId}/${id}`,
+        `http://localhost:3000/chat/banned/${userId}/${id}`,
         {
           method: "GET",
           credentials: "include",
@@ -743,9 +766,54 @@ export const ChatChannel = () => {
                           Unmute
                         </button>
                       )}
-                      <button onClick={() => BanFromChannel(users.id)}>
-                        Ban
-                      </button>
+                      {selectedUserIsBanned === "false" && (
+                        <button onClick={() => BanFromChannel(users.id)}>
+                          Ban
+                        </button>
+                      )}
+                      {selectedUserIsBanned === "true" && (
+                        <button onClick={() => UnbanFromChannel(users.id)}>
+                          Unban
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  {yourRole === "ADMIN" && (
+                    <div>
+                      {selectedUserRole === "USER" && (
+                        <button onClick={() => passAdminOfChannel(users.id)}>
+                          Promote Admin
+                        </button>
+                      )}
+                      {selectedUserRole === "USER" && (
+                        <button onClick={() => kickFromChannel(users.id)}>
+                          kick
+                        </button>
+                      )}
+                      {selectedUserIsMuted === "false" &&
+                        selectedUserRole === "USER" && (
+                          <button onClick={() => MuteFromChannel(users.id)}>
+                            Mute
+                          </button>
+                        )}
+                      {selectedUserIsMuted === "true" &&
+                        selectedUserRole === "USER" && (
+                          <button onClick={() => UnMuteFromChannel(users.id)}>
+                            Unmute
+                          </button>
+                        )}
+                      {selectedUserIsBanned === "false" &&
+                        selectedUserRole === "USER" && (
+                          <button onClick={() => BanFromChannel(users.id)}>
+                            Ban
+                          </button>
+                        )}
+                      {selectedUserIsBanned === "true" &&
+                        selectedUserRole === "USER" && (
+                          <button onClick={() => UnbanFromChannel(users.id)}>
+                            Unban
+                          </button>
+                        )}
                     </div>
                   )}
                 </div>

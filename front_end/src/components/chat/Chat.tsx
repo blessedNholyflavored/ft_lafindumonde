@@ -35,6 +35,7 @@ interface channels {
   name: string;
   visibility: string;
   id: number;
+  AmIBanned: string;
 }
 
 interface invSend {
@@ -92,12 +93,25 @@ export const Chat = () => {
       const data = await response.json();
       if (data.length > 0) {
         const friendObjects = data;
-        const friendInfo = friendObjects.map(
-          (friend: { name: string; visibility: string; id: number }) => ({
-            name: friend.name,
-            visibility: friend.visibility,
-            id: friend.id,
-          })
+        const friendInfo = await Promise.all(
+          friendObjects.map(
+          async (friend: { name: string; visibility: string; id: number; AmIBanned: string }) => {
+
+            const isBannedResponse = await fetch(
+              `http://localhost:3000/chat/banned/${user?.id}/${friend.id}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            if (isBannedResponse.ok)
+            {
+              const isBanned = await isBannedResponse.text();
+              friend.AmIBanned = isBanned;
+            }
+            return (friend);
+          }
+          )
         );
         setChannelsJoin(friendInfo);
       }
@@ -256,8 +270,10 @@ export const Chat = () => {
       }
       const data = await response.text();
       if (userId === user?.id) {
-        if (data === "false") setUserIsBanned(false);
-        else setUserIsBanned(true);
+        if (data === "false")
+          setUserIsBanned(false);
+        else
+          setUserIsBanned(true);
         console.log("statu banned:   ", data);
       } else return data;
     } catch (error) {
@@ -401,14 +417,17 @@ export const Chat = () => {
   };
 
   const navToChan = async (id: number) => {
-    if (user) await checkBanned(user?.id, id.toString());
-    if (userIsBanned === true) {
-      alert("caca");
-      window.location.reload();
-    } else {
-      navigate(`/chat/chan/${id}`);
-      setActiveChannel(id);
+    if (user)
+    {
+      await checkBanned(user?.id, id.toString());
     }
+        if (userIsBanned === true) {
+          alert("caca");
+          window.location.reload();
+        } else {
+          navigate(`/chat/chan/${id}`);
+          setActiveChannel(id);
+        }
   };
 
   const navToPrivateConv = (id: number) => {
@@ -743,9 +762,7 @@ export const Chat = () => {
             <div key={chan.id}>
               <button
                 onClick={() => {
-                  if (user)
-                    checkBanned(user?.id, chan.id.toString())
-                  if (userIsBanned === false) {
+                  if (chan.AmIBanned === "false") {
                     navToChan(chan.id);
                     if (showChatChannel) {
                       handleButton();
@@ -758,6 +775,7 @@ export const Chat = () => {
                       setIsPrivatechan(1);
                     } else setIsPrivatechan(0);
                   }
+                  else{alert("t banni !")}
                 }}
                 disabled={activeChannel === chan.id}
               >

@@ -162,6 +162,12 @@ export class ChatController {
     return this.chatService.unMuteSomeone(roomId, userId);
   }
 
+  @Post('unban/:id/:id1')
+  unBanSomeone(@Param('id') roomId: string, @Param('id1') userId: string) {
+    return this.chatService.unBanSomeone(roomId, userId);
+  }
+
+
   @Get('/muted/:id/:id1')
   async getStatusMute(@Param('id') userId: string, @Param('id1') roomId: string)
   {
