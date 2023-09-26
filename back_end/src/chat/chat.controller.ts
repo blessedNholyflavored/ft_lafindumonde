@@ -147,9 +147,19 @@ export class ChatController {
     return this.chatService.leftChan(roomId, userId);
   }
 
+  @Post('ban/:id/:id1/:time')
+  banChan(@Param('id') roomId: string, @Param('id1') userId: string, @Param('time') time: number) {
+    return this.chatService.banSomeone(roomId, userId, time);
+  }
+
   @Post('mute/:id/:id1/:time')
   muteSomeone(@Param('id') roomId: string, @Param('id1') userId: string, @Param('time') time: number) {
     return this.chatService.muteSomeone(roomId, userId, time);
+  }
+
+  @Post('unmute/:id/:id1')
+  unMuteSomeone(@Param('id') roomId: string, @Param('id1') userId: string) {
+    return this.chatService.unMuteSomeone(roomId, userId);
   }
 
   @Get('/muted/:id/:id1')
@@ -157,6 +167,13 @@ export class ChatController {
   {
     return this.chatService.getStatusMute(userId, roomId);
   }
+
+  @Get('/banned/:id/:id1')
+  async getStatusBan(@Param('id') userId: string, @Param('id1') roomId: string)
+  {
+    return this.chatService.getStatusBan(userId, roomId);
+  }
+
 
   @Post('/admin/:id/:id1')
   async passAdmin(@Param('id') userId: string, @Param('id1') roomId: string)

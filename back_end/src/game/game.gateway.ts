@@ -612,5 +612,18 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
         });
         user1.emit("refreshAfterMute", roomName, data[2], data[3]);
       }
+
+      @SubscribeMessage('banFromChannel')
+      async onBanFromChannel(@MessageBody() data: {userId:number, roomId:number, reason: string, time: number},@ConnectedSocket() socket: Socket)
+      {
+        const roomName = await this.chatService.getRoomName(data[1]);
+        let user1;
+        const NuserId = Number(data[0]);
+        this.playerConnections.forEach((value, key) => {
+          if (key === NuserId)
+            user1 = value;
+        });
+        user1.emit("refreshAfterBan", roomName, data[2], data[3]);
+      }
       
 }

@@ -50,6 +50,7 @@ interface invSend {
 export const Chat = () => {
   const { user, setUser } = useAuth();
   const { recipient } = useParams();
+  const { id } = useParams();
   const [value, setValue] = useState("");
   const [valueRoom, setValueRoom] = useState("");
   const [messages, setMessages] = useState<MessagePayload[]>([]);
@@ -74,6 +75,7 @@ export const Chat = () => {
     useState(false);
   const [invSend, setInvSend] = useState<invSend[]>([]);
   const [invReceive, setInvReceive] = useState<invSend[]>([]);
+  const [userIsBanned, setUserIsBanned] = useState(false);
 
   async function fetchYourRoomsList() {
     try {
@@ -240,6 +242,29 @@ export const Chat = () => {
 
   // }, []);
 
+  async function checkBanned(userId: number, roomId: string) {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/chat/banned/${userId}/${roomId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+      const data = await response.text();
+      if (userId === user?.id) {
+        if (data === "false") setUserIsBanned(false);
+        else setUserIsBanned(true);
+        console.log("statu banned:   ", data);
+      } else return data;
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+  }
+
   useEffect(() => {
     async function fetchYourRooms() {
       const scores = await fetchYourRoomsList();
@@ -275,10 +300,39 @@ export const Chat = () => {
       });
     }
     if (socket) {
-      socket.on("refreshAfterMute", (roomName: string, reason: string, time: number) => {
-        alert("You have been muted from " + roomName + ". Raison: " + reason + ", pendant: " + time);
-        window.location.reload();
-      });
+      socket.on(
+        "refreshAfterMute",
+        (roomName: string, reason: string, time: number) => {
+          alert(
+            "You have been muted from " +
+              roomName +
+              ". Raison: " +
+              reason +
+              ", pendant: " +
+              time
+          );
+          window.location.reload();
+        }
+      );
+    }
+    if (socket) {
+      socket.on(
+        "refreshAfterBan",
+        (roomName: string, reason: string, time: number) => {
+          alert(
+            "You have been banned from " +
+              roomName +
+              ". Raison: " +
+              reason +
+              ", pendant: " +
+              time
+          );
+          window.location.href = "/chat";
+          window.location.reload();
+          window.location.href = "/chat";
+
+        }
+      );
     }
     if (socket) {
       socket.on("refreshMessages", () => {
@@ -304,6 +358,7 @@ export const Chat = () => {
     fetchInviteReceive();
   }, [activeChannel]);
 
+  
   const checkRoomAlreadyExist = async () => {
     try {
       const response = await fetch(
@@ -345,9 +400,15 @@ export const Chat = () => {
     return "";
   };
 
-  const navToChan = (id: number) => {
-    navigate(`/chat/chan/${id}`);
-    setActiveChannel(id);
+  const navToChan = async (id: number) => {
+    if (user) await checkBanned(user?.id, id.toString());
+    if (userIsBanned === true) {
+      alert("caca");
+      window.location.reload();
+    } else {
+      navigate(`/chat/chan/${id}`);
+      setActiveChannel(id);
+    }
   };
 
   const navToPrivateConv = (id: number) => {
@@ -355,7 +416,7 @@ export const Chat = () => {
     setSelectedPrivateConv(id);
   };
 
-  const clickToJoinChan = (id: number, name: string, option: string) => {
+  const clickToJoinChan = async (id: number, name: string, option: string) => {
     if (option === "PUBLIC") {
       socket.emit("joinChatRoom", name, option, "");
     } else if (option === "PWD_PROTECTED") {
@@ -652,25 +713,25 @@ export const Chat = () => {
           <h1>Liste des convos privées :</h1>
           {privMSG.map((priv) => (
             <div key={priv.id}>
-            {priv.isBlocked === "false" && (
-              <button
-                onClick={() => {
-                  navToPrivateConv(priv.id);
-                  if (showConv) {
-                    handleButtonConv();
-                  } else {
-                    setShowConv(true);
-                    setShowChatChannel(false);
-                    setActiveChannel(0);
-                  }
-                }}
-                disabled={selectedPrivateConv === priv.id}
-              >
-                <div>
-                  id: {priv.id} --- username: {priv.username}
-                </div>
-              </button>
-            )}
+              {priv.isBlocked === "false" && (
+                <button
+                  onClick={() => {
+                    navToPrivateConv(priv.id);
+                    if (showConv) {
+                      handleButtonConv();
+                    } else {
+                      setShowConv(true);
+                      setShowChatChannel(false);
+                      setActiveChannel(0);
+                    }
+                  }}
+                  disabled={selectedPrivateConv === priv.id}
+                >
+                  <div>
+                    id: {priv.id} --- username: {priv.username}
+                  </div>
+                </button>
+              )}
             </div>
           ))}
         </ul>
@@ -682,17 +743,21 @@ export const Chat = () => {
             <div key={chan.id}>
               <button
                 onClick={() => {
-                  navToChan(chan.id);
-                  if (showChatChannel) {
-                    handleButton();
-                  } else {
-                    setShowChatChannel(true);
-                    setShowConv(false);
-                    setSelectedPrivateConv(0);
+                  if (user)
+                    checkBanned(user?.id, chan.id.toString())
+                  if (userIsBanned === false) {
+                    navToChan(chan.id);
+                    if (showChatChannel) {
+                      handleButton();
+                    } else {
+                      setShowChatChannel(true);
+                      setShowConv(false);
+                      setSelectedPrivateConv(0);
+                    }
+                    if (chan.visibility === "PRIVATE") {
+                      setIsPrivatechan(1);
+                    } else setIsPrivatechan(0);
                   }
-                  if (chan.visibility === "PRIVATE") {
-                    setIsPrivatechan(1);
-                  } else setIsPrivatechan(0);
                 }}
                 disabled={activeChannel === chan.id}
               >
@@ -785,6 +850,7 @@ export const Chat = () => {
         </button>
       </div>
       {showChatChannel && <ChatChannel />}
+      {! showChatChannel && id && <ChatChannel />}
       {!showConv && recipient && <PrivateChat />}
       {showConv && <PrivateChat />}
     </div>

@@ -10,12 +10,12 @@ const prisma = new PrismaClient();
 export class ChatService {
   prisma: any;
 
-  async getAllChatRooms(): Promise<Chatroom[]> {
+  async getAllChatRooms(){
     const chatRooms = await prisma.chatroom.findMany();
     return chatRooms;
   }
 
-  async recupRooms(userId: string): Promise<Chatroom[]> {
+  async recupRooms(userId: string){
     const chatRooms = await prisma.chatroom.findMany({
       where: {
         NOT: {
@@ -30,7 +30,6 @@ export class ChatService {
         },
       },
     });
-
     return chatRooms;
   }
 
@@ -279,7 +278,6 @@ async recupRoomMess(roomId:string)
 
 async  recupUserNotInChan(roomId: string, userId: string) {
   try {
-    // Récupérer les IDs des utilisateurs dans le canal
     const usersInChannel = await prisma.userOnChannel.findMany({
       where: {
         channelId: parseInt(roomId),
@@ -291,7 +289,6 @@ async  recupUserNotInChan(roomId: string, userId: string) {
 
     const userIdsInChannel = usersInChannel.map((user) => user.userId);
 
-    // Récupérer les IDs des utilisateurs ayant reçu des invitations pour ce canal
     const invitations = await prisma.chatroomInvitations.findMany({
       where: {
         chatroomId: parseInt(roomId),
@@ -304,7 +301,6 @@ async  recupUserNotInChan(roomId: string, userId: string) {
 
     const userIdsWithInvitations = invitations.map((invitation) => invitation.senderId);
 
-    // Récupérer les utilisateurs qui ne sont ni dans le canal ni avec des invitations
     const usersNotInChannelOrWithInvitations = await prisma.user.findMany({
       where: {
         NOT: {
@@ -545,6 +541,24 @@ async demoteAdmin(roomId: string, userId: string)
   });
 }
 
+async banSomeone(roomId: string, userId: string, time: number)
+{
+  const bannedUntil = new Date();
+  let timeAsNumber = parseInt(time.toString(), 10);
+  let minutes = bannedUntil.getMinutes();
+  minutes += timeAsNumber;
+  bannedUntil.setMinutes(minutes);
+
+  await prisma.userOnChannel.updateMany({
+    where: {
+        channelId: parseInt(roomId),
+        userId: parseInt(userId),
+    },
+    data: {
+      bannedUntil : bannedUntil,
+    },
+  });
+}
 
 async muteSomeone(roomId: string, userId: string, time: number)
 {
@@ -565,6 +579,18 @@ async muteSomeone(roomId: string, userId: string, time: number)
   });
 }
 
+async unMuteSomeone(roomId: string, userId: string)
+{
+  await prisma.userOnChannel.updateMany({
+    where: {
+        channelId: parseInt(roomId),
+        userId: parseInt(userId),
+    },
+    data: {
+      mutedUntil : null,
+    },
+  });
+}
 
 async banUserTemporarily(roomId: string, userId: string, time: number){
   const bannedUntil = new Date();
@@ -576,30 +602,9 @@ async banUserTemporarily(roomId: string, userId: string, time: number){
       userId: parseInt(userId),
     },
     data: {
-      bannedUntil,
+      bannedUntil : bannedUntil,
     },
   });
-}
-
-async checkUserStatus(roomId: string, userId: string) {
-  const userOnChannel = await prisma.userOnChannel.findUnique({
-    where: {
-      channelId_userId: {
-        channelId: parseInt(roomId),
-        userId: parseInt(userId),
-      },
-    },
-  });
-
-  if (userOnChannel) {
-    if (userOnChannel.bannedUntil && new Date() < userOnChannel.bannedUntil) {
-      // L'utilisateur est banni jusqu'à la date spécifiée.
-      // Ne permettez pas l'action souhaitée.
-    }
-  }
-  return userOnChannel;
-
-  
 }
 
 async getStatusMute(userId: string, roomId: string) {
@@ -614,6 +619,24 @@ async getStatusMute(userId: string, roomId: string) {
 
   if (userOnChannel) {
     if (userOnChannel.mutedUntil && new Date() < userOnChannel.mutedUntil) {
+      return "true";
+    }
+  }
+  return "false";
+}
+
+async getStatusBan(userId: string, roomId: string) {
+  const userOnChannel = await prisma.userOnChannel.findUnique({
+    where: {
+      channelId_userId: {
+        channelId: parseInt(roomId),
+        userId: parseInt(userId),
+      },
+    },
+  });
+
+  if (userOnChannel) {
+    if (userOnChannel.bannedUntil && new Date() < userOnChannel.bannedUntil) {
       return "true";
     }
   }
