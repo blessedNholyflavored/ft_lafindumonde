@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "UserOnChannel" ALTER COLUMN "mutedUntil" SET DATA TYPE TIMESTAMPTZ(1);

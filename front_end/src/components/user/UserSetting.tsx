@@ -150,10 +150,7 @@ export const UserSetting: React.FC = () => {
         }
       }
     }
-  };
-  const navigateToHome = () => {
-    navigate("/");
-  };
+  }
 
   const navigateToProfPage = () => {
     navigate(`/users/profile/${user?.id}`);
@@ -174,6 +171,9 @@ export const UserSetting: React.FC = () => {
   const navigateToSettings = () => {
     navigate("/settings");
   };
+	const navigateToHome = () => {
+		navigate('/');
+	};
 
   return (
     <>
@@ -197,26 +197,29 @@ export const UserSetting: React.FC = () => {
 				<img src={icon} className="buttonnav" alt="icon" />
 				<p className="titlebox"> SETTINGS </p>
 			</div> */}
+			
+
             <div className="threerow">
               {/* deuxieme */}
               <div className="boxrowsettings">
-                <div className="navbarsmallbox">
-                  <p className="boxtitle"> CHANGE AVATAR </p>
-                </div>
-                <img src={ImgUrl} alt="user avatar"></img>
-                <div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
-                  <button onClick={changePic}>Upload</button>
-                </div>
-                <div className="footersmallbox">
-                  <br></br>
-                </div>
-              </div>
-
+				<div className="navbarsmallbox">
+					<p className="boxtitle"> CHANGE USERNAME </p>
+				</div>
+				<form className='formsettings' onSubmit={handleSubmit}>
+					<label className='labelcss'>
+						<input
+							className='inputcss'
+							type="text"
+							value={newUsername}
+							placeholder="type new username"
+							onChange={(e) => setNewUsername(e.target.value)} />
+					</label>
+					<button className='buttonsettings' type="submit">update</button>
+				</form>
+				<div className="footersmallbox">
+					<br></br>
+				</div>
+			</div>
               {/* deuxieme */}
               <div className="boxrowsettings">
                 <div className="navbarsmallbox">

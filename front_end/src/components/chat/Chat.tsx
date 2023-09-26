@@ -28,6 +28,7 @@ interface messages {
 interface privMSG {
   id: number;
   username: string;
+  isBlocked: string;
 }
 
 interface channels {
@@ -198,9 +199,17 @@ export const Chat = () => {
       const data = await response.json();
 
       if (data.length > 0) {
-        const promises = data.map(async (userId: string) => {
+        const promises = data.map(async (userId: string, isBlocked: string) => {
           const username = await fetchUsernameById(userId);
-          return { id: userId, username };
+          const isBlockedResponse = await fetch(
+            `http://localhost:3000/friends/blocked/${userId}/${user?.id}`,
+            {
+              method: "GET",
+              credentials: "include",
+            }
+          );
+          const blocked = isBlockedResponse.text();
+          return { id: userId, username, isBlocked };
         });
 
         const usernames: privMSG[] = await Promise.all(promises);
@@ -260,6 +269,18 @@ export const Chat = () => {
       });
     }
     if (socket) {
+      socket.on("refreshAfterKick", (roomName: string, reason: string) => {
+        alert("You have been kicked from " + roomName + ". Raison: " + reason);
+        window.location.reload();
+      });
+    }
+    if (socket) {
+      socket.on("refreshAfterMute", (roomName: string, reason: string, time: number) => {
+        alert("You have been muted from " + roomName + ". Raison: " + reason + ", pendant: " + time);
+        window.location.reload();
+      });
+    }
+    if (socket) {
       socket.on("refreshMessages", () => {
         fetchPrivateConv();
       });
@@ -304,9 +325,13 @@ export const Chat = () => {
   };
 
   const createRoom = async () => {
-    if ((await checkRoomAlreadyExist()) === false)
+    if ((await checkRoomAlreadyExist()) === false) {
       socket.emit("createChatRoom", valueRoom, selectedOption, password);
-    else alert("Name room already taken");
+      socket.emit("ActuAtRoomCreate", valueRoom, selectedOption);
+      setTimeout(() => {
+        socket.emit("reloadListRoomAtJoin", valueRoom);
+      }, 100);
+    } else alert("Name room already taken");
     return "";
   };
 
@@ -627,6 +652,7 @@ export const Chat = () => {
           <h1>Liste des convos privées :</h1>
           {privMSG.map((priv) => (
             <div key={priv.id}>
+            {priv.isBlocked === "false" && (
               <button
                 onClick={() => {
                   navToPrivateConv(priv.id);
@@ -644,6 +670,7 @@ export const Chat = () => {
                   id: {priv.id} --- username: {priv.username}
                 </div>
               </button>
+            )}
             </div>
           ))}
         </ul>

@@ -146,5 +146,28 @@ export class ChatController {
   leftChan(@Param('id') roomId: string, @Param('id1') userId: string) {
     return this.chatService.leftChan(roomId, userId);
   }
+
+  @Post('mute/:id/:id1/:time')
+  muteSomeone(@Param('id') roomId: string, @Param('id1') userId: string, @Param('time') time: number) {
+    return this.chatService.muteSomeone(roomId, userId, time);
+  }
+
+  @Get('/muted/:id/:id1')
+  async getStatusMute(@Param('id') userId: string, @Param('id1') roomId: string)
+  {
+    return this.chatService.getStatusMute(userId, roomId);
+  }
+
+  @Post('/admin/:id/:id1')
+  async passAdmin(@Param('id') userId: string, @Param('id1') roomId: string)
+  {
+    return this.chatService.passAdmin(roomId, userId);
+  }
+
+  @Post('/demoteAdmin/:id/:id1')
+  async demoteAdmin(@Param('id') userId: string, @Param('id1') roomId: string)
+  {
+    return this.chatService.demoteAdmin(roomId, userId);
+  }
   
 }

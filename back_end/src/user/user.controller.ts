@@ -80,6 +80,7 @@ export class UsersController {
           console.log('IFFFFFFFFFFFFFFFFF');
           cb(null, true);
         } else {
+			console.log(file.mimetype);
           console.log('ELSSEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
           cb(
             new HttpException(
@@ -118,7 +119,7 @@ export class UsersController {
     const ret = await this.userService.getID(id.toString());
     return this.userService.exclude(ret, ['totpKey', 'password']);
   }
-
+  
   @Get('/:id/games-data')
   async fetchGameData(@Param('id') id: string)
   {
@@ -135,6 +136,14 @@ export class UsersController {
       '    fin dans le back ndrrrrr',
     );
     return user.status;
+  }
+
+  @Get('/leaderboard/:id')
+  async getLeaderboardData(@Param('id') id: number)
+  {
+	const data = await this.userService.getLeaderboard();
+	console.log(data);
+	return (data);
   }
 
   // @Get('/scoresMG')
