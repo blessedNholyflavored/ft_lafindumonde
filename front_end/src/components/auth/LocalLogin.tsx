@@ -40,6 +40,7 @@ export function LocalLogin() {
     } else {
       const data = await res.json();
       setUser(data.user);
+      window.location.reload();
     }
   };
   const fortyTwoLogin = () => {

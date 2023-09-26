@@ -50,6 +50,7 @@ export function Register() {
     } else {
       const data = await res.json();
       setUser(data.user);
+      window.location.reload();
     }
   };
 

@@ -21,6 +21,7 @@ export const InputTotp: React.FC = () => {
         if (response.status === 200) {
           // console.log('it went well ! user = ', response.data);
           setUser(response.data);
+          window.location.reload();
         } else {
           console.error("Hmm Hmmm :", response.data);
         }
