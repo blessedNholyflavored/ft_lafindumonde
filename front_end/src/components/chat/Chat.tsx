@@ -78,7 +78,7 @@ export const Chat = () => {
   async function fetchYourRoomsList() {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/recupYourRooms/${user?.id}`,
+        `http://localhost:3000/chat/recupYourRooms`,
         {
           method: "GET",
           credentials: "include",
@@ -107,13 +107,10 @@ export const Chat = () => {
 
   async function fetchRoomsList() {
     try {
-      const response = await fetch(
-        `http://localhost:3000/chat/recupRooms/${user?.id}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`http://localhost:3000/chat/recupRooms`, {
+        method: "GET",
+        credentials: "include",
+      });
       if (!response.ok) {
         throw new Error(
           "Erreur lors de la récupération des messages preeeeivés."
@@ -184,13 +181,10 @@ export const Chat = () => {
 
   async function fetchPrivateConvList() {
     try {
-      const response = await fetch(
-        `http://localhost:3000/chat/recupPrivate/${user?.id}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`http://localhost:3000/chat/recupPrivate`, {
+        method: "GET",
+        credentials: "include",
+      });
       if (!response.ok) {
         throw new Error(
           "Erreur lors de la récupération des messages preeeeivés."
@@ -275,10 +269,20 @@ export const Chat = () => {
       });
     }
     if (socket) {
-      socket.on("refreshAfterMute", (roomName: string, reason: string, time: number) => {
-        alert("You have been muted from " + roomName + ". Raison: " + reason + ", pendant: " + time);
-        window.location.reload();
-      });
+      socket.on(
+        "refreshAfterMute",
+        (roomName: string, reason: string, time: number) => {
+          alert(
+            "You have been muted from " +
+              roomName +
+              ". Raison: " +
+              reason +
+              ", pendant: " +
+              time
+          );
+          window.location.reload();
+        }
+      );
     }
     if (socket) {
       socket.on("refreshMessages", () => {
@@ -652,25 +656,25 @@ export const Chat = () => {
           <h1>Liste des convos privées :</h1>
           {privMSG.map((priv) => (
             <div key={priv.id}>
-            {priv.isBlocked === "false" && (
-              <button
-                onClick={() => {
-                  navToPrivateConv(priv.id);
-                  if (showConv) {
-                    handleButtonConv();
-                  } else {
-                    setShowConv(true);
-                    setShowChatChannel(false);
-                    setActiveChannel(0);
-                  }
-                }}
-                disabled={selectedPrivateConv === priv.id}
-              >
-                <div>
-                  id: {priv.id} --- username: {priv.username}
-                </div>
-              </button>
-            )}
+              {priv.isBlocked === "false" && (
+                <button
+                  onClick={() => {
+                    navToPrivateConv(priv.id);
+                    if (showConv) {
+                      handleButtonConv();
+                    } else {
+                      setShowConv(true);
+                      setShowChatChannel(false);
+                      setActiveChannel(0);
+                    }
+                  }}
+                  disabled={selectedPrivateConv === priv.id}
+                >
+                  <div>
+                    id: {priv.id} --- username: {priv.username}
+                  </div>
+                </button>
+              )}
             </div>
           ))}
         </ul>

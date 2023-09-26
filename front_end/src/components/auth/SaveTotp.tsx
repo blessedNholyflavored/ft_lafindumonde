@@ -12,7 +12,6 @@ export const SaveTotp: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log("ALLLOALLOO");
   const searchParams = new URLSearchParams(location.search);
   const qrCodeImg = searchParams.get("qrCodeImg");
 

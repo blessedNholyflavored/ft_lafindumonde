@@ -67,17 +67,9 @@ export class ChatController {
     return this.chatService.checkRoomExist(name);
   }
 
-  @Get('/recupYourRooms/:id')
-  async recupYourRooms(@Param('id') id: string, @Req() req: any)
+  @Get('/recupYourRooms')
+  async recupYourRooms(@Req() req: any)
   {
-		// console.log("////////////////PENDING");
-		// console.log("RECUP YOUR ROOMS");
-		// console.log("user making request: ", req.user.id);
-		// console.log("user id gave in function:", id);
-		const userID = parseInt(id);
-		if (req.user.id != userID)
-			console.log("/////ALERT ALERT ALERT ALERT IN RECUP YOUR ROOMS CONTROLLER/////");
-		// TODO: if alert is never raised : erase id of this route
     return this.chatService.recupYourRooms(req.user.id.toString());
   }
 
@@ -87,30 +79,16 @@ export class ChatController {
     return this.chatService.recupInvSend(id, id1);
   }
 
-  @Get('/recupRooms/:id')
-  async recupRooms(@Req() req: any, @Param('id') id: string)
+  @Get('/recupRooms/')
+  async recupRooms(@Req() req: any)
   {
-	//	console.log("////////////////PENDING");
-		// console.log("RECUP ROOMS");
-		// console.log("user making request: ", req.user.id);
-		// console.log("user id gave in function:", id);
-		if (req.user.id != id)
-			console.log("ALERT ALERT ALERT IN RECUPROOMS CHAT CONTROLLER ALERT ALERT");
-		//TODO: if alert is never raised, clear Param and only use req.user.id
-    return this.chatService.recupRooms(id);
+    return this.chatService.recupRooms(req.user.id.toString());
   }
 
-  @Get('/recupPrivate/:id')
-  async recupPrivate(@Req() req: any, @Param('id') id: string)
+  @Get('/recupPrivate/')
+  async recupPrivate(@Req() req: any)
   {
-		// console.log("////////////////PENDING");
-		// console.log("RECUP PRIV");
-		// console.log("user making request: ", req.user.id);
-		// console.log("user id gave in function:", id);
-		if (req.user.id != id)
-			console.log("ALERT ALERT ALERT IN RECUPPRIVATE CHAT CONTROLLER ALERT ALERT");
-	//TODO: if alert is never raised, clear Param and only use req.user.id
-    return this.chatService.recupPrivate(id);
+    return this.chatService.recupPrivate(req.user.id.toString());
   }
 
   @Get('/invReceive/:id')
