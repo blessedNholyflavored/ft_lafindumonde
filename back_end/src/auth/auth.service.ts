@@ -81,13 +81,6 @@ export class AuthService {
 		}
 	}
 
-	// passwordHasher(input: string){
-	// 	const saltOrRounds = 10;
-	// 	const hash = bcrypt.hash(input, saltOrRounds);
-	// 	console.log("hashed pass = ", hash);
-	// 	return hash;
-	// }
-
 	passwordChecker(input: string, user: User){
 		return (bcrypt.compare(input, user.password));
 	}
