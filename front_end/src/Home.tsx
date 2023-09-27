@@ -1,128 +1,114 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import io, { Socket } from 'socket.io-client';
-import { User } from './interfaces';
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import io, { Socket } from "socket.io-client";
+import { User } from "./interfaces";
 import icon from "./img/buttoncomp.png";
 import logo from "./img/logo42.png";
 import chat_pic from "./img/fill.pic.png";
 import "./App.css";
 import "./style/Home.css";
 import "./style/Logout.css";
-import { Logout } from './components/auth/Logout';
-import { useAuth } from './components/auth/AuthProvider';
-import { WebsocketContext } from './WebsocketContext';
+import { Logout } from "./components/auth/Logout";
+import { useAuth } from "./components/auth/AuthProvider";
+import { WebsocketContext } from "./WebsocketContext";
 import folder from "./img/folder0.png";
 import folder1 from "./img/folder2.png";
 import folder2 from "./img/folder3.png";
 import folder3 from "./img/folder4.png";
 import folder4 from "./img/folder5.png";
 import folder0 from "./img/folder1.png";
-import nav from "./img/buttoncomp.png"
-import gaming from "./img/gamingpreview.png"
-import love from "./img/42lov.png"
-import chatpic from "./img/chatpic.png"
-import gradient from "./img/gradient.png"
-import Notify from './Notify';
+import nav from "./img/buttoncomp.png";
+import gaming from "./img/gamingpreview.png";
+import love from "./img/42lov.png";
+import chatpic from "./img/chatpic.png";
+import gradient from "./img/gradient.png";
+import Notify from "./Notify";
 import folder6 from "./img/folder6.png";
-
 
 interface HomeProps {
   socket: Socket | null;
 }
 
 const Home: React.FC<HomeProps> = () => {
-
-  const [notifyMSG, setNotifyMSG] = useState<string>('');
+  const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
   const [sender, setSender] = useState<number>(0);
-  
+
   const socket = useContext(WebsocketContext);
   const navigate = useNavigate();
-  const { user, setUser } =useAuth();
+  const { user, setUser } = useAuth();
   // const [recupStatus, setStatus] = useState<string>('');
-	let [ImgUrl, setImgUrl] = useState<string>('');
+  let [ImgUrl, setImgUrl] = useState<string>("");
   const [showNotification, setShowNotification] = useState(false);
 
-
   useEffect(() => {
-		displayPic();
-	}, []);
-	
+    displayPic();
+  }, []);
 
-  const displayPic = async() => {
+  const displayPic = async () => {
+    const userId = user?.id;
+    try {
+      const response = await fetch(
+        `http://localhost:3000/users/${userId}/avatar`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        const pictureURL = await response.text();
+        //console.log("aaaaaaA",pictureURL);
+        if (pictureURL.includes("https")) {
+          setImgUrl(pictureURL);
+        } else {
+          try {
+            const response = await fetch(
+              `http://localhost:3000/users/uploads/${pictureURL}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            if (response.ok) {
+              const blob = await response.blob();
+              const absoluteURL = URL.createObjectURL(blob);
+              setImgUrl(absoluteURL);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-		const userId = user?.id;
-		try {
-			const response = await fetch(`http://localhost:3000/users/${userId}/avatar`, {
-				method: 'GET',
-        credentials: 'include',
+  if (socket) {
+    socket.on("coucou", () => {
+      socket.emit("coucou");
+    });
+  }
 
-			});
-			if (response.ok) {
-				const pictureURL = await response.text();
-				//console.log("aaaaaaA",pictureURL);
-				if (pictureURL.includes("https"))
-				{
-					setImgUrl(pictureURL);
-				}
-				else {
-					try {
-					const response = await fetch(`http://localhost:3000/users/uploads/${pictureURL}`, {
-						method: 'GET',
-            credentials: 'include',
+  if (socket) {
+    socket.on("friendShipNotif", () => {
+      setShowNotification(true);
+      setNotifyMSG("Tu as recu une demande d'ami");
+      setNotifyType(0);
+    });
+  }
 
-					});
-					if (response.ok) {
-						const blob = await response.blob();
-						const absoluteURL = URL.createObjectURL(blob);
-						setImgUrl(absoluteURL);
-					}
-					}
-					catch (error) {
-						console.error(error);
-					}
-				}
-			}
-		}
-		catch (error) {
-			console.error(error);
-		}
-	}
+  if (socket) {
+    socket.on("receiveInvite", (sender: number) => {
+      setShowNotification(true);
+      setNotifyMSG("Tu as recu une invitation pour une partie");
+      setNotifyType(1);
+      setSender(sender);
+    });
+  }
 
-
-
-if (socket)
-{
-  socket.on("coucou", () => {
-    socket.emit("coucou");
-  })
-}
-
-if (socket)
-{
-  socket.on("friendShipNotif", () => {
-    setShowNotification(true);
-    setNotifyMSG("Tu as recu une demande d'ami")
-    setNotifyType(0);
-  })
-}
-
-if (socket)
-{
-  socket.on("receiveInvite", (sender: number) => {
-    setShowNotification(true);
-    setNotifyMSG("Tu as recu une invitation pour une partie")
-    setNotifyType(1);
-    setSender(sender);
-  })
-}
-
-
-
-
-
-const navigateToHome = () => {
-	navigate('/');
+  const navigateToHome = () => {
+    navigate("/");
   };
 
   const navigateToProfPage = () => {
@@ -130,75 +116,75 @@ const navigateToHome = () => {
   };
 
   const navigateToChat = () => {
-	navigate('/chat');
+    navigate("/chat");
   };
 
   const NavToSoloPong = () => {
-    navigate('/solopong');
-    };
+    navigate("/solopong");
+  };
 
   const navigateToFriends = () => {
-    navigate('/friends');
-    };
+    navigate("/friends");
+  };
 
-    const handleCloseNotification = () => {
-      setShowNotification(false);
-    };
-
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
 
   const navigateToSettings = () => {
-    navigate('/settings');
-    };
-    const navToGamePage = () => {
-      navigate('/gamePage');
-      };
+    navigate("/settings");
+  };
+  const navToGamePage = () => {
+    navigate("/gamePage");
+  };
 
   return (
-	<>
-  <body>
-    <header>
+    <>
+      <body>
+        <header>
+          <div>
+            <img src={nav} alt="Menu 1" />
+          </div>
+          <h1>TRANSCENDENCE</h1>
+        </header>
         <div>
-            <img src={nav} alt="Menu 1"/>
+          {showNotification && (
+            <Notify
+              message={notifyMSG}
+              type={notifyType}
+              senderId={sender}
+              onClose={handleCloseNotification}
+            />
+          )}
         </div>
-        <h1>TRANSCENDENCE</h1>
-    </header>
-    <div>
-      {showNotification && (
-        <Notify message={notifyMSG} type={notifyType} senderId={sender} onClose={handleCloseNotification} />
-      )}
-    </div>
-    <div className="flex-bg">
-        <main>
+        <div className="flex-bg">
+          <main>
             <div className="home">
-					<p> HOME </p>
-          <div className="inside">
-            <img src={ImgUrl} className="homepic"/>
-                <button className="homebut">
-              WELCOME {user?.username}
-                </button>
+              <p> HOME </p>
+              <div className="inside">
+                <img src={ImgUrl} className="homepic" />
+                <button className="homebut">WELCOME {user?.username}</button>
               </div>
             </div>
-            
-            <div className="chat"onClick={ navigateToChat } >
-					<p> CHAT WITH FRIENDS </p>
-          <img src={chatpic} />
+
+            <div className="chat" onClick={navigateToChat}>
+              <p> CHAT WITH FRIENDS </p>
+              <img src={chatpic} />
             </div>
 
-            <div className="troll" >
-					<p > 42 LOVES U </p>
-          <img src={love} />
-
+            <div className="troll">
+              <p> 42 LOVES U </p>
+              <img src={love} />
             </div>
 
-            <div className="game" onClick={() => navToGamePage()} >
-					<p> PLAY THE GAME </p>
-          <img src={gaming} />
+            <div className="game" onClick={() => navToGamePage()}>
+              <p> PLAY THE GAME </p>
+              <img src={gaming} />
             </div>
-            
-        </main>
-        <nav>
+          </main>
+          <nav>
             <ul>
-                {/* <li className="menu-item">
+              {/* <li className="menu-item">
                     <a onClick={() => handlePlayerSelect('1')}>
                         <img src={folder4} alt="Menu 1"/>
                         <p  >Matchmaking</p>
@@ -213,49 +199,52 @@ const navigateToHome = () => {
               )}
                     </a>
                 </li> */}
-                {/* <li className="menu-item">
+              {/* <li className="menu-item">
                     <a onClick={() => handlePlayerSelect222('1')}>
                         <img src={folder3} alt="Menu 2"/>
                         <p  >Big Game</p>
                         
                     </a>
                 </li> */}
-                <li className="menu-item">
-                    <a onClick={() => NavToSoloPong()}>
-                        <img src={folder2} alt="Menu 3"/>
-                        <p  >Tiny Game</p>
-                    </a>
-                </li>
-                <li className="menu-item">
-                    <a onClick={navigateToProfPage}>
-                        <img src={folder1} alt="Menu 3"/>
-                        <p >Profile</p>
-                    </a>
-                </li>
-                <li className="menu-item">
-                    <a onClick={navigateToSettings}>
-                        <img src={folder} alt="Menu 3"/>
-                        <p  >Settings</p>
-                    </a>
-                </li>
-                <li className="menu-item">
-                    <a onClick={navigateToFriends}>
-                        <img src={folder0} alt="Menu 3"/>
-                        <p  >Friends</p>
-                    </a>
-                </li>
+              <li className="menu-item">
+                <a onClick={() => NavToSoloPong()}>
+                  <img src={folder2} alt="Menu 3" />
+                  <p>Tiny Game</p>
+                </a>
+              </li>
+              <li className="menu-item">
+                <a onClick={navigateToProfPage}>
+                  <img src={folder1} alt="Menu 3" />
+                  <p>Profile</p>
+                </a>
+              </li>
+              <li className="menu-item">
+                <a onClick={navigateToSettings}>
+                  <img src={folder} alt="Menu 3" />
+                  <p>Settings</p>
+                </a>
+              </li>
+              <li className="menu-item">
+                <a onClick={navigateToFriends}>
+                  <img src={folder0} alt="Menu 3" />
+                  <p>Friends</p>
+                </a>
+              </li>
             </ul>
-        </nav>
-    </div>
-    <footer>
-        <button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
-			<img src={logo} className="logo" alt="icon" />
-    </footer>
-</body>
+          </nav>
+        </div>
+        <footer>
+          <button
+            className="logoutBtn"
+            onClick={() => Logout({ user, setUser })}
+          >
+            LOG OUT{" "}
+          </button>
+          <img src={logo} className="logo" alt="icon" />
+        </footer>
+      </body>
 
-
-
-	{/* <div className="main_box">
+      {/* <div className="main_box">
 		<div className="navbarmainpage">
 			<img src={icon} className="buttonnav" alt="icon" />
 			<p className="titlemainpage"> TRANSCENDENCE </p>
@@ -317,15 +306,11 @@ const navigateToHome = () => {
 			<img src={logo} className="logo" alt="icon" />
 		</div>
 	</div> */}
-	
-  
-  
-  </>
+    </>
   );
 };
 
 export default Home;
-
 
 /*
   return (
