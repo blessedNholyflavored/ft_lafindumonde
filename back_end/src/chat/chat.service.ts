@@ -4,6 +4,7 @@ import { Room, privateMessage } from 'src/interfaces';
 import { PrismaClient,UserRoleInChannel, Chatroom, UserChannelVisibility, InvitationsStatus } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
 import { merge } from 'lodash';
+import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 @Injectable()
@@ -124,9 +125,18 @@ export class ChatService {
       }
   }
 
+  async passwordHasher(input: string){
+		if (!input)
+			return ;
+		const saltOrRounds = 10;
+		const hash = await bcrypt.hash(input, saltOrRounds);
+		return hash.toString();
+	}
+
   async CreateRoom(nameRoom: string, option: string, hash:string, id: string) {
 
     let visibility: UserChannelVisibility;
+		let securedHash = await this.passwordHasher(hash.toString());
 
     if (option == "public")
       visibility = UserChannelVisibility.PUBLIC;
@@ -138,7 +148,7 @@ export class ChatService {
       data: {
         name: nameRoom,
         visibility: visibility,
-        hash: hash,
+        hash: securedHash,
       },
     });
     const userOnChannel = await prisma.userOnChannel.create({
@@ -193,7 +203,7 @@ export class ChatService {
       }
     
       if (chatRoom.visibility == UserChannelVisibility.PWD_PROTECTED) {
-        if (chatRoom.hash != hash) {
+				if (await bcrypt.compare(hash, chatRoom.hash) === false){
           return;
         }
       }

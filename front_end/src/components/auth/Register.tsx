@@ -23,6 +23,13 @@ export function Register() {
   // sending input to back_end to verify and register
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let dogimg;
+    await fetch(`https://dog.ceo/api/breeds/image/random`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((responseData) => (dogimg = responseData.message.toString()))
+      .catch(() => (dogimg = champi.toString()));
     const res = await fetch(`http://localhost:3000/auth/register`, {
       method: "POST",
       headers: {
@@ -32,7 +39,7 @@ export function Register() {
         email: inputEmail,
         password: inputPassword,
         username: inputUsername,
-        pictureURL: champi.toString(),
+        pictureURL: dogimg,
       }),
       credentials: "include",
     });
@@ -43,18 +50,16 @@ export function Register() {
     } else {
       const data = await res.json();
       setUser(data.user);
+      window.location.reload();
     }
-    /*	.then(async (res: any) => { 
-					// console.log(await res.json() );
-					const data = await res.json();
-					setUser(data.user);
-					console.log("OUII ?",data);
-				})
-				.catch((error:any) => {window.alert("One or severals of your inputs aren't right !");});*/
   };
 
   const returnHome = () => {
     navigate("/");
+  };
+
+  const fortyTwoLogin = () => {
+    window.location.href = "http://localhost:3000/auth/login42";
   };
 
   return (
@@ -65,47 +70,62 @@ export function Register() {
       <div className="boxAuth">
         <div className="navbarbox navAuth">
           <img src={icon} className="buttonnav" alt="icon" />
-          <p className="navTitle"> REGISTER </p>
+          <p className="navTitle"> /REGISTER </p>
           <p className="navTitle"> ▷</p>
         </div>
         <div className="boxAuthContent">
-          <form className="registerForm" onSubmit={handleSubmit}>
-            <label>Username:</label>
-            <input
-              className="registerInput"
-              type="text"
-              value={inputUsername}
-              placeholder="toto"
-              minLength={3}
-              required={true}
-              onChange={(e) => setInputUsername(e.target.value)}
-            />
-            <label>Password</label>
-            <input
-              className="registerInput"
-              type="password"
-              value={inputPassword}
-              placeholder="********"
-              minLength={8}
-              required={true}
-              onChange={(e) => setInputPassword(e.target.value)}
-            />
-            <label>E-mail:</label>
-            <input
-              className="registerInput"
-              type="email"
-              value={inputEmail}
-              placeholder="toto@cie.io"
-              required={true}
-              onChange={(e) => setInputEmail(e.target.value)}
-            />
-
-            <button className="submitLogIn" type="submit">
-              LET ME IN !
-            </button>
+          <form className="loginForm" onSubmit={handleSubmit}>
+            <div className="loginFormBox">
+              <label>Username:</label>
+              <input
+                className="registerInput"
+                type="text"
+                value={inputUsername}
+                placeholder="toto"
+                minLength={3}
+                required={true}
+                onChange={(e) => setInputUsername(e.target.value)}
+              />
+            </div>
+            <div className="loginFormBox">
+              <label>Password</label>
+              <input
+                className="registerInput"
+                type="password"
+                value={inputPassword}
+                placeholder="********"
+                minLength={8}
+                required={true}
+                onChange={(e) => setInputPassword(e.target.value)}
+              />
+            </div>
+            <div className="loginFormBox">
+              <label>E-mail:</label>
+              <input
+                className="registerInput"
+                type="email"
+                value={inputEmail}
+                placeholder="toto@cie.io"
+                required={true}
+                onChange={(e) => setInputEmail(e.target.value)}
+              />
+            </div>
+            <div className="loginFormBox">
+              <button className="submitLogIn" type="submit">
+                LET ME IN !
+              </button>
+            </div>
           </form>
-          <p> I changed my mind I want to be logged through 42 !</p>
-          <button onClick={returnHome}>LOG W/ 42</button>
+          <div className="otherLogin">
+            <div className="otherLoginBox">
+              <p> I changed my mind I want to be logged through 42 !</p>
+              <img
+                src="./login.png"
+                onClick={fortyTwoLogin}
+                alt="login with 42 button"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

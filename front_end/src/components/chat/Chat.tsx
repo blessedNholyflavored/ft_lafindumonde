@@ -83,7 +83,7 @@ export const Chat = () => {
   async function fetchYourRoomsList() {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/recupYourRooms/${user?.id}`,
+        `http://localhost:3000/chat/recupYourRooms`,
         {
           method: "GET",
           credentials: "include",
@@ -128,13 +128,10 @@ export const Chat = () => {
 
   async function fetchRoomsList() {
     try {
-      const response = await fetch(
-        `http://localhost:3000/chat/recupRooms/${user?.id}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`http://localhost:3000/chat/recupRooms`, {
+        method: "GET",
+        credentials: "include",
+      });
       if (!response.ok) {
         throw new Error(
           "Erreur lors de la récupération des messages preeeeivés."
@@ -204,13 +201,10 @@ export const Chat = () => {
 
   async function fetchPrivateConvList() {
     try {
-      const response = await fetch(
-        `http://localhost:3000/chat/recupPrivate/${user?.id}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`http://localhost:3000/chat/recupPrivate`, {
+        method: "GET",
+        credentials: "include",
+      });
       if (!response.ok) {
         throw new Error(
           "Erreur lors de la récupération des messages preeeeivés."

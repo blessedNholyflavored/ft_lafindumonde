@@ -63,8 +63,7 @@ export class AuthService {
 		// creates QR code from TotpKey generated
 		// + add key to user
 		const totpSecret = this.keyGenerator();
-		// TODO: find a better name
-		const issuer =  'AwesomeLameApp';
+		const issuer =  'ft_lafindumonde';
 		const qrCodeImg = await qrcode.toDataURL(`otpauth://totp/${issuer}:${user.id}?secret=${totpSecret}&issuer=${issuer}`);
 		await this.userService.add2FAKey(totpSecret, user.id);
 		return {qrCodeImg, user};
@@ -81,13 +80,6 @@ export class AuthService {
 			return undefined;
 		}
 	}
-
-	// passwordHasher(input: string){
-	// 	const saltOrRounds = 10;
-	// 	const hash = bcrypt.hash(input, saltOrRounds);
-	// 	console.log("hashed pass = ", hash);
-	// 	return hash;
-	// }
 
 	passwordChecker(input: string, user: User){
 		return (bcrypt.compare(input, user.password));

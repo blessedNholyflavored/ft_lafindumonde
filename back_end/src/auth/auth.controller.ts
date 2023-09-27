@@ -12,9 +12,9 @@ import { AuthDto } from "src/user/dto/auth.dto";
 @Controller("auth")
 export class AuthController{
     constructor(
-        private readonly authService: AuthService,
-        private readonly userService: UserService,
-	    private readonly config: ConfigService,
+			private readonly authService: AuthService,
+			private readonly userService: UserService,
+			private readonly config: ConfigService,
     ){}
 
     /************************
@@ -97,10 +97,10 @@ export class AuthController{
     @Get('/api/v1/auth/42/callback')
     @UseGuards(FortyTwoAuthGuard)
     async callback(@Req() req:any, @Res() res: any){
-        const token = await this.authService.login(req.user);
-		await this.userService.setLog2FA(req.user, false);
-        res.cookie('access_token', token.access_token, {httpOnly: true }).redirect('http://localhost:8080/');
-        return token;
+      const token = await this.authService.login(req.user);
+			await this.userService.setLog2FA(req.user, false);
+      res.cookie('access_token', token.access_token, {httpOnly: true }).redirect('http://localhost:8080/');
+      return token;
     }
 
     @Get('me')
