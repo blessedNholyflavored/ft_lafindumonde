@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Game" ALTER COLUMN "start_at" SET DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "privateMessage" ALTER COLUMN "start_at" SET DEFAULT CURRENT_TIMESTAMP;

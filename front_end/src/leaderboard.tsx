@@ -1,63 +1,80 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
-import { useAuth } from './components/auth/AuthProvider';
-import { WebsocketContext } from './WebsocketContext';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from "./components/auth/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 
 interface PlayerScore {
     place: number;
     username: string;
     ELO: number;
+	id: number;
   }
 
 export const Classement = () => {
 
   const [playerScores, setPlayerScores] = useState<PlayerScore[]>([]);
+  const { user, setUser } = useAuth();
+  const userId = user?.id;
+  const navigate = useNavigate();
 
 
+ useEffect(() => {
+	fetchPlayerScores();
+ }, []);
 
     async function fetchPlayerScores() {
         try {
-          const response = await fetch(`http://localhost:3001/users/`, {
+          const response = await fetch(`http://localhost:3000/users/leaderboard/${userId}`, {
             method: 'GET',
+            credentials: 'include',
           });
           if (!response.ok) {
             throw new Error('Erreur lors de la récupération des scores.');
           }
           const data = await response.json();
-          return data;
+		  console.log("DANS LEADERBOARD.TSX", data);
+          setPlayerScores(data);
         } catch (error) {
           console.error('Erreur:', error);
           return [];
         }
       }
-    
-      useEffect(() => {
-        async function fetchScores() {
-          const scores = await fetchPlayerScores();
-          // Tri des scores dans l'ordre décroissant
-          scores.sort((a: { ELO: number; }, b: { ELO: number; }) => b.ELO - a.ELO);
-          // Attribuer les places aux joueurs
-          scores.forEach((score: { place: any; }, index: number) => {
-            score.place = index + 1;
-          });
-          setPlayerScores(scores);
-        }
-    
-        fetchScores();
-      }, []);
-
+	  function navToProfil(id: string) {
+		navigate(`/users/profile/${id}`);
+	  }
 
 return(
-<div style={{ float: 'right' }}>
-<h2>Scores des joueurs :</h2>
-<ul>
-  {playerScores.map((score) => (
-    <li key={score.username}>
-      {score.place} - {score.username}: {score.ELO}
-    </li>
-  ))}
-</ul>
-</div>
+	<>
+		<h2>Scores des joueurs :</h2>
+		<div>
+			<table>
+			<thead>
+				<tr>
+				<th>Rank</th>
+				<th>Username</th>
+				<th>Elo</th>
+				</tr>
+			</thead>
+			<tbody>
+				{playerScores.map((tab: PlayerScore, index: number) => (
+				<tr key={index}>
+					<td>{tab.place}</td>
+					<td>{tab.username}</td>
+					<td>{tab.ELO}</td>
+					<td><button
+                      onClick={() => navToProfil(tab.id.toString())}
+                    >
+					Voir Profile
+				  </button></td>
+				</tr>
+				))}
+			</tbody>
+			</table>
+		</div>
+		<div className="footersmallbox">
+				<br></br>
+		</div>
+	</>
 );
 }
 

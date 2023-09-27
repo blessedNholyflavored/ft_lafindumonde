@@ -33,7 +33,6 @@ export class FriendsService {
         where: { id: parseInt(id) },
         select: { InvitFriendSent: true},
       });
-      console.log(friends[0]);
       return friends[0].InvitFriendSent;
     } catch (error) {
       throw new BadRequestException('invsend recup friends error : ' + error);
@@ -47,7 +46,6 @@ export class FriendsService {
         where: { id: parseInt(id) },
         select: { InvitFriendReceived: true},
       });
-      console.log(friends[0]);
       return friends[0].InvitFriendReceived;
     } catch (error) {
       throw new BadRequestException('invsend recup friends error : ' + error);
@@ -55,16 +53,238 @@ export class FriendsService {
   }
 
 
-  async acceptRequest(id: string)
-  {
-    const friendShipUpdate = await prisma.friendship.update({
+async unBlock(senderId: string, recipientId: string)
+{
+  await prisma.user.update({
+    where: {
+      id: parseInt(senderId),
+    },
+    data: {
+      block: {
+        disconnect: {
+          id: parseInt(recipientId),
+        },
+      },
+    },
+  });
+
+  await prisma.user.update({
+    where: {
+      id: parseInt(recipientId),
+    },
+    data: {
+      blockOf: {
+        disconnect: {
+          id: parseInt(senderId),
+        },
+      },
+    },
+  });
+}
+
+async blockFriend(sender: string, recipient: string)
+{
+  const updateUser = await prisma.user.update({
+    where: {
+      id: parseInt(sender),
+    },
+    include: { block: true },
+    data: {
+      block: { connect: { id: parseInt(recipient) } },
+    },
+  });
+  const updateUser1 = await prisma.user.update({
+    where: {
+      id: parseInt(recipient),
+    },
+    include: { blockOf: true },
+    data: {
+      blockOf: { connect: { id: parseInt(sender) } },
+    },
+  });
+}
+
+async listBlocked(id: string)
+{
+  try {
+    const user = await prisma.user.findUnique({
       where: {
         id: parseInt(id),
       },
-      data: {
-			  status: "ACCEPTED",
-			},
-    })
+      include: {
+        block: true,
+      },
+    });
+
+    if (user) {
+      const blockedUsers = user.block;
+      return blockedUsers;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error('Erreur lors de la récupération des utilisateurs bloqués : ', error);
+    throw error;
+  }
+}
+
+async checkBlocked(senderId: string, recipientId: string)
+{
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: parseInt(recipientId),
+      },
+      include: {
+        block: true,
+      },
+    });
+
+    if (user) {
+      const blockedUsers = user.block;
+
+      const isBlocked = blockedUsers.some((blockedUser) => blockedUser.id === parseInt(senderId));
+      return isBlocked;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erreur lors de la vérification du blocage de l'utilisateur : ", error);
+    throw error;
+  }
+}
+
+async getOnlinePlayers(userId: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: parseInt(userId),
+      },
+      include: {
+        friends: true,
+        block: true,
+      },
+    });
+
+    if (!user) {
+      throw new Error('Utilisateur non trouvé');
+    }
+    const usersOnline = await prisma.user.findMany({
+      where: {
+        status: 'ONLINE',
+      },
+    });
+
+    const usersOnlineFiltered = usersOnline.filter((onlineUser) => {
+      const isFriend = user.friends.some((friend) => friend.id === onlineUser.id);
+      const isBlocked = user.block.some((blockedUser) => blockedUser.id === onlineUser.id);
+      const isUser = user.id === onlineUser.id;
+
+      return !isFriend && !isBlocked && !isUser;
+    });
+
+    return usersOnlineFiltered;
+  } catch (error) {
+    throw new Error(`Erreur lors de la récupération des utilisateurs en ligne: ${error.message}`);
+  }
+}
+
+async checkBlockedStatus(senderId: string, recipientId: string)
+{
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: parseInt(recipientId),
+      },
+      include: {
+        block: true,
+      },
+    });
+
+    if (user) {
+      const blockedUsers = user.block;
+
+      const isBlocked = blockedUsers.some((blockedUser) => blockedUser.id === parseInt(senderId));
+      return isBlocked;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Erreur lors de la vérification du blocage de l'utilisateur : ", error);
+    throw error;
+  }
+}
+
+
+async deleteFriend(sender: string, recipient: string)
+{
+
+  const user1 = await this.prisma.user.findUnique({
+    where: {
+      id: parseInt(sender),
+    },
+  });
+
+  const user2 = await this.prisma.user.findUnique({
+    where: {
+      id: parseInt(recipient),
+    },
+  });
+
+  await this.prisma.user.update({
+    where: {
+      id: parseInt(sender),
+    },
+    data: {
+      friends: {
+        disconnect: {
+          id: parseInt(recipient),
+        },
+      },
+    },
+  });
+  await this.prisma.user.update({
+    where: {
+      id: parseInt(recipient),
+    },
+    data: {
+      friends: {
+        disconnect: {
+          id: parseInt(sender),
+        },
+      },
+    },
+  });
+
+  await this.prisma.user.update({
+    where: {
+      id: parseInt(recipient),
+    },
+    data: {
+      friendsOf: {
+        disconnect: {
+          id: parseInt(sender),
+        },
+      },
+    },
+  });
+  await this.prisma.user.update({
+    where: {
+      id: parseInt(sender),
+    },
+    data: {
+      friendsOf: {
+        disconnect: {
+          id: parseInt(recipient),
+        },
+      },
+    },
+  });
+}
+
+  async acceptRequest(id: string)
+  {
+
     const friendShip = await prisma.friendship.findUnique({
       where: {
         id: parseInt(id),
@@ -72,6 +292,11 @@ export class FriendsService {
     })
     
     this.userService.addFriends(friendShip.senderId, friendShip.recipientId);
+    const friendShipUpdate = await prisma.friendship.delete({
+      where: {
+        id: parseInt(id),
+      },
+    })
   }
 
   async refuseRequest(id: string)

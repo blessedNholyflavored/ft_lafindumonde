@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import '../../style/Profile.css'
 import ProfileBox from "./ProfileBox"
 import icon from "../../img/buttoncomp.png"
@@ -6,12 +6,28 @@ import logo from "../../img/logo42.png"
 import domo from "../../img/domo.png"
 import ScoreList from "./ScoreList";
 import Friends from "./FriendsList";
+import { useAuth } from "../auth/AuthProvider";
+import Notify from '../../Notify';
+import { WebsocketContext } from "../../WebsocketContext";
+import { GameHistory } from "./GameHistory";
+import { useParams } from "react-router-dom";
 
 const Box = (props: any) => {
 
     const [info, setInfo] = useState<any>(null);
+	let [ImgUrl, setImgUrl] = useState<string>('');
+	const { user, setUser } = useAuth();
+    const [notifyMSG, setNotifyMSG] = useState<string>('');
+    const [notifyType, setNotifyType] = useState<number>(0);
+    const [sender, setSender] = useState<number>(0);
+    const socket = useContext(WebsocketContext);
+    const [showNotification, setShowNotification] = useState(false);
+	const { id } = useParams();
+
+
 
     useEffect(() => {
+		displayPic();
         if (props.type === 'info') {
             setInfo(<ProfileBox type={props.type}/>)
         } else if  (props.type === 'friends') {
@@ -21,9 +37,73 @@ const Box = (props: any) => {
     
 }, [props.type])
 
+const displayPic = async() => {
+
+    const userId = user?.id;
+    try {
+        const response = await fetch(`http://localhost:3000/users/${id}/avatar`, {
+            method: 'GET',
+			credentials: 'include',
+        });
+        if (response.ok) {
+            const pictureURL = await response.text();
+            //console.log("aaaaaaA",pictureURL);
+            if (pictureURL.includes("https"))
+            {
+                setImgUrl(pictureURL);
+            }
+            else {
+                try {
+                const response = await fetch(`http://localhost:3000/users/uploads/${pictureURL}`, {
+                    method: 'GET',
+					credentials: 'include',
+                });
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const absoluteURL = URL.createObjectURL(blob);
+                    setImgUrl(absoluteURL);
+                }
+                }
+                catch (error) {
+                    console.error(error);
+                }
+            }
+        }
+    }
+    catch (error) {
+        console.error(error);
+    }
+}
+
+const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
+  
+  if (socket)
+{
+socket.on("receiveInvite", (sender: number) => {
+setShowNotification(true);
+setNotifyMSG("Tu as recu une invitation pour une partie")
+setNotifyType(1);
+setSender(sender);
+})
+}
+
+if (socket)
+{
+  socket.on("friendShipNotif", () => {
+    setShowNotification(true);
+    setNotifyMSG("Tu as recu une demande d'ami")
+    setNotifyType(0);
+  })
+}
+
 return (
-    
+<div>
     <div className="mainpage">
+      {showNotification && (
+        <Notify message={notifyMSG} type={notifyType} senderId={sender} onClose={handleCloseNotification} />
+      )}
         <div className="navbarmainpage">
         <img src={icon} className="buttonnav" alt="icon" />
            <p className="titlemainpage"> TRANSCENDENCE </p>
@@ -36,7 +116,7 @@ return (
 
         <div className="threerow">
             <div className="color">
-            <img src={domo} className="profilepic" alt="profilepic" />
+            <img src={ImgUrl} alt='user avatar'></img>
             </div>
             <div className="boxrow">
                 <div className="navbarsmallbox">
@@ -49,9 +129,9 @@ return (
             </div>
             <div className="boxrow">
                 <div className="navbarsmallbox">
-                    <p className="boxtitle"> Friends </p>
+                    <p className="boxtitle"> Game History </p>
                 </div>
-                    <Friends type="info"/>
+                    <GameHistory type="info"/>
                     <div className="footersmallbox">
                     <br></br>
                 </div>
@@ -76,6 +156,7 @@ return (
         {/* // <Friendslist type="friends"/> */}
         {/* // <Scorelist type ="scorelist"/> */}
     
+    </div>
     </div>
 )
 }

@@ -7,8 +7,9 @@ import {
 import { PrismaClient, User, USER_STATUS } from '@prisma/client'; // Renommez "User" en "PrismaUser"
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaUserCreateInput } from './user-create.input';
-import { Game } from '../interfaces';
-
+import { Game, Leaderboard } from '../interfaces';
+import * as bcrypt from 'bcrypt';
+import { AuthDto } from './dto/auth.dto';
 //import { createUserDto } from 'src/dto/createUserDto.dto';
 // import { UserAchievements } from '../user/user.interface';
 import { merge } from 'lodash';
@@ -109,9 +110,23 @@ export class UserService {
 			const allGames: Game[] = [...ret.game1, ...ret.game2].sort(
 				(a, b) => Date.parse(a.start_at) - Date.parse(b.start_at)
 			);
-		//console.log("AAAAA", allGames);
 		return (allGames);
 	}
+  }
+
+  async getLeaderboard()
+  {
+	const ret: Leaderboard[] = [];
+	const users = await prisma.user.findMany({
+		orderBy: {ELO: 'desc'},
+	});
+	const leaderboard: Leaderboard[] = users.map((user, index) => ({
+		id: user.id,
+		username: user.username,
+		ELO: user.ELO,
+		place: index + 1,
+	}));
+	return (leaderboard);
   }
 
   async getFriends(id: number) {
@@ -151,6 +166,7 @@ export class UserService {
       },
     });
   }
+  
   async updateUserStatuIG(id: number, newStatus: USER_STATUS) {
     const updateUser = await prisma.user.update({
       where: { id: id },
@@ -259,34 +275,74 @@ export class UserService {
     return false;
   }
 
-  async createUser(user: PrismaUserCreateInput): Promise<User> {
-    let tmpUser: User;
+  async passwordHasher(input: string){
+	if (!input)
+		return null;
+	const saltOrRounds = 10;
+	const hash = await bcrypt.hash(input, saltOrRounds);
+	return hash.toString();
+  }
 
+  async createUser(user: PrismaUserCreateInput, boolLocal: boolean): Promise<User> {
+    let tmpUser: User;
+	let hashedPwd = await this.passwordHasher(user.password)
     try {
       tmpUser = await prisma.user.create({
         data: {
           id: user.id,
           email: user.email,
-          //   hash: "",
+          password: hashedPwd,
           username: user.username,
           pictureURL: user.pictureURL,
           enabled2FA: false,
-		  log2FA: false,
-      gameplayed: 0,
-      scoreMiniGame: 0,
-      ELO: 1000,
-      level: 0,
-      xp: 0,
+		      log2FA: false,
+		      loginLoc: boolLocal,
+      	  gameplayed: 0,
+      	  scoreMiniGame: 0,
+      	  ELO: 1000,
+      	  level: 0,
+      	  xp: 0,
         }
       });
       return tmpUser;
     } catch (err) {
       //TODO: return the accurate error
       // doc here : https://www.prisma.io/docs/reference/api-reference/error-reference
-      console.log('Error creating user:', err);
+      console.error('Error creating user:', err);
       //throw err;
     }
   }
+
+	async createLocalUser(user: AuthDto, id: number): Promise<User>{
+		let tmpUser: User;
+		if (await this.usernameAuthChecker(user.username) === true){
+			//in case someone already have this username
+			user.username = user.username + '_';
+		}
+		let hashedPwd = await this.passwordHasher(user.password);
+		try {
+			tmpUser = await prisma.user.create({
+				data: {
+					id: id,
+					email: user.email,
+					password: hashedPwd,
+					username: user.username,
+					pictureURL: user.pictureURL,
+					enabled2FA: false,
+					log2FA: false,
+					loginLoc: true,
+					gameplayed: 0,
+					scoreMiniGame: 0,
+					ELO: 1000,
+					level: 0,
+					xp: 0,
+				}
+			});
+			return tmpUser;
+		} catch (err) {
+			console.error('Error creating user:', err);
+		}
+	}
 
   async enable2FA(id: number) {
     const updateUser = await prisma.user.update({

@@ -27,6 +27,7 @@ model User {
 	enabled2FA	Boolean?
 	totpKey		String?
 	log2FA		Boolean?
+	loginLoc	Boolean?
 	ELO			Int?
 
 	friends		User[] @relation ("Friends")
@@ -35,8 +36,20 @@ model User {
 	InvitFriendSent		Friendship[]			@relation("SentFriendships")
 	InvitFriendReceived	Friendship[]			@relation("ReceivedFriendships")
 
+	sentInvitations		ChatroomInvitations[]	@relation("SentInvitations")
+	receivedInvitations	ChatroomInvitations[]	@relation("ReceidedInvitations")
+
 	// achievements		UserAchievement[]
 	// @@map("users")
+
+	block		User[] @relation ("Block")
+	blockOf		User[] @relation ("Block")
+
+	PrivMessEmited       privateMessage[] @relation(name: "sender")
+  	PrivMessReceived     privateMessage[] @relation(name: "recipient")
+
+	userOnChanel		UserOnChannel[]
+	RoomMessSent		ChatroomMessage[]
 
 }
 
@@ -88,7 +101,7 @@ enum USER_STATUS{
 
 model Game {
 	id			Int			@id @default(autoincrement())
-	start_at	DateTime
+	start_at	DateTime	@default(now())
 	end_at		DateTime
   	userId1		Int
 	player1		User @relation("player1", fields: [userId1], references: [id])
@@ -103,23 +116,84 @@ model Game {
 	username2	String?
 }
 
-//model ChatRoom {
-//	id			Int		@id @default(autoincrement())
-//	name		String?
-//	users		User[]
-//	admins		User[]
-//	isPrivate		Boolean
-//	password	String?
-//	createdAt	DateTime	@default(now())
-//	updatedAt	DateTime	@updatedAt()
-//	messages	Message[]
-//}
+model privateMessage {
+	id			Int			@id @default(autoincrement())
+	start_at	DateTime	@default(now())
+	content		String?
+  	senderId    Int
+	sender		User @relation("sender", fields: [senderId], references: [id])
+  	recipientId Int
+	recipient	User @relation("recipient", fields: [recipientId], references: [id])
+}
 
-//model Message {
-//    id			Int		@id @default(autoincrement())
-//	createdAt	DateTime	@default(now())
-//	content		String
-//	sender		User
-//	receiver	User
-//	room		ChatRoom
-//}
+model Chatroom {
+	id				Int						@id @default(autoincrement())
+	visibility		UserChannelVisibility	@default(PUBLIC)
+	name			String
+	users	UserOnChannel[]
+	hash			String?
+	roomMess		ChatroomMessage[]
+	invitations		ChatroomInvitations[]
+
+}
+
+model ChatroomMessage {
+  id				Int     @id @default(autoincrement())
+  start_at			DateTime  @default(now())
+  content			String?
+  chatroomId		Int
+  chatroom			Chatroom @relation(fields: [chatroomId], references: [id])
+  senderId			Int
+  sender			User    @relation(fields: [senderId], references: [id])
+}
+
+model ChatroomInvitations {
+	id			Int					@id @default(autoincrement())
+	status		InvitationsStatus	@default(PENDING)
+	chatroomId	Int
+	chatroom	Chatroom			@relation(fields: [chatroomId], references: [id])
+	senderId	Int
+	sender		User				@relation(name: "SentInvitations", fields: [senderId], references: [id])
+	receiverId	Int
+	receiver	User				@relation(name: "ReceidedInvitations", fields: [receiverId], references: [id])
+	createdAt	DateTime			@default(now())
+	@@unique([chatroomId, senderId, receiverId])
+}
+
+model UserOnChannel {
+	id			Int					@id @default(autoincrement())
+	role		UserRoleInChannel	@default(USER)
+	status		UserStatusOnChannel	@default(CLEAN)
+	userId		Int
+	user		User				@relation(fields: [userId], references: [id])
+	channelId	Int
+	channel		Chatroom			@relation(fields: [channelId], references: [id])
+	bannedUntil	DateTime?
+	mutedUntil	DateTime?			@db.Timestamptz(1)
+
+	@@unique([channelId, userId])
+}
+
+enum UserChannelVisibility {
+	PUBLIC
+	PRIVATE
+	PWD_PROTECTED
+}
+
+enum UserRoleInChannel {
+	USER
+	ADMIN
+	OWNER
+}
+
+enum UserStatusOnChannel {
+	CLEAN
+	MUTE
+	BAN
+}
+
+enum InvitationsStatus {
+	PENDING
+	ACCEPTED
+	REJECTED
+}

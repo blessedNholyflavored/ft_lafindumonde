@@ -2,36 +2,25 @@ import { Injectable, HttpException, UnauthorizedException } from '@nestjs/common
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { ConfigService } from '@nestjs/config';
+import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
+import * as cookie from 'cookie';
 import { encode } from 'hi-base32';
 import * as qrcode from 'qrcode';
+import Socket from 'src/gateway/types/socket';
 
 @Injectable()
 export class AuthService {
 	constructor(
-		private userService: UserService,
-		private jwtService: JwtService,
-		private config: ConfigService
+		private readonly userService: UserService,
+		private readonly jwtService: JwtService,
+		private readonly config: ConfigService
 	){}
 
-// local login
-/*	async validateUser(username: string, password: string): Promise<User> {
-		throw new UnauthorizedException("Invalid credentials");
-	}*/
-
-	//ici faudra add 2FA boolean ds param
 	async login(user: any) {
-	/*	console.log('in login from auth service !!!')
-		console.log('username is :', user.username);
-		console.log('pictureURl is :', user.pictureURL);*/
+		// JWT creation
 		const payload = {sub: user.id};
-	/*	if (await this.launch2FA(user) == false) {
-			return {
-				access_token:'access failed',
-				message: 'Authentication with 2FA failed'
-			}
-		}*/
 		return {
 			access_token: this.jwtService.sign(payload,{
 				secret: this.config.get('JWT_SECURE_KEY'),
@@ -41,40 +30,58 @@ export class AuthService {
 	}
 
 	async retrieveUser(data: any){
+		//check if user already exists, else user creation
 		const user = await this.userService.getUserByID(data.id);
 		if (!user){
-		// TODO: check what happens if data is empty
 			if (await this.userService.usernameAuthChecker(data.username) == true){
 				// in case someone already have this username
 				data.username =  data.username + '_';
 			}
-			return await this.userService.createUser(data);
+			return await this.userService.createUser(data, false);
 		}
 		return user;
 	}
 
 	keyGenerator(): string {
+		//generates totpKey
 		const buffer = crypto.randomBytes(20);
-	//	console.log("DEBUGDEBUG buffer from crypto = ", buffer);
 		const secret = encode(buffer);
-	//	console.log("DEBUGDEBUGDEBUG buffer encoded in b32 : ", secret);
 		return secret;
 	}
 
-	async generate2FAkey(user: any){
-		const totpSecret = this.keyGenerator();
+	async idGenerator(){
+		// generates random ID for local login
+		let idCreated = Math.floor(Math.random() * 99999);
+		const userTest = await this.userService.getUserByID(idCreated);
+		if (userTest){
+			idCreated = await this.idGenerator();
+		}
+		return idCreated;
+	}
 
-		//console.log("COUCOUCOCOUC TOTP SECRET: ", totpSecret);
-		// generate QR code
-		const issuer =  'AwesomeLameApp';
+	async generate2FAkey(user: any){
+		// creates QR code from TotpKey generated
+		// + add key to user
+		const totpSecret = this.keyGenerator();
+		const issuer =  'ft_lafindumonde';
 		const qrCodeImg = await qrcode.toDataURL(`otpauth://totp/${issuer}:${user.id}?secret=${totpSecret}&issuer=${issuer}`);
 		await this.userService.add2FAKey(totpSecret, user.id);
-
 		return {qrCodeImg, user};
 	}
-/*	async launch2FA(user: any){
-		if (user.enabled2FA == false)
-			return true;
-		
-	}*/
+
+	async getUserBySocket(socket: Socket) : Promise<User | undefined> {
+		try {
+			//gets user by cookie
+			const token = socket.handshake.headers?.cookie?.split("; ")?.find((row) => row.startsWith("access_token"))?.split("=")[1];
+			const payload = this.jwtService.verify(token, {secret: this.config.get('JWT_SECURE_KEY')});
+			socket.user = await this.userService.getUserByID(payload.sub);
+			return (socket.user);
+		} catch (e) {
+			return undefined;
+		}
+	}
+
+	passwordChecker(input: string, user: User){
+		return (bcrypt.compare(input, user.password));
+	}
 }
