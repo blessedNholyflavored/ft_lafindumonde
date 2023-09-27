@@ -45,10 +45,23 @@ export const ChatChannel = () => {
   const [selectedUserIsMuted, setSelectedUserIsMuted] = useState<string | any>(
     "false"
   );
+  const [newPass, setNewPass] = useState("");
   const [selectedUserIsBanned, setSelectedUserIsBanned] = useState<
     string | any
   >("false");
   const [reactu, setReactu] = useState(0);
+  const [changeStatutButton, setChangeStatutButton] = useState(false);
+  const [onChangeStatut, setOnChangeStatut] = useState(false);
+  const [onMute, setOnMute] = useState(false);
+  const [onBan, setOnBan] = useState(false);
+  const [onKick, setOnKick] = useState(false);
+  const [timeMute, setTimeMute] = useState("");
+  const [reasonMute, setReason] = useState("");
+  const [timeBan, setTimeBan] = useState("");
+  const [reasonBan, setReasonBan] = useState("");
+  const [reasonKick, setReasonKick] = useState("");
+  const [onPWD, setOnPWD] = useState(false);
+  const [statutChan, setStatutChan] = useState("PUBLIC");
 
   async function fetchUsernameById(userId: string) {
     try {
@@ -129,7 +142,6 @@ export const ChatChannel = () => {
                 message.senderUsername = senderUsername;
                 message.senderRole = senderRole;
                 message.isBlocked = isBlocked;
-                console.log("WHS C QUOI CE DEL:   ", message);
               }
             } catch (error: any) {
               console.log(error);
@@ -235,7 +247,6 @@ export const ChatChannel = () => {
   }, [reactu]);
 
   useEffect(() => {
-    console.log(reactu);
     if (reactu === 0) return;
 
     async function fetchRoomMessage() {
@@ -313,7 +324,7 @@ export const ChatChannel = () => {
   };
 
   const kickFromChannel = async (userId: number) => {
-    const reason = window.prompt("Raison du kick ?");
+    const reason = reasonKick;
     try {
       const response = await fetch(
         `http://localhost:3000/chat/leftChan/${id}/${userId}`,
@@ -332,12 +343,13 @@ export const ChatChannel = () => {
       socket.emit("reloadMessRoom", id);
       socket.emit("kickFromChannel", userId, id, reason);
     }, 100);
+    setReasonKick("");
     setSelectedUser(0);
   };
 
   const MuteFromChannel = async (userId: number) => {
-    let reason = window.prompt("Raison du mute ?");
-    let time = window.prompt("Temps de mute? (en min)");
+    let reason = reasonMute;
+    let time = timeMute;
     if (!time) time = "0";
     if (!reason) reason = "";
     try {
@@ -358,12 +370,14 @@ export const ChatChannel = () => {
       socket.emit("reloadMessRoom", id);
       socket.emit("muteFromChannel", userId, id, reason, time);
     }, 100);
+    setReason("");
+    setTimeMute("");
     setSelectedUser(0);
   };
 
   const BanFromChannel = async (userId: number) => {
-    let reason = window.prompt("Raison du ban ?");
-    let time = window.prompt("Temps de ban? (en min)");
+    let reason = reasonBan;
+    let time = timeBan;
     if (!time) time = "0";
     if (!reason) reason = "";
     try {
@@ -384,6 +398,8 @@ export const ChatChannel = () => {
       socket.emit("reloadMessRoom", id);
       socket.emit("banFromChannel", userId, id, reason, time);
     }, 100);
+    setTimeBan("");
+    setReasonBan("");
     setSelectedUser(0);
   };
 
@@ -440,10 +456,7 @@ export const ChatChannel = () => {
     setSelectedUserIsMuted(mute);
     const ban = await checkBanned(userId);
     setSelectedUserIsBanned(ban);
-  };
-
-  const handleInvite = () => {
-    setShowMenu(false);
+    if (selectedUser !== 0) setSelectedUser(0);
   };
 
   const handleViewProfile = () => {
@@ -640,6 +653,66 @@ export const ChatChannel = () => {
     }
   }
 
+  async function getStatutChan() {
+    try {
+      const response = await fetch(`http://localhost:3000/chat/statut/${id}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+      const data = await response.text();
+      setStatutChan(data);
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+  }
+
+  async function ChangeStatutChan(option: string) {
+    let pass: string | null = "42";
+    if (option === "PWD_PROTECTED") {
+      pass = newPass;
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3000/chat/changeStatut/${id}/${option}/${pass}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+    setTimeout(() => {
+      socket.emit("reloadListRoom", id);
+    }, 100);
+  }
+
+  function handleMuteButton() {
+    if (onMute === true) setOnMute(false);
+    else setOnMute(true);
+  }
+
+  function handleBanButton() {
+    if (onBan === true) setOnBan(false);
+    else setOnBan(true);
+  }
+
+  function handleKickButton() {
+    if (onKick === true) setOnKick(false);
+    else setOnKick(true);
+  }
+
+  function handleChangeToPWD() {
+    if (onPWD === true) setOnPWD(false);
+    else setOnPWD(true);
+  }
+
   return (
     <div>
       <div>
@@ -703,6 +776,101 @@ export const ChatChannel = () => {
       )}
 
       <div>
+        {changeStatutButton && statutChan === "PWD_PROTECTED" && (
+          <div>
+            <button onClick={() => setOnChangeStatut(true)}>
+              Changer le MDP
+            </button>
+            <input
+              type="text"
+              value={newPass}
+              onChange={(e) => setNewPass(e.target.value)}
+            />
+            <button
+              onClick={() => ChangeStatutChan("PWD_PROTECTED")}
+              disabled={newPass.length === 0}
+            >
+              Change Password
+            </button>
+          </div>
+        )}
+        {yourRole === "OWNER" && (
+          <button
+            onClick={() => {
+              setChangeStatutButton(true);
+              getStatutChan();
+            }}
+          >
+            Changer le statut du chan
+          </button>
+        )}
+        {changeStatutButton && statutChan === "PUBLIC" && (
+          <div>
+            <button onClick={() => ChangeStatutChan("PRIVATE")}>
+              pass to Private
+            </button>
+            <div>
+              <button onClick={() => handleChangeToPWD()}>
+                pass to protected
+              </button>
+              {onPWD === true && (
+                <div>
+                  <input
+                    type="text"
+                    placeholder="newPass ?"
+                    value={newPass}
+                    onChange={(e) => setNewPass(e.target.value)}
+                  />
+                  <button
+                    onClick={() => ChangeStatutChan("PWD_PROTECTED")}
+                    disabled={newPass.length === 0}
+                  >
+                    pass to Protected
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        {changeStatutButton && statutChan === "PRIVATE" && (
+          <div>
+            <button onClick={() => ChangeStatutChan("PUBLIC")}>
+              pass to Public
+            </button>
+            <div>
+              <button onClick={() => handleChangeToPWD()}>
+                pass to protected
+              </button>
+              {onPWD === true && (
+                <div>
+                  <input
+                    type="text"
+                    placeholder="newPass ?"
+                    value={newPass}
+                    onChange={(e) => setNewPass(e.target.value)}
+                  />
+                  <button
+                    onClick={() => ChangeStatutChan("PWD_PROTECTED")}
+                    disabled={newPass.length === 0}
+                  >
+                    pass to Protected
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        {changeStatutButton && statutChan === "PWD_PROTECTED" && (
+          <div>
+            <button onClick={() => ChangeStatutChan("PRIVATE")}>
+              pass to Private
+            </button>
+            <button onClick={() => ChangeStatutChan("PUBLIC")}>
+              pass to Public
+            </button>
+          </div>
+        )}
+
         <ul>
           <h1>Liste des utilisateurs :</h1>
           {usersInRoom.map((users) => (
@@ -753,13 +921,56 @@ export const ChatChannel = () => {
                           Demote Admin
                         </button>
                       )}
-                      <button onClick={() => kickFromChannel(users.id)}>
-                        kick
-                      </button>
+                      <div>
+                        <button onClick={() => handleKickButton()}>Kick</button>
+                        {onKick === true && (
+                          <div>
+                            <input
+                              type="text"
+                              placeholder="Reason ?"
+                              value={reasonKick}
+                              onChange={(e) => setReasonKick(e.target.value)}
+                            />
+                            <button onClick={() => kickFromChannel(users.id)}>
+                              Submit
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
                       {selectedUserIsMuted === "false" && (
-                        <button onClick={() => MuteFromChannel(users.id)}>
-                          Mute
-                        </button>
+                        <div>
+                          <div>
+                            <button onClick={() => handleMuteButton()}>
+                              Mute
+                            </button>
+                            {onMute === true && (
+                              <div>
+                                <input
+                                  type="text"
+                                  placeholder="Time ?"
+                                  value={timeMute}
+                                  onChange={(e) => setTimeMute(e.target.value)}
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Reason ?"
+                                  value={reasonMute}
+                                  onChange={(e) => setReason(e.target.value)}
+                                />
+                                <button
+                                  onClick={() => MuteFromChannel(users.id)}
+                                  disabled={
+                                    isNaN(parseInt(timeMute)) ||
+                                    parseInt(timeMute) === 0
+                                  }
+                                >
+                                  Submit
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       )}
                       {selectedUserIsMuted === "true" && (
                         <button onClick={() => UnMuteFromChannel(users.id)}>
@@ -767,9 +978,38 @@ export const ChatChannel = () => {
                         </button>
                       )}
                       {selectedUserIsBanned === "false" && (
-                        <button onClick={() => BanFromChannel(users.id)}>
-                          Ban
-                        </button>
+                        <div>
+                          <div>
+                            <button onClick={() => handleBanButton()}>
+                              Ban
+                            </button>
+                            {onBan === true && (
+                              <div>
+                                <input
+                                  type="text"
+                                  placeholder="Time ?"
+                                  value={timeBan}
+                                  onChange={(e) => setTimeBan(e.target.value)}
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Reason ?"
+                                  value={reasonBan}
+                                  onChange={(e) => setReasonBan(e.target.value)}
+                                />
+                                <button
+                                  onClick={() => BanFromChannel(users.id)}
+                                  disabled={
+                                    isNaN(parseInt(timeBan)) ||
+                                    parseInt(timeBan) === 0
+                                  }
+                                >
+                                  Submit
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       )}
                       {selectedUserIsBanned === "true" && (
                         <button onClick={() => UnbanFromChannel(users.id)}>

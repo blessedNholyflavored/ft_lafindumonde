@@ -77,6 +77,8 @@ export const Chat = () => {
   const [invSend, setInvSend] = useState<invSend[]>([]);
   const [invReceive, setInvReceive] = useState<invSend[]>([]);
   const [userIsBanned, setUserIsBanned] = useState(false);
+  const [pass, setpass] = useState("");
+  const [isPromptOpen, setIsPromptOpen] = useState(false);
 
   async function fetchYourRoomsList() {
     try {
@@ -95,22 +97,25 @@ export const Chat = () => {
         const friendObjects = data;
         const friendInfo = await Promise.all(
           friendObjects.map(
-          async (friend: { name: string; visibility: string; id: number; AmIBanned: string }) => {
-
-            const isBannedResponse = await fetch(
-              `http://localhost:3000/chat/banned/${user?.id}/${friend.id}`,
-              {
-                method: "GET",
-                credentials: "include",
+            async (friend: {
+              name: string;
+              visibility: string;
+              id: number;
+              AmIBanned: string;
+            }) => {
+              const isBannedResponse = await fetch(
+                `http://localhost:3000/chat/banned/${user?.id}/${friend.id}`,
+                {
+                  method: "GET",
+                  credentials: "include",
+                }
+              );
+              if (isBannedResponse.ok) {
+                const isBanned = await isBannedResponse.text();
+                friend.AmIBanned = isBanned;
               }
-            );
-            if (isBannedResponse.ok)
-            {
-              const isBanned = await isBannedResponse.text();
-              friend.AmIBanned = isBanned;
+              return friend;
             }
-            return (friend);
-          }
           )
         );
         setChannelsJoin(friendInfo);
@@ -136,7 +141,6 @@ export const Chat = () => {
         );
       }
       const data = await response.json();
-      console.log(data);
       if (data.length > 0) {
         const friendObjects = data;
         const friendInfo = friendObjects.map(
@@ -270,11 +274,8 @@ export const Chat = () => {
       }
       const data = await response.text();
       if (userId === user?.id) {
-        if (data === "false")
-          setUserIsBanned(false);
-        else
-          setUserIsBanned(true);
-        console.log("statu banned:   ", data);
+        if (data === "false") setUserIsBanned(false);
+        else setUserIsBanned(true);
       } else return data;
     } catch (error) {
       console.error("Erreur:", error);
@@ -309,6 +310,16 @@ export const Chat = () => {
         fetchRooms();
       });
     }
+    if (socket) {
+      socket.on("refreshAll", () => {
+        fetchPossibleInvite();
+        fetchInviteSend();
+        fetchInviteReceive();
+        fetchYourRooms();
+        fetchRooms();
+      });
+    }
+
     if (socket) {
       socket.on("refreshAfterKick", (roomName: string, reason: string) => {
         alert("You have been kicked from " + roomName + ". Raison: " + reason);
@@ -346,7 +357,6 @@ export const Chat = () => {
           window.location.href = "/chat";
           window.location.reload();
           window.location.href = "/chat";
-
         }
       );
     }
@@ -374,7 +384,6 @@ export const Chat = () => {
     fetchInviteReceive();
   }, [activeChannel]);
 
-  
   const checkRoomAlreadyExist = async () => {
     try {
       const response = await fetch(
@@ -417,17 +426,16 @@ export const Chat = () => {
   };
 
   const navToChan = async (id: number) => {
-    if (user)
-    {
+    if (user) {
       await checkBanned(user?.id, id.toString());
     }
-        if (userIsBanned === true) {
-          alert("caca");
-          window.location.reload();
-        } else {
-          navigate(`/chat/chan/${id}`);
-          setActiveChannel(id);
-        }
+    if (userIsBanned === true) {
+      alert("caca");
+      window.location.reload();
+    } else {
+      navigate(`/chat/chan/${id}`);
+      setActiveChannel(id);
+    }
   };
 
   const navToPrivateConv = (id: number) => {
@@ -435,14 +443,17 @@ export const Chat = () => {
     setSelectedPrivateConv(id);
   };
 
-  const clickToJoinChan = async (id: number, name: string, option: string) => {
+  const clickToJoinChan = async (
+    id: number,
+    name: string,
+    option: string,
+    pass: string
+  ) => {
     if (option === "PUBLIC") {
       socket.emit("joinChatRoom", name, option, "");
     } else if (option === "PWD_PROTECTED") {
-      const password = window.prompt("Entrez le mot de passe :");
-
-      if (password !== null) {
-        socket.emit("joinChatRoom", name, option, password);
+      if (pass !== null) {
+        socket.emit("joinChatRoom", name, option, pass);
       } else {
         alert(
           "Annulation : Vous devez fournir un mot de passe pour rejoindre le channel protégé."
@@ -500,7 +511,6 @@ export const Chat = () => {
           );
         }
         const data = await response.json();
-        console.log(data);
         if (data.length > 0) {
           const friendObjects = data;
           const friendInfo = friendObjects.map(
@@ -617,7 +627,6 @@ export const Chat = () => {
           }
         )
       );
-      console.log("for see:  ", updatedData);
       setInvReceive(updatedData);
       return data[0];
     } catch (error) {
@@ -643,9 +652,6 @@ export const Chat = () => {
         }
       );
       if (response.ok) {
-        console.log(response);
-        // if (user && await checkBlockedForNotify(user?.id.toString(), recipientId) === false)
-        // socket.emit('notifyFriendShip', id);
         alert("Invitation created successfully.");
       } else {
         console.error("Error creating friendship: request is pending");
@@ -675,6 +681,18 @@ export const Chat = () => {
     window.location.reload();
   }
 
+  const handleJoinClick = (id: number) => {
+    setpass("");
+    setIsPromptOpen(true);
+    setActiveChannel(id);
+  };
+
+  const handlePasswordChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setpass(event.target.value);
+  };
+
   return (
     <div className="main_chat_box" style={{ background: "darkgreen" }}>
       <div>
@@ -689,7 +707,8 @@ export const Chat = () => {
                       clickToJoinChan(
                         parseInt(chan.id),
                         chan.chatRoomName,
-                        "PUBLIC"
+                        "PUBLIC",
+                        ""
                       )
                     }
                   >
@@ -712,17 +731,52 @@ export const Chat = () => {
           <h1>Liste des channels disponible :</h1>
           {channels.map((chan) => (
             <div key={chan.id}>
-              <button
-                onClick={() =>
-                  clickToJoinChan(chan.id, chan.name, chan.visibility)
-                }
-                disabled={activeChannel === chan.id}
-              >
-                <div>
-                  id: {chan.id} --- name chan: {chan.name} --- options:{" "}
-                  {chan.visibility}
-                </div>
-              </button>
+              <div>
+                {isPromptOpen}
+                <button
+                  onClick={() => handleJoinClick(chan.id)}
+                  disabled={activeChannel === chan.id}
+                >
+                  <div>
+                    id: {chan.id} --- name chan: {chan.name} --- options:{" "}
+                    {chan.visibility}
+                  </div>
+                </button>
+                {isPromptOpen === true &&
+                  activeChannel === chan.id &&
+                  chan.visibility === "PWD_PROTECTED" && (
+                    <div>
+                      <input
+                        type="password"
+                        placeholder="Entrez le mot de passe"
+                        value={pass}
+                        onChange={handlePasswordChange}
+                      />
+                      <button
+                        onClick={() =>
+                          clickToJoinChan(
+                            chan.id,
+                            chan.name,
+                            "PWD_PROTECTED",
+                            pass
+                          )
+                        }
+                        disabled={pass.length === 0}
+                      >
+                        Join
+                      </button>
+                    </div>
+                  )}
+                {chan.visibility === "PUBLIC" && activeChannel === chan.id && (
+                  <button
+                    onClick={() =>
+                      clickToJoinChan(chan.id, chan.name, "PUBLIC", "")
+                    }
+                  >
+                    Join
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </ul>
@@ -774,8 +828,9 @@ export const Chat = () => {
                     if (chan.visibility === "PRIVATE") {
                       setIsPrivatechan(1);
                     } else setIsPrivatechan(0);
+                  } else {
+                    alert("t banni !");
                   }
-                  else{alert("t banni !")}
                 }}
                 disabled={activeChannel === chan.id}
               >
@@ -868,7 +923,7 @@ export const Chat = () => {
         </button>
       </div>
       {showChatChannel && <ChatChannel />}
-      {! showChatChannel && id && <ChatChannel />}
+      {!showChatChannel && id && <ChatChannel />}
       {!showConv && recipient && <PrivateChat />}
       {showConv && <PrivateChat />}
     </div>

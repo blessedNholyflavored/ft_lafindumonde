@@ -8,6 +8,7 @@ import { Response } from 'express';
 import { UserService } from 'src/user/user.service';
 import { ChatService } from './chat.service';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
+import { get } from 'http';
 
 
 @Controller('chat')
@@ -192,5 +193,16 @@ export class ChatController {
   {
     return this.chatService.demoteAdmin(roomId, userId);
   }
-  
+
+  @Get('/statut/:id')
+  async getStatusChan(@Param('id') roomId: string)
+  {
+    return this.chatService.getStatusChan(roomId);
+  }
+
+  @Post('/changeStatut/:id/:option/:pass')
+  async changeStatut(@Param('id') roomId: string, @Param('option') option: string, @Param('pass') pass: string)
+  {
+    return this.chatService.changeStatut(roomId, option, pass);
+  }  
 }

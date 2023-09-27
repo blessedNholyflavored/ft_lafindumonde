@@ -657,4 +657,38 @@ async getStatusBan(userId: string, roomId: string) {
   }
   return "false";
 }
+
+async getStatusChan(roomId: string) {
+  const room = await prisma.chatroom.findUnique({
+    where: {
+      id: parseInt(roomId),
+    },
+  });
+  if (room)
+    return (room.visibility);
+}
+
+async changeStatut(roomId: string, option: string, pass: string) {
+
+  let visibility: UserChannelVisibility;
+
+  if (option == "PUBLIC")
+    visibility = UserChannelVisibility.PUBLIC;
+  if (option == "PRIVATE")
+    visibility = UserChannelVisibility.PRIVATE;
+  if (option == "PWD_PROTECTED")
+    visibility = UserChannelVisibility.PWD_PROTECTED;
+  const room = await prisma.chatroom.update({
+    where: {
+      id: parseInt(roomId),
+    },
+    data: {
+      visibility: visibility,
+      hash: pass,
+    }
+  });
+  if (room)
+    return (room.visibility);
+}
+
 }

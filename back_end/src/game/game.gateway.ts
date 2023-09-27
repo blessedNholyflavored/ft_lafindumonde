@@ -551,6 +551,16 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
         });
       });
     }
+
+    @SubscribeMessage('reloadListRoom')
+    async onReloadAll(@ConnectedSocket() socket: Socket)
+    {
+      let user1;
+        this.playerConnections.forEach((value, key) => {
+            value.emit("refreshAll");
+        });
+    }
+
     @SubscribeMessage('reloadListRoomAtJoin')
     async onNewListRoomAtJoin(@MessageBody() name: string,@ConnectedSocket() socket: Socket)
       {
