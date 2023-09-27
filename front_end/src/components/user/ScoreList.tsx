@@ -105,4 +105,3 @@ const ScoreList = (props: any) => {
 };
 
 export default ScoreList;
-

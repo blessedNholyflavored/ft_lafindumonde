@@ -10,6 +10,7 @@ import { useAuth } from "../auth/AuthProvider";
 import Notify from '../../Notify';
 import { WebsocketContext } from "../../WebsocketContext";
 import { GameHistory } from "./GameHistory";
+import { useParams } from "react-router-dom";
 
 const Box = (props: any) => {
 
@@ -21,6 +22,8 @@ const Box = (props: any) => {
     const [sender, setSender] = useState<number>(0);
     const socket = useContext(WebsocketContext);
     const [showNotification, setShowNotification] = useState(false);
+	const { id } = useParams();
+
 
 
     useEffect(() => {
@@ -38,7 +41,7 @@ const displayPic = async() => {
 
     const userId = user?.id;
     try {
-        const response = await fetch(`http://localhost:3000/users/${userId}/avatar`, {
+        const response = await fetch(`http://localhost:3000/users/${id}/avatar`, {
             method: 'GET',
 			credentials: 'include',
         });
