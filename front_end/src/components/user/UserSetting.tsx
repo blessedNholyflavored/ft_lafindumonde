@@ -19,15 +19,42 @@ import nav from "../../img/buttoncomp.png";
 
 export const UserSetting: React.FC = () => {
   const [newUsername, setNewUsername] = useState("");
+  const [newPass, setNewPass] = useState("");
   const [newPicture, setNewPicture] = useState<File | null>(null);
   let [ImgUrl, setImgUrl] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [isLocal, setIsLocal] = useState<Boolean>(false);
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     displayPic();
+    checkLocal();
   }, []);
+
+  const checkLocal = async () => {
+    const userId = user?.id;
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/users/${userId}/isloc`,
+        {
+          method: "GET",
+          credentials: "include",
+        });
+        if (response.ok)
+        {
+          const data: string = await response.text();
+          if (data === "true")
+          {
+            setIsLocal(true);
+          }
+        }
+      }
+      catch (error){
+        console.error(error);
+      }
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +78,35 @@ export const UserSetting: React.FC = () => {
       } else {
         alert(
           "Une erreur s'est produite lors de la mise à jour du nom d'utilisateur."
+        );
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+  };
+
+  const handleSubmitPass = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const userId = user?.id;
+    console.log("dans front user id = ", userId);
+    try {
+      const response = await fetch(
+        `http://localhost:3000/users/update-pass`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ password: newPass }),
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        alert("Password mis à jour avec succès !");
+        //window.location.reload();
+      } else {
+        alert(
+          "Une erreur s'est produite lors de la mise à jour du password."
         );
       }
     } catch (error) {
@@ -216,9 +272,25 @@ export const UserSetting: React.FC = () => {
 					</label>
 					<button className='buttonsettings' type="submit">update</button>
 				</form>
+        {/* OPTIONAL PASSWORD CHANGE LOCAL USER */}
+      {isLocal == true && (
+        <div>
+      <form className='formsettings' onSubmit={handleSubmitPass}>
+					<label className='labelcss'>
+						<input
+							className='inputcss'
+							type="password"
+							value={newPass}
+							placeholder="type new password"
+							onChange={(e) => setNewPass(e.target.value)} />
+					</label>
+					<button className='buttonsettings' type="submit">update</button>
+				</form>
 				<div className="footersmallbox">
 					<br></br>
 				</div>
+              </div>
+)}
 			</div>
               {/* deuxieme */}
               <div className="boxrowsettings">

@@ -68,6 +68,18 @@ export class UserService {
     return updateUser;
   }
 
+  async updatePassword(id: string, newPassword: string) {
+    console.log('dans controleur', id);
+	let hashedPwd = await this.passwordHasher(newPassword)
+    const updateUser = await prisma.user.update({
+      where: { id: parseInt(id) },
+      data: {
+        password: hashedPwd,
+      },
+    });
+    return updateUser;
+  }
+
   async getPicture(id: string) {
     const User = await prisma.user.findUnique({
       where: { id: parseInt(id) },
@@ -193,6 +205,15 @@ export class UserService {
     {
       return user;
     }
+  }
+
+  async isLocal(id: string)
+  {
+    const ret = await prisma.user.findUnique({
+      where: { id: parseInt(id)},
+    });
+    if (ret)
+      return (ret.loginLoc);
   }
 
   async updateGamePlayer(id: string)
