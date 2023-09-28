@@ -262,7 +262,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
   // boucle de jeu
   startLoop(id: number) {
 
-    console.log("lalallalala");
     let recupRoom = this.roomMapService.getRoom(id.toString());
 
     this.roomIntervals[recupRoom.idRoom] = setInterval(() => {
@@ -503,7 +502,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (socket.user.id === this.room.idP1)
             this.startLoop(Sroom.roomID);
   
-        this.server.to(this.res.id.toString()).emit('startGame2', Sroom);
+        this.server.to(this.res.id.toString()).emit('startFriendGame', Sroom);
     }
 
 

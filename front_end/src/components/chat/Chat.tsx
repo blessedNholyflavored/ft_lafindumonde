@@ -537,7 +537,7 @@ export const Chat = () => {
       }
     }
     setTimeout(() => {
-      socket.emit("reloadListRoomForOne");
+      socket.emit("ActuAtRoomCreate");
     }, 300);
     setActiveChannel(0);
   };

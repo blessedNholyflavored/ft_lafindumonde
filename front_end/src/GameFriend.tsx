@@ -100,7 +100,7 @@ useEffect(() => {
   //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
   
   if (socket) {
-    socket.on('startGame2', async (updateroom: Room) => {
+    socket.on('startFriendGame', async (updateroom: Room) => {
       setCounter(1);
       setRoom(updateroom);
     });
