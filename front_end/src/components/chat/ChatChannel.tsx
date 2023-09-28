@@ -320,6 +320,7 @@ export const ChatChannel = () => {
     }, 100);
     setTimeout(() => {
       window.location.reload();
+      window.location.href = "/chat";
     }, 100);
   };
 
@@ -341,10 +342,11 @@ export const ChatChannel = () => {
     }
     setTimeout(() => {
       socket.emit("reloadMessRoom", id);
-      socket.emit("kickFromChannel", userId, id, reason);
+      socket.emit("onkickFromChannel", userId, id, reason);
     }, 100);
     setReasonKick("");
     setSelectedUser(0);
+    setOnKick(false);
   };
 
   const MuteFromChannel = async (userId: number) => {
@@ -713,19 +715,29 @@ export const ChatChannel = () => {
     else setOnPWD(true);
   }
 
+  function handleOnChangeMDP() {
+    if (changeStatutButton === true) {
+      setChangeStatutButton(false);
+      setNewPass("");
+    } else setChangeStatutButton(true);
+  }
+
   return (
     <div>
       <div>
-        <button onClick={leftChannel}>Quitter le channel ?</button>
+        <div>
+          <button onClick={leftChannel}>Quitter le channel ?</button>
+        </div>
+
         {id && (
           <ul>
-            <h1>Liste des msgs envoyes :</h1>
+            <h1>Liste des messages envoyés :</h1>
             {messageListSend.length > 0 && user ? (
               messageListSend.map((friend, index) => (
-                <div>
+                <div key={index}>
                   {friend.senderId === user?.id && (
                     <div style={{ backgroundColor: "blue", float: "left" }}>
-                      <div key={index}>
+                      <div>
                         <div>{friend.start_at}</div>
                         <div>
                           {friend.senderUsername} --- {friend.senderRole}
@@ -737,7 +749,7 @@ export const ChatChannel = () => {
                   {friend.senderId !== user?.id &&
                     friend.isBlocked === "false" && (
                       <div style={{ backgroundColor: "green", float: "right" }}>
-                        <div key={index}>
+                        <div>
                           <div>{friend.start_at}</div>
                           <div>{friend.senderUsername}</div>
                           <div>
@@ -778,11 +790,9 @@ export const ChatChannel = () => {
       <div>
         {changeStatutButton && statutChan === "PWD_PROTECTED" && (
           <div>
-            <button onClick={() => setOnChangeStatut(true)}>
-              Changer le MDP
-            </button>
+            <button onClick={() => handleOnChangeMDP()}>Changer le MDP</button>
             <input
-              type="text"
+              type="password"
               value={newPass}
               onChange={(e) => setNewPass(e.target.value)}
             />
@@ -816,11 +826,12 @@ export const ChatChannel = () => {
               {onPWD === true && (
                 <div>
                   <input
-                    type="text"
+                    type="password"
                     placeholder="newPass ?"
                     value={newPass}
                     onChange={(e) => setNewPass(e.target.value)}
                   />
+
                   <button
                     onClick={() => ChangeStatutChan("PWD_PROTECTED")}
                     disabled={newPass.length === 0}

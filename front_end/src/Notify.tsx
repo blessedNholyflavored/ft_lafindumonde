@@ -14,13 +14,11 @@ const Notify: React.FC<NotificationProps> = ({ message, type, senderId, onClose 
 
   const navigate = useNavigate();
 
-  // Utilisez useEffect pour définir un délai de fermeture
   useEffect(() => {
     const timeout = setTimeout(() => {
-      onClose(); // Appelez la fonction onClose pour fermer la notification après 5 secondes
-    }, 5000); // Délai en millisecondes (5000ms = 5 secondes)
+      onClose();
+    }, 5000);
 
-    // Nettoyez le délai lorsque le composant est démonté
     return () => clearTimeout(timeout);
   }, [onClose]);
 
@@ -44,6 +42,11 @@ const Notify: React.FC<NotificationProps> = ({ message, type, senderId, onClose 
       <button className="notification-link" onClick={handleViewClick}>        
       Accepter
       </button>
+      </div>
+      )}
+       {type === 2 && (
+    <div className="notification">
+      {message}
       </div>
       )}
     </>

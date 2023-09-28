@@ -167,6 +167,25 @@ export class ChatService {
     return roomNames.includes(nameRoom);
   }
 
+  async checkIfIn(nameRoom: string, userId: string) {
+
+      const rooms = await this.getAllChatRooms();
+      const room = rooms.find((room) => room.name === nameRoom);
+      const users = await prisma.chatroom.findUnique({
+        where: {
+          id: room.id,
+        },
+        select: {
+          users: true
+        }
+      })
+      const userInRoom = users.users.find((user) => user.userId === parseInt(userId));
+      if (userInRoom)
+        return (true);
+      else
+        return (false);
+  }
+
     async recupYourRooms(userId: string) {
       
       const userRooms = await prisma.userOnChannel.findMany({
@@ -186,6 +205,8 @@ export class ChatService {
   
       return userRooms.map((userRoom) => userRoom.channel);
     }
+
+    
 
     async JoinRoom(nameRoom: string, option: UserChannelVisibility, hash: string, userId: string): Promise<void> {
       const allChatRooms = await this.getAllChatRooms();
@@ -378,7 +399,6 @@ async getRole(senderId: string, roomId: string) {
       role: true,
     },
   });
-
   if (userRole)
     return userRole.role;
 }
@@ -681,7 +701,8 @@ async getStatusChan(roomId: string) {
 async changeStatut(roomId: string, option: string, pass: string) {
 
   let visibility: UserChannelVisibility;
-
+  let securedHash = await this.passwordHasher(pass.toString());
+  
   if (option == "PUBLIC")
     visibility = UserChannelVisibility.PUBLIC;
   if (option == "PRIVATE")
@@ -694,7 +715,7 @@ async changeStatut(roomId: string, option: string, pass: string) {
     },
     data: {
       visibility: visibility,
-      hash: pass,
+      hash: securedHash,
     }
   });
   if (room)

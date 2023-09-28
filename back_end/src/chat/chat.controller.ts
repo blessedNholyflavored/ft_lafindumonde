@@ -42,17 +42,6 @@ export class ChatController {
   @Get('/getRole/:id/:id1')
   async getRole(@Req() req: any, @Param('id') senderId: string,@Param('id1') roomId: number)
   {
-		//converts senderId to number because implicit type isn't number
-		const nbrSenderId =  parseInt(senderId);
-		const usersInRoom = await this.chatService.getUsersInRoom(roomId.toString());
-		if (usersInRoom.includes(req.user.id) === false){
-			//if the user issuing the request isn't in the room, he can't assigned someone to a role in the room
-			throw new UnauthorizedException("User isn't in room");
-		}
-		else if(usersInRoom.includes(nbrSenderId) == false){
-			//if the user assigned to role isn't in room, error
-			throw new BadRequestException("Sent user isn't in room");
-		}
     return this.chatService.getRole(senderId.toString(), roomId.toString());
   }
 
@@ -66,6 +55,12 @@ export class ChatController {
   async checkRoomName(@Param('name') name: string)
   {
     return this.chatService.checkRoomExist(name);
+  }
+
+  @Get('/checkIfIn/:name/:id')
+  async checkIfIn(@Param('name') name: string, @Param('id') userId: string)
+  {
+    return this.chatService.checkIfIn(name, userId);
   }
 
   @Get('/recupYourRooms')

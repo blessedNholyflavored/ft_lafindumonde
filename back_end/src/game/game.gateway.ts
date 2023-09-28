@@ -598,7 +598,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           value.emit("refreshListRoom");
         });
       }
-      @SubscribeMessage('kickFromChannel')
+      @SubscribeMessage('onkickFromChannel')
       async onkickFromChannel(@MessageBody() data: {userId:number, roomId:number, reason: string},@ConnectedSocket() socket: Socket)
       {
         const roomName = await this.chatService.getRoomName(data[1]);
