@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./../../App.css";
 import "./../../style/Profile.css";
 import "./../../style/Login.css";
@@ -16,9 +16,11 @@ export function Register() {
   const navigate = useNavigate();
 
   // check if user is already logged in
-  if (user) {
-    navigate("/");
-  }
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, []);
 
   // sending input to back_end to verify and register
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,8 +52,7 @@ export function Register() {
     } else {
       const data = await res.json();
       setUser(data.user);
-      //window.location.reload();
-      navigate("/");
+      window.location.reload();
     }
   };
 

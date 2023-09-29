@@ -150,7 +150,7 @@ export const UserSetting: React.FC = () => {
         }
       }
     }
-  }
+  };
 
   const navigateToProfPage = () => {
     navigate(`/users/profile/${user?.id}`);
@@ -171,114 +171,116 @@ export const UserSetting: React.FC = () => {
   const navigateToSettings = () => {
     navigate("/settings");
   };
-	const navigateToHome = () => {
-		navigate('/');
-	};
+  const navigateToHome = () => {
+    navigate("/");
+  };
 
   return (
     <>
-      <body>
-        <header>
-          <div>
-            <img src={nav} alt="Menu 1" />
-          </div>
-          <h1>TRANSCENDENCE</h1>
-        </header>
+      {/* <body> */}
+      <header>
+        <div>
+          <img src={nav} alt="Menu 1" />
+        </div>
+        <h1>TRANSCENDENCE</h1>
+      </header>
 
-        <div className="flex-bg">
-          <main>
-            {/* <div className="mainpage"> */}
-            {/* <div className="navbarmainpage">
+      <div className="flex-bg">
+        <main>
+          {/* <div className="mainpage"> */}
+          {/* <div className="navbarmainpage">
 			<img src={icon} className="buttonnav" alt="icon" />
 			<p className="titlemainpage"> TRANSCENDENCE </p>
 		</div> */}
-            {/* <div className="Insidemain">
+          {/* <div className="Insidemain">
 			<div className="navbarbox">
 				<img src={icon} className="buttonnav" alt="icon" />
 				<p className="titlebox"> SETTINGS </p>
 			</div> */}
-			
 
-            <div className="threerow">
-              {/* deuxieme */}
-              <div className="boxrowsettings">
-				<div className="navbarsmallbox">
-					<p className="boxtitle"> CHANGE USERNAME </p>
-				</div>
-				<form className='formsettings' onSubmit={handleSubmit}>
-					<label className='labelcss'>
-						<input
-							className='inputcss'
-							type="text"
-							value={newUsername}
-							placeholder="type new username"
-							onChange={(e) => setNewUsername(e.target.value)} />
-					</label>
-					<button className='buttonsettings' type="submit">update</button>
-				</form>
-				<div className="footersmallbox">
-					<br></br>
-				</div>
-			</div>
-              {/* deuxieme */}
-              <div className="boxrowsettings">
-                <div className="navbarsmallbox">
-                  <p className="boxtitle"> CHANGE AVATAR </p>
-                </div>
-                <img src={ImgUrl} alt="user avatar"></img>
-                <div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
-                  <button onClick={changePic}>Upload</button>
-                </div>
-                <div className="footersmallbox">
-                  <br></br>
-                </div>
+          <div className="threerow">
+            {/* deuxieme */}
+            <div className="boxrowsettings">
+              <div className="navbarsmallbox">
+                <p className="boxtitle"> CHANGE USERNAME </p>
               </div>
-
-              {/* troisieme */}
-              <div className="boxrowsettings">
-                <div className="navbarsmallbox">
-                  <p className="boxtitle"> 2FAC AUTH </p>
-                </div>
-                <div className="twoFA">
-                  <button
-                    className="twoFAenabled"
-                    onClick={() => twoFAEnable(navigate, user)}
-                  >
-                    enable
-                  </button>
-                  <button
-                    className="twoFAdisabled"
-                    onClick={() => twoFADisable({ user, setUser })}
-                  >
-                    disable
-                  </button>
-                </div>
-                <div className="footersmallbox">
-                  <br></br>
-                </div>
+              <form className="formsettings" onSubmit={handleSubmit}>
+                <label className="labelcss">
+                  <input
+                    className="inputcss"
+                    type="text"
+                    value={newUsername}
+                    placeholder="type new username"
+                    onChange={(e) => setNewUsername(e.target.value)}
+                  />
+                </label>
+                <button className="buttonsettings" type="submit">
+                  update
+                </button>
+              </form>
+              <div className="footersmallbox">
+                <br></br>
               </div>
             </div>
-          </main>
+            {/* deuxieme */}
+            <div className="boxrowsettings">
+              <div className="navbarsmallbox">
+                <p className="boxtitle"> CHANGE AVATAR </p>
+              </div>
+              <img src={ImgUrl} alt="user avatar"></img>
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+                <button onClick={changePic}>Upload</button>
+              </div>
+              <div className="footersmallbox">
+                <br></br>
+              </div>
+            </div>
 
-          <nav>
-            <ul>
-              <li className="menu-item">
-                <a onClick={navigateToHome}>
-                  <img src={folder6} alt="Menu 3" />
-                  <p>Home</p>
-                </a>
-              </li>
-              <li className="menu-item">
-                {/* <a > onClick={() => handlePlayerSelect('1')}> */}
-                <a>
-                  <img src={folder4} alt="Menu 1" />
-                  <p>Matchmaking</p>
-                  {/* {(queueCount > 0 || queueCountBonus > 0) &&  (
+            {/* troisieme */}
+            <div className="boxrowsettings">
+              <div className="navbarsmallbox">
+                <p className="boxtitle"> 2FAC AUTH </p>
+              </div>
+              <div className="twoFA">
+                <button
+                  className="twoFAenabled"
+                  onClick={() => twoFAEnable(navigate, user)}
+                >
+                  enable
+                </button>
+                <button
+                  className="twoFAdisabled"
+                  onClick={() => twoFADisable({ user, setUser })}
+                >
+                  disable
+                </button>
+              </div>
+              <div className="footersmallbox">
+                <br></br>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <nav>
+          <ul>
+            <li className="menu-item">
+              <a onClick={navigateToHome}>
+                <img src={folder6} alt="Menu 3" />
+                <p>Home</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              {/* <a > onClick={() => handlePlayerSelect('1')}> */}
+              <a>
+                <img src={folder4} alt="Menu 1" />
+                <p>Matchmaking</p>
+                {/* {(queueCount > 0 || queueCountBonus > 0) &&  (
     						<p>En attente d'autres joueurs...</p>
   						)}
   						{queueCount === 2 && (
@@ -287,53 +289,50 @@ export const UserSetting: React.FC = () => {
               { inGame === 1 && (
                 <p>Deja en game mon reuf !</p>
               )} */}
-                </a>
-              </li>
-              <li className="menu-item">
-                {/* <a onClick={() => handlePlayerSelect222('1')}> */}
-                <a>
-                  <img src={folder3} alt="Menu 2" />
-                  <p>Big Game</p>
-                </a>
-              </li>
-              <li className="menu-item">
-                <a onClick={() => NavToSoloPong()}>
-                  <img src={folder2} alt="Menu 3" />
-                  <p>Tiny Game</p>
-                </a>
-              </li>
-              <li className="menu-item">
-                <a onClick={navigateToProfPage}>
-                  <img src={folder1} alt="Menu 3" />
-                  <p>Profile</p>
-                </a>
-              </li>
-              <li className="menu-item">
-                <a onClick={navigateToSettings}>
-                  <img src={folder} alt="Menu 3" />
-                  <p>Settings</p>
-                </a>
-              </li>
-              <li className="menu-item">
-                <a onClick={navigateToFriends}>
-                  <img src={folder0} alt="Menu 3" />
-                  <p>Friends</p>
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
+              </a>
+            </li>
+            <li className="menu-item">
+              {/* <a onClick={() => handlePlayerSelect222('1')}> */}
+              <a>
+                <img src={folder3} alt="Menu 2" />
+                <p>Big Game</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={() => NavToSoloPong()}>
+                <img src={folder2} alt="Menu 3" />
+                <p>Tiny Game</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToProfPage}>
+                <img src={folder1} alt="Menu 3" />
+                <p>Profile</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToSettings}>
+                <img src={folder} alt="Menu 3" />
+                <p>Settings</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToFriends}>
+                <img src={folder0} alt="Menu 3" />
+                <p>Friends</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
 
-        <footer>
-          <button
-            className="logoutBtn"
-            onClick={() => Logout({ user, setUser })}
-          >
-            LOG OUT{" "}
-          </button>
-          <img src={logo} className="logo" alt="icon" />
-        </footer>
-      </body>
+      <footer>
+        <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
+          LOG OUT{" "}
+        </button>
+        <img src={logo} className="logo" alt="icon" />
+      </footer>
+      {/* </body> */}
     </>
   );
 };

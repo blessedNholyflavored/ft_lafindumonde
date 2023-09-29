@@ -75,6 +75,7 @@ export class AuthController{
 		let newID = await this.authService.idGenerator();
 		while (await this.userService.getUserByID(newID))
 			newID = await this.authService.idGenerator();
+		//TODO: CHEKER for username and email (check it doesn't exist) --> if it exists ? strange
 		//using specific DTO for locallogin
 		const user = await this.userService.createLocalUser(authDtos, newID);
 		//setting token and ending registering

@@ -140,51 +140,51 @@ const Home: React.FC<HomeProps> = () => {
 
   return (
     <>
-      <body>
-        <header>
-          <div>
-            <img src={nav} alt="Menu 1" />
-          </div>
-          <h1>TRANSCENDENCE</h1>
-        </header>
+      {/* <body> */}
+      <header>
         <div>
-          {showNotification && (
-            <Notify
-              message={notifyMSG}
-              type={notifyType}
-              senderId={sender}
-              onClose={handleCloseNotification}
-            />
-          )}
+          <img src={nav} alt="Menu 1" />
         </div>
-        <div className="flex-bg">
-          <main>
-            <div className="home">
-              <p> HOME </p>
-              <div className="inside">
-                <img src={ImgUrl} className="homepic" />
-                <button className="homebut">WELCOME {user?.username}</button>
-              </div>
+        <h1>TRANSCENDENCE</h1>
+      </header>
+      <div>
+        {showNotification && (
+          <Notify
+            message={notifyMSG}
+            type={notifyType}
+            senderId={sender}
+            onClose={handleCloseNotification}
+          />
+        )}
+      </div>
+      <div className="flex-bg">
+        <main>
+          <div className="home">
+            <p> HOME </p>
+            <div className="inside">
+              <img src={ImgUrl} className="homepic" />
+              <button className="homebut">WELCOME {user?.username}</button>
             </div>
+          </div>
 
-            <div className="chat" onClick={navigateToChat}>
-              <p> CHAT WITH FRIENDS </p>
-              <img src={chatpic} />
-            </div>
+          <div className="chat" onClick={navigateToChat}>
+            <p> CHAT WITH FRIENDS </p>
+            <img src={chatpic} />
+          </div>
 
-            <div className="troll">
-              <p> 42 LOVES U </p>
-              <img src={love} />
-            </div>
+          <div className="troll">
+            <p> 42 LOVES U </p>
+            <img src={love} />
+          </div>
 
-            <div className="game" onClick={() => navToGamePage()}>
-              <p> PLAY THE GAME </p>
-              <img src={gaming} />
-            </div>
-          </main>
-          <nav>
-            <ul>
-              {/* <li className="menu-item">
+          <div className="game" onClick={() => navToGamePage()}>
+            <p> PLAY THE GAME </p>
+            <img src={gaming} />
+          </div>
+        </main>
+        <nav>
+          <ul>
+            {/* <li className="menu-item">
                     <a onClick={() => handlePlayerSelect('1')}>
                         <img src={folder4} alt="Menu 1"/>
                         <p  >Matchmaking</p>
@@ -199,50 +199,47 @@ const Home: React.FC<HomeProps> = () => {
               )}
                     </a>
                 </li> */}
-              {/* <li className="menu-item">
+            {/* <li className="menu-item">
                     <a onClick={() => handlePlayerSelect222('1')}>
                         <img src={folder3} alt="Menu 2"/>
                         <p  >Big Game</p>
                         
                     </a>
                 </li> */}
-              <li className="menu-item">
-                <a onClick={() => NavToSoloPong()}>
-                  <img src={folder2} alt="Menu 3" />
-                  <p>Tiny Game</p>
-                </a>
-              </li>
-              <li className="menu-item">
-                <a onClick={navigateToProfPage}>
-                  <img src={folder1} alt="Menu 3" />
-                  <p>Profile</p>
-                </a>
-              </li>
-              <li className="menu-item">
-                <a onClick={navigateToSettings}>
-                  <img src={folder} alt="Menu 3" />
-                  <p>Settings</p>
-                </a>
-              </li>
-              <li className="menu-item">
-                <a onClick={navigateToFriends}>
-                  <img src={folder0} alt="Menu 3" />
-                  <p>Friends</p>
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <footer>
-          <button
-            className="logoutBtn"
-            onClick={() => Logout({ user, setUser })}
-          >
-            LOG OUT{" "}
-          </button>
-          <img src={logo} className="logo" alt="icon" />
-        </footer>
-      </body>
+            <li className="menu-item">
+              <a onClick={() => NavToSoloPong()}>
+                <img src={folder2} alt="Menu 3" />
+                <p>Tiny Game</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToProfPage}>
+                <img src={folder1} alt="Menu 3" />
+                <p>Profile</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToSettings}>
+                <img src={folder} alt="Menu 3" />
+                <p>Settings</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToFriends}>
+                <img src={folder0} alt="Menu 3" />
+                <p>Friends</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <footer>
+        <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
+          LOG OUT{" "}
+        </button>
+        <img src={logo} className="logo" alt="icon" />
+      </footer>
+      {/* </body> */}
 
       {/* <div className="main_box">
 		<div className="navbarmainpage">

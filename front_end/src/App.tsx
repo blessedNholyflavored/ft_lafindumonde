@@ -35,8 +35,8 @@ import PageNotFound from "./PageNotFound";
 
 export const App: React.FC = () => {
   return (
-    <WebsocketProvider value={socket}>
-      <AuthProvider>
+    <AuthProvider>
+      <WebsocketProvider value={socket}>
         <Routes>
           <Route
             path="/"
@@ -177,7 +177,7 @@ export const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-		  <Route
+          <Route
             path="/404"
             element={
               <ProtectedRoute>
@@ -185,7 +185,7 @@ export const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-		  <Route
+          <Route
             path="/*"
             element={
               <ProtectedRoute>
@@ -194,8 +194,8 @@ export const App: React.FC = () => {
             }
           />
         </Routes>
-      </AuthProvider>
-    </WebsocketProvider>
+      </WebsocketProvider>
+    </AuthProvider>
   );
 };
 
