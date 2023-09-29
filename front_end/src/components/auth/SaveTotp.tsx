@@ -25,7 +25,7 @@ export const SaveTotp: React.FC = () => {
         if (response.status === 200) {
           return navigate("/");
         } else {
-          console.error("HnmmmmH,mmmm:", response.data);
+          console.error("Error: ", response.data);
         }
       } catch (error) {
         console.error("Error: ", error);

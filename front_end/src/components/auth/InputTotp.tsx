@@ -19,11 +19,10 @@ export const InputTotp: React.FC = () => {
           `/auth/submitInput?code=${receivedCode}`
         );
         if (response.status === 200) {
-          // console.log('it went well ! user = ', response.data);
           setUser(response.data);
           window.location.reload();
         } else {
-          console.error("Hmm Hmmm :", response.data);
+          console.error("Error: ", response.data);
         }
       } catch (error) {
         console.error("Error: ", error);
