@@ -51,7 +51,6 @@ const handlePlayerSelect = async (player: string) => {
         const recup = await response.text();
         // setStatus(recup);
         recupStatus = recup;
-        console.log("ICICICICICICIC", recupStatus);
       }
       if (recupStatus !== "INGAME")
       {

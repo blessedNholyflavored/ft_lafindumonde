@@ -26,7 +26,26 @@ const SuperPong: React.FC<PongGameProps> = () => {
   const [BallYpos, setBallYPos] = useState<number>(200);
   const [SpeedBallX, setSpeedBallX] = useState<number>(-5);
   const [SpeedBallY, setSpeedBallY] = useState<number>(0);
+  const [countdown, setCountdown] = useState(3);
 
+
+
+  const startCountdown = () => {
+    const countdownInterval = setInterval(() => {
+      setCountdown((prevCountdown) => prevCountdown - 1);
+    }, 1000);
+  
+    // Ajoutez une vérification en dehors de l'intervalle
+    setTimeout(() => {
+      clearInterval(countdownInterval);
+      startGameFCT();
+    }, 4000); // Arrêtez le compte à rebours après 3 secondes
+  };
+  useEffect(() => {
+    if (countdown !== 0) {
+      startCountdown();
+    }
+  }, [counter]);
 
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -89,6 +108,15 @@ const NavHome = () => {
 
 }
 
+const startGameFCT = () =>
+{
+  if (socket && counter === 0)
+  {
+    socket?.emit('startGame');
+    setCounter(1);
+  }
+}
+
 useEffect(() => {
 
 
@@ -102,12 +130,6 @@ useEffect(() => {
   }
 
       //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
-
-  if (socket && counter === 0) {
-    let t = user?.id;
-    socket?.emit('startGame');
-    setCounter(1);
-  }
 
       //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
 
@@ -148,7 +170,7 @@ useEffect(() => {
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
 
-    socket?.emit('leaveGame');
+    socket?.emit('leaveGame', room?.roomID);
     socket?.emit('changeStatus');
   };
 
@@ -214,6 +236,16 @@ useEffect(() => {
       {user && (
         <h2>Vous êtes connecté en tant que {user.username}</h2>
       )}
+      {/* <div className="countdown-container"> */}
+{countdown > 1 && (
+    <div className="countdown">{countdown}</div>
+  )}
+  {countdown === 1 && (
+    <div className="countdown ready">Ready ?</div>
+  )}
+  {countdown === 0 && (
+    <div className="countdown start">Start</div>
+  )}
           {!end && (
     <button onClick={NavHome}>Quitter la partie</button>
     )}

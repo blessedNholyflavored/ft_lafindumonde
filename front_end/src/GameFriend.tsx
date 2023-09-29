@@ -74,7 +74,7 @@ const startGameFCT = () =>
 {
   if (socket && counter === 0)
   {
-    socket?.emit('startGameFriend');
+    socket?.emit('startfriendGameFriend');
     setCounter(1);
   }
 }
@@ -137,7 +137,7 @@ useEffect(() => {
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
 
-    socket?.emit('leaveGame');
+    socket?.emit('leaveGame', room?.roomID);
     socket?.emit('changeStatus');
     setEnd(1);
   };
