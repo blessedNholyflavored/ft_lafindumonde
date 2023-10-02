@@ -220,21 +220,25 @@ export const Chat = () => {
       const data = await response.json();
 
       if (data.length > 0) {
-        const promises = data.map(async (userId: string, isBlocked: string) => {
-          const username = await fetchUsernameById(userId);
-          const isBlockedResponse = await fetch(
-            `http://localhost:3000/friends/blocked/${userId}/${user?.id}`,
-            {
-              method: "GET",
-              credentials: "include",
-            }
-          );
-          const blocked = isBlockedResponse.text();
-          return { id: userId, username, isBlocked };
-        });
+        const promises = data.map(
+          async (userId: string, isBlocked: string) => {
+            const username = await fetchUsernameById(userId);
+            const isBlockedResponse = await fetch(
+              `http://localhost:3000/friends/blocked/${userId}/${user?.id}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            const blocked = await isBlockedResponse.text();
+            isBlocked = blocked;
+            return { id: userId, username, isBlocked };
+          }
+        );
 
         const usernames: privMSG[] = await Promise.all(promises);
         setPrivMSG(usernames);
+        console.log(privMSG);
       }
     } catch (error) {
       console.error("Erreur :", error);
@@ -403,8 +407,9 @@ export const Chat = () => {
     }
 
     if (socket) {
-      socket.on("refreshMessages", () => {
-        fetchPrivateConv();
+      socket.on("refreshMessages", async () => {
+        await fetchPrivateConv();
+        console.log(privMSG);
       });
     }
     if (socket) {
