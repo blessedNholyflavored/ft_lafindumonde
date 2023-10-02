@@ -7,7 +7,7 @@ import {
 import { PrismaClient, User, USER_STATUS } from '@prisma/client'; // Renommez "User" en "PrismaUser"
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaUserCreateInput } from './user-create.input';
-import { Game, Leaderboard } from '../interfaces';
+import { Game, Leaderboard, MiniScore } from '../interfaces';
 import * as bcrypt from 'bcrypt';
 import { AuthDto } from './dto/auth.dto';
 //import { createUserDto } from 'src/dto/createUserDto.dto';
@@ -124,6 +124,21 @@ export class UserService {
 			);
 		return (allGames);
 	}
+  }
+
+  async getMini()
+  {
+	const ret: MiniScore[] = [];
+	const users = await prisma.user.findMany({
+		orderBy: {scoreMiniGame: 'desc'},
+	});
+	const leaderboard: MiniScore[] = users.map((user, index) => ({
+		id: user.id,
+		username: user.username,
+    scoreMiniGame: user.scoreMiniGame,
+		place: index + 1,
+	}));
+	return (leaderboard);
   }
 
   async getLeaderboard()

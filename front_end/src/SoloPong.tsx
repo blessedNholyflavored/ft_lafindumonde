@@ -1,13 +1,16 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { useAuth } from './components/auth/AuthProvider';
 import { WebsocketContext } from './WebsocketContext';
+import { useNavigate } from "react-router-dom";
 
-interface PlayerScore {
-    place: number;
+
+interface MiniScore {
+    id: number;
     username: string;
     scoreMiniGame: number;
-  }
+    place: number;
   
+  }
 
 export const MiniGame = () => {
   const [player1, setPlayer1] = useState(0);
@@ -26,13 +29,16 @@ export const MiniGame = () => {
   const [end, setEnd] = useState<boolean>(false);
   const { user, setUser } = useAuth();
   const socket = useContext(WebsocketContext);
-  const [playerScores, setPlayerScores] = useState<PlayerScore[]>([]);
+  const [playerScores, setPlayerScores] = useState<MiniScore[]>([]);
+
+  const userId = user?.id;
+  const navigate = useNavigate();
 
 
 
   async function fetchPlayerScores() {
     try {
-      const response = await fetch(`http://localhost:3000/users/`, {
+      const response = await fetch(`http://localhost:3000/users/mini/${userId}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -40,25 +46,20 @@ export const MiniGame = () => {
         throw new Error('Erreur lors de la récupération des scores.');
       }
       const data = await response.json();
-      return data;
+ // console.log("DANS LEADERBOARD.TSX", data);
+      setPlayerScores(data);
     } catch (error) {
       console.error('Erreur:', error);
       return [];
     }
   }
+  function navToProfil(id: string) {
+  navigate(`/users/profile/${id}`);
+}
 
-  useEffect(() => {
-    async function fetchScores() {
-      const scores = await fetchPlayerScores();
-      scores.sort((a: { scoreMiniGame: number; }, b: { scoreMiniGame: number; }) => b.scoreMiniGame - a.scoreMiniGame);
-      scores.forEach((score: { place: any; }, index: number) => {
-        score.place = index + 1;
-      });
-      setPlayerScores(scores);
-    }
-
-    fetchScores();
-  }, []);
+useEffect(() => {
+	fetchPlayerScores();
+ }, []);
 
   // Compteur de rebond pour le joueur 1
   const [rebounds, setRebounds] = useState(0);
@@ -108,6 +109,10 @@ export const MiniGame = () => {
       } else if (ball.x >= mapx - 8 - 10) {
         setEnd(true);
         socket?.emit('updateScoreMiniGame', rebounds);
+        setTimeout(() => {
+          fetchPlayerScores();
+          
+        }, 500);
     }
     }
     if (ball.x < 0) {
@@ -159,14 +164,32 @@ export const MiniGame = () => {
         )}
       </div>
       <div style={{ float: 'right' }}>
-        <h2>Scores des joueurs :</h2>
-        <ul>
-          {playerScores.map((score) => (
-            <li key={score.username}>
-              {score.place} - {score.username}: {score.scoreMiniGame}
-            </li>
-          ))}
-        </ul>
+      <h2>Scores des joueurs :</h2>
+        <div>
+          <table>
+          <thead>
+            <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {playerScores.map((tab: MiniScore, index: number) => (
+            <tr key={index}>
+              <td>{tab.place}</td>
+              <td>{tab.username}</td>
+              <td>{tab.scoreMiniGame}</td>
+              <td><button
+                          onClick={() => navToProfil(tab.id.toString())}
+                        >
+              Voir Profil
+              </button></td>
+            </tr>
+            ))}
+          </tbody>
+          </table>
+        </div>
       </div>
       <div
         ref={gameAreaRef}

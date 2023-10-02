@@ -80,3 +80,11 @@ export interface Leaderboard {
 	id: number;
 	place: number;
 }
+
+export interface MiniScore {
+  id: number;
+  username: string;
+  scoreMiniGame: number;
+	place: number;
+
+}

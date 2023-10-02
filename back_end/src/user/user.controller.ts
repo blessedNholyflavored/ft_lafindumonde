@@ -150,9 +150,17 @@ export class UsersController {
   @Get('/leaderboard/:id')
   async getLeaderboardData(@Param('id') id: number)
   {
-	const data = await this.userService.getLeaderboard();
-	console.log(data);
-	return (data);
+    const data = await this.userService.getLeaderboard();
+    //console.log(data);
+    return (data);
+  }
+
+  @Get('/mini/:id')
+  async getMini(@Param('id') id: number)
+  {
+    const data = await this.userService.getMini();
+    //console.log(data);
+    return (data);
   }
 
   @Get('/:id/isloc')
