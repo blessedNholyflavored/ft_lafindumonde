@@ -45,6 +45,15 @@ export class UsersController {
     const newUsername = username['username'];
     this.userService.updateUsername(req.user.id, newUsername);
   }
+
+  @Post('/update-pass')
+  updating_password(@Req() req: any, @Body() password: string) {
+    //console.log(username);
+    console.log('service update username ', req.user.id);
+    const newPassword = password['password'];
+    this.userService.updatePassword(req.user.id, newPassword);
+  }
+
   @Get('/:id/avatar')
   returnPic(@Param('id') id: string) {
     const pictureURL = this.userService.getPicture(id);
@@ -144,6 +153,13 @@ export class UsersController {
 	const data = await this.userService.getLeaderboard();
 	console.log(data);
 	return (data);
+  }
+
+  @Get('/:id/isloc')
+  async checkIsLocal(@Param('id') id: string)
+  {
+    const data = await this.userService.isLocal(id);
+    return (data);
   }
 
   // @Get('/scoresMG')
