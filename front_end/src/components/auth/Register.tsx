@@ -45,10 +45,17 @@ export function Register() {
       }),
       credentials: "include",
     });
-    if (!res.ok) {
-      window.alert("Verify your input");
+    if (res.status === 409) {
+      window.alert("email already taken !");
       setInputPassword("");
       setInputUsername("");
+      setInputEmail("");
+    } else if (!res.ok) {
+      window.alert("Verify your input");
+      console.log("res = ", res);
+      setInputPassword("");
+      setInputUsername("");
+      setInputEmail("");
     } else {
       const data = await res.json();
       setUser(data.user);

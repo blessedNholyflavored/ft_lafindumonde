@@ -3,13 +3,13 @@ import "./../../App.css";
 import "./../../style/Login.css";
 import icon from "../../img/buttoncomp.png";
 import { useAuth } from "./AuthProvider";
-import { useNavigate, Navigate } from "react-router-dom";
-import api, { AxiosResponse } from "../../AxiosInstance";
+import { Navigate } from "react-router-dom";
+import api from "../../AxiosInstance";
 
 export const InputTotp: React.FC = () => {
   const { user, setUser } = useAuth();
   const [receivedCode, setReceivedCode] = useState("");
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const totpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

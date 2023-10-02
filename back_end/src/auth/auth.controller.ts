@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards, UsePipes, ValidationPipe, BadRequestException, UnauthorizedException } from "@nestjs/common";
+import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards, UsePipes, ValidationPipe, BadRequestException, UnauthorizedException, ConflictException } from "@nestjs/common";
 import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
 import { FortyTwoAuthGuard } from "./guards/FortyTwo-auth.guard";
@@ -76,6 +76,8 @@ export class AuthController{
 		while (await this.userService.getUserByID(newID))
 			newID = await this.authService.idGenerator();
 		//TODO: CHEKER for username and email (check it doesn't exist) --> if it exists ? strange
+		if (await this.authService.mailChecker(authDtos) == false)
+			throw new ConflictException("username or email already taken !");
 		//using specific DTO for locallogin
 		const user = await this.userService.createLocalUser(authDtos, newID);
 		//setting token and ending registering

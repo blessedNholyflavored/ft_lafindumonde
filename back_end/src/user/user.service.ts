@@ -268,6 +268,14 @@ export class UserService {
     });
   }
 
+	async getUserByEmail(email: string): Promise<User | undefined>{
+		return await prisma.user.findUnique({
+			where: {
+				email,
+			},
+		});
+	}
+
   async usernameAuthChecker(username: string) {
     const tmpUser = await this.getUserByUsername(username);
 

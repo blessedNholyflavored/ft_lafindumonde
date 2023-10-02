@@ -9,6 +9,7 @@ import * as cookie from 'cookie';
 import { encode } from 'hi-base32';
 import * as qrcode from 'qrcode';
 import Socket from 'src/gateway/types/socket';
+import { AuthDto } from 'src/user/dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -83,5 +84,12 @@ export class AuthService {
 
 	passwordChecker(input: string, user: User){
 		return (bcrypt.compare(input, user.password));
+	}
+
+	async mailChecker(user: AuthDto): Promise<Boolean>{
+		const tmpUser = await this.userService.getUserByEmail(user.email);
+		if (tmpUser)
+			return false;
+		return (true);
 	}
 }
