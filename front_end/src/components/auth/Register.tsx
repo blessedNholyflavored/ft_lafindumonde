@@ -62,6 +62,15 @@ export function Register() {
       setInputPassword("");
       setInputUsername("");
       setInputEmail("");
+    } else if (res.status === 406) {
+      setShowNotification(true);
+      setNotifyMSG("You must use 42 LogIn system !");
+      setNotifyType(3);
+      // setSender(0);
+      // window.alert("email already taken !");
+      setInputPassword("");
+      setInputUsername("");
+      setInputEmail("");
     } else if (!res.ok) {
       setShowNotification(true);
       setNotifyMSG("Something is wrong with your inputs !");

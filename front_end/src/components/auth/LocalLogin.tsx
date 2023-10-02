@@ -41,9 +41,15 @@ export function LocalLogin() {
       }),
       credentials: "include",
     });
-    if (!res.ok) {
+    if (res.status === 404) {
       setShowNotification(true);
-      setNotifyMSG("Wrong password or username");
+      setNotifyMSG("This username doesn't exist");
+      setNotifyType(3);
+      setInputPassword("");
+      setInputUsername("");
+    } else if (!res.ok) {
+      setShowNotification(true);
+      setNotifyMSG("Wrong password");
       setNotifyType(3);
       setInputPassword("");
       setInputUsername("");
