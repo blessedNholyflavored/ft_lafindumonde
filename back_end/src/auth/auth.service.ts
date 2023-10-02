@@ -92,4 +92,12 @@ export class AuthService {
 			return false;
 		return (true);
 	}
+
+	async FortyTwoMailCheck(user: AuthDto) : Promise<Boolean>{
+		const str = user.email.split('@').slice(1);
+
+		if (str.includes('student.42.fr'))
+			return false;
+		return true;
+	}
 }
