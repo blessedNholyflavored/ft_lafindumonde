@@ -6,6 +6,7 @@ import logo from "../../img/logo42.png";
 import icon from "../../img/buttoncomp.png";
 import champi from "../../img/champi.png";
 import { useAuth } from "./AuthProvider";
+import Notify from "../../Notify";
 import { useNavigate } from "react-router-dom";
 
 export function Register() {
@@ -13,6 +14,10 @@ export function Register() {
   const [inputUsername, setInputUsername] = useState("");
   const [inputPassword, setInputPassword] = useState("");
   const [inputEmail, setInputEmail] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
+  const [notifyMSG, setNotifyMSG] = useState<string>("");
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const [sender, setSender] = useState<number>(0);
   const navigate = useNavigate();
 
   // check if user is already logged in
@@ -21,11 +26,14 @@ export function Register() {
       navigate("/");
     }
   }, []);
-
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
   // sending input to back_end to verify and register
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     let dogimg;
+
     await fetch(`https://dog.ceo/api/breeds/image/random`, {
       method: "GET",
     })
@@ -46,13 +54,21 @@ export function Register() {
       credentials: "include",
     });
     if (res.status === 409) {
-      window.alert("email already taken !");
+      setShowNotification(true);
+      setNotifyMSG("Email is already taken !");
+      setNotifyType(3);
+      // setSender(0);
+      // window.alert("email already taken !");
       setInputPassword("");
       setInputUsername("");
       setInputEmail("");
     } else if (!res.ok) {
-      window.alert("Verify your input");
-      console.log("res = ", res);
+      setShowNotification(true);
+      setNotifyMSG("Something is wrong with your inputs !");
+      setNotifyType(3);
+      // setSender(0);
+      // window.alert("Verify your input");
+      // console.log("res = ", res);
       setInputPassword("");
       setInputUsername("");
       setInputEmail("");
@@ -73,6 +89,14 @@ export function Register() {
 
   return (
     <div className="Login">
+      {showNotification && (
+        <Notify
+          message={notifyMSG}
+          type={notifyType}
+          senderId={sender}
+          onClose={handleCloseNotification}
+        />
+      )}
       <div className="logoAuth">
         <img src={logo} className="logo" alt="icon" />
       </div>

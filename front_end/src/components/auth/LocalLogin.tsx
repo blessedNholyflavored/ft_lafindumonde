@@ -5,19 +5,27 @@ import "./../../style/Login.css";
 import logo from "../../img/logo42.png";
 import icon from "../../img/buttoncomp.png";
 import { useAuth } from "./AuthProvider";
-//import { Login } from "./Login";
+import Notify from "../../Notify";
 import { useNavigate } from "react-router-dom";
 
 export function LocalLogin() {
   const { user, setUser } = useAuth();
   const [inputUsername, setInputUsername] = useState("");
   const [inputPassword, setInputPassword] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
+  const [notifyMSG, setNotifyMSG] = useState<string>("");
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const [sender, setSender] = useState<number>(0);
   const navigate = useNavigate();
 
   // if user is already set
   if (user) {
     navigate("/");
   }
+
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
 
   // send inputs to back_end for validation
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,7 +42,9 @@ export function LocalLogin() {
       credentials: "include",
     });
     if (!res.ok) {
-      window.alert("Wrong password or username !");
+      setShowNotification(true);
+      setNotifyMSG("Wrong password or username");
+      setNotifyType(3);
       setInputPassword("");
       setInputUsername("");
     } else {
@@ -57,6 +67,14 @@ export function LocalLogin() {
 
   return (
     <div className="Login">
+      {showNotification && (
+        <Notify
+          message={notifyMSG}
+          type={notifyType}
+          senderId={sender}
+          onClose={handleCloseNotification}
+        />
+      )}
       <div className="logoAuth">
         <img src={logo} className="logo" alt="icon" />
       </div>
