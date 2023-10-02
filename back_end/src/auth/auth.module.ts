@@ -12,7 +12,7 @@ import { AuthController} from './auth.controller';
 
 @Module({
   imports: [UserModule, PassportModule, ConfigModule.forRoot(), JwtModule.register({
-		secret: process.env.JWT_SECURE_KEY, // => envvar
+		secret: process.env.JWT_SECURE_KEY,
 		signOptions: { expiresIn: '1d'},
   })],
   providers: [AuthService, FortyTwoStrategy, JwtStrategy, JwtService, TotpStrategy ],

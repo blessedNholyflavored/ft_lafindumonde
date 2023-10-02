@@ -4,9 +4,10 @@ import "../../style/twoFA.css";
 import icon from "../../img/buttoncomp.png";
 import logo from "../../img/logo42.png";
 import { useAuth } from "../auth/AuthProvider";
-import { twoFAEnable, twoFADisable } from "../auth/2faComp";
+// import { twoFAEnable, twoFADisable } from "../auth/2faComp";
 import { Logout } from "./../auth/Logout";
 import { useNavigate } from "react-router-dom";
+import api from "../../AxiosInstance";
 import "../../../src/style/Home.css";
 import folder from "./../../img/folder0.png";
 import folder1 from "./../../img/folder2.png";
@@ -16,6 +17,7 @@ import folder4 from "./../../img/folder5.png";
 import folder0 from "./../../img/folder1.png";
 import folder6 from "./../../img/folder6.png";
 import nav from "../../img/buttoncomp.png";
+import Notify from "../../Notify";
 
 export const UserSetting: React.FC = () => {
   const [newUsername, setNewUsername] = useState("");
@@ -26,6 +28,10 @@ export const UserSetting: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLocal, setIsLocal] = useState<Boolean>(false);
   const { user, setUser } = useAuth();
+  const [showNotification, setShowNotification] = useState(false);
+  const [notifyMSG, setNotifyMSG] = useState<string>("");
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const [sender, setSender] = useState<number>(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -248,10 +254,67 @@ export const UserSetting: React.FC = () => {
   const navigateToHome = () => {
     navigate("/");
   };
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
+
+  const twoFADisable = async (context: any) => {
+    try {
+      const res = await api.get("/auth/2FAdisable");
+      context.setUser(res.data);
+      if (res.data.log2FA) {
+        setShowNotification(true);
+        setNotifyMSG(
+          "You successfully disabled the two factor authentication!"
+        );
+        setNotifyType(2);
+      } else {
+        setShowNotification(true);
+        setNotifyMSG(
+          "You can't disable something that wasn't enabled, weirdoo !!!"
+        );
+        setNotifyType(3);
+      }
+    } catch (error) {
+      console.log("Error while de-2fa-ing : ", error);
+    }
+  };
+
+  const twoFAEnable = async (navigate: any, user: any) => {
+    //TODO: ca il faut le faire dans le back en vrai
+    if (user.loginLoc === true) {
+      setShowNotification(true);
+      setNotifyMSG("You can't enable 2FA with this type of account !");
+      setNotifyType(3);
+      return;
+    }
+    setShowNotification(true);
+    setNotifyMSG(
+      "Are you ready to save the QR code you will be provided in the next page ?"
+    );
+    setNotifyType(4);
+    setSender(sender);
+    // if (window.confirm("Are you ready to save your unique QR code ?")) {
+    //   const res = await fetch("http://localhost:3000/auth/2FAenable", {
+    //     method: "GET",
+    //     credentials: "include",
+    //   });
+    //   const data = await res.json();
+    //   return navigate(`/totpSave?qrCodeImg=${encodeURIComponent(data.code)}`);
+    // }
+  };
 
   return (
     <>
       {/* <body> */}
+      {showNotification && (
+        <Notify
+          message={notifyMSG}
+          type={notifyType}
+          senderId={sender}
+          onClose={handleCloseNotification}
+        />
+      )}
       <header>
         <div>
           <img src={nav} alt="Menu 1" />
@@ -307,7 +370,7 @@ export const UserSetting: React.FC = () => {
                           value={newPass}
                           placeholder="type new password"
                           onChange={(e) => setNewPass(e.target.value)}
-                          />
+                        />
                       </label>
                       <button className="buttonsettings" type="submit">
                         update
@@ -318,25 +381,25 @@ export const UserSetting: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                  <form className="formsettings" onSubmit={handleSubmitMail}>
-                    <label className="labelcss">
-                      <input
-                        className="inputcss"
-                        type="email"
-                        value={newMail}
-                        placeholder="type new mail"
-                        onChange={(e) => setNewMail(e.target.value)}
+                    <form className="formsettings" onSubmit={handleSubmitMail}>
+                      <label className="labelcss">
+                        <input
+                          className="inputcss"
+                          type="email"
+                          value={newMail}
+                          placeholder="type new mail"
+                          onChange={(e) => setNewMail(e.target.value)}
                         />
-                    </label>
-                    <button className="buttonsettings" type="submit">
-                      update
-                    </button>
-                  </form>
-                  <div className="footersmallbox">
-                    <br></br>
+                      </label>
+                      <button className="buttonsettings" type="submit">
+                        update
+                      </button>
+                    </form>
+                    <div className="footersmallbox">
+                      <br></br>
+                    </div>
                   </div>
-                </div>
-              </>
+                </>
               )}
             </div>
 

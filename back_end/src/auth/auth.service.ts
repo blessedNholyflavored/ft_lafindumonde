@@ -85,19 +85,4 @@ export class AuthService {
 	passwordChecker(input: string, user: User){
 		return (bcrypt.compare(input, user.password));
 	}
-
-	async mailChecker(mail: string): Promise<Boolean>{
-		const tmpUser = await this.userService.getUserByEmail(mail);
-		if (tmpUser)
-			return false;
-		return (true);
-	}
-
-	async FortyTwoMailCheck(mail: string) : Promise<Boolean>{
-		const str = mail.split('@').slice(1);
-
-		if (str.includes('student.42.fr'))
-			return false;
-		return true;
-	}
 }

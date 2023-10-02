@@ -66,9 +66,9 @@ export class UsersController {
     //console.log(username);
     //console.log('service update username ', req.user.id);
     const newMail = mail['email'];
-    if (await this.userService.mailChecker(mail.toString()) === false)
+    if (await this.userService.mailChecker(newMail.toString()) === false)
 			throw new ConflictException("email already taken !");
-		if (await this.userService.FortyTwoMailCheck(mail.toString()) === true)
+		if (await this.userService.FortyTwoMailCheck(newMail.toString()) === false)
 			throw new NotAcceptableException("email domain not allowed");
     this.userService.updateMail(req.user.id, newMail);
   }

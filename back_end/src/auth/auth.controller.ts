@@ -76,9 +76,9 @@ export class AuthController{
 		while (await this.userService.getUserByID(newID))
 			newID = await this.authService.idGenerator();
 		//TODO: CHEKER for username and email (check it doesn't exist) --> if it exists ? strange
-		if (await this.authService.mailChecker(authDtos.email) === false)
+		if (await this.userService.mailChecker(authDtos.email) === false)
 			throw new ConflictException("username or email already taken !");
-		if (await this.authService.FortyTwoMailCheck(authDtos.email) === false)
+		if (await this.userService.FortyTwoMailCheck(authDtos.email) === false)
 			throw new NotAcceptableException("email domain not allowed");
 		//using specific DTO for locallogin
 		const user = await this.userService.createLocalUser(authDtos, newID);
