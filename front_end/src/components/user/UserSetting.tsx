@@ -107,6 +107,30 @@ export const UserSetting: React.FC = () => {
     }
   };
 
+  const handleSubmitMail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const userId = user?.id;
+    console.log("dans front user id = ", userId);
+    try {
+      const response = await fetch(`http://localhost:3000/users/update-mail`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password: newPass }),
+        credentials: "include",
+      });
+      if (response.ok) {
+        alert("Password mis à jour avec succès !");
+        //window.location.reload();
+      } else {
+        alert("Une erreur s'est produite lors de la mise à jour du password.");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+  };
+
   const displayPic = async () => {
     const userId = user?.id;
     try {
@@ -157,7 +181,7 @@ export const UserSetting: React.FC = () => {
   };
 
   const changePic = async () => {
-    console.log("DANS CHANGE PIC");
+    //console.log("DANS CHANGE PIC");
     const userId = user?.id;
     if (newPicture) {
       const blob = new Blob([newPicture], { type: newPicture.type });
@@ -165,7 +189,7 @@ export const UserSetting: React.FC = () => {
 
       formData.append("userpic", blob, newPicture.name);
 
-      console.log(formData);
+      //console.log(formData);
 
       try {
         const response = await fetch(
@@ -180,11 +204,11 @@ export const UserSetting: React.FC = () => {
           const result = await response.json();
           setImgUrl(result.pictureURL);
           //setImgUrl(URL.createObjectURL(blob));
-          console.log("DDDDDDDDDDDDDDDDDDDDDD", result.pictureURL);
+          //console.log("DDDDDDDDDDDDDDDDDDDDDD", result.pictureURL);
           alert("profil picture mise à jour avec succès !");
           displayPic();
         } else {
-          console.log("kkkkkkkkkk");
+          //console.log("kkkkkkkkkk");
           const backError = await response.json();
           setError(backError.message);
           alert(backError.message);
@@ -195,7 +219,7 @@ export const UserSetting: React.FC = () => {
           const backError = await error.json();
           setError(backError.message);
           alert(backError.message);
-          console.log("llalalalaal   ", backError);
+          //console.log("llalalalaal   ", backError);
         }
       }
     }
@@ -270,9 +294,29 @@ export const UserSetting: React.FC = () => {
               <div className="footersmallbox">
                 <br></br>
               </div>
-              {/* OPTIONAL PASSWORD CHANGE LOCAL USER */}
+              {/* OPTIONAL PASSWORD AND EMAIL CHANGE LOCAL USER */}
               {isLocal == true && (
-                <div>
+                <>
+                  <div>
+                    <form className="formsettings" onSubmit={handleSubmitPass}>
+                      <label className="labelcss">
+                        <input
+                          className="inputcss"
+                          type="password"
+                          value={newPass}
+                          placeholder="type new password"
+                          onChange={(e) => setNewPass(e.target.value)}
+                          />
+                      </label>
+                      <button className="buttonsettings" type="submit">
+                        update
+                      </button>
+                    </form>
+                    <div className="footersmallbox">
+                      <br></br>
+                    </div>
+                  </div>
+                  <div>
                   <form className="formsettings" onSubmit={handleSubmitPass}>
                     <label className="labelcss">
                       <input
@@ -281,7 +325,7 @@ export const UserSetting: React.FC = () => {
                         value={newPass}
                         placeholder="type new password"
                         onChange={(e) => setNewPass(e.target.value)}
-                      />
+                        />
                     </label>
                     <button className="buttonsettings" type="submit">
                       update
@@ -291,6 +335,7 @@ export const UserSetting: React.FC = () => {
                     <br></br>
                   </div>
                 </div>
+              </>
               )}
             </div>
 
