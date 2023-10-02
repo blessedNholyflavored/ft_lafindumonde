@@ -20,6 +20,7 @@ import nav from "../../img/buttoncomp.png";
 export const UserSetting: React.FC = () => {
   const [newUsername, setNewUsername] = useState("");
   const [newPass, setNewPass] = useState("");
+  const [newMail, setNewMail] = useState("");
   const [newPicture, setNewPicture] = useState<File | null>(null);
   let [ImgUrl, setImgUrl] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -79,7 +80,7 @@ export const UserSetting: React.FC = () => {
         );
       }
     } catch (error) {
-      console.error("Erreur:", error);
+      //console.error("Erreur:", error);
     }
   };
 
@@ -110,24 +111,24 @@ export const UserSetting: React.FC = () => {
   const handleSubmitMail = async (e: React.FormEvent) => {
     e.preventDefault();
     const userId = user?.id;
-    console.log("dans front user id = ", userId);
+    //console.log("dans front user id = ", userId);
     try {
       const response = await fetch(`http://localhost:3000/users/update-mail`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ password: newPass }),
+        body: JSON.stringify({ email: newMail }),
         credentials: "include",
       });
       if (response.ok) {
-        alert("Password mis à jour avec succès !");
+        alert("mail mis à jour avec succès !");
         //window.location.reload();
       } else {
-        alert("Une erreur s'est produite lors de la mise à jour du password.");
+        alert("Une erreur s'est produite lors de la mise à jour du mail.");
       }
     } catch (error) {
-      console.error("Erreur:", error);
+      //console.error("Erreur:", error);
     }
   };
 
@@ -317,14 +318,14 @@ export const UserSetting: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                  <form className="formsettings" onSubmit={handleSubmitPass}>
+                  <form className="formsettings" onSubmit={handleSubmitMail}>
                     <label className="labelcss">
                       <input
                         className="inputcss"
-                        type="password"
-                        value={newPass}
-                        placeholder="type new password"
-                        onChange={(e) => setNewPass(e.target.value)}
+                        type="email"
+                        value={newMail}
+                        placeholder="type new mail"
+                        onChange={(e) => setNewMail(e.target.value)}
                         />
                     </label>
                     <button className="buttonsettings" type="submit">

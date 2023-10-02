@@ -11,22 +11,28 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
+  ConflictException,
+  NotAcceptableException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UserService } from './user.service';
+import { AuthService } from '../auth/auth.service';
 import { User } from '@prisma/client';
 import * as path from 'path';
 import { join } from 'path';
 import { Response } from 'express';
 import * as mimetype from 'mime-types';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
+import { throwError } from 'rxjs';
+
+
 
 @Controller('users')
 @UseGuards(...AuthenticatedGuard)
 export class UsersController {
   friendService: any;
-  constructor(private userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   //cette function est commentée parce que pas sécurisée
   // si besoin de l'utiliser pour une feature definitive
@@ -39,11 +45,12 @@ export class UsersController {
   }
 */
   @Post('/update-username')
-  updating_username(@Req() req: any, @Body() username: string) {
+  async updating_username(@Req() req: any, @Body() username: string) {
     //console.log(username);
     console.log('service update username ', req.user.id);
     const newUsername = username['username'];
-    this.userService.updateUsername(req.user.id, newUsername);
+    if (await this.userService.updateUsername(req.user.id, newUsername) == false)
+      throw new ConflictException("username not available");
   }
 
   @Post('/update-pass')
@@ -52,6 +59,18 @@ export class UsersController {
     console.log('service update username ', req.user.id);
     const newPassword = password['password'];
     this.userService.updatePassword(req.user.id, newPassword);
+  }
+  
+  @Post('/update-mail')
+  async updating_mail(@Req() req: any, @Body() mail: string) {
+    //console.log(username);
+    //console.log('service update username ', req.user.id);
+    const newMail = mail['email'];
+    if (await this.userService.mailChecker(mail.toString()) === false)
+			throw new ConflictException("email already taken !");
+		if (await this.userService.FortyTwoMailCheck(mail.toString()) === true)
+			throw new NotAcceptableException("email domain not allowed");
+    this.userService.updateMail(req.user.id, newMail);
   }
 
   @Get('/:id/avatar')

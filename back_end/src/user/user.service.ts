@@ -57,15 +57,19 @@ export class UserService {
     }
   }
 
-  async updateUsername(id: string, newUsername: string) {
+  async updateUsername(id: string, newUsername: string) :Promise<Boolean> {
     console.log('dans controleur', id);
-    const updateUser = await prisma.user.update({
+    let updatedUser = await this.getUserByID(parseInt(id));
+		if (await this.usernameAuthChecker(newUsername) === false){
+      updatedUser = await prisma.user.update({
       where: { id: parseInt(id) },
       data: {
         username: newUsername,
       },
     });
-    return updateUser;
+    return true;
+  }
+    return false;
   }
 
   async updatePassword(id: string, newPassword: string) {
@@ -79,6 +83,32 @@ export class UserService {
     });
     return updateUser;
   }
+
+  async updateMail(id: string, newMail: string) {
+   // console.log('dans controleur', id);
+    const updateUser = await prisma.user.update({
+      where: { id: parseInt(id) },
+      data: {
+        email: newMail,
+      },
+    });
+    return updateUser;
+  }
+
+  async mailChecker(mail: string): Promise<Boolean>{
+		const tmpUser = await this.getUserByEmail(mail);
+		if (tmpUser)
+			return false;
+		return (true);
+	}
+
+	async FortyTwoMailCheck(mail: string) : Promise<Boolean>{
+		const str = mail.split('@').slice(1);
+
+		if (str.includes('student.42.fr'))
+			return false;
+		return true;
+	}
 
   async getPicture(id: string) {
     const User = await prisma.user.findUnique({
@@ -239,6 +269,8 @@ export class UserService {
     });
     return updateUser;
   }
+
+
   // async getAchievementById(id: number) {
   //   if (id === undefined) {
   //     throw new BadRequestException('Undefined user ID');
@@ -305,7 +337,7 @@ export class UserService {
   }
 
 	async getUserByEmail(email: string): Promise<User | undefined>{
-		return await prisma.user.findUnique({
+    return await prisma.user.findUnique({
 			where: {
 				email,
 			},
