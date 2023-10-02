@@ -262,7 +262,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
   // boucle de jeu
   startLoop(id: number) {
 
-    console.log("lalallalala");
     let recupRoom = this.roomMapService.getRoom(id.toString());
 
     this.roomIntervals[recupRoom.idRoom] = setInterval(() => {
@@ -380,32 +379,34 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
   
   // Arret de la partie si un joueur quitte la game en cours
   @SubscribeMessage('leaveGame')
-  async onDisconnect(@ConnectedSocket() socket: Socket) {
+  async onDisconnect(@MessageBody() id: number, @ConnectedSocket() socket: Socket) {
 
-    if (this.room && !this.room.end)
+    let recupRoom = this.roomMapService.getRoom(id.toString());
+
+    if (recupRoom && !recupRoom.end)
     {
-    if (socket.user.id == this.room.idP1)
+    if (socket.user.id == recupRoom.idP1)
     {
-      this.room.winnerid = this.room.idP2;
-      this.room.winner = this.room.player2.username;
-      this.room.scorePlayer1 = -1;
+      recupRoom.winnerid = recupRoom.idP2;
+      recupRoom.winner = recupRoom.player2.username;
+      recupRoom.scorePlayer1 = -1;
     }
-    else if (socket.user.id == this.room.idP2)
+    else if (socket.user.id == recupRoom.idP2)
     {
-      this.room.winnerid = this.room.idP2;
-      this.room.winner = this.room.player1.username;
-      this.room.scorePlayer2 = -1;
+      recupRoom.winnerid = recupRoom.idP2;
+      recupRoom.winner = recupRoom.player1.username;
+      recupRoom.scorePlayer2 = -1;
     }
 
-    if (!this.room.end) 
-      this.gameService.updateGame(this.room);
-    this.room.end = 1;
+    if (!recupRoom.end) 
+      this.gameService.updateGame(recupRoom);
+    recupRoom.end = 1;
 
-    let roomUpdate: roomSend = {player1: this.room.player1.username, player2: this.room.player2.username,
-      ballX: this.room.ball.x, ballY: this.room.ball.y, scoreP1: this.room.scorePlayer1,
-      scoreP2: this.room.scorePlayer2, player1Y: this.room.player1.point.y, player2Y: this.room.player2.point.y,
-      winner: '', roomID: this.res.id, end: 1};
-    this.room = null;
+    let roomUpdate: roomSend = {player1: recupRoom.player1.username, player2: recupRoom.player2.username,
+      ballX: recupRoom.ball.x, ballY: recupRoom.ball.y, scoreP1: recupRoom.scorePlayer1,
+      scoreP2: recupRoom.scorePlayer2, player1Y: recupRoom.player1.point.y, player2Y: recupRoom.player2.point.y,
+      winner: recupRoom.winner, roomID: id, end: 1};
+    recupRoom = null;
     this.stopLoop(roomUpdate.roomID);
     this.server.to(roomUpdate.roomID.toString()).emit('playerLeave', roomUpdate);
 
@@ -476,7 +477,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
   }
 
     // init des valeurs pour le jeu + creation de la Room de jeu dasn la db
-    @SubscribeMessage('startGameFriend')
+    @SubscribeMessage('startfriendGameFriend')
     async onStartGameFriend(@ConnectedSocket() socket: Socket)
     {
         const firstPlayer = this.playerQueue2Friend.shift()!;
@@ -503,7 +504,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (socket.user.id === this.room.idP1)
             this.startLoop(Sroom.roomID);
   
-        this.server.to(this.res.id.toString()).emit('startGame2', Sroom);
+        this.server.to(this.res.id.toString()).emit('startFriendGame', Sroom);
     }
 
 
@@ -598,7 +599,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           value.emit("refreshListRoom");
         });
       }
-      @SubscribeMessage('kickFromChannel')
+      @SubscribeMessage('onkickFromChannel')
       async onkickFromChannel(@MessageBody() data: {userId:number, roomId:number, reason: string},@ConnectedSocket() socket: Socket)
       {
         const roomName = await this.chatService.getRoomName(data[1]);

@@ -22,7 +22,7 @@ export const MiniGame = () => {
   const [player1tsc, setPoint1tsc] = useState(0);
   const [player2tsc, setPoint2tsc] = useState(0);
   const [ball, setBall] = useState<{ x: number; y: number }>({ x: 350, y: 200 });
-  const [ballDir, setBallDir] = useState<{ x: number; y: number }>({ x: -1, y: 0 });
+  const [ballDir, setBallDir] = useState<{ x: number; y: number }>({ x: 1, y: 0 });
   const [end, setEnd] = useState<boolean>(false);
   const { user, setUser } = useAuth();
   const socket = useContext(WebsocketContext);
@@ -50,9 +50,7 @@ export const MiniGame = () => {
   useEffect(() => {
     async function fetchScores() {
       const scores = await fetchPlayerScores();
-      // Tri des scores dans l'ordre décroissant
       scores.sort((a: { scoreMiniGame: number; }, b: { scoreMiniGame: number; }) => b.scoreMiniGame - a.scoreMiniGame);
-      // Attribuer les places aux joueurs
       scores.forEach((score: { place: any; }, index: number) => {
         score.place = index + 1;
       });
@@ -104,12 +102,10 @@ export const MiniGame = () => {
           setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: -prevBallDir.y + 0.30 }));
         setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, x: -prevBallDir.x }));
 
-        // Incrémente le compteur de rebond du joueur 1
         if (ball.x < mapx / 2) {
           setRebounds((prevRebounds) => prevRebounds + 1);
         }
       } else if (ball.x >= mapx - 8 - 10) {
-        // La balle touche le mur de droite, arrêt du jeu
         setEnd(true);
         socket?.emit('updateScoreMiniGame', rebounds);
     }
@@ -143,24 +139,9 @@ export const MiniGame = () => {
   }, []);
 
   const restartGame = () => {
-    setEnd(false);
-    setPlayer1(0);
-    setPlayer2(300);
-    setPoint1tsc(0);
-    setPoint2tsc(0);
-    setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, x: 1 }));
-    setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: 0 }));
+    window.location.reload();
   };
 
-  useEffect(() => {
-    if (player1Point >= 5 || player2Point >= 5) {
-      setEnd(true);
-      setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, x: 0 }));
-      setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: 0 }));
-      setPoint1(0);
-      setPoint2(0);
-    }
-  }, [player1Point, player2Point, end, ballDir]);
 
   return (
     <div>

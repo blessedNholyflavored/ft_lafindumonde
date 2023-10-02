@@ -27,19 +27,31 @@ const PongGame: React.FC = () => {
   const [countdown, setCountdown] = useState(3);
 
 
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+
+    socket?.emit('leaveGame', room?.roomID);
+    socket?.emit('changeStatus');
+    setEnd(1);
+  
+      NavHome();
+      window.location.href = "/gamePage";
+
+  }; 
+
   const startCountdown = () => {
+    
     const countdownInterval = setInterval(() => {
-      setCountdown((prevCountdown) => prevCountdown - 1);
+      if (room?.end !== 1)
+        setCountdown((prevCountdown) => prevCountdown - 1);
     }, 1000);
   
-    // Ajoutez une vérification en dehors de l'intervalle
     setTimeout(() => {
       clearInterval(countdownInterval);
       startGameFCT();
-    }, 4000); // Arrêtez le compte à rebours après 3 secondes
+    }, 4000);
   };
   useEffect(() => {
-    if (countdown !== 0) {
+    if (countdown !== 0 && end === 0) {
       startCountdown();
     }
   }, [counter]);
@@ -65,7 +77,7 @@ const PongGame: React.FC = () => {
 const NavHome = () => {
   socket.emit('changeStatus', (socket: Socket) => {
   });
-  navigate('/');
+  navigate('/gamePage');
   window.location.reload();
 
 }
@@ -135,12 +147,7 @@ useEffect(() => {
   if (socket && room && room.end)
   setEnd(1);
 
-  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
 
-    socket?.emit('leaveGame');
-    socket?.emit('changeStatus');
-    setEnd(1);
-  };
   
   window.addEventListener('beforeunload', handleBeforeUnload);
   

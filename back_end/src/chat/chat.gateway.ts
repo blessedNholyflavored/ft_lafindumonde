@@ -62,4 +62,12 @@ export class ChatGateway {
   {
     this.chatService.CreateMessageRoom(data[0], socket.user.id.toString(), data[1])
   }
+
+  @SubscribeMessage('reloadListRoomForOne')
+  async onreloadForOne(socket: Socket)
+  {
+    socket.emit("refreshForOne");
+  }
+
+  
 }

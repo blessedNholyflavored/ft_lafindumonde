@@ -32,9 +32,7 @@ interface onlinePlayers {
 export const FriendsPage: React.FC = () => {
   const { user, setUser } = useAuth();
   const [username, setUsername] = useState<string>("");
-  const navigate = useNavigate();
-  const [notifyMSG, setNotifyMSG] = useState<string>("");
-  const [notifyType, setNotifyType] = useState<number>(0);
+
   const [sender, setSender] = useState<number>(0);
   const socket = useContext(WebsocketContext);
 
@@ -46,6 +44,10 @@ export const FriendsPage: React.FC = () => {
   const [blocked, setBlocked] = useState<friendsSend[]>([]);
   const [onlinePlayers, setOnlinePlayers] = useState<onlinePlayers[]>([]);
   const [showNotification, setShowNotification] = useState(false);
+  const [notifyMSG, setNotifyMSG] = useState<string>("");
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const navigate = useNavigate();
+
 
   async function fetchfriendsSend() {
     try {

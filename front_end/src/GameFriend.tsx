@@ -74,7 +74,7 @@ const startGameFCT = () =>
 {
   if (socket && counter === 0)
   {
-    socket?.emit('startGameFriend');
+    socket?.emit('startfriendGameFriend');
     setCounter(1);
   }
 }
@@ -100,7 +100,7 @@ useEffect(() => {
   //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
   
   if (socket) {
-    socket.on('startGame2', async (updateroom: Room) => {
+    socket.on('startFriendGame', async (updateroom: Room) => {
       setCounter(1);
       setRoom(updateroom);
     });
@@ -137,7 +137,7 @@ useEffect(() => {
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
 
-    socket?.emit('leaveGame');
+    socket?.emit('leaveGame', room?.roomID);
     socket?.emit('changeStatus');
     setEnd(1);
   };
