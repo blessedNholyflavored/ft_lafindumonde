@@ -88,6 +88,7 @@ ul {
 
 .menu-item {
   margin-bottom: 1rem;
+  cursor: pointer;
 }
 
 .menu-item a {
@@ -116,13 +117,25 @@ footer {
   /* width: 100%; */
 }
 
-.home {
+/* .home {
   position: absolute;
   width: 80px;
   height: 80px;
   top: 20%;
   left: 10%;
   background-color: red;
+} */
+.home {
+  top: 5%;
+  left: 5%;
+  height: 40vh;
+  width: 12vw;
+  position: absolute;
+  background-color: white;
+  border: 6px solid var(--greyscale-k, #000);
+  box-shadow: 10px 12px 0px 0px #000;
+  /* height: 450px; */
+  background-color: #000;
 }
 
 .chat {
@@ -137,6 +150,7 @@ footer {
 
 .chat img {
   /* height: 250px; */
+  cursor: pointer;
   width: 25vw;
 }
 
@@ -159,6 +173,7 @@ footer {
 }
 
 .game img {
+  cursor: pointer;
   width: 30vw;
 }
 
@@ -191,18 +206,6 @@ footer {
 .troll img {
   /* height: 200px; */
   width: 15vw;
-}
-
-.home {
-  top: 5%;
-  left: 5%;
-  height: 40vh;
-  width: 15vw;
-  background-color: white;
-  border: 6px solid var(--greyscale-k, #000);
-  box-shadow: 10px 12px 0px 0px #000;
-  /* height: 450px; */
-  background-color: #000;
 }
 
 .home p {
