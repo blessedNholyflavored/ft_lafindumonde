@@ -110,8 +110,6 @@ export const UserSetting: React.FC = () => {
 
   const handleSubmitMail = async (e: React.FormEvent) => {
     e.preventDefault();
-    const userId = user?.id;
-    //console.log("dans front user id = ", userId);
     try {
       const response = await fetch(`http://localhost:3000/users/update-mail`, {
         method: "POST",
@@ -182,8 +180,6 @@ export const UserSetting: React.FC = () => {
   };
 
   const changePic = async () => {
-    //console.log("DANS CHANGE PIC");
-    const userId = user?.id;
     if (newPicture) {
       const blob = new Blob([newPicture], { type: newPicture.type });
       const formData = new FormData();
@@ -276,7 +272,7 @@ export const UserSetting: React.FC = () => {
             {/* deuxieme */}
             <div className="boxrowsettings">
               <div className="navbarsmallbox">
-                <p className="boxtitle"> CHANGE USERNAME </p>
+              {isLocal === false ? (<p className="boxtitle"> CHANGE USERNAME </p>) : (<p className="boxtitle"> CHANGE INFOS </p>)}
               </div>
               <form className="formsettings" onSubmit={handleSubmit}>
                 <label className="labelcss">
@@ -296,7 +292,7 @@ export const UserSetting: React.FC = () => {
                 <br></br>
               </div>
               {/* OPTIONAL PASSWORD AND EMAIL CHANGE LOCAL USER */}
-              {isLocal == true && (
+              {isLocal === true && (
                 <>
                   <div>
                     <form className="formsettings" onSubmit={handleSubmitPass}>

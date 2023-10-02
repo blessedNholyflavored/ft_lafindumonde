@@ -17,7 +17,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UserService } from './user.service';
-import { AuthService } from '../auth/auth.service';
 import { User } from '@prisma/client';
 import * as path from 'path';
 import { join } from 'path';
@@ -66,9 +65,9 @@ export class UsersController {
     //console.log(username);
     //console.log('service update username ', req.user.id);
     const newMail = mail['email'];
-    if (await this.userService.mailChecker(mail.toString()) === false)
+    if (await this.userService.mailChecker(newMail.toString()) === false)
 			throw new ConflictException("email already taken !");
-		if (await this.userService.FortyTwoMailCheck(mail.toString()) === true)
+		if (await this.userService.FortyTwoMailCheck(newMail.toString()) === false)
 			throw new NotAcceptableException("email domain not allowed");
     this.userService.updateMail(req.user.id, newMail);
   }
