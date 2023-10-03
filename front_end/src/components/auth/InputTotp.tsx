@@ -32,22 +32,22 @@ export const InputTotp: React.FC = () => {
 
   if (user && user.enabled2FA) {
     return (
-      <div className="Login">
-        <div className="boxAuth">
+      <div className="Totp">
+        <div className="boxTotp">
           <div className="navbarbox navAuth">
             <img src={icon} className="buttonnav" alt="icon" />
             <p className="navTitle"> 2FA AUTH </p>
             <p className="navTitle"> ▷</p>
           </div>
-          <div className="boxAuthContent">
-            <p>
+          <div className="boxTotpContent">
+            <p className="textTotpLogin">
               Use the input box below to confirm your identity with the code you
               generated with your favorite TOTP authenticator app :
             </p>
             <form className="totpSubmit" onSubmit={totpSubmit}>
               <label className="totpLabel">
                 <input
-                  className="totpInput"
+                  className="totpInputLogin"
                   type="text"
                   value={receivedCode}
                   placeholder="000000"

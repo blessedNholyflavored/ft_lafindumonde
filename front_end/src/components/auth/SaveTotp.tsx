@@ -35,21 +35,23 @@ export const SaveTotp: React.FC = () => {
 
   if (user) {
     return (
-      <div className="Login">
-        <div className="boxAuth">
+      <div className="Totp">
+        <div className="boxTotp">
           <div className="navbarbox navAuth">
             <img src={icon} className="buttonnav" alt="icon" />
             <p className="navTitle"> 2FA AUTH </p>
             <p className="navTitle"> ▷</p>
           </div>
-          <div className="boxAuthContent">
-            <p>
+          <div className="boxTotpContent">
+            <p className="textTotp">
               Use this QR in your favorite TOTP authenticator. It will register
               the app inside your authenticator in order to log in easily by
               reloading the code input that follows upon authentication.
             </p>
-            {qrCodeImg && <img src={qrCodeImg} alt="qr code" />}
-            <p>
+            {qrCodeImg && (
+              <img src={qrCodeImg} alt="qr code" className="imgQRcode" />
+            )}
+            <p className="textTotp">
               Now you can use the input box below to confirm your identity with
               the code you received :
             </p>
