@@ -4,7 +4,6 @@ import "../../style/twoFA.css";
 import icon from "../../img/buttoncomp.png";
 import logo from "../../img/logo42.png";
 import { useAuth } from "../auth/AuthProvider";
-// import { twoFAEnable, twoFADisable } from "../auth/2faComp";
 import { Logout } from "./../auth/Logout";
 import { useNavigate } from "react-router-dom";
 import api from "../../AxiosInstance";
@@ -359,7 +358,7 @@ export const UserSetting: React.FC = () => {
                 <br></br>
               </div>
               {/* OPTIONAL PASSWORD AND EMAIL CHANGE LOCAL USER */}
-              {isLocal == true && (
+              {isLocal === true && (
                 <>
                   <div>
                     <form className="formsettings" onSubmit={handleSubmitPass}>

@@ -15,7 +15,7 @@ export function LocalLogin() {
   const [showNotification, setShowNotification] = useState(false);
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
-  const [sender, setSender] = useState<number>(0);
+  const [sender] = useState<number>(0);
   const navigate = useNavigate();
 
   // if user is already set
@@ -69,9 +69,9 @@ export function LocalLogin() {
     window.location.href = "http://localhost:3000/auth/login42";
   };
 
-  const returnHome = () => {
-    navigate("/");
-  };
+  // const returnHome = () => {
+  //   navigate("/");
+  // };
 
   const navigateRegister = () => {
     navigate("/register");

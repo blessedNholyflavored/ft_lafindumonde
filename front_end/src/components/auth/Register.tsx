@@ -17,7 +17,7 @@ export function Register() {
   const [showNotification, setShowNotification] = useState(false);
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
-  const [sender, setSender] = useState<number>(0);
+  const [sender] = useState<number>(0);
   const navigate = useNavigate();
 
   // check if user is already logged in
@@ -25,7 +25,7 @@ export function Register() {
     if (user) {
       navigate("/");
     }
-  }, []);
+  }, [navigate, user]);
   const handleCloseNotification = () => {
     setShowNotification(false);
   };
@@ -81,9 +81,9 @@ export function Register() {
     }
   };
 
-  const returnHome = () => {
-    navigate("/");
-  };
+  // const returnHome = () => {
+  //   navigate("/");
+  // };
 
   const fortyTwoLogin = () => {
     window.location.href = "http://localhost:3000/auth/login42";
