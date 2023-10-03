@@ -47,7 +47,7 @@ export const App: React.FC = () => {
             }
           />
           <Route
-            path="/game"
+            path="/game/:id"
             element={
               <ProtectedRoute>
                 <PongGame />

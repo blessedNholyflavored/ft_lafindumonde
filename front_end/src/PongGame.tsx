@@ -3,13 +3,14 @@ import { Socket } from 'socket.io-client';
 import { User, Room } from './interfaces'; // Assurez-vous d'importer les interfaces correctes
 import './App.css'
 import { useAuth } from './components/auth/AuthProvider';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { WebsocketContext } from './WebsocketContext';
 import { count } from 'console';
 
 
 
 const PongGame: React.FC = () => {
+  const { id } = useParams();
   const [room, setRoom] = useState<Room | null>(null);
   const [counter, setCounter] = useState(0);
   const [end, setEnd] = useState<number>(0);
@@ -29,13 +30,16 @@ const PongGame: React.FC = () => {
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
 
-    socket?.emit('leaveGame', room?.roomID);
+    if (countdown > 0)
+    {
+      socket?.emit("reloadCountdown", id);
+      setCountdown(-1);
+      // window.location.href = "/gamePage";
+    }
+    socket?.emit('leaveGame', id);
     socket?.emit('changeStatus');
     setEnd(1);
-  
-      NavHome();
-      window.location.href = "/gamePage";
-
+    // NavHome();
   }; 
 
   const startCountdown = () => {
@@ -79,28 +83,45 @@ const NavHome = () => {
   });
   navigate('/gamePage');
   window.location.reload();
-
 }
 
 const startGameFCT = () =>
 {
   if (socket && counter === 0)
   {
-    socket?.emit('startGame');
+    socket?.emit('startGame', id);
     setCounter(1);
   }
 }
 
 useEffect(() => {
 
-  
-  //      CREATION DU MODEL DE LA GAME DANS LA DB
-  
-  if (socket && !startFlag && room && counter === 1) {
-    setStartflag(1);
-    socket.emit('CreateGame', (room: Room) => {
+    
+  if (socket) {
+    socket.on('reloadCountdown', async () => {
+      window.location.href = "/gamePage";
     });
   }
+
+  if (socket && !end) {
+
+    socket.on('gameIsDone', async () => {
+      setEnd(1)
+      window.location.href = "/gamePage";
+    });
+  }
+
+  socket.on("heLeftTheGame", () => {
+    localStorage.setItem("leftGame", "Your oppenent has left the game");
+  });
+
+    if (socket && id && room)
+    {
+      socket.emit('gameFinished', id);
+    }
+
+  //      CREATION DU MODEL DE LA GAME DANS LA DB
+  
 
   //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
   
@@ -184,8 +205,7 @@ useEffect(() => {
     if (socket && end) {
       if (user?.username !== room?.winner && updatelvl === 0)
       {
-        console.log(room?.winner);
-        socket?.emit('updateLevelExpELO', user?.id, room?.roomID);
+        socket?.emit('updateLevelExpELO', user?.id, id);
         setUpdatelvl(1);
       }
     }
