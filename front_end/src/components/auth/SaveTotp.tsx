@@ -20,7 +20,7 @@ export const SaveTotp: React.FC = () => {
     if (user) {
       try {
         const response = await api.post(
-          `http://localhost:3000/auth/submitCode?code=${receivedCode}`
+          `http://${window.location.hostname}:3000/auth/submitCode?code=${receivedCode}`
         );
         if (response.status === 200) {
           return navigate("/");

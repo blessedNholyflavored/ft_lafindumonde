@@ -43,7 +43,7 @@ const handlePlayerSelect = async (player: string) => {
     setSelectedPlayer(player);
 
     try {
-      const response = await fetch(`http://localhost:3000/users/status/${user?.id}`, {
+      const response = await fetch(`http://${window.location.hostname}:3000/users/status/${user?.id}`, {
         method: 'GET',
         credentials: 'include',
       });

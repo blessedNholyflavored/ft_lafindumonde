@@ -30,7 +30,7 @@ export function LocalLogin() {
   // send inputs to back_end for validation
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch(`http://localhost:3000/auth/local_login`, {
+    const res = await fetch(`http://${window.location.hostname}:3000/auth/local_login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -66,7 +66,7 @@ export function LocalLogin() {
     }
   };
   const fortyTwoLogin = () => {
-    window.location.href = "http://localhost:3000/auth/login42";
+    window.location.href = `http://${window.location.hostname}:3000/auth/login42`;
   };
 
   // const returnHome = () => {

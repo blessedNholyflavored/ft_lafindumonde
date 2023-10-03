@@ -106,7 +106,7 @@ export class AuthController{
     async callback(@Req() req:any, @Res() res: any){
       const token = await this.authService.login(req.user);
 			await this.userService.setLog2FA(req.user, false);
-      res.cookie('access_token', token.access_token, {httpOnly: true }).redirect('http://localhost:8080/');
+      res.cookie('access_token', token.access_token, {httpOnly: true }).redirect('http://' + process.env.HOSTNAME + ':8080/');
       return token;
     }
 

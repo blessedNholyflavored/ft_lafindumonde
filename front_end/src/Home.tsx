@@ -42,7 +42,7 @@ const Home: React.FC<HomeProps> = () => {
     const userId = user?.id;
     try {
       const response = await fetch(
-        `http://localhost:3000/users/${userId}/avatar`,
+        `http://${window.location.hostname}:3000/users/${userId}/avatar`,
         {
           method: "GET",
           credentials: "include",
@@ -56,7 +56,7 @@ const Home: React.FC<HomeProps> = () => {
         } else {
           try {
             const response = await fetch(
-              `http://localhost:3000/users/uploads/${pictureURL}`,
+              `http://${window.location.hostname}:3000/users/uploads/${pictureURL}`,
               {
                 method: "GET",
                 credentials: "include",

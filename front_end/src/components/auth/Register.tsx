@@ -40,7 +40,7 @@ export function Register() {
       .then((response) => response.json())
       .then((responseData) => (dogimg = responseData.message.toString()))
       .catch(() => (dogimg = champi.toString()));
-    const res = await fetch(`http://localhost:3000/auth/register`, {
+    const res = await fetch(`http://${window.location.hostname}:3000/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -86,7 +86,7 @@ export function Register() {
   // };
 
   const fortyTwoLogin = () => {
-    window.location.href = "http://localhost:3000/auth/login42";
+    window.location.href = `http://${window.location.hostname}:3000/auth/login42`;
   };
 
   return (

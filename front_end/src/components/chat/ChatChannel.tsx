@@ -66,7 +66,7 @@ export const ChatChannel = () => {
   async function fetchUsernameById(userId: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/users/${userId}/username`,
+        `http://${window.location.hostname}:3000/users/${userId}/username`,
         {
           method: "GET",
           credentials: "include",
@@ -88,7 +88,7 @@ export const ChatChannel = () => {
   async function fetchRoomMessageList() {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/recupRoomMess/${id}`,
+        `http://${window.location.hostname}:3000/chat/recupRoomMess/${id}`,
         {
           method: "GET",
           credentials: "include",
@@ -110,21 +110,21 @@ export const ChatChannel = () => {
           }) => {
             try {
               const senderResponse = await fetch(
-                `http://localhost:3000/users/${message.senderId}/username`,
+                `http://${window.location.hostname}:3000/users/${message.senderId}/username`,
                 {
                   method: "GET",
                   credentials: "include",
                 }
               );
               const rolesenderResponse = await fetch(
-                `http://localhost:3000/chat/getRole/${message.senderId}/${id}`,
+                `http://${window.location.hostname}:3000/chat/getRole/${message.senderId}/${id}`,
                 {
                   method: "GET",
                   credentials: "include",
                 }
               );
               const isBlockedResponse = await fetch(
-                `http://localhost:3000/friends/blocked/${message.senderId}/${user?.id}`,
+                `http://${window.location.hostname}:3000/friends/blocked/${message.senderId}/${user?.id}`,
                 {
                   method: "GET",
                   credentials: "include",
@@ -160,7 +160,7 @@ export const ChatChannel = () => {
   async function fectUserInRoomList() {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/getUserInRoom/${id}`,
+        `http://${window.location.hostname}:3000/chat/getUserInRoom/${id}`,
         {
           method: "GET",
           credentials: "include",
@@ -185,14 +185,14 @@ export const ChatChannel = () => {
             }) => {
               if (user) {
                 const isBlockedResponse = await fetch(
-                  `http://localhost:3000/friends/blocked/${friend.id}/${user?.id}`,
+                  `http://${window.location.hostname}:3000/friends/blocked/${friend.id}/${user?.id}`,
                   {
                     method: "GET",
                     credentials: "include",
                   }
                 );
                 const isMutedResponse = await fetch(
-                  `http://localhost:3000/chat/muted/${friend.id}/${id}`,
+                  `http://${window.location.hostname}:3000/chat/muted/${friend.id}/${id}`,
                   {
                     method: "GET",
                     credentials: "include",
@@ -219,7 +219,7 @@ export const ChatChannel = () => {
   async function fetchYourRole(userId: number) {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/getRole/${userId}/${id}`,
+        `http://${window.location.hostname}:3000/chat/getRole/${userId}/${id}`,
         {
           method: "GET",
           credentials: "include",
@@ -303,7 +303,7 @@ export const ChatChannel = () => {
   const leftChannel = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/leftChan/${id}/${user?.id}`,
+        `http://${window.location.hostname}:3000/chat/leftChan/${id}/${user?.id}`,
         {
           method: "POST",
           credentials: "include",
@@ -328,7 +328,7 @@ export const ChatChannel = () => {
     const reason = reasonKick;
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/leftChan/${id}/${userId}`,
+        `http://${window.location.hostname}:3000/chat/leftChan/${id}/${userId}`,
         {
           method: "POST",
           credentials: "include",
@@ -356,7 +356,7 @@ export const ChatChannel = () => {
     if (!reason) reason = "";
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/mute/${id}/${userId}/${time}`,
+        `http://${window.location.hostname}:3000/chat/mute/${id}/${userId}/${time}`,
         {
           method: "POST",
           credentials: "include",
@@ -384,7 +384,7 @@ export const ChatChannel = () => {
     if (!reason) reason = "";
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/ban/${id}/${userId}/${time}`,
+        `http://${window.location.hostname}:3000/chat/ban/${id}/${userId}/${time}`,
         {
           method: "POST",
           credentials: "include",
@@ -408,7 +408,7 @@ export const ChatChannel = () => {
   const UnbanFromChannel = async (userId: number) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/unban/${id}/${userId}}`,
+        `http://${window.location.hostname}:3000/chat/unban/${id}/${userId}}`,
         {
           method: "POST",
           credentials: "include",
@@ -430,7 +430,7 @@ export const ChatChannel = () => {
   const UnMuteFromChannel = async (userId: number) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/unmute/${id}/${userId}/`,
+        `http://${window.location.hostname}:3000/chat/unmute/${id}/${userId}/`,
         {
           method: "POST",
           credentials: "include",
@@ -469,7 +469,7 @@ export const ChatChannel = () => {
   async function checkBlockedForNotify(senderId: string, recipientId: number) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/blocked/${senderId}/${recipientId}`,
+        `http://${window.location.hostname}:3000/friends/blocked/${senderId}/${recipientId}`,
         {
           method: "GET",
           credentials: "include",
@@ -508,7 +508,7 @@ export const ChatChannel = () => {
   async function deleteFriend(sender: string, recipient: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/delete/${recipient}`,
+        `http://${window.location.hostname}:3000/friends/delete/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -528,7 +528,7 @@ export const ChatChannel = () => {
     deleteFriend(sender, recipient);
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/block/${recipient}`,
+        `http://${window.location.hostname}:3000/friends/block/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -549,7 +549,7 @@ export const ChatChannel = () => {
   async function removeBlocked(sender: string, recipient: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/unblock/${recipient}`,
+        `http://${window.location.hostname}:3000/friends/unblock/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -570,7 +570,7 @@ export const ChatChannel = () => {
   async function passAdminOfChannel(userId: number) {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/admin/${userId}/${id}`,
+        `http://${window.location.hostname}:3000/chat/admin/${userId}/${id}`,
         {
           method: "POST",
           credentials: "include",
@@ -592,7 +592,7 @@ export const ChatChannel = () => {
   async function demoteAdminOfChannel(userId: number) {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/demoteAdmin/${userId}/${id}`,
+        `http://${window.location.hostname}:3000/chat/demoteAdmin/${userId}/${id}`,
         {
           method: "POST",
           credentials: "include",
@@ -614,7 +614,7 @@ export const ChatChannel = () => {
   async function checkMuted(userId: number) {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/muted/${userId}/${id}`,
+        `http://${window.location.hostname}:3000/chat/muted/${userId}/${id}`,
         {
           method: "GET",
           credentials: "include",
@@ -636,7 +636,7 @@ export const ChatChannel = () => {
   async function checkBanned(userId: number) {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/banned/${userId}/${id}`,
+        `http://${window.location.hostname}3000/chat/banned/${userId}/${id}`,
         {
           method: "GET",
           credentials: "include",
@@ -657,7 +657,7 @@ export const ChatChannel = () => {
 
   async function getStatutChan() {
     try {
-      const response = await fetch(`http://localhost:3000/chat/statut/${id}`, {
+      const response = await fetch(`http://${window.location.hostname}:3000/chat/statut/${id}`, {
         method: "GET",
         credentials: "include",
       });
@@ -678,7 +678,7 @@ export const ChatChannel = () => {
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/changeStatut/${id}/${option}/${pass}`,
+        `http://${window.location.hostname}:3000/chat/changeStatut/${id}/${option}/${pass}`,
         {
           method: "POST",
           credentials: "include",

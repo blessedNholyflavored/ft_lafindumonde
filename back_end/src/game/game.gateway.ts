@@ -25,7 +25,7 @@ import { ChatService } from 'src/chat/chat.service';
 // ici add de l'authorisation de recup des credentials du front (le token)
 @WebSocketGateway({
   cors: {
-    origin: "http://localhost:8080",
+    origin: "http://" + process.env.HOSTNAME + ":8080",
     credentials: true
   },
   path: "",
