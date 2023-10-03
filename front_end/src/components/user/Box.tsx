@@ -41,7 +41,7 @@ const displayPic = async() => {
 
     const userId = user?.id;
     try {
-        const response = await fetch(`http://localhost:3000/users/${id}/avatar`, {
+        const response = await fetch(`http://${window.location.hostname}:3000/users/${id}/avatar`, {
             method: 'GET',
 			credentials: 'include',
         });
@@ -54,7 +54,7 @@ const displayPic = async() => {
             }
             else {
                 try {
-                const response = await fetch(`http://localhost:3000/users/uploads/${pictureURL}`, {
+                const response = await fetch(`http://${window.location.hostname}:3000/users/uploads/${pictureURL}`, {
                     method: 'GET',
 					credentials: 'include',
                 });

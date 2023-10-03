@@ -15,7 +15,7 @@ export function LocalLogin() {
   const [showNotification, setShowNotification] = useState(false);
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
-  const [sender, setSender] = useState<number>(0);
+  const [sender] = useState<number>(0);
   const navigate = useNavigate();
 
   // if user is already set
@@ -30,7 +30,7 @@ export function LocalLogin() {
   // send inputs to back_end for validation
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch(`http://localhost:3000/auth/local_login`, {
+    const res = await fetch(`http://${window.location.hostname}:3000/auth/local_login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -47,6 +47,12 @@ export function LocalLogin() {
       setNotifyType(3);
       setInputPassword("");
       setInputUsername("");
+    } else if (res.status === 409) {
+      setShowNotification(true);
+      setNotifyMSG("You must use the 42 Login System.");
+      setNotifyType(3);
+      setInputUsername("");
+      setInputPassword("");
     } else if (!res.ok) {
       setShowNotification(true);
       setNotifyMSG("Wrong password");
@@ -60,12 +66,12 @@ export function LocalLogin() {
     }
   };
   const fortyTwoLogin = () => {
-    window.location.href = "http://localhost:3000/auth/login42";
+    window.location.href = `http://${window.location.hostname}:3000/auth/login42`;
   };
 
-  const returnHome = () => {
-    navigate("/");
-  };
+  // const returnHome = () => {
+  //   navigate("/");
+  // };
 
   const navigateRegister = () => {
     navigate("/register");

@@ -24,7 +24,7 @@ export const Classement = () => {
 
     async function fetchPlayerScores() {
         try {
-          const response = await fetch(`http://localhost:3000/users/leaderboard/${userId}`, {
+          const response = await fetch(`http://${window.location.hostname}:3000/users/leaderboard/${userId}`, {
             method: 'GET',
             credentials: 'include',
           });

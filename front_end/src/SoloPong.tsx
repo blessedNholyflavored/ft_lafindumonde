@@ -38,7 +38,7 @@ export const MiniGame = () => {
 
   async function fetchPlayerScores() {
     try {
-      const response = await fetch(`http://localhost:3000/users/mini/${userId}`, {
+      const response = await fetch(`http://${window.location.hostname}:3000/users/mini/${userId}`, {
         method: 'GET',
         credentials: 'include',
       });

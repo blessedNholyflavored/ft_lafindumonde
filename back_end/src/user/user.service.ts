@@ -390,7 +390,7 @@ export class UserService {
 
 	async createLocalUser(user: AuthDto, id: number): Promise<User>{
 		let tmpUser: User;
-		if (await this.usernameAuthChecker(user.username) === true){
+		while (await this.usernameAuthChecker(user.username) === true){
 			//in case someone already have this username
 			user.username = user.username + '_';
 		}

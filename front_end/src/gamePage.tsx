@@ -43,7 +43,7 @@ export const GamePage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/users/status/${user?.id}`,
+        `http://${window.location.hostname}:3000/users/status/${user?.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -115,16 +115,14 @@ export const GamePage = () => {
   useEffect(() => {
     setTimeout(() => {
       const leftGame = localStorage.getItem("leftGame");
-    if (leftGame) {
-      setShowNotification(true);
-      setNotifyMSG(leftGame);
-      setNotifyType(2);
-      setSender(0);
-    }
-    localStorage.removeItem("leftGame");
+      if (leftGame) {
+        setShowNotification(true);
+        setNotifyMSG(leftGame);
+        setNotifyType(2);
+        setSender(0);
+      }
+      localStorage.removeItem("leftGame");
     }, 2000);
-
-    
 
     socket.on("heLeftTheGame", () => {
       localStorage.setItem("leftGame", "Your oppenent has left the game");

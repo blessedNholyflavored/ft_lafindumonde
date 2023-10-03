@@ -52,7 +52,7 @@ export const FriendsPage: React.FC = () => {
   async function fetchfriendsSend() {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/invSend/${user?.id}`,
+        `http://${window.location.hostname}:3000/friends/invSend/${user?.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -86,7 +86,7 @@ export const FriendsPage: React.FC = () => {
   async function fetchfriendsRequest() {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/invRequest/${user?.id}`,
+        `http://${window.location.hostname}:3000/friends/invRequest/${user?.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -125,7 +125,7 @@ export const FriendsPage: React.FC = () => {
   const fetchFriendsList = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/${user?.id}`,
+        `http://${window.location.hostname}:3000/friends/${user?.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -163,7 +163,7 @@ export const FriendsPage: React.FC = () => {
   const fetchBlockedList = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/blockedList/${user?.id}`,
+        `http://${window.location.hostname}:3000/friends/blockedList/${user?.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -200,7 +200,7 @@ export const FriendsPage: React.FC = () => {
   const fetchOnlinePlayersList = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/online/${user?.id}`,
+        `http://${window.location.hostname}:3000/friends/online/${user?.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -254,7 +254,7 @@ export const FriendsPage: React.FC = () => {
   async function recupUsername(userId: number) {
     try {
       const response = await fetch(
-        `http://localhost:3000/users/${userId}/username`,
+        `http://${window.location.hostname}:3000/users/${userId}/username`,
         {
           method: "GET",
           credentials: "include",
@@ -276,7 +276,7 @@ export const FriendsPage: React.FC = () => {
   async function AcceptFriend(id: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/accept/${id}`,
+        `http://${window.location.hostname}:3000/friends/accept/${id}`,
         {
           method: "POST",
           credentials: "include",
@@ -294,7 +294,7 @@ export const FriendsPage: React.FC = () => {
   async function RefuseFriend(id: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/refuse/${id}`,
+        `http://${window.location.hostname}:3000/friends/refuse/${id}`,
         {
           method: "POST",
           credentials: "include",
@@ -312,7 +312,7 @@ export const FriendsPage: React.FC = () => {
   async function deleteFriend(sender: string, recipient: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/delete/${recipient}`,
+        `http://${window.location.hostname}:3000/friends/delete/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -330,7 +330,7 @@ export const FriendsPage: React.FC = () => {
   async function removeBlocked(sender: string, recipient: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/unblock/${recipient}`,
+        `http://${window.location.hostname}:3000/friends/unblock/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -349,7 +349,7 @@ export const FriendsPage: React.FC = () => {
     deleteFriend(sender, recipient);
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/block/${recipient}`,
+        `http://${window.location.hostname}:3000/friends/block/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -367,7 +367,7 @@ export const FriendsPage: React.FC = () => {
   async function checkBlocked(senderId: string, recipientId: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/blocked/${senderId}/${recipientId}`,
+        `http://${window.location.hostname}:3000/friends/blocked/${senderId}/${recipientId}`,
         {
           method: "GET",
           credentials: "include",
@@ -393,7 +393,7 @@ export const FriendsPage: React.FC = () => {
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/${user?.id}/${recipientId}`,
+        `http://${window.location.hostname}:3000/friends/${user?.id}/${recipientId}`,
         {
           method: "POST",
           headers: {

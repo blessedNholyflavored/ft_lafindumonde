@@ -18,12 +18,13 @@ header h1 {
 }
 
 /* Styles for the main content */
+
 .flex-bg {
   display: flex;
   background-size: cover;
   background-position: center;
   background-image: url("../img/social.png");
-  max-height: 90vh;
+  height: 800px;
 }
 
 main {
@@ -75,10 +76,10 @@ main h2 {
 
 /* Styles for the navigation */
 nav {
-  width: 20%;
+  width: 10vw;
   display: grid;
   justify-items: end;
-  padding: 1rem;
+  padding: 1rem 2vw;
 }
 
 ul {

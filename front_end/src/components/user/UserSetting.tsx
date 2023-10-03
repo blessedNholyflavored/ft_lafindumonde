@@ -4,7 +4,6 @@ import "../../style/twoFA.css";
 import icon from "../../img/buttoncomp.png";
 import logo from "../../img/logo42.png";
 import { useAuth } from "../auth/AuthProvider";
-// import { twoFAEnable, twoFADisable } from "../auth/2faComp";
 import { Logout } from "./../auth/Logout";
 import { useNavigate } from "react-router-dom";
 import api from "../../AxiosInstance";
@@ -44,7 +43,7 @@ export const UserSetting: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/users/${userId}/isloc`,
+        `http://${window.location.hostname}:3000/users/${userId}/isloc`,
         {
           method: "GET",
           credentials: "include",
@@ -67,7 +66,7 @@ export const UserSetting: React.FC = () => {
     console.log("dans front user id = ", userId);
     try {
       const response = await fetch(
-        `http://localhost:3000/users/update-username`,
+        `http://${window.location.hostname}:3000/users/update-username`,
         {
           method: "POST",
           headers: {
@@ -78,12 +77,18 @@ export const UserSetting: React.FC = () => {
         }
       );
       if (response.ok) {
-        alert("Nom d'utilisateur mis à jour avec succès !");
+        setShowNotification(true);
+        setNotifyMSG("Username successfully updated !");
+        setNotifyType(2);
+        // alert("Nom d'utilisateur mis à jour avec succès !");
         //window.location.reload();
       } else {
-        alert(
-          "Une erreur s'est produite lors de la mise à jour du nom d'utilisateur."
-        );
+        setShowNotification(true);
+        setNotifyMSG("An error happened while updating password");
+        setNotifyType(3);
+        // alert(
+        //   "Une erreur s'est produite lors de la mise à jour du nom d'utilisateur."
+        // );
       }
     } catch (error) {
       //console.error("Erreur:", error);
@@ -95,7 +100,7 @@ export const UserSetting: React.FC = () => {
     const userId = user?.id;
     console.log("dans front user id = ", userId);
     try {
-      const response = await fetch(`http://localhost:3000/users/update-pass`, {
+      const response = await fetch(`http://${window.location.hostname}:3000/users/update-pass`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -104,10 +109,16 @@ export const UserSetting: React.FC = () => {
         credentials: "include",
       });
       if (response.ok) {
-        alert("Password mis à jour avec succès !");
+        setShowNotification(true);
+        setNotifyMSG("Password successfully updated !");
+        setNotifyType(2);
+        // alert("Password mis à jour avec succès !");
         //window.location.reload();
       } else {
-        alert("Une erreur s'est produite lors de la mise à jour du password.");
+        setShowNotification(true);
+        setNotifyMSG("An error happened while updating password");
+        setNotifyType(3);
+        // alert("Une erreur s'est produite lors de la mise à jour du password.");
       }
     } catch (error) {
       console.error("Erreur:", error);
@@ -119,7 +130,7 @@ export const UserSetting: React.FC = () => {
     const userId = user?.id;
     //console.log("dans front user id = ", userId);
     try {
-      const response = await fetch(`http://localhost:3000/users/update-mail`, {
+      const response = await fetch(`http://${window.location.hostname}:3000/users/update-mail`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -128,10 +139,16 @@ export const UserSetting: React.FC = () => {
         credentials: "include",
       });
       if (response.ok) {
-        alert("mail mis à jour avec succès !");
+        setShowNotification(true);
+        setNotifyMSG("Mail successfully updated !");
+        setNotifyType(2);
+        // alert("mail mis à jour avec succès !");
         //window.location.reload();
       } else {
-        alert("Une erreur s'est produite lors de la mise à jour du mail.");
+        setShowNotification(true);
+        setNotifyMSG("An error happened while updating email address");
+        setNotifyType(3);
+        // alert("Une erreur s'est produite lors de la mise à jour du mail.");
       }
     } catch (error) {
       //console.error("Erreur:", error);
@@ -142,7 +159,7 @@ export const UserSetting: React.FC = () => {
     const userId = user?.id;
     try {
       const response = await fetch(
-        `http://localhost:3000/users/${userId}/avatar`,
+        `http://${window.location.hostname}:3000/users/${userId}/avatar`,
         {
           method: "GET",
           credentials: "include",
@@ -156,7 +173,7 @@ export const UserSetting: React.FC = () => {
         } else {
           try {
             const response = await fetch(
-              `http://localhost:3000/users/uploads/${pictureURL}`,
+              `http://${window.location.hostname}:3000/users/uploads/${pictureURL}`,
               {
                 method: "GET",
                 credentials: "include",
@@ -200,7 +217,7 @@ export const UserSetting: React.FC = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/users/update-avatar`,
+          `http://${window.location.hostname}:3000/users/update-avatar`,
           {
             method: "POST",
             body: formData,
@@ -294,14 +311,6 @@ export const UserSetting: React.FC = () => {
     );
     setNotifyType(4);
     setSender(sender);
-    // if (window.confirm("Are you ready to save your unique QR code ?")) {
-    //   const res = await fetch("http://localhost:3000/auth/2FAenable", {
-    //     method: "GET",
-    //     credentials: "include",
-    //   });
-    //   const data = await res.json();
-    //   return navigate(`/totpSave?qrCodeImg=${encodeURIComponent(data.code)}`);
-    // }
   };
 
   return (
@@ -347,6 +356,9 @@ export const UserSetting: React.FC = () => {
                     className="inputcss"
                     type="text"
                     value={newUsername}
+                    minLength={3}
+                    maxLength={10}
+                    required={true}
                     placeholder="type new username"
                     onChange={(e) => setNewUsername(e.target.value)}
                   />
@@ -359,7 +371,7 @@ export const UserSetting: React.FC = () => {
                 <br></br>
               </div>
               {/* OPTIONAL PASSWORD AND EMAIL CHANGE LOCAL USER */}
-              {isLocal == true && (
+              {isLocal === true && (
                 <>
                   <div>
                     <form className="formsettings" onSubmit={handleSubmitPass}>
@@ -368,6 +380,8 @@ export const UserSetting: React.FC = () => {
                           className="inputcss"
                           type="password"
                           value={newPass}
+                          minLength={8}
+                          required={true}
                           placeholder="type new password"
                           onChange={(e) => setNewPass(e.target.value)}
                         />
@@ -388,6 +402,7 @@ export const UserSetting: React.FC = () => {
                           type="email"
                           value={newMail}
                           placeholder="type new mail"
+                          required={true}
                           onChange={(e) => setNewMail(e.target.value)}
                         />
                       </label>

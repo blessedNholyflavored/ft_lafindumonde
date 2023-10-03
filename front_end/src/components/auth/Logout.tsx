@@ -4,7 +4,7 @@ import './../../style/Logout.css';
 
 export async function Logout(context: any){
 	try{
-		await fetch(`http://localhost:3000/auth/logout`,{
+		await fetch(`http://${window.location.hostname}:3000/auth/logout`,{
 			method: 'GET',
 			credentials: 'include',
 		});
