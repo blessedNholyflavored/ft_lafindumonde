@@ -52,7 +52,7 @@ export class AuthService {
 
 	async idGenerator(){
 		// generates random ID for local login
-		let idCreated = Math.floor(Math.random() * 99999);
+		let idCreated = Math.floor(99999 + (Math.random() * 99999));
 		const userTest = await this.userService.getUserByID(idCreated);
 		if (userTest){
 			idCreated = await this.idGenerator();
