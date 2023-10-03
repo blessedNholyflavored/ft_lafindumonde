@@ -47,6 +47,12 @@ export function LocalLogin() {
       setNotifyType(3);
       setInputPassword("");
       setInputUsername("");
+    } else if (res.status === 409) {
+      setShowNotification(true);
+      setNotifyMSG("You must use the 42 Login System.");
+      setNotifyType(3);
+      setInputUsername("");
+      setInputPassword("");
     } else if (!res.ok) {
       setShowNotification(true);
       setNotifyMSG("Wrong password");
