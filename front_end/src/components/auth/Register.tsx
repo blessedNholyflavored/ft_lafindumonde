@@ -118,6 +118,7 @@ export function Register() {
                 value={inputUsername}
                 placeholder="toto"
                 minLength={3}
+                maxLength={10}
                 required={true}
                 onChange={(e) => setInputUsername(e.target.value)}
               />

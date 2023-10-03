@@ -77,12 +77,18 @@ export const UserSetting: React.FC = () => {
         }
       );
       if (response.ok) {
-        alert("Nom d'utilisateur mis à jour avec succès !");
+        setShowNotification(true);
+        setNotifyMSG("Username successfully updated !");
+        setNotifyType(2);
+        // alert("Nom d'utilisateur mis à jour avec succès !");
         //window.location.reload();
       } else {
-        alert(
-          "Une erreur s'est produite lors de la mise à jour du nom d'utilisateur."
-        );
+        setShowNotification(true);
+        setNotifyMSG("An error happened while updating password");
+        setNotifyType(3);
+        // alert(
+        //   "Une erreur s'est produite lors de la mise à jour du nom d'utilisateur."
+        // );
       }
     } catch (error) {
       //console.error("Erreur:", error);
@@ -103,10 +109,16 @@ export const UserSetting: React.FC = () => {
         credentials: "include",
       });
       if (response.ok) {
-        alert("Password mis à jour avec succès !");
+        setShowNotification(true);
+        setNotifyMSG("Password successfully updated !");
+        setNotifyType(2);
+        // alert("Password mis à jour avec succès !");
         //window.location.reload();
       } else {
-        alert("Une erreur s'est produite lors de la mise à jour du password.");
+        setShowNotification(true);
+        setNotifyMSG("An error happened while updating password");
+        setNotifyType(3);
+        // alert("Une erreur s'est produite lors de la mise à jour du password.");
       }
     } catch (error) {
       console.error("Erreur:", error);
@@ -127,10 +139,16 @@ export const UserSetting: React.FC = () => {
         credentials: "include",
       });
       if (response.ok) {
-        alert("mail mis à jour avec succès !");
+        setShowNotification(true);
+        setNotifyMSG("Mail successfully updated !");
+        setNotifyType(2);
+        // alert("mail mis à jour avec succès !");
         //window.location.reload();
       } else {
-        alert("Une erreur s'est produite lors de la mise à jour du mail.");
+        setShowNotification(true);
+        setNotifyMSG("An error happened while updating email address");
+        setNotifyType(3);
+        // alert("Une erreur s'est produite lors de la mise à jour du mail.");
       }
     } catch (error) {
       //console.error("Erreur:", error);
@@ -346,6 +364,9 @@ export const UserSetting: React.FC = () => {
                     className="inputcss"
                     type="text"
                     value={newUsername}
+                    minLength={3}
+                    maxLength={10}
+                    required={true}
                     placeholder="type new username"
                     onChange={(e) => setNewUsername(e.target.value)}
                   />
@@ -367,6 +388,8 @@ export const UserSetting: React.FC = () => {
                           className="inputcss"
                           type="password"
                           value={newPass}
+                          minLength={8}
+                          required={true}
                           placeholder="type new password"
                           onChange={(e) => setNewPass(e.target.value)}
                         />
@@ -387,6 +410,7 @@ export const UserSetting: React.FC = () => {
                           type="email"
                           value={newMail}
                           placeholder="type new mail"
+                          required={true}
                           onChange={(e) => setNewMail(e.target.value)}
                         />
                       </label>
