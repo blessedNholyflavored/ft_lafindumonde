@@ -34,7 +34,7 @@ export class AuthService {
 		//check if user already exists, else user creation
 		const user = await this.userService.getUserByID(data.id);
 		if (!user){
-			if (await this.userService.usernameAuthChecker(data.username) == true){
+			while (await this.userService.usernameAuthChecker(data.username) == true){
 				// in case someone already have this username
 				data.username =  data.username + '_';
 			}
