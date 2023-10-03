@@ -30,6 +30,14 @@ const Notify: React.FC<NotificationProps> = ({
     navigate(`/acceptMatch/${senderId}`);
   };
 
+  const handle2FAEnable = async () => {
+    const res = await fetch("http://localhost:3000/auth/2FAenable", {
+      method: "GET",
+      credentials: "include",
+    });
+    const data = await res.json();
+    return navigate(`/totpSave?qrCodeImg=${encodeURIComponent(data.code)}`);
+  };
   return (
     <>
       {type === 0 && (
@@ -50,6 +58,14 @@ const Notify: React.FC<NotificationProps> = ({
       )}
       {type === 2 && <div className="notification">{message}</div>}
       {type === 3 && <div className="notificationError">{message}</div>}
+      {type === 4 && (
+        <div className="notification2FA">
+          {message}
+          <button className="notification-link2FA" onClick={handle2FAEnable}>
+            confirm
+          </button>
+        </div>
+      )}
     </>
   );
 };

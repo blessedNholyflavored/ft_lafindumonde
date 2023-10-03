@@ -104,7 +104,6 @@ export class UserService {
 
 	async FortyTwoMailCheck(mail: string) : Promise<Boolean>{
 		const str = mail.split('@').slice(1);
-
 		if (str.includes('student.42.fr'))
 			return false;
 		return true;

@@ -27,7 +27,7 @@ import MiniGame from "./SoloPong";
 import Classement from "./leaderboard";
 import AcceptMatch from "./acceptMatch";
 import GameFriend from "./GameFriend";
-import { twoFAEnable, twoFADisable } from "./components/auth/2faComp";
+// import { twoFAEnable, twoFADisable } from "./components/auth/2faComp";
 import ChatChannel from "./components/chat/ChatChannel";
 import PrivateChat from "./components/chat/PrivateChat";
 import GamePage from "./gamePage";
@@ -213,28 +213,6 @@ function AuthTest() {
       <h1>{user!.username}</h1>
       <img src={user!.pictureURL} alt="profile pic" />
       <p>{JSON.stringify(user)}</p>
-      <div className="boxrowsettings">
-        <div className="navbarsmallbox">
-          <p className="boxtitle"> 2FAC AUTH </p>
-        </div>
-        <div className="twoFA">
-          <button
-            className="twoFAenabled"
-            onClick={() => twoFAEnable(navigate, user)}
-          >
-            enable
-          </button>
-          <button
-            className="twoFAdisabled"
-            onClick={() => twoFADisable({ user, setUser })}
-          >
-            disable
-          </button>
-        </div>
-        <div className="footersmallbox">
-          <br></br>
-        </div>
-      </div>
       <button onClick={() => Logout({ user, setUser })}>LOG OUT </button>
       <button onClick={navigateToHome}>HOME</button>
     </div>

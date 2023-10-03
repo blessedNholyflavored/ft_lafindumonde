@@ -57,8 +57,6 @@ export function Register() {
       setShowNotification(true);
       setNotifyMSG("Email is already taken !");
       setNotifyType(3);
-      // setSender(0);
-      // window.alert("email already taken !");
       setInputPassword("");
       setInputUsername("");
       setInputEmail("");
@@ -66,8 +64,6 @@ export function Register() {
       setShowNotification(true);
       setNotifyMSG("You must use 42 LogIn system !");
       setNotifyType(3);
-      // setSender(0);
-      // window.alert("email already taken !");
       setInputPassword("");
       setInputUsername("");
       setInputEmail("");
@@ -75,9 +71,6 @@ export function Register() {
       setShowNotification(true);
       setNotifyMSG("Something is wrong with your inputs !");
       setNotifyType(3);
-      // setSender(0);
-      // window.alert("Verify your input");
-      // console.log("res = ", res);
       setInputPassword("");
       setInputUsername("");
       setInputEmail("");

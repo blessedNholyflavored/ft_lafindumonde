@@ -23,6 +23,7 @@ header h1 {
   background-size: cover;
   background-position: center;
   background-image: url("../img/social.png");
+  max-height: 90vh;
 }
 
 main {
