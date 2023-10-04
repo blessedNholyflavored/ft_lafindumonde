@@ -14,9 +14,9 @@ import folder3 from "./../../img/folder4.png";
 import folder4 from "./../../img/folder5.png";
 import folder0 from "./../../img/folder1.png";
 import folder6 from "./../../img/folder6.png";
-import icon from "../../img/buttoncomp.png"
-import '../../style/Profile.css'
-import '../../style/Home.css'
+import icon from "../../img/buttoncomp.png";
+import "../../style/Profile.css";
+import "../../style/Home.css";
 
 interface friendsSend {
   id: string;
@@ -50,7 +50,7 @@ export const FriendsPage: React.FC = () => {
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
   const navigate = useNavigate();
-
+  const [selectedUser, setSelectedUser] = useState(0);
 
   async function fetchfriendsSend() {
     try {
@@ -467,6 +467,13 @@ export const FriendsPage: React.FC = () => {
     navigate("/settings");
   };
 
+  const handleUserClick = async (userId: number) => {
+    let flag = 0;
+    if (selectedUser !== 0 && userId === selectedUser) flag = 1;
+    setSelectedUser(userId);
+    if (flag === 1) setSelectedUser(0);
+  };
+
   return (
     <>
       {/* <body> */}
@@ -478,7 +485,6 @@ export const FriendsPage: React.FC = () => {
       </header>
       <div className="flex-bg">
         <main>
-
           <div>
             {showNotification && (
               <Notify
@@ -491,151 +497,186 @@ export const FriendsPage: React.FC = () => {
           </div>
 
           <div className="fullpage1">
-        <div className="navbarbox">
-        <img src={icon}  alt="icon" />
-           <h1> FRIENDS </h1>
-           </div>
-           <div className="testingrow">
-
-           <div className="boxrowtest2">
+            <div className="navbarbox">
+              <img src={icon} alt="icon" />
+              <h1> FRIENDS </h1>
+            </div>
+            <div className="testingrow">
+              <div className="boxrowtest2">
                 <div className="navbarsmallbox">
-                    <p className="boxtitle"> Friend list </p>
+                  <p className="boxtitle"> Friend list </p>
                 </div>
-          <ul>
-            {friends.length > 0 ? (
-              friends.map((friend, index) => (
-                <div key={index}>
-                  <div>{friend.username}</div>
-                  <div>{friend.status}</div>
-                  <button
-                    onClick={() =>
-                      deleteFriend(
-                        friend.senderId.toString(),
-                        friend.recipientId.toString()
-                      )
-                    }
-                  >
-                    Delete
-                  </button>
-                  <button
-                    onClick={() =>
-                      BlockFriend(
-                        friend.senderId.toString(),
-                        friend.recipientId.toString()
-                      )
-                    }
-                  >
-                    Bloquer
-                  </button>
-                  <button
-                    onClick={() => navToProfil(friend.recipientId.toString())}
-                  >
-                    Voir Profile
-                  </button>
-                  <button
-                    onClick={() => messagePage(friend.recipientId.toString())}
-                  >
-                    Envoyer un message
-                  </button>
-                </div>
-              ))
-            ) : (
-              <div>ptdr t'as pas de pote</div>
-            )}
-          </ul>
-          </div>
-          <div className="boxrowtest2">
+                <ul>
+                  {friends.length > 0 ? (
+                    friends.map((friend, index) => (
+                      <div key={index}>
+                        <div>{friend.username}</div>
+                        <div>{friend.status}</div>
+                        <button
+                          onClick={() =>
+                            deleteFriend(
+                              friend.senderId.toString(),
+                              friend.recipientId.toString()
+                            )
+                          }
+                        >
+                          Delete
+                        </button>
+                        <button
+                          onClick={() =>
+                            BlockFriend(
+                              friend.senderId.toString(),
+                              friend.recipientId.toString()
+                            )
+                          }
+                        >
+                          Bloquer
+                        </button>
+                        <button
+                          onClick={() =>
+                            navToProfil(friend.recipientId.toString())
+                          }
+                        >
+                          Voir Profile
+                        </button>
+                        <button
+                          onClick={() =>
+                            messagePage(friend.recipientId.toString())
+                          }
+                        >
+                          Envoyer un message
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div>ptdr t'as pas de pote</div>
+                  )}
+                </ul>
+              </div>
+              <div className="boxrowtest2">
                 <div className="navbarsmallbox">
-                    <p className="boxtitle"> Blocked list </p>
+                  <p className="boxtitle"> Blocked list </p>
                 </div>
-          <ul>
-            {blocked.length > 0 ? (
-              blocked.map((blocked, index) => (
-                <div key={index}>
-                  <div>{blocked.username}</div>
-                  <div>{blocked.status}</div>
-                  <button
-                    onClick={() =>
-                      removeBlocked(
-                        blocked.senderId.toString(),
-                        blocked.recipientId.toString()
-                      )
-                    }
-                  >
-                    Debloquer
-                  </button>
-                  <button
-                    onClick={() => navToProfil(blocked.recipientId.toString())}
-                  >
-                    Voir Profile
-                  </button>
-                </div>
-              ))
-            ) : (
-              <div>tu aimes tlm</div>
-            )}
-          </ul>
-          </div>
-          <div className="boxrowtest2">
+                <ul>
+                  {blocked.length > 0 ? (
+                    blocked.map((blocked, index) => (
+                      <div key={index}>
+                        <div>{blocked.username}</div>
+                        <div>{blocked.status}</div>
+                        <button
+                          onClick={() =>
+                            removeBlocked(
+                              blocked.senderId.toString(),
+                              blocked.recipientId.toString()
+                            )
+                          }
+                        >
+                          Debloquer
+                        </button>
+                        <button
+                          onClick={() =>
+                            navToProfil(blocked.recipientId.toString())
+                          }
+                        >
+                          Voir Profile
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div>tu aimes tlm</div>
+                  )}
+                </ul>
+              </div>
+              <div className="boxrowtest2">
                 <div className="navbarsmallbox">
-                    <p className="boxtitle"> Who's online? </p>
+                  <p className="boxtitle"> Who's online? </p>
                 </div>
                 <div className="online">
-            {onlinePlayers.length > 0 && user ? (
-              onlinePlayers.map((friend, index) => (
-                <div key={index}>
-                  <div>{friend.username}</div>
-                  <button className="onlinebttn" onClick={() => addSomeone(friend.id.toString())}>
-                    add
-                  </button>
-                  <button className="onlinebttn"
-                    onClick={() =>
-                      BlockFriend(user.id.toString(), friend.id.toString())
-                    }
-                  >
-                    block
-                  </button>
-                  <button className="onlinebttn" onClick={() => navToProfil(friend.id.toString())}>
-                    see profile
-                  </button>
-                  <button className="onlinebttn" onClick={() => messagePage(friend.id.toString())}>
-                    send a message
-                  </button>
+                  {onlinePlayers.length > 0 && user ? (
+                    onlinePlayers.map((friend, index) => (
+                      <div key={index}>
+                        <button
+                          onClick={() => handleUserClick(parseInt(friend.id))}
+                          disabled={user?.id.toString() === friend.id}
+                        >
+                          <div>{friend.username}</div>
+                        </button>
+                        {selectedUser === parseInt(friend.id) && (
+                          <div>
+                            <button
+                              className="onlinebttn"
+                              onClick={() => addSomeone(friend.id.toString())}
+                            >
+                              add
+                            </button>
+                            <button
+                              className="onlinebttn"
+                              onClick={() =>
+                                BlockFriend(
+                                  user.id.toString(),
+                                  friend.id.toString()
+                                )
+                              }
+                            >
+                              block
+                            </button>
+                            <button
+                              className="onlinebttn"
+                              onClick={() => navToProfil(friend.id.toString())}
+                            >
+                              see profile
+                            </button>
+                            <button
+                              className="onlinebttn"
+                              onClick={() => messagePage(friend.id.toString())}
+                            >
+                              send a message
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div>ptdr ya personne</div>
+                  )}
                 </div>
-              ))
-            ) : (
-              <div>ptdr ya personne</div>
-            )}
-          </div>
-          </div>
-          <div className="boxrowtest2">
-                <div className="navbarsmallbox">
-                    <p className="boxtitle"> Friend requests </p>
-                </div>
-          <div className="requests">
-            {friendsRequest.map((friend) => (
-              <div>
-                {friend.status === "PENDING" && !friend.isBlocked && (
-                  <div className="requestinfo" key={friend.id}>
-                    {/* <div>ID: {friend.id}</div> */}
-                    <div>Sender ID: {user?.username}</div>
-                    <div style={{fontStyle: "italic" , fontSize: 12}}>Status: {friend.status}</div>
-                    {/* <div>recipientId ID: {friend.username}</div> */}
-                    <div className="bttnholder">
-                    <button className="acceptbutton" onClick={() => AcceptFriend(friend.id)}>
-                      accept
-                    </button>
-                    <button className="deletebutton" onClick={() => RefuseFriend(friend.id)}>
-                      delete
-                    </button>
-                  </div>
-                  </div>
-                )}
               </div>
-            ))}
-          </div>
-          </div>
-          {/* <div className="boxrowtest">
+              <div className="boxrowtest2">
+                <div className="navbarsmallbox">
+                  <p className="boxtitle"> Friend requests </p>
+                </div>
+                <div className="requests">
+                  {friendsRequest.map((friend) => (
+                    <div>
+                      {friend.status === "PENDING" && !friend.isBlocked && (
+                        <div className="requestinfo" key={friend.id}>
+                          {/* <div>ID: {friend.id}</div> */}
+                          <div>Sender ID: {user?.username}</div>
+                          <div style={{ fontStyle: "italic", fontSize: 12 }}>
+                            Status: {friend.status}
+                          </div>
+                          {/* <div>recipientId ID: {friend.username}</div> */}
+                          <div className="bttnholder">
+                            <button
+                              className="acceptbutton"
+                              onClick={() => AcceptFriend(friend.id)}
+                            >
+                              accept
+                            </button>
+                            <button
+                              className="deletebutton"
+                              onClick={() => RefuseFriend(friend.id)}
+                            >
+                              delete
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* <div className="boxrowtest">
                 <div className="navbarsmallbox">
                     <p className="boxtitle"> INFO </p>
                 </div>
@@ -658,7 +699,7 @@ export const FriendsPage: React.FC = () => {
             ))}
           </ul>
           </div> */}
-          </div>
+            </div>
           </div>
         </main>
         <nav>

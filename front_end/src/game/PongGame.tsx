@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { User, Room } from "./interfaces"; // Assurez-vous d'importer les interfaces correctes
-import "./App.css";
-import { useAuth } from "./components/auth/AuthProvider";
+import { User, Room } from "../interfaces"; // Assurez-vous d'importer les interfaces correctes
+import "../App.css";
+import { useAuth } from "../components/auth/AuthProvider";
 import { useNavigate, useParams } from "react-router-dom";
-import { WebsocketContext } from "./WebsocketContext";
+import { WebsocketContext } from "../WebsocketContext";
 import { count } from "console";
 
 const PongGame: React.FC = () => {
@@ -109,7 +109,7 @@ const PongGame: React.FC = () => {
       setCheckStatus(true);
     }
 
-    if (socket && countdown === -999  ) {
+    if (socket && countdown === -999) {
       socket.on("reloadCountdown", async () => {
         window.location.href = "/gamePage";
       });
@@ -118,7 +118,7 @@ const PongGame: React.FC = () => {
     if (socket && !end) {
       socket.on("gameIsDone", async () => {
         setEnd(1);
-        window.location.href = "/gamePage";
+        // window.location.href = "/gamePage";
       });
     }
 
