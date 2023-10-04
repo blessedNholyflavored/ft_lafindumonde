@@ -31,7 +31,7 @@ const Notify: React.FC<NotificationProps> = ({
   };
 
   const handle2FAEnable = async () => {
-    const res = await fetch("http://localhost:3000/auth/2FAenable", {
+    const res = await fetch(`http://${window.location.hostname}:3000/auth/2FAenable`, {
       method: "GET",
       credentials: "include",
     });

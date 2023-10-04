@@ -13,6 +13,8 @@ import {
   UseGuards,
   ConflictException,
   NotAcceptableException,
+	ValidationPipe,
+	UsePipes,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -24,6 +26,8 @@ import { Response } from 'express';
 import * as mimetype from 'mime-types';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
 import { throwError } from 'rxjs';
+import { AuthDto } from './dto/auth.dto';
+import { MailDto, PassDto, UsernameDto } from './dto/settings.dto';
 
 
 
@@ -44,7 +48,8 @@ export class UsersController {
   }
 */
   @Post('/update-username')
-  async updating_username(@Req() req: any, @Body() username: string) {
+	@UsePipes(new ValidationPipe())
+  async updating_username(@Req() req: any, @Body() username: UsernameDto) {
     //console.log(username);
     console.log('service update username ', req.user.id);
     const newUsername = username['username'];
@@ -53,7 +58,8 @@ export class UsersController {
   }
 
   @Post('/update-pass')
-  updating_password(@Req() req: any, @Body() password: string) {
+	@UsePipes(new ValidationPipe())
+  updating_password(@Req() req: any, @Body() password: PassDto) {
     //console.log(username);
     console.log('service update username ', req.user.id);
     const newPassword = password['password'];
@@ -61,7 +67,8 @@ export class UsersController {
   }
   
   @Post('/update-mail')
-  async updating_mail(@Req() req: any, @Body() mail: string) {
+	@UsePipes(new ValidationPipe())
+  async updating_mail(@Req() req: any, @Body() mail: MailDto) {
     //console.log(username);
     //console.log('service update username ', req.user.id);
     const newMail = mail['email'];

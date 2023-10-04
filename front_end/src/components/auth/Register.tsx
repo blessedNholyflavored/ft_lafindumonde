@@ -17,7 +17,7 @@ export function Register() {
   const [showNotification, setShowNotification] = useState(false);
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
-  const [sender, setSender] = useState<number>(0);
+  const [sender] = useState<number>(0);
   const navigate = useNavigate();
 
   // check if user is already logged in
@@ -25,7 +25,7 @@ export function Register() {
     if (user) {
       navigate("/");
     }
-  }, []);
+  }, [navigate, user]);
   const handleCloseNotification = () => {
     setShowNotification(false);
   };
@@ -40,7 +40,7 @@ export function Register() {
       .then((response) => response.json())
       .then((responseData) => (dogimg = responseData.message.toString()))
       .catch(() => (dogimg = champi.toString()));
-    const res = await fetch(`http://localhost:3000/auth/register`, {
+    const res = await fetch(`http://${window.location.hostname}:3000/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -81,12 +81,12 @@ export function Register() {
     }
   };
 
-  const returnHome = () => {
-    navigate("/");
-  };
+  // const returnHome = () => {
+  //   navigate("/");
+  // };
 
   const fortyTwoLogin = () => {
-    window.location.href = "http://localhost:3000/auth/login42";
+    window.location.href = `http://${window.location.hostname}:3000/auth/login42`;
   };
 
   return (
@@ -118,6 +118,7 @@ export function Register() {
                 value={inputUsername}
                 placeholder="toto"
                 minLength={3}
+                maxLength={10}
                 required={true}
                 onChange={(e) => setInputUsername(e.target.value)}
               />

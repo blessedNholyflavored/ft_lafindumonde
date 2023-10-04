@@ -3,7 +3,7 @@ import axios from 'axios';
 // instance d'axios qui permet de recup les credentials
 // a partir de ce qui est set ds le back
 export default axios.create({
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://' + window.location.hostname + ':3000',
     withCredentials: true
 })
 

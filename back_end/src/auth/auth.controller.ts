@@ -59,6 +59,8 @@ export class AuthController{
 		const user = await this.userService.getUserByUsername(body.username);
 		if (!user)
 			return res.status(404).json({ message: { statusCode: 404, error: 'Not Found', message: "User doesn't exist" } }).send();
+		if (user.loginLoc === false)
+			throw new ConflictException("wrong account type");
 		// check if password is correct
 		// else returns HTTP401 as RFC 7235 recommends
 		if (await this.authService.passwordChecker(body.password, user) == false)
@@ -104,7 +106,7 @@ export class AuthController{
     async callback(@Req() req:any, @Res() res: any){
       const token = await this.authService.login(req.user);
 			await this.userService.setLog2FA(req.user, false);
-      res.cookie('access_token', token.access_token, {httpOnly: true }).redirect('http://localhost:8080/');
+      res.cookie('access_token', token.access_token, {httpOnly: true }).redirect('http://' + process.env.HOSTNAME + ':8080/');
       return token;
     }
 

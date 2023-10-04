@@ -34,7 +34,7 @@ export class AuthService {
 		//check if user already exists, else user creation
 		const user = await this.userService.getUserByID(data.id);
 		if (!user){
-			if (await this.userService.usernameAuthChecker(data.username) == true){
+			while (await this.userService.usernameAuthChecker(data.username) == true){
 				// in case someone already have this username
 				data.username =  data.username + '_';
 			}
@@ -52,7 +52,7 @@ export class AuthService {
 
 	async idGenerator(){
 		// generates random ID for local login
-		let idCreated = Math.floor(Math.random() * 99999);
+		let idCreated = Math.floor(99999 + (Math.random() * 99999));
 		const userTest = await this.userService.getUserByID(idCreated);
 		if (userTest){
 			idCreated = await this.idGenerator();

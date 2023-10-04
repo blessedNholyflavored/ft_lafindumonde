@@ -12,7 +12,7 @@ export const FriendsList = (props: any) => {
 
     const fetchFriendsList = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/friends/${id}`, {
+            const response = await fetch(`http://${window.location.hostname}:3000/friends/${id}`, {
                 method: "GET",
                 credentials: 'include',
             });

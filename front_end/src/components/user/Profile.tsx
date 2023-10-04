@@ -14,7 +14,7 @@ export const Profile = () => {
 	useEffect(() => {
 	  const checkId = async () => {
 		try {
-		  const response = await fetch(`http://localhost:3000/users/${id}`, {
+		  const response = await fetch(`http://${window.location.hostname}:3000/users/${id}`, {
 			method: 'GET',
 			credentials: 'include',
 		  });

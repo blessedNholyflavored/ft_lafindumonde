@@ -46,7 +46,7 @@ export const PrivateChat = () => {
 
 async function fetchPrivMessageList() {
     try {
-      const response = await fetch(`http://localhost:3000/chat/recupMess/${recipient}/${user?.id}`, {
+      const response = await fetch(`http://${window.location.hostname}:3000/chat/recupMess/${recipient}/${user?.id}`, {
             method: 'GET',
             credentials: 'include',
         });
@@ -56,11 +56,11 @@ async function fetchPrivMessageList() {
       const data = await response.json();
       const usernamePromises = data.map(async (message: { senderId: any; recipientId: any; senderUsername: string; recipientUsername: string; }) => {
             try {
-              const senderResponse = await fetch(`http://localhost:3000/users/${message.senderId}/username`, {
+              const senderResponse = await fetch(`http://${window.location.hostname}:3000/users/${message.senderId}/username`, {
                     method: 'GET',
                     credentials: 'include',
               });
-              const recipientResponse = await fetch(`http://localhost:3000/users/${message.recipientId}/username`, {
+              const recipientResponse = await fetch(`http://${window.location.hostname}:3000/users/${message.recipientId}/username`, {
                     method: 'GET',
                     credentials: 'include',
               });
