@@ -636,6 +636,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       {
         const allRooms = this.chatService.getAllChatRooms();
         const goodRoom = (await allRooms).find((room) => room.name === name);
+        if (!goodRoom)
+          return ;
         let user1;
         const Ids = this.chatService.getUsersInRoom(goodRoom.id.toString());
         (await Ids).forEach((userId) => {
