@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import './Notify.css';
-import { Link, useNavigate } from 'react-router-dom'; // Importez Link depuis react-router-dom
+import React, { useEffect } from "react";
+import "./Notify.css";
+import { Link, useNavigate } from "react-router-dom"; // Importez Link depuis react-router-dom
 
 // Définissez une interface pour les props du composant
 interface NotificationProps {
@@ -10,17 +10,19 @@ interface NotificationProps {
   senderId: number;
 }
 
-const Notify: React.FC<NotificationProps> = ({ message, type, senderId, onClose }) => {
-
+const Notify: React.FC<NotificationProps> = ({
+  message,
+  type,
+  senderId,
+  onClose,
+}) => {
   const navigate = useNavigate();
 
-  // Utilisez useEffect pour définir un délai de fermeture
   useEffect(() => {
     const timeout = setTimeout(() => {
-      onClose(); // Appelez la fonction onClose pour fermer la notification après 5 secondes
-    }, 5000); // Délai en millisecondes (5000ms = 5 secondes)
+      onClose();
+    }, 5000);
 
-    // Nettoyez le délai lorsque le composant est démonté
     return () => clearTimeout(timeout);
   }, [onClose]);
 
@@ -28,26 +30,44 @@ const Notify: React.FC<NotificationProps> = ({ message, type, senderId, onClose 
     navigate(`/acceptMatch/${senderId}`);
   };
 
+  const handle2FAEnable = async () => {
+    const res = await fetch(`http://${window.location.hostname}:3000/auth/2FAenable`, {
+      method: "GET",
+      credentials: "include",
+    });
+    const data = await res.json();
+    return navigate(`/totpSave?qrCodeImg=${encodeURIComponent(data.code)}`);
+  };
   return (
     <>
       {type === 0 && (
-    <div className="notification">
-      {message}
-      <Link to="/friends" className="notification-link">
-        Voir
-      </Link>
-      </div>
+        <div className="notification">
+          {message}
+          <Link to="/friends" className="notification-link">
+            Voir
+          </Link>
+        </div>
       )}
       {type === 1 && (
-    <div className="notification">
-      {message}
-      <button className="notification-link" onClick={handleViewClick}>        
-      Accepter
-      </button>
-      </div>
+        <div className="notification">
+          {message}
+          <button className="notification-link" onClick={handleViewClick}>
+            Accepter
+          </button>
+        </div>
+      )}
+      {type === 2 && <div className="notification">{message}</div>}
+      {type === 3 && <div className="notificationError">{message}</div>}
+      {type === 4 && (
+        <div className="notification2FA">
+          {message}
+          <button className="notification-link2FA" onClick={handle2FAEnable}>
+            confirm
+          </button>
+        </div>
       )}
     </>
   );
-}
+};
 
 export default Notify;

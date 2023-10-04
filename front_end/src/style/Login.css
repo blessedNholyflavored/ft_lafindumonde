@@ -5,6 +5,10 @@
   display: inline-block;
   font-family: IBM Plex Mono;
 }
+.Totp {
+  display: inline-block;
+  font-family: IBM Plex Mono;
+}
 .logoAuth {
   display: inline-block;
   padding-bottom: 3vh;
@@ -19,6 +23,10 @@
   width: 40vw;
 }
 
+.boxTotp {
+  height: 80%;
+  width: 40vw;
+}
 /****
         NAV BOX 
 ****/
@@ -36,6 +44,11 @@
 /****
         BOX CONTENT
 ****/
+.boxTotpContent {
+  background-color: grey;
+  padding: 5vh 2vw;
+  color: #000;
+}
 .boxAuthContent {
   background-color: grey;
   padding-top: 5vh;
@@ -43,13 +56,19 @@
   color: #000;
 }
 .boxAuthContent img {
-  width: 25vw;
+  width: 30vw;
   max-width: 150px;
   cursor: pointer;
 }
 .boxAuthContent p {
   font-size: 3vh;
   font-family: IBM Plex Mono;
+}
+
+.imgQRcode {
+  width: 20vw;
+  max-width: 300px;
+  min-width: 150px;
 }
 
 .boxAuthContent button {
@@ -90,6 +109,29 @@
   padding: 10px 16px;
   margin: 5% 5%;
   box-shadow: 4px 6px 0px 0px #000;
+}
+
+.textTotp {
+  margin: 5vh auto;
+}
+
+.textTotpLogin {
+  margin: 5vh auto;
+  font-size: 2vh;
+}
+.totpInputLogin {
+  height: 3vh;
+}
+.totpBtn {
+  cursor: pointer;
+  width: 10vw;
+  max-width: 100px;
+  height: 5vh;
+  margin-left: 10px;
+  color: #000;
+  border: 2px solid #000;
+  border-width: 2px;
+  box-shadow: 2px 3px 0px 0px #000;
 }
 /****
 				ICON BOXES

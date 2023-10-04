@@ -32,7 +32,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("called to useAuth must be inside an AuthProvider");
+    throw new Error("Bad Request");
   }
   return context;
 };
@@ -51,7 +51,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         setLoading(false);
       })
       .catch((error: any) => {
-        console.log("error found in useEffect:", error);
         setLoading(false);
       });
   }, []);

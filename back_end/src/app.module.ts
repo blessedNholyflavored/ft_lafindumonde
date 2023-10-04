@@ -12,6 +12,7 @@ import { GameService } from './game/game.service';
 import { GameModule } from './game/game.module';
 import { GatewayModule } from './gateway/socket.module';
 import { ChatModule } from './chat/chat.module';
+import { AuthService } from './auth/auth.service';
 // import { WebsocketProvider } from './gateway/socket.provider';
 
 @Module({

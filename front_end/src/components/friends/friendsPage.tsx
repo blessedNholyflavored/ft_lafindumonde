@@ -14,6 +14,9 @@ import folder3 from "./../../img/folder4.png";
 import folder4 from "./../../img/folder5.png";
 import folder0 from "./../../img/folder1.png";
 import folder6 from "./../../img/folder6.png";
+import icon from "../../img/buttoncomp.png";
+import "../../style/Profile.css";
+import "../../style/Home.css";
 
 interface friendsSend {
   id: string;
@@ -32,9 +35,7 @@ interface onlinePlayers {
 export const FriendsPage: React.FC = () => {
   const { user, setUser } = useAuth();
   const [username, setUsername] = useState<string>("");
-  const navigate = useNavigate();
-  const [notifyMSG, setNotifyMSG] = useState<string>("");
-  const [notifyType, setNotifyType] = useState<number>(0);
+
   const [sender, setSender] = useState<number>(0);
   const socket = useContext(WebsocketContext);
 
@@ -46,11 +47,15 @@ export const FriendsPage: React.FC = () => {
   const [blocked, setBlocked] = useState<friendsSend[]>([]);
   const [onlinePlayers, setOnlinePlayers] = useState<onlinePlayers[]>([]);
   const [showNotification, setShowNotification] = useState(false);
+  const [notifyMSG, setNotifyMSG] = useState<string>("");
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const navigate = useNavigate();
+  const [selectedUser, setSelectedUser] = useState(0);
 
   async function fetchfriendsSend() {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/invSend/${user?.id}`,
+        `http://${window.location.hostname}:3000/friends/invSend/${user?.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -84,7 +89,7 @@ export const FriendsPage: React.FC = () => {
   async function fetchfriendsRequest() {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/invRequest/${user?.id}`,
+        `http://${window.location.hostname}:3000/friends/invRequest/${user?.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -123,7 +128,7 @@ export const FriendsPage: React.FC = () => {
   const fetchFriendsList = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/${user?.id}`,
+        `http://${window.location.hostname}:3000/friends/${user?.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -161,7 +166,7 @@ export const FriendsPage: React.FC = () => {
   const fetchBlockedList = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/blockedList/${user?.id}`,
+        `http://${window.location.hostname}:3000/friends/blockedList/${user?.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -198,7 +203,7 @@ export const FriendsPage: React.FC = () => {
   const fetchOnlinePlayersList = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/online/${user?.id}`,
+        `http://${window.location.hostname}:3000/friends/online/${user?.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -252,7 +257,7 @@ export const FriendsPage: React.FC = () => {
   async function recupUsername(userId: number) {
     try {
       const response = await fetch(
-        `http://localhost:3000/users/${userId}/username`,
+        `http://${window.location.hostname}:3000/users/${userId}/username`,
         {
           method: "GET",
           credentials: "include",
@@ -274,7 +279,7 @@ export const FriendsPage: React.FC = () => {
   async function AcceptFriend(id: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/accept/${id}`,
+        `http://${window.location.hostname}:3000/friends/accept/${id}`,
         {
           method: "POST",
           credentials: "include",
@@ -292,7 +297,7 @@ export const FriendsPage: React.FC = () => {
   async function RefuseFriend(id: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/refuse/${id}`,
+        `http://${window.location.hostname}:3000/friends/refuse/${id}`,
         {
           method: "POST",
           credentials: "include",
@@ -310,7 +315,7 @@ export const FriendsPage: React.FC = () => {
   async function deleteFriend(sender: string, recipient: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/delete/${recipient}`,
+        `http://${window.location.hostname}:3000/friends/delete/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -328,7 +333,7 @@ export const FriendsPage: React.FC = () => {
   async function removeBlocked(sender: string, recipient: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/unblock/${recipient}`,
+        `http://${window.location.hostname}:3000/friends/unblock/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -347,7 +352,7 @@ export const FriendsPage: React.FC = () => {
     deleteFriend(sender, recipient);
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/block/${recipient}`,
+        `http://${window.location.hostname}:3000/friends/block/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -365,7 +370,7 @@ export const FriendsPage: React.FC = () => {
   async function checkBlocked(senderId: string, recipientId: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/blocked/${senderId}/${recipientId}`,
+        `http://${window.location.hostname}:3000/friends/blocked/${senderId}/${recipientId}`,
         {
           method: "GET",
           credentials: "include",
@@ -391,7 +396,7 @@ export const FriendsPage: React.FC = () => {
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/${user?.id}/${recipientId}`,
+        `http://${window.location.hostname}:3000/friends/${user?.id}/${recipientId}`,
         {
           method: "POST",
           headers: {
@@ -462,238 +467,283 @@ export const FriendsPage: React.FC = () => {
     navigate("/settings");
   };
 
+  const handleUserClick = async (userId: number) => {
+    let flag = 0;
+    if (selectedUser !== 0 && userId === selectedUser) flag = 1;
+    setSelectedUser(userId);
+    if (flag === 1) setSelectedUser(0);
+  };
+
   return (
     <>
-      <body>
-        <header>
-          <div>
-            <img src={nav} alt="Menu 1" />
-          </div>
-          <h1>TRANSCENDENCE</h1>
-        </header>
-        <div className="flex-bg">
-          <main>
-            <div>
-              {showNotification && (
-                <Notify
-                  message={notifyMSG}
-                  type={notifyType}
-                  senderId={sender}
-                  onClose={handleCloseNotification}
-                />
-              )}
-            </div>
-
-            <ul>
-              <h1>Liste des amis :</h1>
-              {friends.length > 0 ? (
-                friends.map((friend, index) => (
-                  <div key={index}>
-                    <div>{friend.username}</div>
-                    <div>{friend.status}</div>
-                    <button
-                      onClick={() =>
-                        deleteFriend(
-                          friend.senderId.toString(),
-                          friend.recipientId.toString()
-                        )
-                      }
-                    >
-                      Delete
-                    </button>
-                    <button
-                      onClick={() =>
-                        BlockFriend(
-                          friend.senderId.toString(),
-                          friend.recipientId.toString()
-                        )
-                      }
-                    >
-                      Bloquer
-                    </button>
-                    <button
-                      onClick={() => navToProfil(friend.recipientId.toString())}
-                    >
-                      Voir Profile
-                    </button>
-                    <button
-                      onClick={() => messagePage(friend.recipientId.toString())}
-                    >
-                      Envoyer un message
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <div>ptdr t'as pas de pote</div>
-              )}
-            </ul>
-            <ul>
-              <h1>Liste des gens que t'aimes po ! :</h1>
-              {blocked.length > 0 ? (
-                blocked.map((blocked, index) => (
-                  <div key={index}>
-                    <div>{blocked.username}</div>
-                    <div>{blocked.status}</div>
-                    <button
-                      onClick={() =>
-                        removeBlocked(
-                          blocked.senderId.toString(),
-                          blocked.recipientId.toString()
-                        )
-                      }
-                    >
-                      Debloquer
-                    </button>
-                    <button
-                      onClick={() =>
-                        navToProfil(blocked.recipientId.toString())
-                      }
-                    >
-                      Voir Profile
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <div>tu aimes tlm</div>
-              )}
-            </ul>
-
-            <ul>
-              <h1>Liste des gens en ligne :</h1>
-              {onlinePlayers.length > 0 && user ? (
-                onlinePlayers.map((friend, index) => (
-                  <div key={index}>
-                    <div>{friend.username}</div>
-                    <button onClick={() => addSomeone(friend.id.toString())}>
-                      Ajouter
-                    </button>
-                    <button
-                      onClick={() =>
-                        BlockFriend(user.id.toString(), friend.id.toString())
-                      }
-                    >
-                      Bloquer
-                    </button>
-                    <button onClick={() => navToProfil(friend.id.toString())}>
-                      Voir Profile
-                    </button>
-                    <button onClick={() => messagePage(friend.id.toString())}>
-                      Envoyer un message
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <div>ptdr ya personne</div>
-              )}
-            </ul>
-            <ul>
-              <h1>Liste des requetes en attente recues :</h1>
-              {friendsRequest.map((friend) => (
-                <div>
-                  {friend.status === "PENDING" && !friend.isBlocked && (
-                    <li key={friend.id}>
-                      <div>ID: {friend.id}</div>
-                      <div>Status: {friend.status}</div>
-                      <div>Sender ID: {user?.username}</div>
-                      <div>recipientId ID: {friend.username}</div>
-                      <button onClick={() => AcceptFriend(friend.id)}>
-                        Accepter
-                      </button>
-                      <button onClick={() => RefuseFriend(friend.id)}>
-                        Refuser
-                      </button>
-                    </li>
-                  )}
-                </div>
-              ))}
-            </ul>
-            <ul>
-              <h1>Liste des requetes en attente envoyees :</h1>
-              {friendsSend.map((friend) => (
-                <div>
-                  {friend.status === "PENDING" && (
-                    <li key={friend.id}>
-                      <div>ID: {friend.id}</div>
-                      <div>Status: {friend.status}</div>
-                      <div>Sender ID: {user?.username}</div>
-                      <div>recipientId ID: {friend.username}</div>
-                      <button onClick={() => RefuseFriend(friend.id)}>
-                        Cancel
-                      </button>
-                    </li>
-                  )}
-                </div>
-              ))}
-            </ul>
-          </main>
-          <nav>
-            <ul>
-              <li className="menu-item">
-                <a onClick={navigateToHome}>
-                  <img src={folder6} alt="Menu 3" />
-                  <p>Home</p>
-                </a>
-              </li>
-              <li className="menu-item">
-                {/* <a > onClick={() => handlePlayerSelect('1')}> */}
-                <a>
-                  <img src={folder4} alt="Menu 1" />
-                  <p>Matchmaking</p>
-                  {/* {(queueCount > 0 || queueCountBonus > 0) &&  (
-    						<p>En attente d'autres joueurs...</p>
-  						)}
-  						{queueCount === 2 && (
-    						<p>La partie commence entre Ldinaut et Mcouppe !</p>
-  						)}
-              { inGame === 1 && (
-                <p>Deja en game mon reuf !</p>
-              )} */}
-                </a>
-              </li>
-              <li className="menu-item">
-                {/* <a onClick={() => handlePlayerSelect222('1')}> */}
-                <a>
-                  <img src={folder3} alt="Menu 2" />
-                  <p>Big Game</p>
-                </a>
-              </li>
-              <li className="menu-item">
-                <a onClick={() => NavToSoloPong()}>
-                  <img src={folder2} alt="Menu 3" />
-                  <p>Tiny Game</p>
-                </a>
-              </li>
-              <li className="menu-item">
-                <a onClick={navigateToProfPage}>
-                  <img src={folder1} alt="Menu 3" />
-                  <p>Profile</p>
-                </a>
-              </li>
-              <li className="menu-item">
-                <a onClick={navigateToSettings}>
-                  <img src={folder} alt="Menu 3" />
-                  <p>Settings</p>
-                </a>
-              </li>
-              <li className="menu-item">
-                <a onClick={navigateToFriends}>
-                  <img src={folder0} alt="Menu 3" />
-                  <p>Friends</p>
-                </a>
-              </li>
-            </ul>
-          </nav>
+      {/* <body> */}
+      <header>
+        <div>
+          <img src={nav} alt="Menu 1" />
         </div>
-        <footer>
-          <button
-            className="logoutBtn"
-            onClick={() => Logout({ user, setUser })}
-          >
-            LOG OUT{" "}
-          </button>
-          <img src={logo} className="logo" alt="icon" />
-        </footer>
-      </body>
+        <h1>TRANSCENDENCE</h1>
+      </header>
+      <div className="flex-bg">
+        <main>
+          <div>
+            {showNotification && (
+              <Notify
+                message={notifyMSG}
+                type={notifyType}
+                senderId={sender}
+                onClose={handleCloseNotification}
+              />
+            )}
+          </div>
+
+          <div className="fullpage1">
+            <div className="navbarbox">
+              <img src={icon} alt="icon" />
+              <h1> FRIENDS </h1>
+            </div>
+            <div className="testingrow">
+              <div className="boxrowtest2">
+                <div className="navbarsmallbox">
+                  <p className="boxtitle"> Friend list </p>
+                </div>
+                <ul>
+                  {friends.length > 0 ? (
+                    friends.map((friend, index) => (
+                      <div key={index}>
+                        <div>{friend.username}</div>
+                        <div>{friend.status}</div>
+                        <button
+                          onClick={() =>
+                            deleteFriend(
+                              friend.senderId.toString(),
+                              friend.recipientId.toString()
+                            )
+                          }
+                        >
+                          Delete
+                        </button>
+                        <button
+                          onClick={() =>
+                            BlockFriend(
+                              friend.senderId.toString(),
+                              friend.recipientId.toString()
+                            )
+                          }
+                        >
+                          Bloquer
+                        </button>
+                        <button
+                          onClick={() =>
+                            navToProfil(friend.recipientId.toString())
+                          }
+                        >
+                          Voir Profile
+                        </button>
+                        <button
+                          onClick={() =>
+                            messagePage(friend.recipientId.toString())
+                          }
+                        >
+                          Envoyer un message
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div>ptdr t'as pas de pote</div>
+                  )}
+                </ul>
+              </div>
+              <div className="boxrowtest2">
+                <div className="navbarsmallbox">
+                  <p className="boxtitle"> Blocked list </p>
+                </div>
+                <ul>
+                  {blocked.length > 0 ? (
+                    blocked.map((blocked, index) => (
+                      <div key={index}>
+                        <div>{blocked.username}</div>
+                        <div>{blocked.status}</div>
+                        <button
+                          onClick={() =>
+                            removeBlocked(
+                              blocked.senderId.toString(),
+                              blocked.recipientId.toString()
+                            )
+                          }
+                        >
+                          Debloquer
+                        </button>
+                        <button
+                          onClick={() =>
+                            navToProfil(blocked.recipientId.toString())
+                          }
+                        >
+                          Voir Profile
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div>tu aimes tlm</div>
+                  )}
+                </ul>
+              </div>
+              <div className="boxrowtest2">
+                <div className="navbarsmallbox">
+                  <p className="boxtitle"> Who's online? </p>
+                </div>
+                <div className="online">
+                  {onlinePlayers.length > 0 && user ? (
+                    onlinePlayers.map((friend, index) => (
+                      <div key={index}>
+                        <button
+                          onClick={() => handleUserClick(parseInt(friend.id))}
+                          disabled={user?.id.toString() === friend.id}
+                        >
+                          <div>{friend.username}</div>
+                        </button>
+                        {selectedUser === parseInt(friend.id) && (
+                          <div>
+                            <button
+                              className="onlinebttn"
+                              onClick={() => addSomeone(friend.id.toString())}
+                            >
+                              add
+                            </button>
+                            <button
+                              className="onlinebttn"
+                              onClick={() =>
+                                BlockFriend(
+                                  user.id.toString(),
+                                  friend.id.toString()
+                                )
+                              }
+                            >
+                              block
+                            </button>
+                            <button
+                              className="onlinebttn"
+                              onClick={() => navToProfil(friend.id.toString())}
+                            >
+                              see profile
+                            </button>
+                            <button
+                              className="onlinebttn"
+                              onClick={() => messagePage(friend.id.toString())}
+                            >
+                              send a message
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div>ptdr ya personne</div>
+                  )}
+                </div>
+              </div>
+              <div className="boxrowtest2">
+                <div className="navbarsmallbox">
+                  <p className="boxtitle"> Friend requests </p>
+                </div>
+                <div className="requests">
+                  {friendsRequest.map((friend) => (
+                    <div>
+                      {friend.status === "PENDING" && !friend.isBlocked && (
+                        <div className="requestinfo" key={friend.id}>
+                          {/* <div>ID: {friend.id}</div> */}
+                          <div>Sender ID: {user?.username}</div>
+                          <div style={{ fontStyle: "italic", fontSize: 12 }}>
+                            Status: {friend.status}
+                          </div>
+                          {/* <div>recipientId ID: {friend.username}</div> */}
+                          <div className="bttnholder">
+                            <button
+                              className="acceptbutton"
+                              onClick={() => AcceptFriend(friend.id)}
+                            >
+                              accept
+                            </button>
+                            <button
+                              className="deletebutton"
+                              onClick={() => RefuseFriend(friend.id)}
+                            >
+                              delete
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* <div className="boxrowtest">
+                <div className="navbarsmallbox">
+                    <p className="boxtitle"> INFO </p>
+                </div>
+          <ul>
+            <h1>Liste des requetes en attente envoyees :</h1>
+            {friendsSend.map((friend) => (
+              <div>
+                {friend.status === "PENDING" && (
+                  <li key={friend.id}>
+                    <div>ID: {friend.id}</div>
+                    <div>Status: {friend.status}</div>
+                    <div>Sender ID: {user?.username}</div>
+                    <div>recipientId ID: {friend.username}</div>
+                    <button onClick={() => RefuseFriend(friend.id)}>
+                      Cancel
+                    </button>
+                  </li>
+                )}
+              </div>
+            ))}
+          </ul>
+          </div> */}
+            </div>
+          </div>
+        </main>
+        <nav>
+          <ul>
+            <li className="menu-item">
+              <a onClick={navigateToHome}>
+                <img src={folder6} alt="Menu 3" />
+                <p>Home</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={() => NavToSoloPong()}>
+                <img src={folder2} alt="Menu 3" />
+                <p>Game</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToProfPage}>
+                <img src={folder1} alt="Menu 3" />
+                <p>Profile</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToSettings}>
+                <img src={folder} alt="Menu 3" />
+                <p>Settings</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToFriends}>
+                <img src={folder0} alt="Menu 3" />
+                <p>Friends</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <footer>
+        <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
+          LOG OUT{" "}
+        </button>
+        <img src={logo} className="logo" alt="icon" />
+      </footer>
+      {/* </body> */}
     </>
   );
 };

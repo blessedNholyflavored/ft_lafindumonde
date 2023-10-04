@@ -1,33 +1,80 @@
 /* Notification.css */
 
 .notification {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-    text-align: center;
-    z-index: 1000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 300px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  }
-  
-  .notification-link {
-    text-decoration: none;
-    color: #fff;
-    background-color: #007bff;
-    padding: 5px 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .notification-link:hover {
-    background-color: #0056b3;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 300px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.notificationError {
+  position: fixed;
+  top: 20vh;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #a50e40;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 300px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.notification2FA {
+  position: fixed;
+  top: 25vh;
+  left: 50%;
+  /* font-size: 2em; */
+  transform: translateX(-50%);
+  background-color: #ff0000bb;
+  color: #fff;
+  padding: 20px 10px;
+  text-align: center;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 30vw;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+.notification-link {
+  text-decoration: none;
+  color: #fff;
+  background-color: #007bff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.notification-link:hover {
+  background-color: #0056b3;
+}
+.notification-link2FA {
+  text-decoration: none;
+  color: #000000;
+  background-color: #50eb9e;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.notification-link2FA:hover {
+  background-color: #299b39;
+}

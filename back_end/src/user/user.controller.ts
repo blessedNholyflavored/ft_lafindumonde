@@ -11,22 +11,32 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
+  ConflictException,
+  NotAcceptableException,
+	ValidationPipe,
+	UsePipes,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UserService } from './user.service';
+import { AuthService } from '../auth/auth.service';
 import { User } from '@prisma/client';
 import * as path from 'path';
 import { join } from 'path';
 import { Response } from 'express';
 import * as mimetype from 'mime-types';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
+import { throwError } from 'rxjs';
+import { AuthDto } from './dto/auth.dto';
+import { MailDto, PassDto, UsernameDto } from './dto/settings.dto';
+
+
 
 @Controller('users')
 @UseGuards(...AuthenticatedGuard)
 export class UsersController {
   friendService: any;
-  constructor(private userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   //cette function est commentée parce que pas sécurisée
   // si besoin de l'utiliser pour une feature definitive
@@ -39,12 +49,37 @@ export class UsersController {
   }
 */
   @Post('/update-username')
-  updating_username(@Req() req: any, @Body() username: string) {
+	@UsePipes(new ValidationPipe())
+  async updating_username(@Req() req: any, @Body() username: UsernameDto) {
     //console.log(username);
     console.log('service update username ', req.user.id);
     const newUsername = username['username'];
-    this.userService.updateUsername(req.user.id, newUsername);
+    if (await this.userService.updateUsername(req.user.id, newUsername) == false)
+      throw new ConflictException("username not available");
   }
+
+  @Post('/update-pass')
+	@UsePipes(new ValidationPipe())
+  updating_password(@Req() req: any, @Body() password: PassDto) {
+    //console.log(username);
+    console.log('service update username ', req.user.id);
+    const newPassword = password['password'];
+    this.userService.updatePassword(req.user.id, newPassword);
+  }
+  
+  @Post('/update-mail')
+	@UsePipes(new ValidationPipe())
+  async updating_mail(@Req() req: any, @Body() mail: MailDto) {
+    //console.log(username);
+    //console.log('service update username ', req.user.id);
+    const newMail = mail['email'];
+    if (await this.userService.mailChecker(newMail.toString()) === false)
+			throw new ConflictException("email already taken !");
+		if (await this.userService.FortyTwoMailCheck(newMail.toString()) === false)
+			throw new NotAcceptableException("email domain not allowed");
+    this.userService.updateMail(req.user.id, newMail);
+  }
+
   @Get('/:id/avatar')
   returnPic(@Param('id') id: string) {
     const pictureURL = this.userService.getPicture(id);
@@ -141,9 +176,24 @@ export class UsersController {
   @Get('/leaderboard/:id')
   async getLeaderboardData(@Param('id') id: number)
   {
-	const data = await this.userService.getLeaderboard();
-	console.log(data);
-	return (data);
+    const data = await this.userService.getLeaderboard();
+    //console.log(data);
+    return (data);
+  }
+
+  @Get('/mini/:id')
+  async getMini(@Param('id') id: number)
+  {
+    const data = await this.userService.getMini();
+    //console.log(data);
+    return (data);
+  }
+
+  @Get('/:id/isloc')
+  async checkIsLocal(@Param('id') id: string)
+  {
+    const data = await this.userService.isLocal(id);
+    return (data);
   }
 
   // @Get('/scoresMG')

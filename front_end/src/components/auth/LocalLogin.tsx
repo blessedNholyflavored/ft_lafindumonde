@@ -5,13 +5,17 @@ import "./../../style/Login.css";
 import logo from "../../img/logo42.png";
 import icon from "../../img/buttoncomp.png";
 import { useAuth } from "./AuthProvider";
-//import { Login } from "./Login";
+import Notify from "../../Notify";
 import { useNavigate } from "react-router-dom";
 
 export function LocalLogin() {
   const { user, setUser } = useAuth();
   const [inputUsername, setInputUsername] = useState("");
   const [inputPassword, setInputPassword] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
+  const [notifyMSG, setNotifyMSG] = useState<string>("");
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const [sender] = useState<number>(0);
   const navigate = useNavigate();
 
   // if user is already set
@@ -19,10 +23,14 @@ export function LocalLogin() {
     navigate("/");
   }
 
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
+
   // send inputs to back_end for validation
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch(`http://localhost:3000/auth/local_login`, {
+    const res = await fetch(`http://${window.location.hostname}:3000/auth/local_login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -33,8 +41,22 @@ export function LocalLogin() {
       }),
       credentials: "include",
     });
-    if (!res.ok) {
-      window.alert("Wrong password or username !");
+    if (res.status === 404) {
+      setShowNotification(true);
+      setNotifyMSG("This username doesn't exist");
+      setNotifyType(3);
+      setInputPassword("");
+      setInputUsername("");
+    } else if (res.status === 409) {
+      setShowNotification(true);
+      setNotifyMSG("You must use the 42 Login System.");
+      setNotifyType(3);
+      setInputUsername("");
+      setInputPassword("");
+    } else if (!res.ok) {
+      setShowNotification(true);
+      setNotifyMSG("Wrong password");
+      setNotifyType(3);
       setInputPassword("");
       setInputUsername("");
     } else {
@@ -44,12 +66,12 @@ export function LocalLogin() {
     }
   };
   const fortyTwoLogin = () => {
-    window.location.href = "http://localhost:3000/auth/login42";
+    window.location.href = `http://${window.location.hostname}:3000/auth/login42`;
   };
 
-  const returnHome = () => {
-    navigate("/");
-  };
+  // const returnHome = () => {
+  //   navigate("/");
+  // };
 
   const navigateRegister = () => {
     navigate("/register");
@@ -57,6 +79,14 @@ export function LocalLogin() {
 
   return (
     <div className="Login">
+      {showNotification && (
+        <Notify
+          message={notifyMSG}
+          type={notifyType}
+          senderId={sender}
+          onClose={handleCloseNotification}
+        />
+      )}
       <div className="logoAuth">
         <img src={logo} className="logo" alt="icon" />
       </div>

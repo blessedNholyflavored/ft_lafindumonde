@@ -24,7 +24,7 @@ import { ChatService } from './chat.service';
 // ici add de l'authorisation de recup des credentials du front (le token)
 @WebSocketGateway({
   cors: {
-    origin: "http://localhost:8080",
+    origin: "http://" + process.env.HOSTNAME + ":8080",
     credentials: true
   },
   path: "",
@@ -62,4 +62,12 @@ export class ChatGateway {
   {
     this.chatService.CreateMessageRoom(data[0], socket.user.id.toString(), data[1])
   }
+
+  @SubscribeMessage('reloadListRoomForOne')
+  async onreloadForOne(socket: Socket)
+  {
+    socket.emit("refreshForOne");
+  }
+
+  
 }

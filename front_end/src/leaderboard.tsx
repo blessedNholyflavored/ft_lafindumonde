@@ -24,7 +24,7 @@ export const Classement = () => {
 
     async function fetchPlayerScores() {
         try {
-          const response = await fetch(`http://localhost:3000/users/leaderboard/${userId}`, {
+          const response = await fetch(`http://${window.location.hostname}:3000/users/leaderboard/${userId}`, {
             method: 'GET',
             credentials: 'include',
           });
@@ -32,7 +32,7 @@ export const Classement = () => {
             throw new Error('Erreur lors de la récupération des scores.');
           }
           const data = await response.json();
-		  console.log("DANS LEADERBOARD.TSX", data);
+		 // console.log("DANS LEADERBOARD.TSX", data);
           setPlayerScores(data);
         } catch (error) {
           console.error('Erreur:', error);
@@ -64,7 +64,7 @@ return(
 					<td><button
                       onClick={() => navToProfil(tab.id.toString())}
                     >
-					Voir Profile
+					Voir Profil
 				  </button></td>
 				</tr>
 				))}

@@ -17,13 +17,11 @@ export const FriendshipComponent = ({
 }) => {
   const { user, setUser } = useAuth();
   const { id } = useParams();
-  //
   const [friendshipStatus, setFriendshipStatus] = useState<string | null>();
   const socket = useContext(WebsocketContext);
   const navigate = useNavigate();
+  const [accepted, setAccepted] = useState(false);
 
-  //
-  //
 
   useEffect(() => {
     fetchFriendshipStatus();
@@ -31,7 +29,7 @@ export const FriendshipComponent = ({
   async function checkBlockedForNotify(senderId: string, recipientId: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/blocked/${senderId}/${recipientId}`,
+        `http://${window.location.hostname}:3000/friends/blocked/${senderId}/${recipientId}`,
         {
           method: "GET",
           credentials: "include",
@@ -59,7 +57,7 @@ export const FriendshipComponent = ({
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/${user?.id}/${id}`,
+        `http://${window.location.hostname}:3000/friends/${user?.id}/${id}`,
         {
           method: "POST",
           headers: {
@@ -90,7 +88,7 @@ export const FriendshipComponent = ({
   const checkAlreadyFriend = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/already/${user?.id}/${id}`,
+        `http://${window.location.hostname}:3000/friends/already/${user?.id}/${id}`,
         {
           credentials: "include",
         }
@@ -119,7 +117,7 @@ export const FriendshipComponent = ({
   const checkBlocked = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/blockedStatus/${id}/${user?.id}/`,
+        `http://${window.location.hostname}:3000/friends/blockedStatus/${id}/${user?.id}/`,
         {
           credentials: "include",
         }
@@ -143,14 +141,13 @@ export const FriendshipComponent = ({
   const fetchFriendshipStatus = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/status/${user?.id}/${id}`,
+        `http://${window.location.hostname}:3000/friends/status/${user?.id}/${id}`,
         {
           credentials: "include",
         }
       );
       if (response.ok) {
         let status = await response.text();
-        console.log("qqqqqqq: ", status);
         if (status === "not") {
           await checkAlreadyFriend();
           return;
@@ -180,11 +177,9 @@ export const FriendshipComponent = ({
   };
 
   async function deleteFriend(sender: string, recipient: string) {
-    console.log(sender);
-    console.log(recipient);
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/delete/${recipient}`,
+        `http://${window.location.hostname}:3000/friends/delete/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -200,12 +195,10 @@ export const FriendshipComponent = ({
   }
 
   async function BlockFriend(sender: string, recipient: string) {
-    console.log(sender);
-    console.log(recipient);
     deleteFriend(sender, recipient);
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/block/${recipient}`,
+        `http://${window.location.hostname}:3000/friends/block/${recipient}`,
         {
           method: "POST",
           credentials: "include",
@@ -228,10 +221,10 @@ export const FriendshipComponent = ({
       socket.emit("inviteToMatch", recipient);
   }
 
-  if (socket) {
-    socket?.on("matchStart", () => {
-      socket?.emit("updateUserIG", user?.id);
-      navigate("/gamefriend");
+  if (socket && accepted === false) {
+    socket?.on("matchStart", (roomdId: number) => {
+      setAccepted(true);
+      navigate(`/gamefriend/${roomdId}`);
     });
   }
 

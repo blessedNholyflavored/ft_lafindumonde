@@ -11,6 +11,7 @@ import { WebsocketContext } from "../../WebsocketContext";
 import { useNavigate } from "react-router-dom";
 import ChatChannel from "./ChatChannel";
 import PrivateChat from "./PrivateChat";
+import Notify from "../../Notify";
 
 type MessagePayload = {
   content: string;
@@ -74,16 +75,22 @@ export const Chat = () => {
   const [isPrivatechan, setIsPrivatechan] = useState<number | null>(null);
   const [isPrivateConvButtonDisabled, setIsPrivateConvButtonDisabled] =
     useState(false);
+  const [toNotify, setToNotify] = useState(false);
   const [invSend, setInvSend] = useState<invSend[]>([]);
   const [invReceive, setInvReceive] = useState<invSend[]>([]);
   const [userIsBanned, setUserIsBanned] = useState(false);
   const [pass, setpass] = useState("");
   const [isPromptOpen, setIsPromptOpen] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const [notifyMSG, setNotifyMSG] = useState<string>("");
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const [kickChan, setKickChan] = useState("");
+  const [kickReason, setKickReason] = useState("");
 
   async function fetchYourRoomsList() {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/recupYourRooms`,
+        `http://${window.location.hostname}:3000/chat/recupYourRooms`,
         {
           method: "GET",
           credentials: "include",
@@ -104,7 +111,7 @@ export const Chat = () => {
               AmIBanned: string;
             }) => {
               const isBannedResponse = await fetch(
-                `http://localhost:3000/chat/banned/${user?.id}/${friend.id}`,
+                `http://${window.location.hostname}:3000/chat/banned/${user?.id}/${friend.id}`,
                 {
                   method: "GET",
                   credentials: "include",
@@ -128,7 +135,7 @@ export const Chat = () => {
 
   async function fetchRoomsList() {
     try {
-      const response = await fetch(`http://localhost:3000/chat/recupRooms`, {
+      const response = await fetch(`http://${window.location.hostname}:3000/chat/recupRooms`, {
         method: "GET",
         credentials: "include",
       });
@@ -158,7 +165,7 @@ export const Chat = () => {
   async function fetchUsernameById(userId: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/users/${userId}/username`,
+        `http://${window.location.hostname}:3000/users/${userId}/username`,
         {
           method: "GET",
           credentials: "include",
@@ -180,7 +187,7 @@ export const Chat = () => {
   async function fetchRoomNameById(roomId: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/roomName/${roomId}/`,
+        `http://${window.location.hostname}:3000/chat/roomName/${roomId}/`,
         {
           method: "GET",
           credentials: "include",
@@ -201,7 +208,7 @@ export const Chat = () => {
 
   async function fetchPrivateConvList() {
     try {
-      const response = await fetch(`http://localhost:3000/chat/recupPrivate`, {
+      const response = await fetch(`http://${window.location.hostname}:3000/chat/recupPrivate`, {
         method: "GET",
         credentials: "include",
       });
@@ -213,21 +220,25 @@ export const Chat = () => {
       const data = await response.json();
 
       if (data.length > 0) {
-        const promises = data.map(async (userId: string, isBlocked: string) => {
-          const username = await fetchUsernameById(userId);
-          const isBlockedResponse = await fetch(
-            `http://localhost:3000/friends/blocked/${userId}/${user?.id}`,
-            {
-              method: "GET",
-              credentials: "include",
-            }
-          );
-          const blocked = isBlockedResponse.text();
-          return { id: userId, username, isBlocked };
-        });
+        const promises = data.map(
+          async (userId: string, isBlocked: string) => {
+            const username = await fetchUsernameById(userId);
+            const isBlockedResponse = await fetch(
+              `http://${window.location.hostname}:3000/friends/blocked/${userId}/${user?.id}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            const blocked = await isBlockedResponse.text();
+            isBlocked = blocked;
+            return { id: userId, username, isBlocked };
+          }
+        );
 
         const usernames: privMSG[] = await Promise.all(promises);
         setPrivMSG(usernames);
+        console.log(privMSG);
       }
     } catch (error) {
       console.error("Erreur :", error);
@@ -257,7 +268,7 @@ export const Chat = () => {
   async function checkBanned(userId: number, roomId: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/banned/${userId}/${roomId}`,
+        `http://${window.location.hostname}:3000/chat/banned/${userId}/${roomId}`,
         {
           method: "GET",
           credentials: "include",
@@ -313,26 +324,65 @@ export const Chat = () => {
         fetchRooms();
       });
     }
+    if (socket) {
+      socket.on("refreshForOne", () => {
+        fetchYourRooms();
+        setTimeout(() => {
+          fetchRooms();
+        }, 500);
+      });
+    }
+
+    const kickMessage = localStorage.getItem("kickMessage");
+    if (kickMessage) {
+      setShowNotification(true);
+      setNotifyMSG(kickMessage);
+      setNotifyType(2);
+    }
+    localStorage.removeItem("kickMessage");
+
+    const muteMessage = localStorage.getItem("muteMessage");
+    if (muteMessage) {
+      setShowNotification(true);
+      setNotifyMSG(muteMessage);
+      setNotifyType(2);
+    }
+    localStorage.removeItem("muteMessage");
+
+    const banMessage = localStorage.getItem("banMessage");
+    if (banMessage) {
+      setShowNotification(true);
+      setNotifyMSG(banMessage);
+      setNotifyType(2);
+    }
+    localStorage.removeItem("banMessage");
 
     if (socket) {
       socket.on("refreshAfterKick", (roomName: string, reason: string) => {
-        alert("You have been kicked from " + roomName + ". Raison: " + reason);
         window.location.reload();
+        window.location.href = "/chat";
+        localStorage.setItem(
+          "kickMessage",
+          "You have been kicked from " + roomName + ". Raison: " + reason
+        );
       });
     }
     if (socket) {
       socket.on(
         "refreshAfterMute",
         (roomName: string, reason: string, time: number) => {
-          alert(
+          window.location.reload();
+          window.location.href = "/chat";
+          localStorage.setItem(
+            "muteMessage",
             "You have been muted from " +
               roomName +
               ". Raison: " +
               reason +
               ", pendant: " +
-              time
+              time +
+              " minutes"
           );
-          window.location.reload();
         }
       );
     }
@@ -340,23 +390,26 @@ export const Chat = () => {
       socket.on(
         "refreshAfterBan",
         (roomName: string, reason: string, time: number) => {
-          alert(
+          window.location.reload();
+          window.location.href = "/chat";
+          localStorage.setItem(
+            "banMessage",
             "You have been banned from " +
               roomName +
               ". Raison: " +
               reason +
               ", pendant: " +
-              time
+              time +
+              " minutes"
           );
-          window.location.href = "/chat";
-          window.location.reload();
-          window.location.href = "/chat";
         }
       );
     }
+
     if (socket) {
-      socket.on("refreshMessages", () => {
-        fetchPrivateConv();
+      socket.on("refreshMessages", async () => {
+        await fetchPrivateConv();
+        console.log(privMSG);
       });
     }
     if (socket) {
@@ -381,7 +434,27 @@ export const Chat = () => {
   const checkRoomAlreadyExist = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/checkRoomName/${valueRoom}`,
+        `http://${window.location.hostname}:3000/chat/checkRoomName/${valueRoom}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des messages privés.");
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Erreur :", error);
+      return [];
+    }
+  };
+
+  const checkIfAlreadyIn = async () => {
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/chat/checkIfIn/${valueRoom}/${user?.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -405,17 +478,38 @@ export const Chat = () => {
       setTimeout(() => {
         socket.emit("reloadListRoomAtJoin", valueRoom);
       }, 100);
-    } else alert("Name room already taken");
+    } else {
+      setShowNotification(true);
+      setNotifyMSG("Name deja pris mon gars !");
+      setNotifyType(2);
+    }
     return "";
   };
 
   const joinRoom = async () => {
+    if ((await checkRoomAlreadyExist()) === false)
+    {
+      setShowNotification(true);
+      setNotifyMSG("Room n'existe pas !");
+      setNotifyType(2);
+      return "";
+    }
+    if ((await checkIfAlreadyIn()) === true) {
+      setShowNotification(true);
+      setNotifyMSG("Tu es deja dans le channel !");
+      setNotifyType(2);
+      return "";
+    }
     if ((await checkRoomAlreadyExist()) === true) {
       socket.emit("joinChatRoom", valueRoom, selectedOption, password);
       setTimeout(() => {
-        socket.emit("reloadListRoom", activeChannel);
+        socket.emit("reloadListRoomAtJoin", valueRoom);
       }, 100);
-    } else alert("room existe po");
+    } else {
+      setShowNotification(true);
+      setNotifyMSG("Room n'existe pas !");
+      setNotifyType(2);
+    }
     return "";
   };
 
@@ -455,8 +549,9 @@ export const Chat = () => {
       }
     }
     setTimeout(() => {
-      socket.emit("reloadListRoomAtJoin", name);
-    }, 100);
+      socket.emit("ActuAtRoomCreate");
+    }, 300);
+    setActiveChannel(0);
   };
 
   const handleOptionChange = (e: { target: { value: string } }) => {
@@ -493,7 +588,7 @@ export const Chat = () => {
     if (activeChannel) {
       try {
         const response = await fetch(
-          `http://localhost:3000/chat/usersNotInRoom/${activeChannel}/${user?.id}`,
+          `http://${window.location.hostname}:3000/chat/usersNotInRoom/${activeChannel}/${user?.id}`,
           {
             method: "GET",
             credentials: "include",
@@ -526,7 +621,7 @@ export const Chat = () => {
     if (activeChannel) {
       try {
         const response = await fetch(
-          `http://localhost:3000/chat/invSend/${user?.id}/${activeChannel}`,
+          `http://${window.location.hostname}:3000/chat/invSend/${user?.id}/${activeChannel}`,
           {
             method: "GET",
             credentials: "include",
@@ -563,7 +658,7 @@ export const Chat = () => {
   async function checkBlocked(senderId: string, recipientId: string) {
     try {
       const response = await fetch(
-        `http://localhost:3000/friends/blocked/${senderId}/${recipientId}`,
+        `http://${window.location.hostname}:3000/friends/blocked/${senderId}/${recipientId}`,
         {
           method: "GET",
           credentials: "include",
@@ -585,7 +680,7 @@ export const Chat = () => {
   async function fetchInviteReceiveList() {
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/invReceive/${user?.id}/`,
+        `http://${window.location.hostname}:3000/chat/invReceive/${user?.id}/`,
         {
           method: "GET",
           credentials: "include",
@@ -636,7 +731,7 @@ export const Chat = () => {
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/chat/invite/${user?.id}/${id}/${activeChannel}`,
+        `http://${window.location.hostname}:3000/chat/invite/${user?.id}/${id}/${activeChannel}`,
         {
           method: "POST",
           headers: {
@@ -662,7 +757,7 @@ export const Chat = () => {
 
   async function refuseInvite(id: string) {
     try {
-      const response = await fetch(`http://localhost:3000/chat/refuse/${id}`, {
+      const response = await fetch(`http://${window.location.hostname}:3000/chat/refuse/${id}`, {
         method: "POST",
         credentials: "include",
       });
@@ -687,8 +782,22 @@ export const Chat = () => {
     setpass(event.target.value);
   };
 
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
+
   return (
     <div className="main_chat_box" style={{ background: "darkgreen" }}>
+      <div>
+        {showNotification && (
+          <Notify
+            message={notifyMSG}
+            type={notifyType}
+            senderId={0}
+            onClose={handleCloseNotification}
+          />
+        )}
+      </div>
       <div>
         <ul>
           <h1>Liste des invitations recues :</h1>
@@ -823,7 +932,8 @@ export const Chat = () => {
                       setIsPrivatechan(1);
                     } else setIsPrivatechan(0);
                   } else {
-                    alert("t banni !");
+                    setNotifyMSG("t bannis mon reuf");
+                    setShowNotification(true);
                   }
                 }}
                 disabled={activeChannel === chan.id}

@@ -1,11 +1,8 @@
 import React from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./Home";
-import PongGame from "./PongGame";
+import PongGame from "./game/PongGame";
 import { UserSetting } from "./components/user/UserSetting";
-//import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-//import { io, Socket } from 'socket.io-client';
-//import { User } from './interfaces';
 import "./App.css";
 import "./style/Profile.css";
 import "./style/twoFA.css";
@@ -19,24 +16,20 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { AuthProvider, useAuth } from "./components/auth/AuthProvider";
 import { socket, WebsocketProvider } from "./WebsocketContext";
 import { Websocket } from "./Websocket";
-import SuperPong from "./SuperPong";
+import SuperPong from "./game/SuperPong";
 import { Profile } from "./components/user/Profile";
 import { FriendsPage } from "./components/friends/friendsPage";
-import SoloPong from "./SoloPong";
-import MiniGame from "./SoloPong";
+import MiniGame from "./game/SoloPong";
 import Classement from "./leaderboard";
-import AcceptMatch from "./acceptMatch";
-import GameFriend from "./GameFriend";
-import { twoFAEnable, twoFADisable } from "./components/auth/2faComp";
-import ChatChannel from "./components/chat/ChatChannel";
-import PrivateChat from "./components/chat/PrivateChat";
-import GamePage from "./gamePage";
+import AcceptMatch from "./game/acceptMatch";
+import GameFriend from "./game/GameFriend";
+import GamePage from "./game/gamePage";
 import PageNotFound from "./PageNotFound";
 
 export const App: React.FC = () => {
   return (
-    <WebsocketProvider value={socket}>
-      <AuthProvider>
+    <AuthProvider>
+      <WebsocketProvider value={socket}>
         <Routes>
           <Route
             path="/"
@@ -47,7 +40,7 @@ export const App: React.FC = () => {
             }
           />
           <Route
-            path="/game"
+            path="/game/:id"
             element={
               <ProtectedRoute>
                 <PongGame />
@@ -130,7 +123,7 @@ export const App: React.FC = () => {
             }
           />
           <Route
-            path="/SuperGame"
+            path="/SuperGame/:id"
             element={
               <ProtectedRoute>
                 <SuperPong socket={socket} />
@@ -162,7 +155,7 @@ export const App: React.FC = () => {
             }
           />
           <Route
-            path="/gameFriend"
+            path="/gameFriend/:id"
             element={
               <ProtectedRoute>
                 <GameFriend />
@@ -177,7 +170,7 @@ export const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-		  <Route
+          <Route
             path="/404"
             element={
               <ProtectedRoute>
@@ -185,7 +178,7 @@ export const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-		  <Route
+          <Route
             path="/*"
             element={
               <ProtectedRoute>
@@ -194,8 +187,8 @@ export const App: React.FC = () => {
             }
           />
         </Routes>
-      </AuthProvider>
-    </WebsocketProvider>
+      </WebsocketProvider>
+    </AuthProvider>
   );
 };
 
@@ -213,28 +206,6 @@ function AuthTest() {
       <h1>{user!.username}</h1>
       <img src={user!.pictureURL} alt="profile pic" />
       <p>{JSON.stringify(user)}</p>
-      <div className="boxrowsettings">
-        <div className="navbarsmallbox">
-          <p className="boxtitle"> 2FAC AUTH </p>
-        </div>
-        <div className="twoFA">
-          <button
-            className="twoFAenabled"
-            onClick={() => twoFAEnable(navigate, user)}
-          >
-            enable
-          </button>
-          <button
-            className="twoFAdisabled"
-            onClick={() => twoFADisable({ user, setUser })}
-          >
-            disable
-          </button>
-        </div>
-        <div className="footersmallbox">
-          <br></br>
-        </div>
-      </div>
       <button onClick={() => Logout({ user, setUser })}>LOG OUT </button>
       <button onClick={navigateToHome}>HOME</button>
     </div>

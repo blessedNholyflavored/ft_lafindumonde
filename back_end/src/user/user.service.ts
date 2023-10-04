@@ -7,7 +7,7 @@ import {
 import { PrismaClient, User, USER_STATUS } from '@prisma/client'; // Renommez "User" en "PrismaUser"
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaUserCreateInput } from './user-create.input';
-import { Game, Leaderboard } from '../interfaces';
+import { Game, Leaderboard, MiniScore } from '../interfaces';
 import * as bcrypt from 'bcrypt';
 import { AuthDto } from './dto/auth.dto';
 //import { createUserDto } from 'src/dto/createUserDto.dto';
@@ -57,16 +57,57 @@ export class UserService {
     }
   }
 
-  async updateUsername(id: string, newUsername: string) {
+  async updateUsername(id: string, newUsername: string) :Promise<Boolean> {
     console.log('dans controleur', id);
-    const updateUser = await prisma.user.update({
+    let updatedUser = await this.getUserByID(parseInt(id));
+		if (await this.usernameAuthChecker(newUsername) === false){
+      updatedUser = await prisma.user.update({
       where: { id: parseInt(id) },
       data: {
         username: newUsername,
       },
     });
+    return true;
+  }
+    return false;
+  }
+
+  async updatePassword(id: string, newPassword: string) {
+    console.log('dans controleur', id);
+	let hashedPwd = await this.passwordHasher(newPassword)
+    const updateUser = await prisma.user.update({
+      where: { id: parseInt(id) },
+      data: {
+        password: hashedPwd,
+      },
+    });
     return updateUser;
   }
+
+  async updateMail(id: string, newMail: string) {
+   // console.log('dans controleur', id);
+    const updateUser = await prisma.user.update({
+      where: { id: parseInt(id) },
+      data: {
+        email: newMail,
+      },
+    });
+    return updateUser;
+  }
+
+  async mailChecker(mail: string): Promise<Boolean>{
+		const tmpUser = await this.getUserByEmail(mail);
+		if (tmpUser)
+			return false;
+		return (true);
+	}
+
+	async FortyTwoMailCheck(mail: string) : Promise<Boolean>{
+		const str = mail.split('@').slice(1);
+		if (str.includes('student.42.fr'))
+			return false;
+		return true;
+	}
 
   async getPicture(id: string) {
     const User = await prisma.user.findUnique({
@@ -112,6 +153,21 @@ export class UserService {
 			);
 		return (allGames);
 	}
+  }
+
+  async getMini()
+  {
+	const ret: MiniScore[] = [];
+	const users = await prisma.user.findMany({
+		orderBy: {scoreMiniGame: 'desc'},
+	});
+	const leaderboard: MiniScore[] = users.map((user, index) => ({
+		id: user.id,
+		username: user.username,
+    scoreMiniGame: user.scoreMiniGame,
+		place: index + 1,
+	}));
+	return (leaderboard);
   }
 
   async getLeaderboard()
@@ -195,6 +251,15 @@ export class UserService {
     }
   }
 
+  async isLocal(id: string)
+  {
+    const ret = await prisma.user.findUnique({
+      where: { id: parseInt(id)},
+    });
+    if (ret)
+      return (ret.loginLoc);
+  }
+
   async updateGamePlayer(id: string)
   {
     const updateUser = await prisma.user.update({
@@ -203,6 +268,8 @@ export class UserService {
     });
     return updateUser;
   }
+
+
   // async getAchievementById(id: number) {
   //   if (id === undefined) {
   //     throw new BadRequestException('Undefined user ID');
@@ -268,6 +335,14 @@ export class UserService {
     });
   }
 
+	async getUserByEmail(email: string): Promise<User | undefined>{
+    return await prisma.user.findUnique({
+			where: {
+				email,
+			},
+		});
+	}
+
   async usernameAuthChecker(username: string) {
     const tmpUser = await this.getUserByUsername(username);
 
@@ -315,7 +390,7 @@ export class UserService {
 
 	async createLocalUser(user: AuthDto, id: number): Promise<User>{
 		let tmpUser: User;
-		if (await this.usernameAuthChecker(user.username) === true){
+		while (await this.usernameAuthChecker(user.username) === true){
 			//in case someone already have this username
 			user.username = user.username + '_';
 		}
@@ -399,9 +474,6 @@ export class UserService {
   async updateLevelExpELO(loserID: number, winnerID: number)
   {
 
-    console.log("lalaalalal:  ", winnerID);
-    console.log("iicicicicic:  ", loserID);
-    
     const updateLoser = await prisma.user.update({
       where: { id : loserID},
       data: { xp: {increment: 1},} 

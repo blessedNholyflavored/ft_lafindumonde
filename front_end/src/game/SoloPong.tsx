@@ -1,18 +1,19 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
-import { useAuth } from './components/auth/AuthProvider';
-import { WebsocketContext } from './WebsocketContext';
+import React, { useState, useRef, useEffect, useContext } from "react";
+import { useAuth } from "../components/auth/AuthProvider";
+import { WebsocketContext } from "../WebsocketContext";
+import { useNavigate } from "react-router-dom";
 
-interface PlayerScore {
-    place: number;
-    username: string;
-    scoreMiniGame: number;
-  }
-  
+interface MiniScore {
+  id: number;
+  username: string;
+  scoreMiniGame: number;
+  place: number;
+}
 
 export const MiniGame = () => {
   const [player1, setPlayer1] = useState(0);
   const [player2, setPlayer2] = useState(300);
-  const [keyCode, setKeyCode] = useState('');
+  const [keyCode, setKeyCode] = useState("");
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const mapy = 400;
   const mapx = 700;
@@ -21,45 +22,48 @@ export const MiniGame = () => {
   const [player2Point, setPoint2] = useState(0);
   const [player1tsc, setPoint1tsc] = useState(0);
   const [player2tsc, setPoint2tsc] = useState(0);
-  const [ball, setBall] = useState<{ x: number; y: number }>({ x: 350, y: 200 });
-  const [ballDir, setBallDir] = useState<{ x: number; y: number }>({ x: -1, y: 0 });
+  const [ball, setBall] = useState<{ x: number; y: number }>({
+    x: 350,
+    y: 200,
+  });
+  const [ballDir, setBallDir] = useState<{ x: number; y: number }>({
+    x: 1,
+    y: 0,
+  });
   const [end, setEnd] = useState<boolean>(false);
   const { user, setUser } = useAuth();
   const socket = useContext(WebsocketContext);
-  const [playerScores, setPlayerScores] = useState<PlayerScore[]>([]);
+  const [playerScores, setPlayerScores] = useState<MiniScore[]>([]);
 
-
+  const userId = user?.id;
+  const navigate = useNavigate();
 
   async function fetchPlayerScores() {
     try {
-      const response = await fetch(`http://localhost:3000/users/`, {
-        method: 'GET',
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/mini/${userId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
       if (!response.ok) {
-        throw new Error('Erreur lors de la récupération des scores.');
+        throw new Error("Erreur lors de la récupération des scores.");
       }
       const data = await response.json();
-      return data;
+      // console.log("DANS LEADERBOARD.TSX", data);
+      setPlayerScores(data);
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error("Erreur:", error);
       return [];
     }
   }
+  function navToProfil(id: string) {
+    navigate(`/users/profile/${id}`);
+  }
 
   useEffect(() => {
-    async function fetchScores() {
-      const scores = await fetchPlayerScores();
-      // Tri des scores dans l'ordre décroissant
-      scores.sort((a: { scoreMiniGame: number; }, b: { scoreMiniGame: number; }) => b.scoreMiniGame - a.scoreMiniGame);
-      // Attribuer les places aux joueurs
-      scores.forEach((score: { place: any; }, index: number) => {
-        score.place = index + 1;
-      });
-      setPlayerScores(scores);
-    }
-
-    fetchScores();
+    fetchPlayerScores();
   }, []);
 
   // Compteur de rebond pour le joueur 1
@@ -91,28 +95,43 @@ export const MiniGame = () => {
   useEffect(() => {
     if (end) return;
     if (ball.y >= mapy - 8 || ball.y <= 0) {
-      setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: -prevBallDir.y }));
+      setBallDir((prevBallDir: { x: number; y: number }) => ({
+        ...prevBallDir,
+        y: -prevBallDir.y,
+      }));
     }
     if (ball.x >= mapx - 8 - 10 || ball.x <= 10) {
       if (
-        (ball.x > mapx / 2 && ball.y + 8 >= player2 && ball.y <= player2 + 80) ||
+        (ball.x > mapx / 2 &&
+          ball.y + 8 >= player2 &&
+          ball.y <= player2 + 80) ||
         (ball.x < mapx / 2 && ball.y + 8 >= player1 && ball.y <= player1 + 400)
       ) {
         if (ball.y <= player2 - 20 || ball.y <= player1 - 20)
-          setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: -prevBallDir.y - 0.15 }));
+          setBallDir((prevBallDir: { x: number; y: number }) => ({
+            ...prevBallDir,
+            y: -prevBallDir.y - 0.15,
+          }));
         if (ball.y <= player2 + 20 || ball.y <= player1 + 20)
-          setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: -prevBallDir.y + 0.30 }));
-        setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, x: -prevBallDir.x }));
+          setBallDir((prevBallDir: { x: number; y: number }) => ({
+            ...prevBallDir,
+            y: -prevBallDir.y + 0.3,
+          }));
+        setBallDir((prevBallDir: { x: number; y: number }) => ({
+          ...prevBallDir,
+          x: -prevBallDir.x,
+        }));
 
-        // Incrémente le compteur de rebond du joueur 1
         if (ball.x < mapx / 2) {
           setRebounds((prevRebounds) => prevRebounds + 1);
         }
       } else if (ball.x >= mapx - 8 - 10) {
-        // La balle touche le mur de droite, arrêt du jeu
         setEnd(true);
-        socket?.emit('updateScoreMiniGame', rebounds);
-    }
+        socket?.emit("updateScoreMiniGame", rebounds);
+        setTimeout(() => {
+          fetchPlayerScores();
+        }, 500);
+      }
     }
     if (ball.x < 0) {
       ball.x = 350;
@@ -143,24 +162,8 @@ export const MiniGame = () => {
   }, []);
 
   const restartGame = () => {
-    setEnd(false);
-    setPlayer1(0);
-    setPlayer2(300);
-    setPoint1tsc(0);
-    setPoint2tsc(0);
-    setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, x: 1 }));
-    setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: 0 }));
+    window.location.reload();
   };
-
-  useEffect(() => {
-    if (player1Point >= 5 || player2Point >= 5) {
-      setEnd(true);
-      setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, x: 0 }));
-      setBallDir((prevBallDir: { x: number; y: number }) => ({ ...prevBallDir, y: 0 }));
-      setPoint1(0);
-      setPoint2(0);
-    }
-  }, [player1Point, player2Point, end, ballDir]);
 
   return (
     <div>
@@ -169,23 +172,45 @@ export const MiniGame = () => {
       <h1>
         {user?.username}: {player2}
       </h1>
-      <div style={{ textAlign: 'center', fontSize: '24px', marginBottom: '10px' }}>
+      <div
+        style={{ textAlign: "center", fontSize: "24px", marginBottom: "10px" }}
+      >
         {end && (
           <div>
-            <p>La partie est terminée. Nombre de rebonds Joueur 1 : {rebounds}</p>
+            <p>
+              La partie est terminée. Nombre de rebonds Joueur 1 : {rebounds}
+            </p>
             <button onClick={restartGame}>Recommencer</button>
           </div>
         )}
       </div>
-      <div style={{ float: 'right' }}>
+      <div style={{ float: "right" }}>
         <h2>Scores des joueurs :</h2>
-        <ul>
-          {playerScores.map((score) => (
-            <li key={score.username}>
-              {score.place} - {score.username}: {score.scoreMiniGame}
-            </li>
-          ))}
-        </ul>
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Username</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {playerScores.map((tab: MiniScore, index: number) => (
+                <tr key={index}>
+                  <td>{tab.place}</td>
+                  <td>{tab.username}</td>
+                  <td>{tab.scoreMiniGame}</td>
+                  <td>
+                    <button onClick={() => navToProfil(tab.id.toString())}>
+                      Voir Profil
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       <div
         ref={gameAreaRef}
@@ -194,8 +219,8 @@ export const MiniGame = () => {
         style={{
           width: mapx,
           height: mapy,
-          border: '7px solid black',
-          position: 'relative',
+          border: "7px solid black",
+          position: "relative",
         }}
       >
         {!end && (
@@ -203,20 +228,20 @@ export const MiniGame = () => {
             <div id="moncercle" style={{ top: ball.y, left: ball.x }}></div>
             <div
               style={{
-                position: 'absolute',
+                position: "absolute",
                 width: 10,
                 height: 400,
-                backgroundColor: 'blue',
+                backgroundColor: "blue",
                 top: player1,
                 left: 0,
               }}
             ></div>
             <div
               style={{
-                position: 'absolute',
+                position: "absolute",
                 width: 10,
                 height: 80,
-                backgroundColor: 'red',
+                backgroundColor: "red",
                 top: player2,
                 right: 0,
               }}
@@ -224,9 +249,7 @@ export const MiniGame = () => {
             <p>Compteur de rebonds: {rebounds}</p>
           </>
         )}
-    </div>
-
-       
+      </div>
     </div>
   );
 };

@@ -13,8 +13,9 @@ export enum FriendsInvitationStatus {
 export const ProfileBox = (props: any) => {
     const { id } = useParams();
     const [userr, setUserr] = useState<string | null>(null);
-    const [lvl, setLevel] = useState<number | null>(null);
-    const [xp, setXp] = useState<number | null>(null);
+    const [lvl, setLevel] = useState<string | null>(null);
+    const [xp, setXp] = useState<string | null>(null);
+    const [elo, setElo] = useState<string | null>(null);
     const [friendshipStatus, setFriendshipStatus] = useState<FriendsInvitationStatus | null>(null);
     const {user, setUser } = useAuth();
 
@@ -25,22 +26,18 @@ export const ProfileBox = (props: any) => {
 
     const fetchUserTab = async (id: string | undefined) => {
         try {
-            const response = await fetch(`http://localhost:3000/users/${id}`, {
+            const response = await fetch(`http://${window.location.hostname}:3000/users/${id}`, {
                 method: "GET",
                 credentials: 'include',
             });
 
             if (response.ok) {
                 const data = await response.json();
-                if (data.username) {
                     setUserr(data.username);
-                }
-                if (data.level) {
-                    setLevel(data.level);
-                }
-                if (data.xp) {
+                    setLevel(data.level.toString());
                     setXp(data.xp);
-                }
+                    setElo(data.ELO);
+                // }
             } else {
                 console.log("error : wrong shit");
             }
@@ -51,12 +48,8 @@ export const ProfileBox = (props: any) => {
 
 
     const fetchFriendshipStatus = async () => {
-
-        console.log("ICICICICICICII");
-        console.log("id         :", id);
-        console.log("user?id    :", user?.id);
         try {
-            const response = await fetch(`http://localhost:3000/friends/status/${user?.id}/${id}`, {
+            const response = await fetch(`http://${window.location.hostname}:3000/friends/status/${user?.id}/${id}`, {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -89,15 +82,19 @@ export const ProfileBox = (props: any) => {
         <div className="profilecard">
             <p className="username">
                 <img src={icon} className="icon" alt="icon"></img>
-                {userr}
+                username:{userr}
             </p>
             <p className="userlvl">
                 <img src={icon} className="icon" alt="icon"></img>
-                {lvl}
+                level: {lvl}
             </p>
             <p className="userxp">
                 <img src={icon} className="icon" alt="icon"></img>
-                {xp}
+                xp: {xp}
+            </p>
+            <p className="userelo">
+                <img src={icon} className="icon" alt="icon"></img>
+                rank: {elo} / 10000000  
             </p>
             
             {renderFriendshipButton()}

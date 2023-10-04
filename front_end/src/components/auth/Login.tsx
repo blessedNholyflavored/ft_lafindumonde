@@ -19,7 +19,7 @@ export function Login() {
 
   // call the login with 42 strategy from back end
   const fortyTwoLogin = () => {
-    window.location.href = "http://localhost:3000/auth/login42";
+    window.location.href = `http://${window.location.hostname}:3000/auth/login42`;
   };
 
   const register = () => {

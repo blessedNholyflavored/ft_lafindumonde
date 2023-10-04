@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./../../App.css";
 import "./../../style/Profile.css";
 import "./../../style/Login.css";
@@ -6,6 +6,7 @@ import logo from "../../img/logo42.png";
 import icon from "../../img/buttoncomp.png";
 import champi from "../../img/champi.png";
 import { useAuth } from "./AuthProvider";
+import Notify from "../../Notify";
 import { useNavigate } from "react-router-dom";
 
 export function Register() {
@@ -13,24 +14,33 @@ export function Register() {
   const [inputUsername, setInputUsername] = useState("");
   const [inputPassword, setInputPassword] = useState("");
   const [inputEmail, setInputEmail] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
+  const [notifyMSG, setNotifyMSG] = useState<string>("");
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const [sender] = useState<number>(0);
   const navigate = useNavigate();
 
   // check if user is already logged in
-  if (user) {
-    navigate("/");
-  }
-
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [navigate, user]);
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
   // sending input to back_end to verify and register
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     let dogimg;
+
     await fetch(`https://dog.ceo/api/breeds/image/random`, {
       method: "GET",
     })
       .then((response) => response.json())
       .then((responseData) => (dogimg = responseData.message.toString()))
       .catch(() => (dogimg = champi.toString()));
-    const res = await fetch(`http://localhost:3000/auth/register`, {
+    const res = await fetch(`http://${window.location.hostname}:3000/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -43,10 +53,27 @@ export function Register() {
       }),
       credentials: "include",
     });
-    if (!res.ok) {
-      window.alert("Verify your input");
+    if (res.status === 409) {
+      setShowNotification(true);
+      setNotifyMSG("Email is already taken !");
+      setNotifyType(3);
       setInputPassword("");
       setInputUsername("");
+      setInputEmail("");
+    } else if (res.status === 406) {
+      setShowNotification(true);
+      setNotifyMSG("You must use 42 LogIn system !");
+      setNotifyType(3);
+      setInputPassword("");
+      setInputUsername("");
+      setInputEmail("");
+    } else if (!res.ok) {
+      setShowNotification(true);
+      setNotifyMSG("Something is wrong with your inputs !");
+      setNotifyType(3);
+      setInputPassword("");
+      setInputUsername("");
+      setInputEmail("");
     } else {
       const data = await res.json();
       setUser(data.user);
@@ -54,16 +81,24 @@ export function Register() {
     }
   };
 
-  const returnHome = () => {
-    navigate("/");
-  };
+  // const returnHome = () => {
+  //   navigate("/");
+  // };
 
   const fortyTwoLogin = () => {
-    window.location.href = "http://localhost:3000/auth/login42";
+    window.location.href = `http://${window.location.hostname}:3000/auth/login42`;
   };
 
   return (
     <div className="Login">
+      {showNotification && (
+        <Notify
+          message={notifyMSG}
+          type={notifyType}
+          senderId={sender}
+          onClose={handleCloseNotification}
+        />
+      )}
       <div className="logoAuth">
         <img src={logo} className="logo" alt="icon" />
       </div>
@@ -83,6 +118,7 @@ export function Register() {
                 value={inputUsername}
                 placeholder="toto"
                 minLength={3}
+                maxLength={10}
                 required={true}
                 onChange={(e) => setInputUsername(e.target.value)}
               />
