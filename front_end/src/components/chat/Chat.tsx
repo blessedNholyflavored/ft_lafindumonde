@@ -487,6 +487,13 @@ export const Chat = () => {
   };
 
   const joinRoom = async () => {
+    if ((await checkRoomAlreadyExist()) === false)
+    {
+      setShowNotification(true);
+      setNotifyMSG("Room n'existe pas !");
+      setNotifyType(2);
+      return "";
+    }
     if ((await checkIfAlreadyIn()) === true) {
       setShowNotification(true);
       setNotifyMSG("Tu es deja dans le channel !");
