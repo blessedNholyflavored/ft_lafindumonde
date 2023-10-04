@@ -62,6 +62,9 @@ export const SaveTotp: React.FC = () => {
                   type="text"
                   value={receivedCode}
                   placeholder="000000"
+                  minLength={6}
+                  maxLength={6}
+                  required
                   onChange={(e) => setReceivedCode(e.target.value)}
                 />
               </label>

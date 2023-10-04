@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./../../App.css";
 import "./../../style/Profile.css";
 import "./../../style/Login.css";
@@ -19,9 +19,11 @@ export function LocalLogin() {
   const navigate = useNavigate();
 
   // if user is already set
-  if (user) {
-    navigate("/");
-  }
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [navigate, user]);
 
   const handleCloseNotification = () => {
     setShowNotification(false);
@@ -30,17 +32,20 @@ export function LocalLogin() {
   // send inputs to back_end for validation
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch(`http://${window.location.hostname}:3000/auth/local_login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: inputUsername,
-        password: inputPassword,
-      }),
-      credentials: "include",
-    });
+    const res = await fetch(
+      `http://${window.location.hostname}:3000/auth/local_login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: inputUsername,
+          password: inputPassword,
+        }),
+        credentials: "include",
+      }
+    );
     if (res.status === 404) {
       setShowNotification(true);
       setNotifyMSG("This username doesn't exist");
