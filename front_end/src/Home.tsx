@@ -12,6 +12,7 @@ import folder from "./img/folder0.png";
 import folder1 from "./img/folder2.png";
 import folder2 from "./img/folder3.png";
 import folder0 from "./img/folder1.png";
+import folder6 from "./img/folder4.png";
 import nav from "./img/buttoncomp.png";
 import gaming from "./img/gamingpreview.png";
 import love from "./img/42lov.png";
@@ -177,32 +178,16 @@ const Home: React.FC<HomeProps> = () => {
         </main>
         <nav>
           <ul>
-            {/* <li className="menu-item">
-                    <a onClick={() => handlePlayerSelect('1')}>
-                        <img src={folder4} alt="Menu 1"/>
-                        <p  >Matchmaking</p>
-                       {(queueCount > 0 || queueCountBonus > 0) &&  (
-    						<p>En attente d'autres joueurs...</p>
-  						)}
-  						{queueCount === 2 && (
-    						<p>La partie commence entre Ldinaut et Mcouppe !</p>
-  						)}
-              { inGame === 1 && (
-                <p>Deja en game mon reuf !</p>
-              )}
-                    </a>
-                </li> */}
-            {/* <li className="menu-item">
-                    <a onClick={() => handlePlayerSelect222('1')}>
-                        <img src={folder3} alt="Menu 2"/>
-                        <p  >Big Game</p>
-                        
-                    </a>
-                </li> */}
+          <li className="menu-item">
+              <a onClick={navigateToHome}>
+                <img src={folder6} alt="Menu 3" />
+                <p>Home</p>
+              </a>
+            </li>
             <li className="menu-item">
-              <a onClick={() => NavToSoloPong()}>
+              <a onClick={() => navToGamePage()}>
                 <img src={folder2} alt="Menu 3" />
-                <p>Tiny Game</p>
+                <p>Game</p>
               </a>
             </li>
             <li className="menu-item">

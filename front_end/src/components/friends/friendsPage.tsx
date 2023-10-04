@@ -14,6 +14,9 @@ import folder3 from "./../../img/folder4.png";
 import folder4 from "./../../img/folder5.png";
 import folder0 from "./../../img/folder1.png";
 import folder6 from "./../../img/folder6.png";
+import icon from "../../img/buttoncomp.png"
+import '../../style/Profile.css'
+import '../../style/Home.css'
 
 interface friendsSend {
   id: string;
@@ -475,6 +478,7 @@ export const FriendsPage: React.FC = () => {
       </header>
       <div className="flex-bg">
         <main>
+
           <div>
             {showNotification && (
               <Notify
@@ -486,8 +490,18 @@ export const FriendsPage: React.FC = () => {
             )}
           </div>
 
+          <div className="fullpage1">
+        <div className="navbarbox">
+        <img src={icon}  alt="icon" />
+           <h1> FRIENDS </h1>
+           </div>
+           <div className="testingrow">
+
+           <div className="boxrowtest2">
+                <div className="navbarsmallbox">
+                    <p className="boxtitle"> Friend list </p>
+                </div>
           <ul>
-            <h1>Liste des amis :</h1>
             {friends.length > 0 ? (
               friends.map((friend, index) => (
                 <div key={index}>
@@ -529,8 +543,12 @@ export const FriendsPage: React.FC = () => {
               <div>ptdr t'as pas de pote</div>
             )}
           </ul>
+          </div>
+          <div className="boxrowtest2">
+                <div className="navbarsmallbox">
+                    <p className="boxtitle"> Blocked list </p>
+                </div>
           <ul>
-            <h1>Liste des gens que t'aimes po ! :</h1>
             {blocked.length > 0 ? (
               blocked.map((blocked, index) => (
                 <div key={index}>
@@ -557,56 +575,70 @@ export const FriendsPage: React.FC = () => {
               <div>tu aimes tlm</div>
             )}
           </ul>
-
-          <ul>
-            <h1>Liste des gens en ligne :</h1>
+          </div>
+          <div className="boxrowtest2">
+                <div className="navbarsmallbox">
+                    <p className="boxtitle"> Who's online? </p>
+                </div>
+                <div className="online">
             {onlinePlayers.length > 0 && user ? (
               onlinePlayers.map((friend, index) => (
                 <div key={index}>
                   <div>{friend.username}</div>
-                  <button onClick={() => addSomeone(friend.id.toString())}>
-                    Ajouter
+                  <button className="onlinebttn" onClick={() => addSomeone(friend.id.toString())}>
+                    add
                   </button>
-                  <button
+                  <button className="onlinebttn"
                     onClick={() =>
                       BlockFriend(user.id.toString(), friend.id.toString())
                     }
                   >
-                    Bloquer
+                    block
                   </button>
-                  <button onClick={() => navToProfil(friend.id.toString())}>
-                    Voir Profile
+                  <button className="onlinebttn" onClick={() => navToProfil(friend.id.toString())}>
+                    see profile
                   </button>
-                  <button onClick={() => messagePage(friend.id.toString())}>
-                    Envoyer un message
+                  <button className="onlinebttn" onClick={() => messagePage(friend.id.toString())}>
+                    send a message
                   </button>
                 </div>
               ))
             ) : (
               <div>ptdr ya personne</div>
             )}
-          </ul>
-          <ul>
-            <h1>Liste des requetes en attente recues :</h1>
+          </div>
+          </div>
+          <div className="boxrowtest2">
+                <div className="navbarsmallbox">
+                    <p className="boxtitle"> Friend requests </p>
+                </div>
+          <div className="requests">
             {friendsRequest.map((friend) => (
               <div>
                 {friend.status === "PENDING" && !friend.isBlocked && (
-                  <li key={friend.id}>
-                    <div>ID: {friend.id}</div>
-                    <div>Status: {friend.status}</div>
+                  <div className="requestinfo" key={friend.id}>
+                    {/* <div>ID: {friend.id}</div> */}
                     <div>Sender ID: {user?.username}</div>
-                    <div>recipientId ID: {friend.username}</div>
-                    <button onClick={() => AcceptFriend(friend.id)}>
-                      Accepter
+                    <div style={{fontStyle: "italic" , fontSize: 12}}>Status: {friend.status}</div>
+                    {/* <div>recipientId ID: {friend.username}</div> */}
+                    <div className="bttnholder">
+                    <button className="acceptbutton" onClick={() => AcceptFriend(friend.id)}>
+                      accept
                     </button>
-                    <button onClick={() => RefuseFriend(friend.id)}>
-                      Refuser
+                    <button className="deletebutton" onClick={() => RefuseFriend(friend.id)}>
+                      delete
                     </button>
-                  </li>
+                  </div>
+                  </div>
                 )}
               </div>
             ))}
-          </ul>
+          </div>
+          </div>
+          {/* <div className="boxrowtest">
+                <div className="navbarsmallbox">
+                    <p className="boxtitle"> INFO </p>
+                </div>
           <ul>
             <h1>Liste des requetes en attente envoyees :</h1>
             {friendsSend.map((friend) => (
@@ -625,6 +657,9 @@ export const FriendsPage: React.FC = () => {
               </div>
             ))}
           </ul>
+          </div> */}
+          </div>
+          </div>
         </main>
         <nav>
           <ul>
@@ -635,32 +670,9 @@ export const FriendsPage: React.FC = () => {
               </a>
             </li>
             <li className="menu-item">
-              {/* <a > onClick={() => handlePlayerSelect('1')}> */}
-              <a>
-                <img src={folder4} alt="Menu 1" />
-                <p>Matchmaking</p>
-                {/* {(queueCount > 0 || queueCountBonus > 0) &&  (
-    						<p>En attente d'autres joueurs...</p>
-  						)}
-  						{queueCount === 2 && (
-    						<p>La partie commence entre Ldinaut et Mcouppe !</p>
-  						)}
-              { inGame === 1 && (
-                <p>Deja en game mon reuf !</p>
-              )} */}
-              </a>
-            </li>
-            <li className="menu-item">
-              {/* <a onClick={() => handlePlayerSelect222('1')}> */}
-              <a>
-                <img src={folder3} alt="Menu 2" />
-                <p>Big Game</p>
-              </a>
-            </li>
-            <li className="menu-item">
               <a onClick={() => NavToSoloPong()}>
                 <img src={folder2} alt="Menu 3" />
-                <p>Tiny Game</p>
+                <p>Game</p>
               </a>
             </li>
             <li className="menu-item">
