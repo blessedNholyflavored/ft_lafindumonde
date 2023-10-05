@@ -14,6 +14,7 @@ import folder0 from "./img/folder1.png";
 import folder6 from "./img/folder6.png";
 
 import "./style/Profile.css";
+import "./style/Home.css";
 import "./style/Leaderboard.css";
 
 interface PlayerScore {
@@ -71,6 +72,9 @@ export const Classement = () => {
   function navToProfil(id: string) {
     navigate(`/users/profile/${id}`);
   }
+  const navigateToHome = () => {
+    navigate("/");
+  };
 
   const navigateToProfPage = () => {
     navigate(`/users/profile/${user?.id}`);
@@ -80,16 +84,16 @@ export const Classement = () => {
     navigate("/chat");
   };
 
-  const NavToSoloPong = () => {
-    navigate("/solopong");
-  };
 
   const navigateToFriends = () => {
     navigate("/friends");
   };
 
-  const navigateToHome = () => {
-    navigate("/");
+  const navigateToSettings = () => {
+    navigate("/settings");
+  };
+  const navToGamePage = () => {
+    navigate("/gamePage");
   };
 
   return (
@@ -100,12 +104,18 @@ export const Classement = () => {
         </div>
         <h1>TRANSCENDENCE</h1>
       </header>
+
       <div className="flex-bg">
+        <main>
+        
         <div className="fullpage">
           <div className="navbarbox">
             <img src={icon} alt="icon" />
             <h1> LEADERBOARD </h1>
           </div>
+
+          
+
           <div className="leaderboard">
             <table>
               <thead>
@@ -113,7 +123,7 @@ export const Classement = () => {
                   <th>Rank</th>
                   <th>Username</th>
                   <th>Elo</th>
-                  <th>Rank</th>
+                  <th>Division</th>
                 </tr>
               </thead>
               <tbody>
@@ -124,7 +134,7 @@ export const Classement = () => {
                     <td>{tab.ELO}</td>
                     <td>{tab.rank}</td>
                     <td>
-                      <button onClick={() => navToProfil(tab.id.toString())}>
+                      <button className="buttonleader" onClick={() => navToProfil(tab.id.toString())}>
                         see profile
                       </button>
                     </td>
@@ -133,7 +143,9 @@ export const Classement = () => {
               </tbody>
             </table>
           </div>
-        </div>
+          </div>
+          
+        </main>
         <nav>
           <ul>
             <li className="menu-item">
@@ -143,7 +155,7 @@ export const Classement = () => {
               </a>
             </li>
             <li className="menu-item">
-              <a onClick={() => NavToSoloPong()}>
+              <a onClick={() => navToGamePage()}>
                 <img src={folder2} alt="Menu 3" />
                 <p>Game</p>
               </a>
@@ -152,6 +164,12 @@ export const Classement = () => {
               <a onClick={navigateToProfPage}>
                 <img src={folder1} alt="Menu 3" />
                 <p>Profile</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToSettings}>
+                <img src={folder} alt="Menu 3" />
+                <p>Settings</p>
               </a>
             </li>
             <li className="menu-item">
