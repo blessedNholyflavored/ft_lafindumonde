@@ -21,12 +21,12 @@ export const ProfileBox = (props: any) => {
     useState<FriendsInvitationStatus | null>(null);
   const { user, setUser } = useAuth();
   const socket = useContext(WebsocketContext);
+  const [rank, setRank] = useState<string>("");
 
   useEffect(() => {
     fetchUserTab(id);
     fetchFriendshipStatus();
-
-
+    fetchDivision();
   }, []);
 
   const fetchUserTab = async (id: string | undefined) => {
@@ -90,6 +90,24 @@ export const ProfileBox = (props: any) => {
     }
   };
 
+  const fetchDivision = async () => {
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/${id}/rank`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        const data = await response.text();
+        setRank(data);
+      }
+    } catch (error) {
+      console.error("Error fetching usernames:", error);
+    }
+  };
+
   return (
     <div className="profilecard">
       <p className="username">
@@ -106,7 +124,7 @@ export const ProfileBox = (props: any) => {
       </p>
       <p className="userelo">
         <img src={icon} className="icon" alt="icon"></img>
-        rank: {elo} / 10000000
+        rank: {elo} / {rank}
       </p>
 
       {renderFriendshipButton()}
