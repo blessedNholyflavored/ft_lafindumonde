@@ -1,63 +1,60 @@
-version: '3.9'
+version: "3.9"
 
 services:
-
   back:
-      image: back
-      container_name: back
-      networks: 
-              - transcendence
-      build:
-            context: back_end/
-            dockerfile: Dockerfile
-      env_file : back_end/.env
-      volumes:
-            - ./back_end:/usr/src/app
-            - back_node_modules:/usr/src/app/node_modules
-      ports:
-            - 3000:3000
-            - 127.0.0.1:5555:5555
-      depends_on:
-        postgres:
-                condition: service_healthy
-      
+    image: back
+    container_name: back
+    networks:
+      - transcendence
+    build:
+      context: back_end/
+      dockerfile: Dockerfile
+    env_file: back_end/.env
+    volumes:
+      - ./back_end:/usr/src/app
+      - back_node_modules:/usr/src/app/node_modules
+    ports:
+      - 3000:3000
+      - 127.0.0.1:5555:5555
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   postgres:
-      image: postgres:latest
-      container_name: postgres
-      networks: 
-              - transcendence
-      env_file : back_end/.env
-      volumes:
-              - my-postgres-data:/var/lib/postgresql/data
-      ports:
-              - 5432:5432
-      restart: always
-      healthcheck:
-              test: ["CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER"]
-              interval: 10s
-              timeout: 5s
-              retries: 5     
-
+    image: postgres:latest
+    container_name: postgres
+    networks:
+      - transcendence
+    env_file: back_end/.env
+    volumes:
+      - my-postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   front:
-      image: front
-      container_name: front
-      networks: 
-              - transcendence
-      build:
-            context: front_end/
-            dockerfile: Dockerfile
-      #env_file : front_end/.env
-      volumes:
-            - ./front_end:/usr/src/app
-            - front_node_modules:/usr/src/app/node_modules
-      ports:
-            - 8080:8080
+    image: front
+    container_name: front
+    networks:
+      - transcendence
+    build:
+      context: front_end/
+      dockerfile: Dockerfile
+    #env_file : front_end/.env
+    volumes:
+      - ./front_end:/usr/src/app
+      - front_node_modules:/usr/src/app/node_modules
+    ports:
+      - 8080:8080
 
 networks:
   transcendence:
-                    
+
 volumes:
   front_node_modules:
   back_node_modules:
