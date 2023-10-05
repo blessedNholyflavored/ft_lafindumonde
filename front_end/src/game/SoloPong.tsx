@@ -33,10 +33,30 @@ export const MiniGame = () => {
   const [end, setEnd] = useState<boolean>(false);
   const { user, setUser } = useAuth();
   const socket = useContext(WebsocketContext);
+  const [countdown, setCountdown] = useState(3);
   const [playerScores, setPlayerScores] = useState<MiniScore[]>([]);
+  const [counter, setCounter] = useState(0);
 
   const userId = user?.id;
   const navigate = useNavigate();
+
+  const startCountdown = () => {
+    const countdownInterval = setInterval(() => {
+      setCountdown((prevCountdown) => prevCountdown - 1);
+    }, 1000);
+
+    setTimeout(() => {
+      clearInterval(countdownInterval);
+      setCounter(1);
+
+    }, 4000);
+  };
+  useEffect(() => {
+    if (countdown !== 0 && counter === 0) {
+      startCountdown();
+    }
+    console.log("ooooooooo:   ", counter);
+  }, [counter]);
 
   async function fetchPlayerScores() {
     try {
@@ -83,83 +103,89 @@ export const MiniGame = () => {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setBall((prevBallPos: { x: number; y: number }) => ({
-        x: prevBallPos.x + ballDir.x * ballSpeed,
-        y: prevBallPos.y + ballDir.y * ballSpeed,
-      }));
-    }, 1000 / 60);
-    return () => clearInterval(interval);
-  }, [ballDir]);
+    if (counter === 1) {
+      const interval = setInterval(() => {
+        setBall((prevBallPos: { x: number; y: number }) => ({
+          x: prevBallPos.x + ballDir.x * ballSpeed,
+          y: prevBallPos.y + ballDir.y * ballSpeed,
+        }));
+      }, 1000 / 60);
+      return () => clearInterval(interval);
+    }
+  }, [ballDir, counter]);
 
   useEffect(() => {
-    if (end) return;
-    if (ball.y >= mapy - 8 || ball.y <= 0) {
-      setBallDir((prevBallDir: { x: number; y: number }) => ({
-        ...prevBallDir,
-        y: -prevBallDir.y,
-      }));
-    }
-    if (ball.x >= mapx - 8 - 10 || ball.x <= 10) {
-      if (
-        (ball.x > mapx / 2 &&
-          ball.y + 8 >= player2 &&
-          ball.y <= player2 + 80) ||
-        (ball.x < mapx / 2 && ball.y + 8 >= player1 && ball.y <= player1 + 400)
-      ) {
-        if (ball.y <= player2 - 20 || ball.y <= player1 - 20)
-          setBallDir((prevBallDir: { x: number; y: number }) => ({
-            ...prevBallDir,
-            y: -prevBallDir.y - 0.15,
-          }));
-        if (ball.y <= player2 + 20 || ball.y <= player1 + 20)
-          setBallDir((prevBallDir: { x: number; y: number }) => ({
-            ...prevBallDir,
-            y: -prevBallDir.y + 0.3,
-          }));
+    if (counter === 1) {
+      if (end) return;
+      if (ball.y >= mapy - 8 || ball.y <= 0) {
         setBallDir((prevBallDir: { x: number; y: number }) => ({
           ...prevBallDir,
-          x: -prevBallDir.x,
+          y: -prevBallDir.y,
         }));
+      }
+      if (ball.x >= mapx - 8 - 10 || ball.x <= 10) {
+        if (
+          (ball.x > mapx / 2 &&
+            ball.y + 8 >= player2 &&
+            ball.y <= player2 + 80) ||
+          (ball.x < mapx / 2 &&
+            ball.y + 8 >= player1 &&
+            ball.y <= player1 + 400)
+        ) {
+          if (ball.y <= player2 - 20 || ball.y <= player1 - 20)
+            setBallDir((prevBallDir: { x: number; y: number }) => ({
+              ...prevBallDir,
+              y: -prevBallDir.y - 0.25,
+            }));
+          if (ball.y <= player2 + 20 || ball.y <= player1 + 20)
+            setBallDir((prevBallDir: { x: number; y: number }) => ({
+              ...prevBallDir,
+              y: -prevBallDir.y + 0.3,
+            }));
+          setBallDir((prevBallDir: { x: number; y: number }) => ({
+            ...prevBallDir,
+            x: -prevBallDir.x,
+          }));
 
-        if (ball.x < mapx / 2) {
-          setRebounds((prevRebounds) => prevRebounds + 1);
+          if (ball.x < mapx / 2) {
+            setRebounds((prevRebounds) => prevRebounds + 1);
+          }
+        } else if (ball.x >= mapx - 8 - 10) {
+          setEnd(true);
+          socket?.emit("updateScoreMiniGame", rebounds);
+          setTimeout(() => {
+            fetchPlayerScores();
+          }, 500);
         }
-      } else if (ball.x >= mapx - 8 - 10) {
-        setEnd(true);
-        socket?.emit("updateScoreMiniGame", rebounds);
-        setTimeout(() => {
-          fetchPlayerScores();
-        }, 500);
+      }
+      if (ball.x < 0) {
+        ball.x = 350;
+        ball.y = 200;
+        setBall((prevBallPos: { x: number; y: number }) => ({
+          x: 350,
+          y: 200,
+        }));
+        setPoint2((prevScore: number) => prevScore + 1);
+        setPoint2tsc((prevScore: number) => prevScore + 1);
+      }
+      if (ball.x >= mapx) {
+        ball.x = 350;
+        ball.y = 200;
+        setBall((prevBallPos: { x: number; y: number }) => ({
+          x: 350,
+          y: 200,
+        }));
+        setPoint1((prevScore: number) => prevScore + 1);
+        setPoint1tsc((prevScore: number) => prevScore + 1);
       }
     }
-    if (ball.x < 0) {
-      ball.x = 350;
-      ball.y = 200;
-      setBall((prevBallPos: { x: number; y: number }) => ({
-        x: 350,
-        y: 200,
-      }));
-      setPoint2((prevScore: number) => prevScore + 1);
-      setPoint2tsc((prevScore: number) => prevScore + 1);
-    }
-    if (ball.x >= mapx) {
-      ball.x = 350;
-      ball.y = 200;
-      setBall((prevBallPos: { x: number; y: number }) => ({
-        x: 350,
-        y: 200,
-      }));
-      setPoint1((prevScore: number) => prevScore + 1);
-      setPoint1tsc((prevScore: number) => prevScore + 1);
-    }
-  }, [ball]);
+  }, [ball, counter]);
 
   useEffect(() => {
     if (gameAreaRef.current) {
       gameAreaRef.current.focus();
     }
-  }, []);
+  }, [counter]);
 
   const restartGame = () => {
     window.location.reload();
@@ -168,10 +194,9 @@ export const MiniGame = () => {
   return (
     <div>
       <p>Hello {user?.username}</p>
-      <h1>KeyCode: {keyCode}</h1>
-      <h1>
-        {user?.username}: {player2}
-      </h1>
+      {countdown > 1 && <div className="countdown">{countdown}</div>}
+      {countdown === 1 && <div className="countdown ready">Ready ?</div>}
+      {countdown === 0 && <div className="countdown start">Start</div>}
       <div
         style={{ textAlign: "center", fontSize: "24px", marginBottom: "10px" }}
       >
@@ -212,6 +237,7 @@ export const MiniGame = () => {
           </table>
         </div>
       </div>
+      { countdown <= 0 && (
       <div
         ref={gameAreaRef}
         tabIndex={0}
@@ -250,6 +276,7 @@ export const MiniGame = () => {
           </>
         )}
       </div>
+      )}
     </div>
   );
 };
