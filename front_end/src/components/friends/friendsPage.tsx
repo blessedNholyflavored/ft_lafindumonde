@@ -192,6 +192,8 @@ export const FriendsPage: React.FC = () => {
           );
           setBlocked(friendInfo);
         }
+        else
+        setBlocked(data);
       } else {
         console.log("error: HTTP request failed");
       }
@@ -201,6 +203,7 @@ export const FriendsPage: React.FC = () => {
   };
 
   const fetchOnlinePlayersList = async () => {
+
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/friends/online/${user?.id}`,
@@ -209,7 +212,7 @@ export const FriendsPage: React.FC = () => {
           credentials: "include",
         }
       );
-
+      
       if (response.ok) {
         const data = await response.json();
         if (data.length > 0) {
@@ -222,8 +225,9 @@ export const FriendsPage: React.FC = () => {
             })
           );
           setOnlinePlayers(friendInfo);
-          console.log(friendInfo);
         }
+        else
+          setOnlinePlayers(data);
       } else {
         console.log("error: HTTP request failed");
       }
@@ -232,6 +236,29 @@ export const FriendsPage: React.FC = () => {
     }
   };
   useEffect(() => {
+    if (socket)
+    {
+      socket.on("SomeoneGoOnlineOrOffline", () => {
+      setTimeout(() => {
+        fetchOnlinePlayers();
+      }, 1000);
+      })
+    }
+
+    if (socket)
+    {
+      socket.on("refreshListFriendPage", () => {
+      setTimeout(() => {
+        fetchScores();
+        fetchRequest();
+        fetchFriends();
+        fetchBlocked();
+        fetchOnlinePlayers();
+
+      }, 1000);
+      })
+    }
+
     async function fetchScores() {
       const scores = await fetchfriendsSend();
     }
@@ -276,7 +303,7 @@ export const FriendsPage: React.FC = () => {
     }
   }
 
-  async function AcceptFriend(id: string) {
+  async function AcceptFriend(id: string, sender: number) {
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/friends/accept/${id}`,
@@ -291,10 +318,11 @@ export const FriendsPage: React.FC = () => {
     } catch (error) {
       console.error("Erreur:", error);
     }
-    window.location.reload();
-  }
+    setTimeout(() => {
+      socket.emit("reloadListFriendPage", sender);
+    }, 300);  }
 
-  async function RefuseFriend(id: string) {
+  async function RefuseFriend(id: string, sender: number) {
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/friends/refuse/${id}`,
@@ -309,8 +337,9 @@ export const FriendsPage: React.FC = () => {
     } catch (error) {
       console.error("Erreur:", error);
     }
-    window.location.reload();
-  }
+    setTimeout(() => {
+      socket.emit("reloadListFriendPage", sender);
+    }, 300);  }
 
   async function deleteFriend(sender: string, recipient: string) {
     try {
@@ -327,8 +356,9 @@ export const FriendsPage: React.FC = () => {
     } catch (error) {
       console.error("Erreur:", error);
     }
-    window.location.reload();
-  }
+    setTimeout(() => {
+      socket.emit("reloadListFriendPage", recipient);
+    }, 300);  }
 
   async function removeBlocked(sender: string, recipient: string) {
     try {
@@ -345,8 +375,9 @@ export const FriendsPage: React.FC = () => {
     } catch (error) {
       console.error("Erreur:", error);
     }
-    window.location.reload();
-  }
+    setTimeout(() => {
+      socket.emit("reloadListFriendPage", 0);
+    }, 300);  }
 
   async function BlockFriend(sender: string, recipient: string) {
     deleteFriend(sender, recipient);
@@ -364,8 +395,9 @@ export const FriendsPage: React.FC = () => {
     } catch (error) {
       console.error("Erreur:", error);
     }
-    window.location.reload();
-  }
+    setTimeout(() => {
+      socket.emit("reloadListFriendPage", recipient);
+    }, 300);  }
 
   async function checkBlocked(senderId: string, recipientId: string) {
     try {
@@ -410,6 +442,9 @@ export const FriendsPage: React.FC = () => {
         // if (user && await checkBlockedForNotify(user?.id.toString(), recipientId) === false)
         // socket.emit('notifyFriendShip', id);
         alert("Friendship created successfully.");
+        setTimeout(() => {
+          socket.emit("reloadListFriendPage", recipientId);
+        }, 300);
       } else {
         console.error("Error creating friendship: request is pending");
         alert("Error creating friendship: request is pending");
@@ -659,13 +694,13 @@ export const FriendsPage: React.FC = () => {
                           <div className="bttnholder">
                             <button
                               className="acceptbutton"
-                              onClick={() => AcceptFriend(friend.id)}
+                              onClick={() => AcceptFriend(friend.id, friend.senderId)}
                             >
                               accept
                             </button>
                             <button
                               className="deletebutton"
-                              onClick={() => RefuseFriend(friend.id)}
+                              onClick={() => RefuseFriend(friend.id, friend.senderId)}
                             >
                               delete
                             </button>
@@ -676,7 +711,7 @@ export const FriendsPage: React.FC = () => {
                   ))}
                 </div>
               </div>
-              {/* <div className="boxrowtest">
+              <div className="boxrowtest">
                 <div className="navbarsmallbox">
                     <p className="boxtitle"> INFO </p>
                 </div>
@@ -690,7 +725,7 @@ export const FriendsPage: React.FC = () => {
                     <div>Status: {friend.status}</div>
                     <div>Sender ID: {user?.username}</div>
                     <div>recipientId ID: {friend.username}</div>
-                    <button onClick={() => RefuseFriend(friend.id)}>
+                    <button onClick={() => RefuseFriend(friend.id, friend.recipientId)}>
                       Cancel
                     </button>
                   </li>
@@ -698,7 +733,7 @@ export const FriendsPage: React.FC = () => {
               </div>
             ))}
           </ul>
-          </div> */}
+          </div>
             </div>
           </div>
         </main>
