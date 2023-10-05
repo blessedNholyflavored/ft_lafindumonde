@@ -19,7 +19,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UserService } from './user.service';
-import { AuthService } from '../auth/auth.service';
 import { User } from '@prisma/client';
 import * as path from 'path';
 import { join } from 'path';
@@ -194,6 +193,31 @@ export class UsersController {
   {
     const data = await this.userService.isLocal(id);
     return (data);
+  }
+
+  @Get("/:id/rank")
+  async calculDivision(@Param('id') id: string): Promise<string> {
+    const user = await this.userService.getUserByID(parseInt(id));
+    let ret: string;
+
+    if (user.ELO >= 0 && user.ELO <= 1029) {
+      ret = "iron";
+    } else if (user.ELO >= 1030 && user.ELO <= 1089) {
+      ret = "silver";
+    } else if (user.ELO >= 1090 && user.ELO <= 1149) {
+      ret = "gold";
+    } else if (user.ELO >= 1150 && user.ELO <= 1219) {
+      ret = "platinum";
+    } else if (user.ELO >= 1220 && user.ELO <= 1299) {
+      ret = "diamond";
+    } else if (user.ELO >= 1300 && user.ELO <= 1399) {
+      ret = "master";
+    } else if (user.ELO >= 1400) {
+      ret = "top challenger";
+    } else {
+      ret = "no rank";
+    }
+    return ret;
   }
 
   // @Get('/scoresMG')
