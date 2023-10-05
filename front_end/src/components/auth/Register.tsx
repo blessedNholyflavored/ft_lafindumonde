@@ -29,6 +29,11 @@ export function Register() {
   const handleCloseNotification = () => {
     setShowNotification(false);
   };
+
+  const localSignIn = () => {
+    navigate("/local_login");
+  };
+
   // sending input to back_end to verify and register
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,19 +45,22 @@ export function Register() {
       .then((response) => response.json())
       .then((responseData) => (dogimg = responseData.message.toString()))
       .catch(() => (dogimg = champi.toString()));
-    const res = await fetch(`http://${window.location.hostname}:3000/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: inputEmail,
-        password: inputPassword,
-        username: inputUsername,
-        pictureURL: dogimg,
-      }),
-      credentials: "include",
-    });
+    const res = await fetch(
+      `http://${window.location.hostname}:3000/auth/register`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: inputEmail,
+          password: inputPassword,
+          username: inputUsername,
+          pictureURL: dogimg,
+        }),
+        credentials: "include",
+      }
+    );
     if (res.status === 409) {
       setShowNotification(true);
       setNotifyMSG("Email is already taken !");
@@ -60,6 +68,7 @@ export function Register() {
       setInputPassword("");
       setInputUsername("");
       setInputEmail("");
+      //TODO: add a return to general login or SignIn only in this case
     } else if (res.status === 406) {
       setShowNotification(true);
       setNotifyMSG("You must use 42 LogIn system !");
@@ -159,6 +168,15 @@ export function Register() {
                 src="./login.png"
                 onClick={fortyTwoLogin}
                 alt="login with 42 button"
+              />
+            </div>
+            <div className="otherLoginBox">
+              <p>I already have a local account !</p>
+              <img
+                src="./blue_login.png"
+                className="signinbtn"
+                onClick={localSignIn}
+                alt="local log in button"
               />
             </div>
           </div>
