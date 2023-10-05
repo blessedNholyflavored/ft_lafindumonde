@@ -720,7 +720,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
         let user1;
         const NuserId = Number(userId);
         this.playerConnections.forEach((value, key) => {
-          console.log(key, " et ", NuserId);
           if (key === NuserId)
             user1 = value;
         });

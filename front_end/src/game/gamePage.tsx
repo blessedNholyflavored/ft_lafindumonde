@@ -57,6 +57,7 @@ export const GamePage = () => {
       );
       if (response.ok) {
         const recup = await response.text();
+        console.log(recup);
         // setStatus(recup);
         recupStatus = recup;
       }

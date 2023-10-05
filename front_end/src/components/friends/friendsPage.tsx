@@ -191,9 +191,7 @@ export const FriendsPage: React.FC = () => {
             })
           );
           setBlocked(friendInfo);
-        }
-        else
-        setBlocked(data);
+        } else setBlocked(data);
       } else {
         console.log("error: HTTP request failed");
       }
@@ -203,7 +201,6 @@ export const FriendsPage: React.FC = () => {
   };
 
   const fetchOnlinePlayersList = async () => {
-
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/friends/online/${user?.id}`,
@@ -212,7 +209,7 @@ export const FriendsPage: React.FC = () => {
           credentials: "include",
         }
       );
-      
+
       if (response.ok) {
         const data = await response.json();
         if (data.length > 0) {
@@ -225,9 +222,7 @@ export const FriendsPage: React.FC = () => {
             })
           );
           setOnlinePlayers(friendInfo);
-        }
-        else
-          setOnlinePlayers(data);
+        } else setOnlinePlayers(data);
       } else {
         console.log("error: HTTP request failed");
       }
@@ -236,27 +231,24 @@ export const FriendsPage: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (socket)
-    {
+    if (socket) {
       socket.on("SomeoneGoOnlineOrOffline", () => {
-      setTimeout(() => {
-        fetchOnlinePlayers();
-      }, 1000);
-      })
+        setTimeout(() => {
+          fetchOnlinePlayers();
+        }, 1000);
+      });
     }
 
-    if (socket)
-    {
+    if (socket) {
       socket.on("refreshListFriendPage", () => {
-      setTimeout(() => {
-        fetchScores();
-        fetchRequest();
-        fetchFriends();
-        fetchBlocked();
-        fetchOnlinePlayers();
-
-      }, 1000);
-      })
+        setTimeout(() => {
+          fetchScores();
+          fetchRequest();
+          fetchFriends();
+          fetchBlocked();
+          fetchOnlinePlayers();
+        }, 1000);
+      });
     }
 
     async function fetchScores() {
@@ -320,7 +312,8 @@ export const FriendsPage: React.FC = () => {
     }
     setTimeout(() => {
       socket.emit("reloadListFriendPage", sender);
-    }, 300);  }
+    }, 300);
+  }
 
   async function RefuseFriend(id: string, sender: number) {
     try {
@@ -339,7 +332,8 @@ export const FriendsPage: React.FC = () => {
     }
     setTimeout(() => {
       socket.emit("reloadListFriendPage", sender);
-    }, 300);  }
+    }, 300);
+  }
 
   async function deleteFriend(sender: string, recipient: string) {
     try {
@@ -358,7 +352,8 @@ export const FriendsPage: React.FC = () => {
     }
     setTimeout(() => {
       socket.emit("reloadListFriendPage", recipient);
-    }, 300);  }
+    }, 300);
+  }
 
   async function removeBlocked(sender: string, recipient: string) {
     try {
@@ -377,7 +372,8 @@ export const FriendsPage: React.FC = () => {
     }
     setTimeout(() => {
       socket.emit("reloadListFriendPage", 0);
-    }, 300);  }
+    }, 300);
+  }
 
   async function BlockFriend(sender: string, recipient: string) {
     deleteFriend(sender, recipient);
@@ -397,7 +393,8 @@ export const FriendsPage: React.FC = () => {
     }
     setTimeout(() => {
       socket.emit("reloadListFriendPage", recipient);
-    }, 300);  }
+    }, 300);
+  }
 
   async function checkBlocked(senderId: string, recipientId: string) {
     try {
@@ -414,6 +411,29 @@ export const FriendsPage: React.FC = () => {
       }
 
       const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Erreur:", error);
+      return false;
+    }
+  }
+
+  async function checkBlockedForNotify(senderId: string, recipientId: number) {
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/friends/blocked/${senderId}/${recipientId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des données.");
+      }
+
+      const data = await response.json();
+      console.log(data);
       return data;
     } catch (error) {
       console.error("Erreur:", error);
@@ -439,9 +459,26 @@ export const FriendsPage: React.FC = () => {
         }
       );
       if (response.ok) {
-        // if (user && await checkBlockedForNotify(user?.id.toString(), recipientId) === false)
-        // socket.emit('notifyFriendShip', id);
-        alert("Friendship created successfully.");
+        const data = response.text();
+        if ((await data).valueOf() === "exist") {
+          setNotifyMSG("Friendship already in PENDING");
+          setShowNotification(true);
+          setSender(0);
+          setNotifyType(2);
+        } else {
+          setNotifyMSG("Friendship sent !");
+          setShowNotification(true);
+          setSender(0);
+          setNotifyType(2);
+        }
+        if (
+          user &&
+          (await checkBlockedForNotify(
+            user?.id.toString(),
+            parseInt(recipientId)
+          )) === false
+        )
+          socket.emit("notifyFriendShip", recipientId);
         setTimeout(() => {
           socket.emit("reloadListFriendPage", recipientId);
         }, 300);
@@ -694,13 +731,17 @@ export const FriendsPage: React.FC = () => {
                           <div className="bttnholder">
                             <button
                               className="acceptbutton"
-                              onClick={() => AcceptFriend(friend.id, friend.senderId)}
+                              onClick={() =>
+                                AcceptFriend(friend.id, friend.senderId)
+                              }
                             >
                               accept
                             </button>
                             <button
                               className="deletebutton"
-                              onClick={() => RefuseFriend(friend.id, friend.senderId)}
+                              onClick={() =>
+                                RefuseFriend(friend.id, friend.senderId)
+                              }
                             >
                               delete
                             </button>

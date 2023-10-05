@@ -290,6 +290,9 @@ async deleteFriend(sender: string, recipient: string)
         id: parseInt(id),
       },
     })
+
+    if (!friendShip)
+      return ;
     
     this.userService.addFriends(friendShip.senderId, friendShip.recipientId);
     const friendShipUpdate = await prisma.friendship.delete({
@@ -301,6 +304,14 @@ async deleteFriend(sender: string, recipient: string)
 
   async refuseRequest(id: string)
   {
+    const recupfriendShip = await prisma.friendship.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    })
+
+    if (!recupfriendShip)
+      return ;
     const friendShipUpdate = await prisma.friendship.update({
       where: {
         id: parseInt(id),
@@ -320,6 +331,42 @@ async deleteFriend(sender: string, recipient: string)
 
   async sendFriendRequest(senderId: string, recipientId: string)
     {
+
+      const existingFriendship = await prisma.friendship.findFirst({
+        where: {
+          AND: [
+            {
+              senderId: parseInt(senderId),
+            },
+            {
+              recipientId: parseInt(recipientId),
+            },
+          ],
+        },
+      });
+  
+      if (existingFriendship)
+        return null;
+
+        const reverseFriendship = await prisma.friendship.findFirst({
+          where: {
+            AND: [
+              {
+                senderId: parseInt(recipientId),
+              },
+              {
+                recipientId: parseInt(senderId),
+              },
+            ],
+          },
+        });
+
+        if (reverseFriendship)
+        {
+          this.acceptRequest(reverseFriendship.id.toString());
+          return "reverse";
+        }
+
     const p1 = await prisma.user.findUnique({
       where: {
         id: parseInt(senderId),

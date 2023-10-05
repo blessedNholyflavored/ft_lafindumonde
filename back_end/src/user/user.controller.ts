@@ -164,11 +164,6 @@ export class UsersController {
   @Get('/status/:id')
   async getPlayerStatus(@Param('id') id: number) {
     const user = await this.userService.getUserByID(id);
-    console.log(
-      'dans le back mdr:    ',
-      user.status,
-      '    fin dans le back ndrrrrr',
-    );
     return user.status;
   }
 

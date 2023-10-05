@@ -231,6 +231,16 @@ export class UserService {
     return updateUser;
   }
 
+  async getStatusUser(id: number)
+  {
+    const user = await prisma.user.findUnique({
+      where: { id: id },
+    });
+
+    return user.status;
+  }
+  
+
   async updateScoreMiniGame(id: number, newScore: number)
   {
     const user = await prisma.user.findUnique({
@@ -522,7 +532,6 @@ export class UserService {
       where: { id: loserID },
       data: { ELO: Number(updateLoser.ELO + eloChangeLoser) }
     });
-    console.log(updateWinner1.ELO);
   }
 
 }
