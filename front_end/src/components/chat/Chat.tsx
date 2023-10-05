@@ -135,10 +135,13 @@ export const Chat = () => {
 
   async function fetchRoomsList() {
     try {
-      const response = await fetch(`http://${window.location.hostname}:3000/chat/recupRooms`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/chat/recupRooms`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
       if (!response.ok) {
         throw new Error(
           "Erreur lors de la récupération des messages preeeeivés."
@@ -180,7 +183,7 @@ export const Chat = () => {
       return userData;
     } catch (error) {
       console.error("Erreur :", error);
-      return null; // En cas d'erreur, renvoyez null ou une valeur par défaut
+      return null;
     }
   }
 
@@ -208,10 +211,13 @@ export const Chat = () => {
 
   async function fetchPrivateConvList() {
     try {
-      const response = await fetch(`http://${window.location.hostname}:3000/chat/recupPrivate`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/chat/recupPrivate`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
       if (!response.ok) {
         throw new Error(
           "Erreur lors de la récupération des messages preeeeivés."
@@ -220,21 +226,19 @@ export const Chat = () => {
       const data = await response.json();
 
       if (data.length > 0) {
-        const promises = data.map(
-          async (userId: string, isBlocked: string) => {
-            const username = await fetchUsernameById(userId);
-            const isBlockedResponse = await fetch(
-              `http://${window.location.hostname}:3000/friends/blocked/${userId}/${user?.id}`,
-              {
-                method: "GET",
-                credentials: "include",
-              }
-            );
-            const blocked = await isBlockedResponse.text();
-            isBlocked = blocked;
-            return { id: userId, username, isBlocked };
-          }
-        );
+        const promises = data.map(async (userId: string, isBlocked: string) => {
+          const username = await fetchUsernameById(userId);
+          const isBlockedResponse = await fetch(
+            `http://${window.location.hostname}:3000/friends/blocked/${userId}/${user?.id}`,
+            {
+              method: "GET",
+              credentials: "include",
+            }
+          );
+          const blocked = await isBlockedResponse.text();
+          isBlocked = blocked;
+          return { id: userId, username, isBlocked };
+        });
 
         const usernames: privMSG[] = await Promise.all(promises);
         setPrivMSG(usernames);
@@ -487,8 +491,7 @@ export const Chat = () => {
   };
 
   const joinRoom = async () => {
-    if ((await checkRoomAlreadyExist()) === false)
-    {
+    if ((await checkRoomAlreadyExist()) === false) {
       setShowNotification(true);
       setNotifyMSG("Room n'existe pas !");
       setNotifyType(2);
@@ -757,10 +760,13 @@ export const Chat = () => {
 
   async function refuseInvite(id: string) {
     try {
-      const response = await fetch(`http://${window.location.hostname}:3000/chat/refuse/${id}`, {
-        method: "POST",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/chat/refuse/${id}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
       if (!response.ok) {
         throw new Error("Erreur lors de la récupération des scores.");
       }
