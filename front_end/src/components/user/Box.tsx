@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import '../../style/Profile.css'
+import '../../style/Home.css'
 import ProfileBox from "./ProfileBox"
 import icon from "../../img/buttoncomp.png"
 import logo from "../../img/logo42.png"
@@ -11,6 +12,16 @@ import Notify from '../../Notify';
 import { WebsocketContext } from "../../WebsocketContext";
 import { GameHistory } from "./GameHistory";
 import { useParams } from "react-router-dom";
+import nav from "./../../img/buttoncomp.png";
+import folder from "./../../img/folder0.png";
+import folder1 from "./../../img/folder2.png";
+import folder2 from "./../../img/folder3.png";
+import folder0 from "./../../img/folder1.png";
+import folder6 from "./../../img/folder4.png";
+import { Logout } from "../auth/Logout";
+import { useNavigate } from "react-router-dom";
+import "@fontsource/ibm-plex-mono";
+
 
 const Box = (props: any) => {
 
@@ -23,11 +34,13 @@ const Box = (props: any) => {
     const socket = useContext(WebsocketContext);
     const [showNotification, setShowNotification] = useState(false);
 	const { id } = useParams();
+    const navigate = useNavigate();
 
 
 
     useEffect(() => {
 		displayPic();
+
         if (props.type === 'info') {
             setInfo(<ProfileBox type={props.type}/>)
         } else if  (props.type === 'friends') {
@@ -98,65 +111,129 @@ if (socket)
   })
 }
 
+const navigateToHome = () => {
+    navigate("/");
+  };
+
+  const navigateToProfPage = () => {
+    navigate(`/users/profile/${user?.id}`);
+  };
+
+  const navigateToChat = () => {
+    navigate("/chat");
+  };
+
+
+
+  const navigateToFriends = () => {
+    navigate("/friends");
+  };
+
+  const navigateToSettings = () => {
+    navigate("/settings");
+  };
+  const navToGamePage = () => {
+    navigate("/gamePage");
+  };
+
 return (
 <div>
-    <div className="mainpage">
+    <header>
+    <div>
+      <img src={nav} alt="Menu 1" />
+    </div>
+    <h1>TRANSCENDENCE</h1>
+  </header>
+
+    <div className="flex-bg">
+    <main>
       {showNotification && (
         <Notify message={notifyMSG} type={notifyType} senderId={sender} onClose={handleCloseNotification} />
       )}
-        <div className="navbarmainpage">
-        <img src={icon} className="buttonnav" alt="icon" />
-           <p className="titlemainpage"> TRANSCENDENCE </p>
-        </div>
-        <div className="Insidemain">
+        
+        <div className="fullpage">
         <div className="navbarbox">
-        <img src={icon} className="buttonnav" alt="icon" />
-           <p className="titlebox"> PROFIL </p>
-        </div>
+        <img src={icon}  alt="icon" />
+           <h1> PROFIL </h1>
+           </div>
 
-        <div className="threerow">
-            <div className="color">
-            <img src={ImgUrl} alt='user avatar'></img>
+        <div className="testingrow">
+        {/* <div className="threerow"> */}
+            
+        <div className="home-profile">
+            <p> hi! </p>
+            <div className="inside">
+              <img src={ImgUrl} className="homepic" />
+              <button className="homebut"> {user?.username}</button>
             </div>
-            <div className="boxrow">
+          </div>
+            <div className="boxrowtest">
                 <div className="navbarsmallbox">
                     <p className="boxtitle"> INFO </p>
                 </div>
                     <ProfileBox type="info"/>
-                <div className="footersmallbox">
-                    <br></br>
-                </div>
+                
             </div>
-            <div className="boxrow">
+            <div className="boxrowtest">
                 <div className="navbarsmallbox">
                     <p className="boxtitle"> Game History </p>
                 </div>
                     <GameHistory type="info"/>
-                    <div className="footersmallbox">
-                    <br></br>
-                </div>
+                    
             </div>
-            <div className="boxrow">
+            <div className="boxrowtest">
                 <div className="navbarsmallbox">
                     <p className="boxtitle"> SCORE </p>
                 </div>
                     <ScoreList type="score"/>
-                    <div className="footersmallbox">
-                    <br></br>
-                </div>
             </div>
         </div>
         </div>
-        <div className="footerprofil">
-            {/* <br></br> */}
-            <img src={logo} className="logo" alt="icon" />
-
-            {/* <img src={footer} className="footer" alt="icon" /> */}
-        </div>
         {/* // <Friendslist type="friends"/> */}
         {/* // <Scorelist type ="scorelist"/> */}
-    
+        </main>
+        <nav>
+          <ul>
+          <li className="menu-item">
+              <a onClick={navigateToHome}>
+                <img src={folder6} alt="Menu 3" />
+                <p>Home</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={() => navToGamePage()}>
+                <img src={folder2} alt="Menu 3" />
+                <p>Game</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToProfPage}>
+                <img src={folder1} alt="Menu 3" />
+                <p>Profile</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToSettings}>
+                <img src={folder} alt="Menu 3" />
+                <p>Settings</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToFriends}>
+                <img src={folder0} alt="Menu 3" />
+                <p>Friends</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
     </div>
+    <footer>
+        <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
+          LOG OUT{" "}
+        </button>
+        <img src={logo} className="logo" alt="icon" />
+      </footer>
     </div>
 )
 }

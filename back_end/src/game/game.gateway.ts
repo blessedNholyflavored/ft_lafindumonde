@@ -194,8 +194,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
 
           this.p1 = firstPlayer;
           this.p2 = secondPlayer;
-          socket1.emit('queueUpdateBonus', count);
-          socket2.emit('queueUpdateBonus', count);
+          socket1.emit('queueUpdateBonus', count, this.res.id);
+          socket2.emit('queueUpdateBonus', count, this.res.id);
           return ;
         }
         
@@ -540,8 +540,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     this.playerQueue2Friend.push(socket.user.id);
     this.playerQueue2Friend.push(NuserId);
 
-    user1.emit("matchStart");
-    socket.emit("matchStart");
+    user1.emit("matchStart", this.res.id);
+    socket.emit("matchStart", this.res.id);
 
   }
 
@@ -636,6 +636,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       {
         const allRooms = this.chatService.getAllChatRooms();
         const goodRoom = (await allRooms).find((room) => room.name === name);
+        if (!goodRoom)
+          return ;
         let user1;
         const Ids = this.chatService.getUsersInRoom(goodRoom.id.toString());
         (await Ids).forEach((userId) => {

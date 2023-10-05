@@ -450,6 +450,9 @@ export const ChatChannel = () => {
   };
 
   const handleUserClick = async (userId: number) => {
+    let flag = 0;
+    if (selectedUser !== 0 && userId === selectedUser)
+      flag = 1;
     setSelectedUser(userId);
     setShowMenu(true);
     const role = await fetchYourRole(userId);
@@ -458,7 +461,9 @@ export const ChatChannel = () => {
     setSelectedUserIsMuted(mute);
     const ban = await checkBanned(userId);
     setSelectedUserIsBanned(ban);
-    if (selectedUser !== 0) setSelectedUser(0);
+    if (flag === 1)
+      setSelectedUser(0);
+
   };
 
   const handleViewProfile = () => {
@@ -499,9 +504,9 @@ export const ChatChannel = () => {
   }
 
   if (socket) {
-    socket?.on("matchStart", () => {
+    socket?.on("matchStart", (roomdId: number) => {
       socket?.emit("updateUserIG", user?.id);
-      navigate("/gamefriend");
+      navigate(`/gamefriend/${roomdId}`);
     });
   }
 

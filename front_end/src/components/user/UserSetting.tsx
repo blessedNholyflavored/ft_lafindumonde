@@ -253,8 +253,8 @@ export const UserSetting: React.FC = () => {
     navigate("/chat");
   };
 
-  const NavToSoloPong = () => {
-    navigate("/solopong");
+  const navToGamePage = () => {
+    navigate("/gamePage");
   };
 
   const navigateToFriends = () => {
@@ -440,13 +440,13 @@ export const UserSetting: React.FC = () => {
               </div>
               <div className="twoFA">
                 <button
-                  className="twoFAenabled"
+                  className="acceptbutton"
                   onClick={() => twoFAEnable(navigate, user)}
                 >
                   enable
                 </button>
                 <button
-                  className="twoFAdisabled"
+                  className="deletebutton"
                   onClick={() => twoFADisable({ user, setUser })}
                 >
                   disable
@@ -466,34 +466,11 @@ export const UserSetting: React.FC = () => {
                 <img src={folder6} alt="Menu 3" />
                 <p>Home</p>
               </a>
-            </li>
+            </li> 
             <li className="menu-item">
-              {/* <a > onClick={() => handlePlayerSelect('1')}> */}
-              <a>
-                <img src={folder4} alt="Menu 1" />
-                <p>Matchmaking</p>
-                {/* {(queueCount > 0 || queueCountBonus > 0) &&  (
-    						<p>En attente d'autres joueurs...</p>
-  						)}
-  						{queueCount === 2 && (
-    						<p>La partie commence entre Ldinaut et Mcouppe !</p>
-  						)}
-              { inGame === 1 && (
-                <p>Deja en game mon reuf !</p>
-              )} */}
-              </a>
-            </li>
-            <li className="menu-item">
-              {/* <a onClick={() => handlePlayerSelect222('1')}> */}
-              <a>
-                <img src={folder3} alt="Menu 2" />
-                <p>Big Game</p>
-              </a>
-            </li>
-            <li className="menu-item">
-              <a onClick={() => NavToSoloPong()}>
+              <a onClick={() => navToGamePage()}>
                 <img src={folder2} alt="Menu 3" />
-                <p>Tiny Game</p>
+                <p>Game</p>
               </a>
             </li>
             <li className="menu-item">

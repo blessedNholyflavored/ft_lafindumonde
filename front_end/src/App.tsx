@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./Home";
-import PongGame from "./PongGame";
+import PongGame from "./game/PongGame";
 import { UserSetting } from "./components/user/UserSetting";
 import "./App.css";
 import "./style/Profile.css";
@@ -16,14 +16,14 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { AuthProvider, useAuth } from "./components/auth/AuthProvider";
 import { socket, WebsocketProvider } from "./WebsocketContext";
 import { Websocket } from "./Websocket";
-import SuperPong from "./SuperPong";
+import SuperPong from "./game/SuperPong";
 import { Profile } from "./components/user/Profile";
 import { FriendsPage } from "./components/friends/friendsPage";
-import MiniGame from "./SoloPong";
+import MiniGame from "./game/SoloPong";
 import Classement from "./leaderboard";
-import AcceptMatch from "./acceptMatch";
-import GameFriend from "./GameFriend";
-import GamePage from "./gamePage";
+import AcceptMatch from "./game/acceptMatch";
+import GameFriend from "./game/GameFriend";
+import GamePage from "./game/gamePage";
 import PageNotFound from "./PageNotFound";
 
 export const App: React.FC = () => {
@@ -123,7 +123,7 @@ export const App: React.FC = () => {
             }
           />
           <Route
-            path="/SuperGame"
+            path="/SuperGame/:id"
             element={
               <ProtectedRoute>
                 <SuperPong socket={socket} />
@@ -155,7 +155,7 @@ export const App: React.FC = () => {
             }
           />
           <Route
-            path="/gameFriend"
+            path="/gameFriend/:id"
             element={
               <ProtectedRoute>
                 <GameFriend />

@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import io, { Socket } from "socket.io-client";
-import { User } from "./interfaces";
+import { User } from "../interfaces";
 import icon from "./img/buttoncomp.png";
 import logo from "./img/logo42.png";
 import chat_pic from "./img/fill.pic.png";
-import "./App.css";
-import "./style/Home.css";
-import "./style/Logout.css";
-import { Logout } from "./components/auth/Logout";
-import { useAuth } from "./components/auth/AuthProvider";
-import { WebsocketContext } from "./WebsocketContext";
+import "../App.css";
+import "../style/Home.css";
+import "../style/Logout.css";
+import { Logout } from "../components/auth/Logout";
+import { useAuth } from "../components/auth/AuthProvider";
+import { WebsocketContext } from "../WebsocketContext";
 import folder from "./img/folder0.png";
 import folder1 from "./img/folder2.png";
 import folder2 from "./img/folder3.png";
@@ -22,7 +22,7 @@ import gaming from "./img/gamingpreview.png";
 import love from "./img/42lov.png";
 import chatpic from "./img/chatpic.png";
 import gradient from "./img/gradient.png";
-import Notify from "./Notify";
+import Notify from "../Notify";
 
 export const GamePage = () => {
   const socket = useContext(WebsocketContext);
@@ -91,11 +91,12 @@ export const GamePage = () => {
       if (user) socket?.emit("joinQueue", user.id, 1);
       setUser(user);
 
-      socket?.on("queueUpdateBonus", (count: number) => {
+      socket?.on("queueUpdateBonus", (count: number, id: number) => {
         setQueueCountBonus(count);
         if (count === 2) {
           socket?.emit("updateUserIG", user?.id);
-          navigate("/SuperGame");
+          socket?.emit("createGame");
+          navigate(`/SuperGame/${id}`);
         }
       });
     } catch (error) {

@@ -1,8 +1,6 @@
 
 .logoutBtn {
 	position: relative;
-	left: 60%;
-	bottom: 20%;
 	display: flex;
     cursor: pointer;
     font-family: IBM Plex Mono;

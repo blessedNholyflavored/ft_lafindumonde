@@ -17,13 +17,11 @@ export const FriendshipComponent = ({
 }) => {
   const { user, setUser } = useAuth();
   const { id } = useParams();
-  //
   const [friendshipStatus, setFriendshipStatus] = useState<string | null>();
   const socket = useContext(WebsocketContext);
   const navigate = useNavigate();
+  const [accepted, setAccepted] = useState(false);
 
-  //
-  //
 
   useEffect(() => {
     fetchFriendshipStatus();
@@ -150,7 +148,6 @@ export const FriendshipComponent = ({
       );
       if (response.ok) {
         let status = await response.text();
-        console.log("qqqqqqq: ", status);
         if (status === "not") {
           await checkAlreadyFriend();
           return;
@@ -180,8 +177,6 @@ export const FriendshipComponent = ({
   };
 
   async function deleteFriend(sender: string, recipient: string) {
-    console.log(sender);
-    console.log(recipient);
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/friends/delete/${recipient}`,
@@ -200,8 +195,6 @@ export const FriendshipComponent = ({
   }
 
   async function BlockFriend(sender: string, recipient: string) {
-    console.log(sender);
-    console.log(recipient);
     deleteFriend(sender, recipient);
     try {
       const response = await fetch(
@@ -228,10 +221,10 @@ export const FriendshipComponent = ({
       socket.emit("inviteToMatch", recipient);
   }
 
-  if (socket) {
-    socket?.on("matchStart", () => {
-      socket?.emit("updateUserIG", user?.id);
-      navigate("/gamefriend");
+  if (socket && accepted === false) {
+    socket?.on("matchStart", (roomdId: number) => {
+      setAccepted(true);
+      navigate(`/gamefriend/${roomdId}`);
     });
   }
 
