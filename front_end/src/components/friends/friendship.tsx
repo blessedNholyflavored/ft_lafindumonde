@@ -25,6 +25,11 @@ export const FriendshipComponent = ({
 
   useEffect(() => {
     fetchFriendshipStatus();
+    if (socket) {
+      socket.on("refreshListFriendPage", () => {
+        fetchFriendshipStatus();
+      });
+  }
   });
   async function checkBlockedForNotify(senderId: string, recipientId: string) {
     try {
@@ -75,6 +80,7 @@ export const FriendshipComponent = ({
             false
         )
           socket.emit("notifyFriendShip", id);
+          socket.emit("reloadListFriendPage", id);
         alert("Friendship created successfully.");
       } else {
         console.error("Error creating friendship: request is pending");
@@ -100,7 +106,6 @@ export const FriendshipComponent = ({
           return;
         }
         setFriendshipStatus(status);
-        console.log("ppppp: ", status);
       } else {
         console.log(
           "Error fetching friendship status. Status code:",

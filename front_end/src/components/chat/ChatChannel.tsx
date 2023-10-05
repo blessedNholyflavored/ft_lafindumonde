@@ -451,8 +451,7 @@ export const ChatChannel = () => {
 
   const handleUserClick = async (userId: number) => {
     let flag = 0;
-    if (selectedUser !== 0 && userId === selectedUser)
-      flag = 1;
+    if (selectedUser !== 0 && userId === selectedUser) flag = 1;
     setSelectedUser(userId);
     setShowMenu(true);
     const role = await fetchYourRole(userId);
@@ -461,9 +460,7 @@ export const ChatChannel = () => {
     setSelectedUserIsMuted(mute);
     const ban = await checkBanned(userId);
     setSelectedUserIsBanned(ban);
-    if (flag === 1)
-      setSelectedUser(0);
-
+    if (flag === 1) setSelectedUser(0);
   };
 
   const handleViewProfile = () => {
@@ -662,10 +659,13 @@ export const ChatChannel = () => {
 
   async function getStatutChan() {
     try {
-      const response = await fetch(`http://${window.location.hostname}:3000/chat/statut/${id}`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/chat/statut/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
       if (!response.ok) {
         throw new Error("Erreur lors de la récupération des scores.");
       }
