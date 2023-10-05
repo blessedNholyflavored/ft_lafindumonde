@@ -81,6 +81,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       console.log("connected");
       if (socket && socket.user)
       {
+        this.playerConnections.forEach((value, key) => {
+          value.emit("SomeoneGoOnlineOrOffline");
+        });
         this.playerConnections.set(socket.user.id, socket);
         this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');
       }
@@ -99,6 +102,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     {
       this.playerConnections.delete(socket.user.id);
       this.userService.updateUserStatuIG(socket.user.id, 'OFFLINE');
+        this.playerConnections.forEach((value, key) => {
+          value.emit("SomeoneGoOnlineOrOffline");
+        });
     }
 
 
@@ -706,6 +712,21 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
             user1 = value;
         });
         user1.emit("refreshAfterBan", roomName, data[2], data[3]);
+      }
+
+      @SubscribeMessage('reloadListFriendPage')
+      async onReloadListFriendPage(@MessageBody() userId:number ,@ConnectedSocket() socket: Socket)
+      {
+        let user1;
+        const NuserId = Number(userId);
+        this.playerConnections.forEach((value, key) => {
+          console.log(key, " et ", NuserId);
+          if (key === NuserId)
+            user1 = value;
+        });
+        if (user1)
+          user1.emit("refreshListFriendPage");
+        socket.emit("refreshListFriendPage");
       }
       
 }
