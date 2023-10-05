@@ -124,7 +124,6 @@ const navigateToHome = () => {
   };
 
 
-
   const navigateToFriends = () => {
     navigate("/friends");
   };

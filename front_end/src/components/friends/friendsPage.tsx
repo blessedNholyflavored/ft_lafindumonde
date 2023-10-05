@@ -711,7 +711,7 @@ export const FriendsPage: React.FC = () => {
                   ))}
                 </div>
               </div>
-              <div className="boxrowtest">
+              {/* <div className="boxrowtest">
                 <div className="navbarsmallbox">
                     <p className="boxtitle"> INFO </p>
                 </div>
@@ -733,7 +733,7 @@ export const FriendsPage: React.FC = () => {
               </div>
             ))}
           </ul>
-          </div>
+          </div> */}
             </div>
           </div>
         </main>
