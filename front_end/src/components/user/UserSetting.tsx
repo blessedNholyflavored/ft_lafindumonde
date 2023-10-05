@@ -26,6 +26,7 @@ export const UserSetting: React.FC = () => {
   let [ImgUrl, setImgUrl] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [isLocal, setIsLocal] = useState<Boolean>(false);
+  const [is2FA, set2FA] = useState<Boolean>(false);
   const { user, setUser } = useAuth();
   const [showNotification, setShowNotification] = useState(false);
   const [notifyMSG, setNotifyMSG] = useState<string>("");
@@ -36,7 +37,27 @@ export const UserSetting: React.FC = () => {
   useEffect(() => {
     displayPic();
     checkLocal();
+    check2FA();
   }, []);
+
+  const check2FA = async () => {
+    const userID = user?.id;
+    try {
+      const res = await fetch(`http://${window.location.hostname}:3000/auth/checkIs2FA`,
+      {  method:'GET',
+        credentials: 'include',
+      })
+      if (res.ok){
+        set2FA(false);
+      }
+      if (res.status === 418){
+        set2FA(true);
+      }
+    }
+    catch(error){
+      throw(error);
+    }
+  };
 
   const checkLocal = async () => {
     const userId = user?.id;
@@ -281,6 +302,7 @@ export const UserSetting: React.FC = () => {
           "You successfully disabled the two factor authentication!"
         );
         setNotifyType(2);
+        set2FA(false);
       } else {
         setShowNotification(true);
         setNotifyMSG(
@@ -294,19 +316,26 @@ export const UserSetting: React.FC = () => {
   };
 
   const twoFAEnable = async (navigate: any, user: any) => {
-    //TODO: ca il faut le faire dans le back en vrai
     if (user.loginLoc === true) {
       setShowNotification(true);
       setNotifyMSG("You can't enable 2FA with this type of account !");
       setNotifyType(3);
       return;
     }
-    setShowNotification(true);
-    setNotifyMSG(
-      "Are you ready to save the QR code you will be provided in the next page ?"
-    );
-    setNotifyType(4);
-    setSender(sender);
+    // if (user.log2FA ===true){
+    //   setShowNotification(true);
+    //   setNotifyMSG("Do you really want to reset two-factor authentication")
+    //   setNotifyType(4);
+    //   setSender(sender);
+    // }
+    else {
+      setShowNotification(true);
+      setNotifyMSG(
+        "Are you ready to save the QR code you will be provided in the next page ?"
+      );
+      setNotifyType(4);
+      setSender(sender);
+    }
   };
 
   return (
@@ -439,12 +468,15 @@ export const UserSetting: React.FC = () => {
                 <p className="boxtitle"> 2FAC AUTH </p>
               </div>
               <div className="twoFA">
+              {is2FA != true && (
                 <button
                   className="acceptbutton"
                   onClick={() => twoFAEnable(navigate, user)}
                 >
                   enable
                 </button>
+              
+              )}
                 <button
                   className="deletebutton"
                   onClick={() => twoFADisable({ user, setUser })}

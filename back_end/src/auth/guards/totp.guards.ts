@@ -6,7 +6,6 @@ export class TotpGuard {
 	constructor(
 		private readonly userService: UserService,
 	){
-		console.log("in Authenticated Guard==> totpGuard !");
 	}
 
 	async canActivate(context: ExecutionContext): Promise<any>{

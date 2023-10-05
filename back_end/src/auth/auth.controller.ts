@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards, UsePipes, ValidationPipe, BadRequestException, UnauthorizedException, ConflictException, NotAcceptableException } from "@nestjs/common";
+import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards, UsePipes, ValidationPipe, BadRequestException, UnauthorizedException, ConflictException, NotAcceptableException, ImATeapotException } from "@nestjs/common";
 import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
 import { FortyTwoAuthGuard } from "./guards/FortyTwo-auth.guard";
@@ -135,6 +135,14 @@ export class AuthController{
         return res.json({code: qrCodeImg});
     }
 
+    @Get('checkIs2FA')
+    @UseGuards(...AuthenticatedGuard)
+    async is2FAcheck(@Req() req: any, @Res() res: any){
+        if (req.user.log2FA === true){
+            throw new ImATeapotException("Well, you are a teapot");
+        }
+        return res.status(200).send();
+    }
     @Get('2FAdisable')
     @UseGuards(...AuthenticatedGuard)
     async twoFAdisabler(@Req() req: any){
