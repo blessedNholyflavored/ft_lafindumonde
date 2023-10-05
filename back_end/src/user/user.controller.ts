@@ -19,7 +19,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UserService } from './user.service';
-import { AuthService } from '../auth/auth.service';
 import { User } from '@prisma/client';
 import * as path from 'path';
 import { join } from 'path';

@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import '../../style/Profile.css'
-import '../../style/Home.css'
-import ProfileBox from "./ProfileBox"
-import icon from "../../img/buttoncomp.png"
-import logo from "../../img/logo42.png"
-import domo from "../../img/domo.png"
+import "../../style/Profile.css";
+import "../../style/Home.css";
+import ProfileBox from "./ProfileBox";
+import icon from "../../img/buttoncomp.png";
+import logo from "../../img/logo42.png";
+import domo from "../../img/domo.png";
 import ScoreList from "./ScoreList";
 import Friends from "./FriendsList";
 import { useAuth } from "../auth/AuthProvider";
-import Notify from '../../Notify';
+import Notify from "../../Notify";
 import { WebsocketContext } from "../../WebsocketContext";
 import { GameHistory } from "./GameHistory";
 import { useParams } from "react-router-dom";
@@ -22,96 +22,113 @@ import { Logout } from "../auth/Logout";
 import { useNavigate } from "react-router-dom";
 import "@fontsource/ibm-plex-mono";
 
-
 const Box = (props: any) => {
+  const [info, setInfo] = useState<any>(null);
+  let [ImgUrl, setImgUrl] = useState<string>("");
+  const { user, setUser } = useAuth();
+  const [notifyMSG, setNotifyMSG] = useState<string>("");
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const [sender, setSender] = useState<number>(0);
+  const socket = useContext(WebsocketContext);
+  const [username, setUsername] = useState<string>("");
+  const [showNotification, setShowNotification] = useState(false);
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-    const [info, setInfo] = useState<any>(null);
-	let [ImgUrl, setImgUrl] = useState<string>('');
-	const { user, setUser } = useAuth();
-    const [notifyMSG, setNotifyMSG] = useState<string>('');
-    const [notifyType, setNotifyType] = useState<number>(0);
-    const [sender, setSender] = useState<number>(0);
-    const socket = useContext(WebsocketContext);
-    const [showNotification, setShowNotification] = useState(false);
-	const { id } = useParams();
-    const navigate = useNavigate();
+  useEffect(() => {
+    displayPic();
+    fetchUsernameById();
 
+    if (props.type === "info") {
+      setInfo(<ProfileBox type={props.type} />);
+    } else if (props.type === "friends") {
+      setInfo(<Friends type={props.type} />);
+    } else if (props.type === "score") setInfo(<ScoreList type={props.type} />);
+  }, [props.type]);
 
+  async function fetchUsernameById() {
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/${id}/username`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error(
+          `Erreur lors de la récupération de l'utilisateur avec l'ID ${id}.`
+        );
+      }
+      const userData = await response.text();
+      setUsername(userData);
+    } catch (error) {
+      console.error("Erreur :", error);
+      return null;
+    }
+  }
 
-    useEffect(() => {
-		displayPic();
-
-        if (props.type === 'info') {
-            setInfo(<ProfileBox type={props.type}/>)
-        } else if  (props.type === 'friends') {
-             setInfo(<Friends type={props.type}/>)
-        } else if (props.type === 'score')
-            setInfo(<ScoreList type={props.type}/>)
-    
-}, [props.type])
-
-const displayPic = async() => {
-
+  const displayPic = async () => {
     const userId = user?.id;
     try {
-        const response = await fetch(`http://${window.location.hostname}:3000/users/${id}/avatar`, {
-            method: 'GET',
-			credentials: 'include',
-        });
-        if (response.ok) {
-            const pictureURL = await response.text();
-            //console.log("aaaaaaA",pictureURL);
-            if (pictureURL.includes("https"))
-            {
-                setImgUrl(pictureURL);
-            }
-            else {
-                try {
-                const response = await fetch(`http://${window.location.hostname}:3000/users/uploads/${pictureURL}`, {
-                    method: 'GET',
-					credentials: 'include',
-                });
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const absoluteURL = URL.createObjectURL(blob);
-                    setImgUrl(absoluteURL);
-                }
-                }
-                catch (error) {
-                    console.error(error);
-                }
-            }
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/${id}/avatar`,
+        {
+          method: "GET",
+          credentials: "include",
         }
+      );
+      if (response.ok) {
+        const pictureURL = await response.text();
+        //console.log("aaaaaaA",pictureURL);
+        if (pictureURL.includes("https")) {
+          setImgUrl(pictureURL);
+        } else {
+          try {
+            const response = await fetch(
+              `http://${window.location.hostname}:3000/users/uploads/${pictureURL}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            if (response.ok) {
+              const blob = await response.blob();
+              const absoluteURL = URL.createObjectURL(blob);
+              setImgUrl(absoluteURL);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
     }
-    catch (error) {
-        console.error(error);
-    }
-}
+  };
 
-const handleCloseNotification = () => {
+  const handleCloseNotification = () => {
     setShowNotification(false);
   };
-  
-  if (socket)
-{
-socket.on("receiveInvite", (sender: number) => {
-setShowNotification(true);
-setNotifyMSG("Tu as recu une invitation pour une partie")
-setNotifyType(1);
-setSender(sender);
-})
-}
 
-if (socket)
-{
-  socket.on("friendShipNotif", () => {
-    setShowNotification(true);
-    setNotifyMSG("Tu as recu une demande d'ami")
-    setNotifyType(0);
-  })
-}
+  if (socket) {
+    socket.on("receiveInvite", (sender: number) => {
+      setShowNotification(true);
+      setNotifyMSG("Tu as recu une invitation pour une partie");
+      setNotifyType(1);
+      setSender(sender);
+    });
+  }
 
-const navigateToHome = () => {
+  if (socket) {
+    socket.on("friendShipNotif", () => {
+      setShowNotification(true);
+      setNotifyMSG("Tu as recu une demande d'ami");
+      setNotifyType(0);
+    });
+  }
+
+  const navigateToHome = () => {
     navigate("/");
   };
 
@@ -122,8 +139,6 @@ const navigateToHome = () => {
   const navigateToChat = () => {
     navigate("/chat");
   };
-
-
 
   const navigateToFriends = () => {
     navigate("/friends");
@@ -136,65 +151,68 @@ const navigateToHome = () => {
     navigate("/gamePage");
   };
 
-return (
-<div>
-    <header>
+  return (
     <div>
-      <img src={nav} alt="Menu 1" />
-    </div>
-    <h1>TRANSCENDENCE</h1>
-  </header>
+      <header>
+        <div>
+          <img src={nav} alt="Menu 1" />
+        </div>
+        <h1>TRANSCENDENCE</h1>
+      </header>
 
-    <div className="flex-bg">
-    <main>
-      {showNotification && (
-        <Notify message={notifyMSG} type={notifyType} senderId={sender} onClose={handleCloseNotification} />
-      )}
-        
-        <div className="fullpage">
-        <div className="navbarbox">
-        <img src={icon}  alt="icon" />
-           <h1> PROFIL </h1>
-           </div>
+      <div className="flex-bg">
+        <main>
+          {showNotification && (
+            <Notify
+              message={notifyMSG}
+              type={notifyType}
+              senderId={sender}
+              onClose={handleCloseNotification}
+            />
+          )}
 
-        <div className="testingrow">
-        {/* <div className="threerow"> */}
-            
-        <div className="home-profile">
-            <p> hi! </p>
-            <div className="inside">
-              <img src={ImgUrl} className="homepic" />
-              <button className="homebut"> {user?.username}</button>
+          <div className="fullpage">
+            <div className="navbarbox">
+              <img src={icon} alt="icon" />
+              <h1> PROFIL </h1>
+            </div>
+
+            <div className="testingrow">
+              {/* <div className="threerow"> */}
+
+              <div className="home-profile">
+                <p> hi! </p>
+                <div className="inside">
+                  <img src={ImgUrl} className="homepic" />
+                  <button className="homebut"> {username}</button>
+                </div>
+              </div>
+              <div className="boxrowtest">
+                <div className="navbarsmallbox">
+                  <p className="boxtitle"> INFO </p>
+                </div>
+                <ProfileBox type="info" />
+              </div>
+              <div className="boxrowtest">
+                <div className="navbarsmallbox">
+                  <p className="boxtitle"> Game History </p>
+                </div>
+                <GameHistory type="info" />
+              </div>
+              <div className="boxrowtest">
+                <div className="navbarsmallbox">
+                  <p className="boxtitle"> SCORE </p>
+                </div>
+                <ScoreList type="score" />
+              </div>
             </div>
           </div>
-            <div className="boxrowtest">
-                <div className="navbarsmallbox">
-                    <p className="boxtitle"> INFO </p>
-                </div>
-                    <ProfileBox type="info"/>
-                
-            </div>
-            <div className="boxrowtest">
-                <div className="navbarsmallbox">
-                    <p className="boxtitle"> Game History </p>
-                </div>
-                    <GameHistory type="info"/>
-                    
-            </div>
-            <div className="boxrowtest">
-                <div className="navbarsmallbox">
-                    <p className="boxtitle"> SCORE </p>
-                </div>
-                    <ScoreList type="score"/>
-            </div>
-        </div>
-        </div>
-        {/* // <Friendslist type="friends"/> */}
-        {/* // <Scorelist type ="scorelist"/> */}
+          {/* // <Friendslist type="friends"/> */}
+          {/* // <Scorelist type ="scorelist"/> */}
         </main>
         <nav>
           <ul>
-          <li className="menu-item">
+            <li className="menu-item">
               <a onClick={navigateToHome}>
                 <img src={folder6} alt="Menu 3" />
                 <p>Home</p>
@@ -226,16 +244,15 @@ return (
             </li>
           </ul>
         </nav>
-
-    </div>
-    <footer>
+      </div>
+      <footer>
         <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
           LOG OUT{" "}
         </button>
         <img src={logo} className="logo" alt="icon" />
       </footer>
     </div>
-)
-}
+  );
+};
 
 export default Box;
