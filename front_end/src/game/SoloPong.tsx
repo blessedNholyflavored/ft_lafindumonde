@@ -9,8 +9,7 @@ import folder2 from "./../img/folder3.png";
 import folder0 from "./../img/folder1.png";
 import folder6 from "./../img/folder4.png";
 import { Logout } from "../components/auth/Logout";
-import logo from "./../img/logo42.png"
-
+import logo from "./../img/logo42.png";
 
 interface MiniScore {
   id: number;
@@ -24,8 +23,8 @@ export const MiniGame = () => {
   const [player2, setPlayer2] = useState(300);
   const [keyCode, setKeyCode] = useState("");
   const gameAreaRef = useRef<HTMLDivElement>(null);
-  const mapy = 450;
-  const mapx = 900;
+  const mapy = 400;
+  const mapx = 700;
   const ballSpeed = 6;
   const [player1Point, setPoint1] = useState(0);
   const [player2Point, setPoint2] = useState(0);
@@ -57,7 +56,6 @@ export const MiniGame = () => {
     setTimeout(() => {
       clearInterval(countdownInterval);
       setCounter(1);
-
     }, 4000);
   };
   useEffect(() => {
@@ -167,26 +165,6 @@ export const MiniGame = () => {
           }, 500);
         }
       }
-      if (ball.x < 0) {
-        ball.x = 350;
-        ball.y = 200;
-        setBall((prevBallPos: { x: number; y: number }) => ({
-          x: 350,
-          y: 200,
-        }));
-        setPoint2((prevScore: number) => prevScore + 1);
-        setPoint2tsc((prevScore: number) => prevScore + 1);
-      }
-      if (ball.x >= mapx) {
-        ball.x = 350;
-        ball.y = 200;
-        setBall((prevBallPos: { x: number; y: number }) => ({
-          x: 350,
-          y: 200,
-        }));
-        setPoint1((prevScore: number) => prevScore + 1);
-        setPoint1tsc((prevScore: number) => prevScore + 1);
-      }
     }
   }, [ball, counter]);
 
@@ -197,7 +175,15 @@ export const MiniGame = () => {
   }, [counter]);
 
   const restartGame = () => {
-    window.location.reload();
+    setBall((prevBallPos: { x: number; y: number }) => ({
+      x: 350,
+      y: 200,
+    }));
+    setPlayer2(300);
+    setCountdown(3);
+    setCounter(0);
+    setEnd(false);
+    setRebounds(0);
   };
 
   const navigateToHome = () => {
@@ -211,7 +197,6 @@ export const MiniGame = () => {
   const navigateToChat = () => {
     navigate("/chat");
   };
-
 
   const navigateToFriends = () => {
     navigate("/friends");
@@ -264,7 +249,7 @@ export const MiniGame = () => {
            <h1> score </h1>
            </div>
         <div className="tablo">
-          <table>
+          <table >
             <thead>
               <tr>
                 <th>#</th>
@@ -273,14 +258,14 @@ export const MiniGame = () => {
               </tr>
             </thead>
             <tbody>
-              {playerScores.map((tab: MiniScore, index: number) => (
+              {playerScores. map((tab: MiniScore, index: number) => (
                 <tr key={index}>
                   <td>{tab.place}</td>
                   <td>{tab.username}</td>
                   <td>{tab.scoreMiniGame}</td>
                   <td>
-                    <button onClick={() => navToProfil(tab.id.toString())}>
-                      Voir Profil
+                    <button className="buttonprfl" onClick={() => navToProfil(tab.id.toString())}>
+                      see profile
                     </button>
                   </td>
                 </tr>
@@ -289,7 +274,7 @@ export const MiniGame = () => {
           </table>
         </div>
       </div>
-      { countdown <= 0 && (
+      {/* { countdown <= 0 && ( */}
       <div
       className="div2"
         ref={gameAreaRef}
@@ -331,12 +316,12 @@ export const MiniGame = () => {
           </>
         )}
       </div>
-       )}
+       {/* )} */}
         </div>
       </main>
         <nav>
           <ul>
-          <li className="menu-item">
+            <li className="menu-item">
               <a onClick={navigateToHome}>
                 <img src={folder6} alt="Menu 3" />
                 <p>Home</p>
@@ -368,9 +353,8 @@ export const MiniGame = () => {
             </li>
           </ul>
         </nav>
-
-    </div>
-    <footer>
+      </div>
+      <footer>
         <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
           LOG OUT{" "}
         </button>

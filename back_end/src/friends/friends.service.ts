@@ -171,8 +171,15 @@ async getOnlinePlayers(userId: string) {
     }
     const usersOnline = await prisma.user.findMany({
       where: {
-        status: 'ONLINE',
-      },
+        OR: [
+            {
+                status: 'ONLINE'
+            },
+            {
+                status: 'INGAME'
+            }
+        ]
+    }
     });
 
     const usersOnlineFiltered = usersOnline.filter((onlineUser) => {

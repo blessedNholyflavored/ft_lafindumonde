@@ -2,11 +2,12 @@
   color: black;
 }
 
-table {
+.leadertab {
   table-layout: fixed;
-  width: 100%;
+  width: 90%;
   border-collapse: collapse;
   border: 3px solid;
+  display: inline-table;
 }
 
 .buttonleader {
@@ -30,4 +31,55 @@ table {
 
 .buttonleader:hover {
   background-color: pink;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.podium__item {
+  width: 200px;
+}
+
+.podium__rank {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 35px;
+  color: #fff;
+}
+
+.podium__city {
+  text-align: center;
+  padding: 0 0.5rem;
+}
+
+.podium__number {
+  width: 27px;
+  height: 75px;
+}
+
+.podium .first {
+  min-height: 300px;
+  background: rgb(255, 172, 37);
+  background: linear-gradient(
+    333deg,
+    rgba(255, 172, 37, 1) 0%,
+    rgba(254, 207, 51, 1) 13%,
+    rgba(254, 224, 51, 1) 53%,
+    rgba(255, 172, 37, 1) 100%
+  );
+}
+
+.podium .second {
+  min-height: 200px;
+  background: #4d7bff;
+}
+
+.podium .third {
+  min-height: 100px;
+  background: #ff90ff;
 }

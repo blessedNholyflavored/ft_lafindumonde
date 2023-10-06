@@ -100,7 +100,6 @@
   }
 }
 /* pour le responsive peut etre un display none si window < 800/900 px */
-/* edit marine : j'ai fais un media query du coup juste au dessus pour le mettre en haut*/
 .trollgame img {
   /* height: 200px; */
   width: 18vw;
@@ -132,7 +131,7 @@
 .parent {
   display: grid;
   float: inline-end;
-  grid-column-gap: 40px;
+  grid-column-gap: 1s0px;
   grid-row-gap: 10px;
   margin-top: 5rem;
   justify-content: center;
@@ -180,7 +179,8 @@
   font-size: medium;
 }
 
-.buttongame {
+.buttongame,
+.buttonprfl {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -196,10 +196,37 @@
   box-shadow: 3px 4px 0px 0px #000;
 }
 
-.buttongame:hover {
+.buttongame:hover,
+.buttonprfl :hover {
   background-color: greenyellow;
 }
 
 .tablo {
   width: 280px;
+}
+
+#leftbox {
+  float: left;
+  background: Red;
+  width: 25%;
+  height: 280px;
+}
+#middlebox {
+  float: left;
+  background: Green;
+  width: 50%;
+  height: 280px;
+}
+#rightbox {
+  float: right;
+  background: blue;
+  width: 25%;
+  height: 280px;
+}
+
+.avatar {
+  vertical-align: middle;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
