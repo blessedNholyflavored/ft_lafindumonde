@@ -143,9 +143,12 @@ body {
     position: relative;
     width: 700px;
     height: 400px;
-    background-color: black;
+    border: 6px solid var(--greyscale-k, #000);
+    box-shadow: 10px 12px 0px 0px #000;
+    /* background-color: black; */
     margin: 0 auto;
     overflow: hidden;
+    margin-top: 5rem;
   }
   
   /* Style pour le terrain de jeu */
@@ -175,3 +178,10 @@ body {
     z-index: -1; /* Placez-le derrière les raquettes */
   }
   
+
+  .avatar {
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }

@@ -212,123 +212,113 @@ export const MiniGame = () => {
   return (
     <div>
       <header>
-        <div>
-          <img src={nav} alt="Menu 1" />
-        </div>
-        <h1>TRANSCENDENCE</h1>
-      </header>
-      <div className="flex-bg">
-        <main style={{ color: "black" }}>
-          <div className="parent">
-            <div className="div1">
-              <div className="navbarbox">
-                <img src={nav} alt="icon" />
-                <h1> hi! </h1>
-              </div>
-              <p>Hello {user?.username}</p>
-              {countdown > 1 && <div className="countdown">{countdown}</div>}
-              {countdown === 1 && (
-                <div className="countdown ready">Ready ?</div>
-              )}
-              {countdown === 0 && <div className="countdown start">Start</div>}
-              <div
-                style={{
-                  textAlign: "center",
-                  fontSize: "24px",
-                  marginBottom: "10px",
-                }}
-              >
-                {end && (
-                  <div>
-                    <p className="text-game">
-                      game's over. total rebound from player: {rebounds}
-                    </p>
-                    <button className="buttongame" onClick={restartGame}>
-                      restart
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
+    <div>
+      <img src={nav} alt="Menu 1" />
+    </div>
+    <h1>TRANSCENDENCE</h1>
+  </header>
+  <div className="flex-bg">
+    <main style={{color:"black"}}>
+    <div className="parent">
 
-            <div style={{ float: "right" }} className="div3">
-              <div className="navbarbox">
-                <h1> score </h1>
-              </div>
-              <div className="tablo">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Username</th>
-                      <th>Score</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {playerScores.map((tab: MiniScore, index: number) => (
-                      <tr key={index}>
-                        <td>{tab.place}</td>
-                        <td>{tab.username}</td>
-                        <td>{tab.scoreMiniGame}</td>
-                        <td>
-                          <button
-                            onClick={() => navToProfil(tab.id.toString())}
-                          >
-                            Voir Profil
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            {countdown <= 0 && (
-              <div
-                className="div2"
-                ref={gameAreaRef}
-                tabIndex={0}
-                onKeyDown={playerMove}
-                style={{
-                  width: mapx,
-                  height: mapy,
-                  // border: "7px solid black",
-                  position: "relative",
-                }}
-              >
-                {!end && (
-                  <>
-                    <div
-                      id="moncercle"
-                      style={{ top: ball.y, left: ball.x }}
-                    ></div>
-                    <div
-                      style={{
-                        position: "absolute",
-                        width: 10,
-                        height: 400,
-                        // backgroundColor: "blue",
-                        top: player1,
-                        left: 0,
-                      }}
-                    ></div>
-                    <div
-                      style={{
-                        position: "absolute",
-                        width: 10,
-                        height: 80,
-                        backgroundColor: "red",
-                        top: player2,
-                        right: 0,
-                      }}
-                    ></div>
-                    <p>Compteur de rebonds: {rebounds}</p>
-                  </>
-                )}
-              </div>
-            )}
+<div className="div1">
+<div className="navbarbox">
+        <img src={nav}  alt="icon" />
+           <h1> hi! </h1>
+           </div>
+      <p>Hello {user?.username}</p>
+      {countdown > 1 && <div className="countdown">{countdown}</div>}
+      {countdown === 1 && <div className="countdown ready">Ready ?</div>}
+      {countdown === 0 && <div className="countdown start">Start</div>}
+      <div
+        style={{ textAlign: "center", fontSize: "24px", marginBottom: "10px" }}
+      >
+        {end && (
+          <div>
+            <p className="text-game">
+              game's over. total rebound from player: {rebounds}
+            </p>
+            <button className="buttongame" onClick={restartGame}>restart</button>
           </div>
-        </main>
+        )}
+      </div>
+      </div>
+      
+      <div style={{ float: "right" }} className="div3">
+      <div className="navbarbox">
+           <h1> score </h1>
+           </div>
+        <div className="tablo">
+          <table >
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Username</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {playerScores. map((tab: MiniScore, index: number) => (
+                <tr key={index}>
+                  <td>{tab.place}</td>
+                  <td>{tab.username}</td>
+                  <td>{tab.scoreMiniGame}</td>
+                  <td>
+                    <button className="buttonprfl" onClick={() => navToProfil(tab.id.toString())}>
+                      see profile
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {/* { countdown <= 0 && ( */}
+      <div
+      className="div2"
+        ref={gameAreaRef}
+        tabIndex={0}
+        onKeyDown={playerMove}
+        style={{
+          width: mapx,
+          height: mapy,
+          // border: "7px solid black",
+          position: "relative",
+        }}
+      >
+        {!end && (
+          <>
+            <div id="moncercle" style={{ top: ball.y, left: ball.x }}></div>
+            <div
+              style={{
+                position: "absolute",
+                width: 10,
+                height: 400,
+                // backgroundColor: "blue",
+                top: player1,
+                left: 0,
+              }}
+            >
+              
+            </div>
+            <div
+              style={{
+                position: "absolute",
+                width: 10,
+                height: 80,
+                backgroundColor: "red",
+                top: player2,
+                right: 0,
+              }}
+            ></div>
+            <p>Compteur de rebonds: {rebounds}</p>
+          </>
+        )}
+      </div>
+       {/* )} */}
+        </div>
+      </main>
         <nav>
           <ul>
             <li className="menu-item">

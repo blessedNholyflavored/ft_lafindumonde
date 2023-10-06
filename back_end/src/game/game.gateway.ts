@@ -767,4 +767,38 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       }
 
       
+      @SubscribeMessage('AskForIdOpponent')
+      async onAskForIdOpponent(@MessageBody() data: {roomId:number, pos: number}  ,@ConnectedSocket() socket: Socket)
+      {
+        if(!data[0])
+          return ;
+       let recupRoom = this.roomMapService.getRoom(data[0].toString());
+        if (!recupRoom)
+          return ;
+        if (data[1] == 1)
+        {
+          socket.emit("recupIdOpponent", recupRoom.idP2);
+        }
+        if (data[1] == 2)
+        {
+          socket.emit("recupIdOpponent", recupRoom.idP1);
+        }
+      }
+
+      @SubscribeMessage('recupRoomAtStart')
+      async OnRecupRoomAtStart(@MessageBody() roomId:number ,@ConnectedSocket() socket: Socket)
+      {
+        if(!roomId)
+          return ;
+       let recupRoom = this.roomMapService.getRoom(roomId.toString());
+        if (!recupRoom)
+          return ;
+          const Sroom: roomSend = {player1: recupRoom.player1.username, player2: recupRoom.player2.username,
+            ballX: 350,
+            ballY: 200, scoreP1: 0,
+            scoreP2: 0, player1Y: 200, player2Y: 200, winner: '',
+            roomID: recupRoom.idRoom};
+
+            socket.emit("sendRoomAtStart", Sroom);
+      }
 }

@@ -22,7 +22,7 @@ import folder1 from "./../img/folder2.png";
 import folder2 from "./../img/folder3.png";
 import folder0 from "./../img/folder1.png";
 import folder6 from "./../img/folder4.png";
-import logo from "./../img/logo42.png"
+import logo from "./../img/logo42.png";
 import pink from "./../img/drivepink.png";
 import yellow from "./../img/driveyellow.png";
 import blue from "./../img/driveblue.png";
@@ -145,7 +145,6 @@ export const GamePage = () => {
     setShowNotification(false);
   };
 
-
   const navigateToHome = () => {
     navigate("/");
   };
@@ -157,7 +156,6 @@ export const GamePage = () => {
   const navigateToChat = () => {
     navigate("/chat");
   };
-
 
   const navigateToFriends = () => {
     navigate("/friends");
@@ -172,101 +170,88 @@ export const GamePage = () => {
 
   const navToLeaderboard = () => {
     navigate("/leaderboard");
-  }
-
+  };
 
   return (
-<div>
-
-<header>
     <div>
-      <img src={nav} alt="Menu 1" />
-    </div>
-    <h1>TRANSCENDENCE</h1>
-  </header>
-  <div className="flex-bg">
-    <main>
+      <header>
+        <div>
+          <img src={nav} alt="Menu 1" />
+        </div>
+        <h1>TRANSCENDENCE</h1>
+      </header>
+      <div className="flex-bg">
+        <main>
+          <div className="fullpage">
+            <div className="navbarbox">
+              <img src={icon} alt="icon" />
+              <h1> Game </h1>
+            </div>
 
-    <div className="fullpage">
-        <div className="navbarbox">
-        <img src={icon}  alt="icon" />
-           <h1> Game </h1>
-           </div>
-
-    <div className="gamecss">
-      <div className="trollgame">
-            <p> 42 LOVES U </p>
-            <img src={sadpepe} />
-          </div>
-
-          <div className="trollgame2">
-            <p> it was so hard </p>
-            <img src={sponge} />
-          </div>
-
-          <div className="game1">
-            <p> PLAY THE GAME </p>
             <div className="gamecss">
+              <div className="trollgame">
+                <p> 42 LOVES U </p>
+                <img src={sadpepe} />
+              </div>
 
-  <div className="column" onClick={() => handlePlayerSelect("1")}>
-  <img src={pink} alt="Menu 3" />
-  <button  className="game_img_btn">
-        Quick play
-      </button>
-  </div>
-  <div className="column"  onClick={() => handlePlayerSelect222("1")}>
-  <img src={blue} alt="Menu 3" />
-  <button
-       
-        className="game_img_btn"
-      >
-        Ranked play
-      </button>
-  </div>
+              <div className="trollgame2">
+                <p> it was so hard </p>
+                <img src={sponge} />
+              </div>
 
-  
-  <div className="column" onClick={() => NavToSoloPong()} >
-  <img src={green} alt="Menu 3" />
-  <button 
-          
-          className="game_img_btn"
-      >
-        Solo game
-      </button>
-  </div>
-  <div className="column"  onClick={() => navToLeaderboard()}>
-  <img src={yellow} alt="Menu 3" />
+              <div className="game1">
+                <p> PLAY THE GAME </p>
+                <div className="gamecss">
+                  <div
+                    className="column"
+                    onClick={() => handlePlayerSelect("1")}
+                  >
+                    <img src={pink} alt="Menu 3" />
+                    <button className="game_img_btn">Quick play</button>
+                  </div>
+                  <div
+                    className="column"
+                    onClick={() => handlePlayerSelect222("1")}
+                  >
+                    <img src={blue} alt="Menu 3" />
+                    <button className="game_img_btn">Ranked play</button>
+                  </div>
 
-  <button className="game_img_btn" > leaderboard
-      </button>
-      {(queueCount > 0 || queueCountBonus > 0) && (
-        <p>loading...</p>
-      )}
-      {queueCount === 2 && <p>La partie commence entre Ldinaut et Mcouppe !</p>}
-      {inGame === 1 && <p>Deja en game mon reuf !</p>}
-  </div>
-  </div>
+                  <div className="column" onClick={() => NavToSoloPong()}>
+                    <img src={green} alt="Menu 3" />
+                    <button className="game_img_btn">Solo game</button>
+                  </div>
+                  <div className="column" onClick={() => navToLeaderboard()}>
+                    <img src={yellow} alt="Menu 3" />
 
+                    <button className="game_img_btn"> leaderboard</button>
+                    {(queueCount > 0 || queueCountBonus > 0) && (
+                      <p>loading...</p>
+                    )}
+                    {queueCount === 2 && (
+                      <p>La partie commence entre Ldinaut et Mcouppe !</p>
+                    )}
+                    {inGame === 1 && <p>Deja en game mon reuf !</p>}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                {showNotification && (
+                  <Notify
+                    message={notifyMSG}
+                    type={notifyType}
+                    senderId={sender}
+                    onClose={handleCloseNotification}
+                  />
+                )}
+              </div>
+            </div>
           </div>
-
-      <div>
-        {showNotification && (
-          <Notify
-            message={notifyMSG}
-            type={notifyType}
-            senderId={sender}
-            onClose={handleCloseNotification}
-          />
-        )}
-      </div>
-
-    </div>
-    </div>
-
-    </main>
-    <nav>
+        </main>
+        <nav>
           <ul>
-          <li className="menu-item">
+            <li className="menu-item">
               <a onClick={navigateToHome}>
                 <img src={folder6} alt="Menu 3" />
                 <p>Home</p>
@@ -298,8 +283,8 @@ export const GamePage = () => {
             </li>
           </ul>
         </nav>
-    </div>
-    <footer>
+      </div>
+      <footer>
         <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
           LOG OUT{" "}
         </button>
