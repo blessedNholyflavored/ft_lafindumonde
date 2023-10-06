@@ -67,6 +67,7 @@ export const Chat = () => {
   const [showChatChannel, setShowChatChannel] = useState(false);
   const [showConv, setShowConv] = useState(false);
   const [activeChannel, setActiveChannel] = useState<number | null>(null);
+  const [activeBanChannel, setActiveBanChannel] = useState<number | null>(null);
   const navigate = useNavigate();
   const socket = useContext(WebsocketContext);
   const [selectedPrivateConv, setSelectedPrivateConv] = useState<number | null>(
@@ -84,12 +85,11 @@ export const Chat = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
+  const [banTimeLeft, setBanTimeLeft] = useState<number>(0);
   const [kickChan, setKickChan] = useState("");
   const [kickReason, setKickReason] = useState("");
 
-
-  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-  };
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {};
 
   async function fetchYourRoomsList() {
     try {
@@ -274,6 +274,8 @@ export const Chat = () => {
   // }, []);
 
   async function checkBanned(userId: number, roomId: string) {
+    if (!roomId || parseInt(roomId) === 0)
+      return ;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/banned/${userId}/${roomId}`,
@@ -295,6 +297,29 @@ export const Chat = () => {
     }
   }
 
+  async function fetchBanTimeLeft(roomId: number) {
+    if (!activeBanChannel || activeChannel === 0) return;
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/chat/timeBan/${user?.id}/${roomId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des messages privés.");
+      } else {
+        const data = await response.text();
+        setBanTimeLeft(parseInt(data));
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+    return "";
+  }
+
   useEffect(() => {
     async function fetchYourRooms() {
       const scores = await fetchYourRoomsList();
@@ -314,6 +339,7 @@ export const Chat = () => {
     async function fetchInviteReceive() {
       const scores = await fetchInviteReceiveList();
     }
+
     if (socket) {
       socket.on("refreshListRoom", () => {
         fetchYourRooms();
@@ -343,21 +369,21 @@ export const Chat = () => {
       });
     }
 
-    const kickMessage = localStorage.getItem("kickMessage");
-    if (kickMessage) {
-      setShowNotification(true);
-      setNotifyMSG(kickMessage);
-      setNotifyType(2);
-    }
-    localStorage.removeItem("kickMessage");
+    // const kickMessage = localStorage.getItem("kickMessage");
+    // if (kickMessage) {
+    //   setShowNotification(true);
+    //   setNotifyMSG(kickMessage);
+    //   setNotifyType(2);
+    // }
+    // localStorage.removeItem("kickMessage");
 
-    const muteMessage = localStorage.getItem("muteMessage");
-    if (muteMessage) {
-      setShowNotification(true);
-      setNotifyMSG(muteMessage);
-      setNotifyType(2);
-    }
-    localStorage.removeItem("muteMessage");
+    // const muteMessage = localStorage.getItem("muteMessage");
+    // if (muteMessage) {
+    //   setShowNotification(true);
+    //   setNotifyMSG(muteMessage);
+    //   setNotifyType(2);
+    // }
+    // localStorage.removeItem("muteMessage");
 
     const banMessage = localStorage.getItem("banMessage");
     if (banMessage) {
@@ -373,13 +399,15 @@ export const Chat = () => {
         // window.location.href = "/chat";
         navigate("/chat");
 
-          socket.emit("reloadListRoomForOne");
+        socket.emit("reloadListRoomForOne");
         // localStorage.setItem(
         //   "kickMessage",
         //   "You have been kicked from " + roomName + ". Raison: " + reason
         // );
         setShowNotification(true);
-        setNotifyMSG("You have been kicked from " + roomName + ". Raison: " + reason);
+        setNotifyMSG(
+          "You have been kicked from " + roomName + ". Raison: " + reason
+        );
         setNotifyType(2);
       });
     }
@@ -387,10 +415,8 @@ export const Chat = () => {
       socket.on(
         "refreshAfterMute",
         (roomName: string, reason: string, time: number) => {
-          window.location.reload();
-          window.location.href = "/chat";
-          localStorage.setItem(
-            "muteMessage",
+          setShowNotification(true);
+          setNotifyMSG(
             "You have been muted from " +
               roomName +
               ". Raison: " +
@@ -399,17 +425,30 @@ export const Chat = () => {
               time +
               " minutes"
           );
+          setNotifyType(2);
         }
       );
     }
     if (socket) {
       socket.on(
         "refreshAfterBan",
-        (roomName: string, reason: string, time: number) => {
-          window.location.reload();
-          window.location.href = "/chat";
-          localStorage.setItem(
-            "banMessage",
+        (roomId:number, roomName: string, reason: string, time: number) => {
+          // window.location.reload();
+          // window.location.href = "/chat";
+          navigate("/chat");
+          setActiveBanChannel(roomId);
+          // localStorage.setItem(
+          //   "banMessage",
+          //   "You have been banned from " +
+          //     roomNames +
+          //     ". Raison: " +
+          //     reason +
+          //     ", pendant: " +
+          //     time +
+          //     " minutes"
+          // );
+          setShowNotification(true);
+          setNotifyMSG(
             "You have been banned from " +
               roomName +
               ". Raison: " +
@@ -418,6 +457,10 @@ export const Chat = () => {
               time +
               " minutes"
           );
+          setNotifyType(2);
+          fetchBanTimeLeft(roomId);
+          setActiveChannel(0);
+          setShowChatChannel(false);
         }
       );
     }
@@ -453,10 +496,7 @@ export const Chat = () => {
       if (socket) {
       }
     };
-
   }, [activeChannel]);
-
-  
 
   const checkRoomAlreadyExist = async () => {
     try {
@@ -549,7 +589,6 @@ export const Chat = () => {
       await checkBanned(user?.id, id.toString());
     }
     if (userIsBanned === true) {
-      alert("caca");
       window.location.reload();
     } else {
       navigate(`/chat/chan/${id}`);
@@ -756,7 +795,7 @@ export const Chat = () => {
   }
 
   const clickToInvite = async (id: number) => {
-    if (!activeChannel) {
+    if (!activeChannel || activeChannel === 0) {
       alert("Recipient ID is missing.");
       return;
     }
@@ -819,6 +858,25 @@ export const Chat = () => {
   const handleCloseNotification = () => {
     setShowNotification(false);
   };
+
+  const decrementBanTimeLeft = () => {
+    if (banTimeLeft > 0) {
+      setBanTimeLeft((prevTime) => prevTime - 1);
+    } else if (banTimeLeft <= 0 && banTimeLeft >= -2) {
+      fetchBanTimeLeft(activeBanChannel as number);
+      setUserIsBanned(false);
+      checkBanned(user?.id as number, activeBanChannel as any);
+      setActiveBanChannel(0);
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(decrementBanTimeLeft, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [banTimeLeft]);
 
   return (
     <div className="main_chat_box" style={{ background: "darkgreen" }}>
@@ -952,7 +1010,7 @@ export const Chat = () => {
           {channelsJoin.map((chan) => (
             <div key={chan.id}>
               <button
-                onClick={() => {
+                onClick={ () => {
                   if (chan.AmIBanned === "false") {
                     navToChan(chan.id);
                     if (showChatChannel) {
@@ -966,8 +1024,12 @@ export const Chat = () => {
                       setIsPrivatechan(1);
                     } else setIsPrivatechan(0);
                   } else {
-                    setNotifyMSG("t bannis mon reuf");
+                    setActiveBanChannel(chan.id);
+                    setNotifyMSG(
+                      "t bannis mon reuf pour " + banTimeLeft + " secondes"
+                    );
                     setShowNotification(true);
+                    setNotifyType(2);
                   }
                 }}
                 disabled={activeChannel === chan.id}

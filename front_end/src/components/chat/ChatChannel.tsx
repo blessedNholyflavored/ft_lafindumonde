@@ -262,8 +262,6 @@ export const ChatChannel = () => {
     return "";
   }
 
-
-  
   useEffect(() => {
     if (reactu === 0) {
       setTimeout(() => {
@@ -315,6 +313,18 @@ export const ChatChannel = () => {
         fetchUserRole();
       });
     }
+
+    if (socket) {
+      socket.on(
+        "refreshAfterMute",
+        (roomName: string, reason: string, time: number) => {
+          MuteTimeLeft();
+          setUserIsMuted(false);
+          UserIsmuted();
+        }
+      );
+    }
+
     fetchRoomMessage();
     fetchUserRole();
     fetchUserInRoom();
@@ -334,8 +344,7 @@ export const ChatChannel = () => {
   };
 
   const leftChannel = async () => {
-    if (!id)
-      return ;
+    if (!id) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/leftChan/${id}/${user?.id}`,
@@ -762,23 +771,21 @@ export const ChatChannel = () => {
     } else setChangeStatutButton(true);
   }
 
-  const handleEnter = (e: { key: string; }) => {
-    if (e.key === 'Enter') {
+  const handleEnter = (e: { key: string }) => {
+    if (e.key === "Enter") {
       onSubmit();
     }
   };
 
   const decrementMuteTimeLeft = () => {
     if (muteTimeLeft > 0) {
-      setMuteTimeLeft(prevTime => prevTime - 1);
-    }
-    else if (muteTimeLeft <= 0 && muteTimeLeft >= -2)
-    {
+      setMuteTimeLeft((prevTime) => prevTime - 1);
+    } else if (muteTimeLeft <= 0 && muteTimeLeft >= -2) {
       fetchMuteTimeLeft(user?.id as number);
       setUserIsMuted(false);
       setValue("");
     }
-    };
+  };
 
   useEffect(() => {
     const interval = setInterval(decrementMuteTimeLeft, 1000);
@@ -787,7 +794,6 @@ export const ChatChannel = () => {
       clearInterval(interval);
     };
   }, [muteTimeLeft]);
-
 
   return (
     <div>
@@ -850,7 +856,6 @@ export const ChatChannel = () => {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyPress={handleEnter}
-
           />
           <button onClick={onSubmit}>Submit</button>
         </div>

@@ -707,14 +707,35 @@ async timeLeftMuteUser(userId: string, roomId: string) {
       },
     },
   });
+  
+  if (!userOnChannel)
+    return ;
   const now = new Date();
   const mutedUntil = new Date(userOnChannel.mutedUntil).getTime();
   const differenceInMs = mutedUntil - now.getTime();
   const differenceInSeconds = Math.floor(differenceInMs / 1000);
 
-  console.log('Temps:', differenceInSeconds);
   return differenceInSeconds;
 }
+
+async timeLeftBanUser(userId: string, roomId: string) {
+  const userOnChannel = await prisma.userOnChannel.findUnique({
+    where: {
+      channelId_userId: {
+        channelId: parseInt(roomId),
+        userId: parseInt(userId),
+      },
+    },
+  });
+  const now = new Date();
+  const bannedUntil = new Date(userOnChannel.bannedUntil).getTime();
+  const differenceInMs = bannedUntil - now.getTime();
+  const differenceInSeconds = Math.floor(differenceInMs / 1000);
+
+  return differenceInSeconds;
+}
+
+
 
 
 

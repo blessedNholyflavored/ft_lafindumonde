@@ -716,7 +716,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (key === NuserId)
             user1 = value;
         });
-        user1.emit("refreshAfterBan", roomName, data[2], data[3]);
+        user1.emit("refreshAfterBan", data[1], roomName, data[2], data[3]);
       }
 
       @SubscribeMessage('reloadListFriendPage')
