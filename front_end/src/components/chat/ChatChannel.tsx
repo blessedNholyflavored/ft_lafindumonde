@@ -325,6 +325,12 @@ export const ChatChannel = () => {
       );
     }
 
+    if (socket) {
+      socket.on("refreshAfterUnmute", async () => {
+        setMuteTimeLeft(-1);
+      });
+    }
+
     fetchRoomMessage();
     fetchUserRole();
     fetchUserInRoom();
@@ -464,10 +470,9 @@ export const ChatChannel = () => {
     } catch (error) {
       console.error("Erreur:", error);
     }
-    // setTimeout(() => {
-    //   socket.emit("reloadMessRoom", id);
-    //   socket.emit("banFromChannel", userId, id, reason, time);
-    // }, 100);
+    setTimeout(() => {
+      socket.emit("UnbanUser", userId);
+    }, 100);
     setSelectedUser(0);
   };
 
@@ -486,10 +491,9 @@ export const ChatChannel = () => {
     } catch (error) {
       console.error("Erreur:", error);
     }
-    // setTimeout(() => {
-    // socket.emit("reloadMessRoom", id);
-    // socket.emit("muteFromChannel", userId, id);
-    // }, 100);
+    setTimeout(() => {
+    socket.emit("UnmuteUser", userId);
+    }, 100);
     setSelectedUser(0);
   };
 

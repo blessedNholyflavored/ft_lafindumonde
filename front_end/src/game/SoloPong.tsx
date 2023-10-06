@@ -9,8 +9,7 @@ import folder2 from "./../img/folder3.png";
 import folder0 from "./../img/folder1.png";
 import folder6 from "./../img/folder4.png";
 import { Logout } from "../components/auth/Logout";
-import logo from "./../img/logo42.png"
-
+import logo from "./../img/logo42.png";
 
 interface MiniScore {
   id: number;
@@ -24,8 +23,8 @@ export const MiniGame = () => {
   const [player2, setPlayer2] = useState(300);
   const [keyCode, setKeyCode] = useState("");
   const gameAreaRef = useRef<HTMLDivElement>(null);
-  const mapy = 450;
-  const mapx = 900;
+  const mapy = 400;
+  const mapx = 700;
   const ballSpeed = 6;
   const [player1Point, setPoint1] = useState(0);
   const [player2Point, setPoint2] = useState(0);
@@ -57,7 +56,6 @@ export const MiniGame = () => {
     setTimeout(() => {
       clearInterval(countdownInterval);
       setCounter(1);
-
     }, 4000);
   };
   useEffect(() => {
@@ -167,26 +165,6 @@ export const MiniGame = () => {
           }, 500);
         }
       }
-      if (ball.x < 0) {
-        ball.x = 350;
-        ball.y = 200;
-        setBall((prevBallPos: { x: number; y: number }) => ({
-          x: 350,
-          y: 200,
-        }));
-        setPoint2((prevScore: number) => prevScore + 1);
-        setPoint2tsc((prevScore: number) => prevScore + 1);
-      }
-      if (ball.x >= mapx) {
-        ball.x = 350;
-        ball.y = 200;
-        setBall((prevBallPos: { x: number; y: number }) => ({
-          x: 350,
-          y: 200,
-        }));
-        setPoint1((prevScore: number) => prevScore + 1);
-        setPoint1tsc((prevScore: number) => prevScore + 1);
-      }
     }
   }, [ball, counter]);
 
@@ -197,7 +175,15 @@ export const MiniGame = () => {
   }, [counter]);
 
   const restartGame = () => {
-    window.location.reload();
+    setBall((prevBallPos: { x: number; y: number }) => ({
+      x: 350,
+      y: 200,
+    }));
+    setPlayer2(300);
+    setCountdown(3);
+    setCounter(0);
+    setEnd(false);
+    setRebounds(0);
   };
 
   const navigateToHome = () => {
@@ -211,7 +197,6 @@ export const MiniGame = () => {
   const navigateToChat = () => {
     navigate("/chat");
   };
-
 
   const navigateToFriends = () => {
     navigate("/friends");
@@ -227,116 +212,126 @@ export const MiniGame = () => {
   return (
     <div>
       <header>
-    <div>
-      <img src={nav} alt="Menu 1" />
-    </div>
-    <h1>TRANSCENDENCE</h1>
-  </header>
-  <div className="flex-bg">
-    <main style={{color:"black"}}>
-    <div className="parent">
-
-<div className="div1">
-<div className="navbarbox">
-        <img src={nav}  alt="icon" />
-           <h1> hi! </h1>
-           </div>
-      <p>Hello {user?.username}</p>
-      {countdown > 1 && <div className="countdown">{countdown}</div>}
-      {countdown === 1 && <div className="countdown ready">Ready ?</div>}
-      {countdown === 0 && <div className="countdown start">Start</div>}
-      <div
-        style={{ textAlign: "center", fontSize: "24px", marginBottom: "10px" }}
-      >
-        {end && (
-          <div>
-            <p className="text-game">
-              game's over. total rebound from player: {rebounds}
-            </p>
-            <button className="buttongame" onClick={restartGame}>restart</button>
-          </div>
-        )}
-      </div>
-      </div>
-      
-      <div style={{ float: "right" }} className="div3">
-      <div className="navbarbox">
-           <h1> score </h1>
-           </div>
-        <div className="tablo">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Username</th>
-                <th>Score</th>
-              </tr>
-            </thead>
-            <tbody>
-              {playerScores.map((tab: MiniScore, index: number) => (
-                <tr key={index}>
-                  <td>{tab.place}</td>
-                  <td>{tab.username}</td>
-                  <td>{tab.scoreMiniGame}</td>
-                  <td>
-                    <button onClick={() => navToProfil(tab.id.toString())}>
-                      Voir Profil
+        <div>
+          <img src={nav} alt="Menu 1" />
+        </div>
+        <h1>TRANSCENDENCE</h1>
+      </header>
+      <div className="flex-bg">
+        <main style={{ color: "black" }}>
+          <div className="parent">
+            <div className="div1">
+              <div className="navbarbox">
+                <img src={nav} alt="icon" />
+                <h1> hi! </h1>
+              </div>
+              <p>Hello {user?.username}</p>
+              {countdown > 1 && <div className="countdown">{countdown}</div>}
+              {countdown === 1 && (
+                <div className="countdown ready">Ready ?</div>
+              )}
+              {countdown === 0 && <div className="countdown start">Start</div>}
+              <div
+                style={{
+                  textAlign: "center",
+                  fontSize: "24px",
+                  marginBottom: "10px",
+                }}
+              >
+                {end && (
+                  <div>
+                    <p className="text-game">
+                      game's over. total rebound from player: {rebounds}
+                    </p>
+                    <button className="buttongame" onClick={restartGame}>
+                      restart
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      { countdown <= 0 && (
-      <div
-      className="div2"
-        ref={gameAreaRef}
-        tabIndex={0}
-        onKeyDown={playerMove}
-        style={{
-          width: mapx,
-          height: mapy,
-          // border: "7px solid black",
-          position: "relative",
-        }}
-      >
-        {!end && (
-          <>
-            <div id="moncercle" style={{ top: ball.y, left: ball.x }}></div>
-            <div
-              style={{
-                position: "absolute",
-                width: 10,
-                height: 400,
-                // backgroundColor: "blue",
-                top: player1,
-                left: 0,
-              }}
-            >
-              
+                  </div>
+                )}
+              </div>
             </div>
-            <div
-              style={{
-                position: "absolute",
-                width: 10,
-                height: 80,
-                backgroundColor: "red",
-                top: player2,
-                right: 0,
-              }}
-            ></div>
-            <p>Compteur de rebonds: {rebounds}</p>
-          </>
-        )}
-      </div>
-       )}
-        </div>
-      </main>
+
+            <div style={{ float: "right" }} className="div3">
+              <div className="navbarbox">
+                <h1> score </h1>
+              </div>
+              <div className="tablo">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Username</th>
+                      <th>Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {playerScores.map((tab: MiniScore, index: number) => (
+                      <tr key={index}>
+                        <td>{tab.place}</td>
+                        <td>{tab.username}</td>
+                        <td>{tab.scoreMiniGame}</td>
+                        <td>
+                          <button
+                            onClick={() => navToProfil(tab.id.toString())}
+                          >
+                            Voir Profil
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {countdown <= 0 && (
+              <div
+                className="div2"
+                ref={gameAreaRef}
+                tabIndex={0}
+                onKeyDown={playerMove}
+                style={{
+                  width: mapx,
+                  height: mapy,
+                  // border: "7px solid black",
+                  position: "relative",
+                }}
+              >
+                {!end && (
+                  <>
+                    <div
+                      id="moncercle"
+                      style={{ top: ball.y, left: ball.x }}
+                    ></div>
+                    <div
+                      style={{
+                        position: "absolute",
+                        width: 10,
+                        height: 400,
+                        // backgroundColor: "blue",
+                        top: player1,
+                        left: 0,
+                      }}
+                    ></div>
+                    <div
+                      style={{
+                        position: "absolute",
+                        width: 10,
+                        height: 80,
+                        backgroundColor: "red",
+                        top: player2,
+                        right: 0,
+                      }}
+                    ></div>
+                    <p>Compteur de rebonds: {rebounds}</p>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </main>
         <nav>
           <ul>
-          <li className="menu-item">
+            <li className="menu-item">
               <a onClick={navigateToHome}>
                 <img src={folder6} alt="Menu 3" />
                 <p>Home</p>
@@ -368,9 +363,8 @@ export const MiniGame = () => {
             </li>
           </ul>
         </nav>
-
-    </div>
-    <footer>
+      </div>
+      <footer>
         <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
           LOG OUT{" "}
         </button>

@@ -240,6 +240,15 @@ export const FriendsPage: React.FC = () => {
     }
 
     if (socket) {
+      socket.on("reloadInGame", () => {
+        setTimeout(() => {
+          fetchFriends();
+          fetchOnlinePlayers();
+        }, 500);
+      });
+    }
+
+    if (socket) {
       socket.on("refreshListFriendPage", () => {
         setTimeout(() => {
           fetchScores();

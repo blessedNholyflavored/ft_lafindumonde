@@ -466,6 +466,17 @@ export const Chat = () => {
     }
 
     if (socket) {
+      socket.on("refreshAfterUnban", async () => {
+        fetchYourRooms();
+      });
+    }
+
+
+    
+
+    
+
+    if (socket) {
       socket.on("refreshMessages", async () => {
         await fetchPrivateConv();
         console.log(privMSG);
@@ -861,6 +872,7 @@ export const Chat = () => {
 
   const decrementBanTimeLeft = () => {
     if (banTimeLeft > 0) {
+      console.log(banTimeLeft);
       setBanTimeLeft((prevTime) => prevTime - 1);
     } else if (banTimeLeft <= 0 && banTimeLeft >= -2) {
       fetchBanTimeLeft(activeBanChannel as number);
