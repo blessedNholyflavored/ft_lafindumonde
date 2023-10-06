@@ -31,10 +31,13 @@ const Notify: React.FC<NotificationProps> = ({
   };
 
   const handle2FAEnable = async () => {
-    const res = await fetch(`http://${window.location.hostname}:3000/auth/2FAenable`, {
-      method: "GET",
-      credentials: "include",
-    });
+    const res = await fetch(
+      `http://${window.location.hostname}:3000/auth/2FAenable`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
     const data = await res.json();
     return navigate(`/totpSave?qrCodeImg=${encodeURIComponent(data.code)}`);
   };
@@ -66,6 +69,7 @@ const Notify: React.FC<NotificationProps> = ({
           </button>
         </div>
       )}
+      {type === 5 && <div className="notificationErrorChat">{message}</div>}
     </>
   );
 };

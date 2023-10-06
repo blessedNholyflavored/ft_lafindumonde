@@ -201,7 +201,6 @@ export const FriendsPage: React.FC = () => {
   };
 
   const fetchOnlinePlayersList = async () => {
-
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/friends/online/${user?.id}`,
@@ -210,7 +209,7 @@ export const FriendsPage: React.FC = () => {
           credentials: "include",
         }
       );
-      
+
       if (response.ok) {
         const data = await response.json();
         if (data.length > 0) {
@@ -557,7 +556,7 @@ export const FriendsPage: React.FC = () => {
         <h1>TRANSCENDENCE</h1>
       </header>
       <div className="flex-bg">
-        <main>
+        <main className="mainFriendship">
           <div>
             {showNotification && (
               <Notify
@@ -755,31 +754,35 @@ export const FriendsPage: React.FC = () => {
               </div>
               <div className="boxrowtest">
                 <div className="navbarsmallbox">
-                    <p className="boxtitle"> INFO </p>
+                  <p className="boxtitle"> INFO </p>
                 </div>
-          <ul>
-            <h1>Liste des requetes en attente envoyees :</h1>
-            {friendsSend.map((friend) => (
-              <div>
-                {friend.status === "PENDING" && (
-                  <li key={friend.id}>
-                    <div>ID: {friend.id}</div>
-                    <div>Status: {friend.status}</div>
-                    <div>Sender ID: {user?.username}</div>
-                    <div>recipientId ID: {friend.username}</div>
-                    <button onClick={() => RefuseFriend(friend.id, friend.recipientId)}>
-                      Cancel
-                    </button>
-                  </li>
-                )}
+                <ul>
+                  <h1>Liste des requetes en attente envoyees :</h1>
+                  {friendsSend.map((friend) => (
+                    <div>
+                      {friend.status === "PENDING" && (
+                        <li key={friend.id}>
+                          <div>ID: {friend.id}</div>
+                          <div>Status: {friend.status}</div>
+                          <div>Sender ID: {user?.username}</div>
+                          <div>recipientId ID: {friend.username}</div>
+                          <button
+                            onClick={() =>
+                              RefuseFriend(friend.id, friend.recipientId)
+                            }
+                          >
+                            Cancel
+                          </button>
+                        </li>
+                      )}
+                    </div>
+                  ))}
+                </ul>
               </div>
-            ))}
-          </ul>
-          </div>
             </div>
           </div>
         </main>
-        <nav>
+        <nav className="friendshipNav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>

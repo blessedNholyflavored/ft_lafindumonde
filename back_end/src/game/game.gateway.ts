@@ -733,19 +733,4 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
         socket.emit("refreshListFriendPage");
       }
 
-      @SubscribeMessage('reloadListFriendPage')
-      async onReloadListFriendPage(@MessageBody() userId:number ,@ConnectedSocket() socket: Socket)
-      {
-        let user1;
-        const NuserId = Number(userId);
-        this.playerConnections.forEach((value, key) => {
-          console.log(key, " et ", NuserId);
-          if (key === NuserId)
-            user1 = value;
-        });
-        if (user1)
-          user1.emit("refreshListFriendPage");
-        socket.emit("refreshListFriendPage");
-      }
-      
 }

@@ -36,6 +36,24 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
+.notificationErrorChat {
+  position: fixed;
+  top: 20vh;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #a50e40;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 300px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
 .notification2FA {
   position: fixed;
   top: 25vh;

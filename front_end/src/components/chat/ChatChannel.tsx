@@ -9,6 +9,7 @@ import logo from "../../img/logo42.png";
 import { Logout } from "./../auth/Logout";
 import { WebsocketContext } from "../../WebsocketContext";
 import { useNavigate } from "react-router-dom";
+import Notify from "../../Notify";
 
 interface messages {
   start_at: string;
@@ -63,6 +64,10 @@ export const ChatChannel = () => {
   const [reasonKick, setReasonKick] = useState("");
   const [onPWD, setOnPWD] = useState(false);
   const [statutChan, setStatutChan] = useState("PUBLIC");
+  const [showNotification, setShowNotification] = useState(false);
+  const [notifyMSG, setNotifyMSG] = useState<string>("");
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const [sender, setSender] = useState<number>(0);
 
   async function fetchUsernameById(userId: string) {
     try {
@@ -95,7 +100,17 @@ export const ChatChannel = () => {
           credentials: "include",
         }
       );
-      if (!response.ok) {
+      if (response.status === 401) {
+        // setShowNotification(true);
+        // setNotifyMSG("You're not in this channel!");
+        // setNotifyType(5);
+        navigate("/chat");
+      } else if (!response.ok) {
+        // console.log("ici erreur 500 ??");
+        // setShowNotification(true);
+        // setNotifyMSG("You're not in this channel!");
+        // setNotifyType(5);
+
         throw new Error("Erreur lors de la récupération des messages privés.");
       }
 
@@ -787,6 +802,10 @@ export const ChatChannel = () => {
     }
   };
 
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
+
   useEffect(() => {
     const interval = setInterval(decrementMuteTimeLeft, 1000);
 
@@ -797,6 +816,14 @@ export const ChatChannel = () => {
 
   return (
     <div>
+      {showNotification && (
+        <Notify
+          message={notifyMSG}
+          type={notifyType}
+          senderId={sender}
+          onClose={handleCloseNotification}
+        />
+      )}
       <div>
         <div>
           <button onClick={leftChannel}>Quitter le channel ?</button>

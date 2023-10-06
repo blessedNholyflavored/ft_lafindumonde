@@ -88,7 +88,7 @@
   size: 28px;
   width: 70%;
   max-width: 150px;
-  color: #000;
+  color: #fff;
   border: 2px solid #000;
   /* // border-width: 2px; */
   height: 30px;
@@ -98,7 +98,22 @@
 }
 
 .loginForm button {
+  display: inline-flex;
+  align-items: center;
+  /* justify-content: center; */
+  align-items: center;
+  cursor: pointer;
   font-family: IBM Plex Mono;
+  color: #000;
+  border: solid #000;
+  background-color: greenyellow;
+  border-radius: 0.5em;
+  border-width: 3px;
+  height: 30px;
+  padding: 10px;
+  margin: 0;
+  box-shadow: 3px 4px 0px 0px #000;
+  /* font-family: IBM Plex Mono;
   size: 28px;
   cursor: pointer;
   size: 42px;
@@ -109,6 +124,11 @@
   padding: 10px 16px;
   margin: 5% 5%;
   box-shadow: 4px 6px 0px 0px #000;
+  background-color: #6a5acd; */
+}
+
+.loginForm button:hover {
+  background-color: #6a5acd;
 }
 
 .textTotp {
@@ -123,15 +143,35 @@
   height: 3vh;
 }
 .totpBtn {
-  cursor: pointer;
+  /* cursor: pointer;
   width: 10vw;
   max-width: 100px;
   height: 5vh;
   margin-left: 10px;
   color: #000;
+  background-color: #6a5acd;
   border: 2px solid #000;
   border-width: 2px;
-  box-shadow: 2px 3px 0px 0px #000;
+  box-shadow: 2px 3px 0px 0px #000; */
+  display: inline-flex;
+  align-items: center;
+  /* justify-content: center; */
+  align-items: center;
+  cursor: pointer;
+  font-family: IBM Plex Mono;
+  color: #000;
+  border: solid #000;
+  background-color: greenyellow;
+  border-radius: 0.5em;
+  border-width: 3px;
+  height: 30px;
+  padding: 10px;
+  margin: 0;
+  box-shadow: 3px 4px 0px 0px #000;
+}
+
+.totpBtn:hover {
+  background-color: #6a5acd;
 }
 /****
 				ICON BOXES

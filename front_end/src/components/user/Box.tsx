@@ -140,7 +140,6 @@ const Box = (props: any) => {
     navigate("/chat");
   };
 
-
   const navigateToFriends = () => {
     navigate("/friends");
   };
@@ -211,35 +210,35 @@ const Box = (props: any) => {
           {/* // <Friendslist type="friends"/> */}
           {/* // <Scorelist type ="scorelist"/> */}
         </main>
-        <nav>
+        <nav className="profileNav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
-                <img src={folder6} alt="Menu 3" />
+                <img src={folder6} alt="Menu 3" className="profileNavIcon" />
                 <p>Home</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={() => navToGamePage()}>
-                <img src={folder2} alt="Menu 3" />
+                <img src={folder2} alt="Menu 3" className="profileNavIcon" />
                 <p>Game</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToProfPage}>
-                <img src={folder1} alt="Menu 3" />
+                <img src={folder1} alt="Menu 3" className="profileNavIcon" />
                 <p>Profile</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToSettings}>
-                <img src={folder} alt="Menu 3" />
+                <img src={folder} alt="Menu 3" className="profileNavIcon" />
                 <p>Settings</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToFriends}>
-                <img src={folder0} alt="Menu 3" />
+                <img src={folder0} alt="Menu 3" className="profileNavIcon" />
                 <p>Friends</p>
               </a>
             </li>

@@ -1,20 +1,24 @@
-
 .logoutBtn {
-	position: relative;
-	display: flex;
-    cursor: pointer;
-    font-family: IBM Plex Mono;
-    color: #000;
-    border: solid #000;
-	background-color: #dcc2ff;
-	border-radius: 0.5em;
-    border-width: 3px;
-    height: 40px;
-    padding: 10px;
-    margin: 0;
-    box-shadow: 3px 4px 0px 0px #000;
+  position: relative;
+  display: flex;
+  cursor: pointer;
+  font-family: IBM Plex Mono;
+  color: #000;
+  border: solid #000;
+  background-color: #dcc2ff;
+  border-radius: 0.5em;
+  border-width: 3px;
+  height: 40px;
+  padding: 10px;
+  margin: 0;
+  box-shadow: 3px 4px 0px 0px #000;
+}
+
+.logoutBtn:hover {
+  background-color: #7653a3;
+  color: #fff;
 }
 
 .logoutBox {
-	margin: 20% 5% 20% 70%;
+  margin: 20% 5% 20% 70%;
 }

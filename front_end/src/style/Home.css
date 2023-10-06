@@ -75,6 +75,14 @@ main h2 {
 }
 
 /* Styles for the navigation */
+
+.friendshipNav {
+  width: 7vw;
+  display: grid;
+  justify-items: center;
+  padding: 1rem 1vw;
+}
+
 nav {
   width: 10vw;
   display: grid;
@@ -208,6 +216,14 @@ footer {
 .troll img {
   /* height: 200px; */
   width: 15vw;
+}
+
+@media (max-width: 1500px) {
+  .troll {
+    position: absolute;
+    top: 10vh;
+    bottom: auto;
+  }
 }
 
 .home p {
