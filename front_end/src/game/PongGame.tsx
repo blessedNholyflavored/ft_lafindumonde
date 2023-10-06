@@ -2,10 +2,23 @@ import React, { useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { User, Room } from "../interfaces"; // Assurez-vous d'importer les interfaces correctes
 import "../App.css";
+import "../style/Home.css";
+import "../style/Profile.css";
+import "../style/Game.css";
+import "../App.css";
 import { useAuth } from "../components/auth/AuthProvider";
 import { useNavigate, useParams } from "react-router-dom";
 import { WebsocketContext } from "../WebsocketContext";
 import { count } from "console";
+import nav from "./../img/buttoncomp.png";
+import folder from "./../img/folder0.png";
+import folder1 from "./../img/folder2.png";
+import folder2 from "./../img/folder3.png";
+import folder0 from "./../img/folder1.png";
+import folder6 from "./../img/folder4.png";
+import icon from "./../img/buttoncomp.png";
+import { Logout } from "../components/auth/Logout";
+import logo from "./../img/logo42.png";
 
 const PongGame: React.FC = () => {
   const { id } = useParams();
@@ -23,8 +36,14 @@ const PongGame: React.FC = () => {
   const [SpeedBallX, setSpeedBallX] = useState<number>(-5);
   const [SpeedBallY, setSpeedBallY] = useState<number>(0);
   const [updatelvl, setUpdatelvl] = useState<number>(0);
+  const [playerId1, setPlayerId1] = useState<number>(0);
+  const [playerId2, setPlayerId2] = useState<number>(0);
   const [countdown, setCountdown] = useState(3);
   const [checkstatus, setCheckStatus] = useState(false);
+  let [ImgUrlP1, setImgUrlP1] = useState<string>("");
+  let [ImgUrlP2, setImgUrlP2] = useState<string>("");
+  let [usernameP1, setUsernameP1] = useState<string>("");
+  let [usernameP2, setUsernameP2] = useState<string>("");
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
     if (countdown > 0) {
@@ -49,6 +68,9 @@ const PongGame: React.FC = () => {
     }, 4000);
   };
   useEffect(() => {
+    if (countdown === 3) {
+      socket.emit("recupRoomAtStart", id);
+    }
     if (countdown !== 0 && end === 0) {
       startCountdown();
     }
@@ -77,6 +99,32 @@ const PongGame: React.FC = () => {
     if (socket && counter === 0) {
       socket?.emit("startGame", id);
       setCounter(1);
+    }
+  };
+
+  const catchPic = () => {
+    if (socket) {
+      console.log(usernameP1, " ", user?.username);
+
+      if (usernameP1 === user?.username) {
+        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+        socket.emit("AskForIdOpponent", id, 1);
+      } else if (usernameP2 === user?.username) {
+        socket.emit("AskForIdOpponent", id, 2);
+      }
+      socket.on("recupIdOpponent", (opponentId: number) => {
+        if (usernameP1 === user?.username) {
+          setPlayerId2(opponentId);
+          displayPic(user?.id as number, 1);
+          displayPic(opponentId, 2);
+        }
+        if (usernameP2 === user?.username) {
+          setPlayerId1(opponentId);
+          displayPic(user?.id as number, 2);
+          displayPic(opponentId, 1);
+        }
+      });
     }
   };
 
@@ -126,8 +174,19 @@ const PongGame: React.FC = () => {
       localStorage.setItem("leftGame", "Your oppenent has left the game");
     });
 
-    if (socket && id && room) {
+    if (socket && id && room && countdown <= 0) {
       socket.emit("gameFinished", id);
+    }
+
+    if (usernameP1 && usernameP2 && countdown > 0)
+      catchPic();
+
+
+    if (socket && countdown > 0) {
+      socket.on("sendRoomAtStart", (recuproom: Room) => {
+        setUsernameP1(recuproom.player1 as string);
+        setUsernameP2(recuproom.player2 as string);
+      });
     }
 
     //      CREATION DU MODEL DE LA GAME DANS LA DB
@@ -192,7 +251,7 @@ const PongGame: React.FC = () => {
         socket.off("startGame");
       }
     };
-  }, [socket, room, end, BallXpos, BallYpos, SpeedBallX, SpeedBallY]);
+  }, [socket, room, end, BallXpos, BallYpos, SpeedBallX, SpeedBallY, usernameP1, usernameP2]);
 
   useEffect(() => {
     if (socket && !end) {
@@ -211,54 +270,210 @@ const PongGame: React.FC = () => {
     }
   });
 
+  const navigateToHome = () => {
+    navigate("/");
+  };
+
+  const navigateToProfPage = () => {
+    navigate(`/users/profile/${user?.id}`);
+  };
+
+  const navigateToChat = () => {
+    navigate("/chat");
+  };
+
+  const navigateToFriends = () => {
+    navigate("/friends");
+  };
+
+  const navigateToSettings = () => {
+    navigate("/settings");
+  };
+  const navToGamePage = () => {
+    navigate("/gamePage");
+  };
+
+  const displayPic = async (userId: number, pos: number) => {
+    console.log("cdcscdcdsdcdcdsc");
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/${userId}/avatar`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        const pictureURL = await response.text();
+        if (pictureURL.includes("https")) {
+          if (pos === 1) setImgUrlP1(pictureURL);
+          if (pos === 2) setImgUrlP2(pictureURL);
+        } else {
+          try {
+            const response = await fetch(
+              `http://${window.location.hostname}:3000/users/uploads/${pictureURL}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            if (response.ok) {
+              const blob = await response.blob();
+              const absoluteURL = URL.createObjectURL(blob);
+              if (pos === 1) setImgUrlP1(pictureURL);
+              if (pos === 2) setImgUrlP2(pictureURL);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <div className="pong-game">
-      {/* <div className="countdown-container"> */}
-      {countdown > 1 && <div className="countdown">{countdown}</div>}
-      {countdown === 1 && <div className="countdown ready">Ready ?</div>}
-      {countdown === 0 && <div className="countdown start">Start</div>}
-      {/* </div> */}
-      {user && <h2>Vous êtes connecté en tant que {user.username}</h2>}
-      {!end && <button onClick={NavHome}>Quitter la partie</button>}
-      {room && room.player1 && room.player2 && (
+    <div>
+      <header>
         <div>
-          <p>
-            La partie commence entre {room.player1} et {room.player2} !
-          </p>
-          <div
-            style={{
-              textAlign: "center",
-              fontSize: "24px",
-              marginBottom: "10px",
-            }}
-          >
-            {end && (
-              <div>
-                <h1>Fin de partie !</h1>
-                Score - {room.player1} {room.scoreP1} | {room.scoreP2}{" "}
-                {room.player2}
-                <p>{room.winner} remporte la partie</p>
-                <button onClick={NavHome}>Retourner au Home</button>
-              </div>
-            )}
-            {!end && (
-              <div>
-                Score - {room.player1} {room.scoreP1} | {room.scoreP2}{" "}
-                {room.player2}
-              </div>
-            )}
-          </div>
-          <div
-            className={`player-rect player1`}
-            style={{ top: player1Pos }}
-          ></div>
-          <div
-            className={`player-rect player2`}
-            style={{ top: player2Pos }}
-          ></div>
-          <div className="ball" style={{ left: BallXpos, top: BallYpos }}></div>
+          <img src={nav} alt="Menu 1" />
         </div>
-      )}
+        <h1>TRANSCENDENCE</h1>
+      </header>
+      <div className="flex-bg">
+        <main>
+          <div className="fullpage">
+            <div className="navbarbox">
+              <img src={icon} alt="icon" />
+              <h1> game </h1>
+            </div>
+
+            <div id="boxes">
+              <div id="leftbox">
+                {ImgUrlP1 && (
+                  <div>
+                    <h2>{usernameP1}</h2>
+                    <img src={ImgUrlP1} className="avatar" alt="photo casse" />
+                  </div>
+                )}
+              </div>
+              <div id="middlebox">
+                <div className="pong-game" style={{ color: "black" }}>
+                  {/* <div className="countdown-container"> */}
+                  {countdown > 1 && (
+                    <div className="countdown">{countdown}</div>
+                  )}
+                  {countdown === 1 && (
+                    <div className="countdown ready">Ready ?</div>
+                  )}
+                  {countdown === 0 && (
+                    <div className="countdown start">Start</div>
+                  )}
+                  {/* </div> */}
+                  {user && (
+                    <h2>Vous êtes connecté en tant que {user.username}</h2>
+                  )}
+                  {!end && <button onClick={NavHome}>Quitter la partie</button>}
+                  {room && room.player1 && room.player2 && (
+                    <div>
+                      <p>
+                        La partie commence entre {room.player1} et{" "}
+                        {room.player2} !
+                      </p>
+                      <div
+                        style={{
+                          textAlign: "center",
+                          fontSize: "24px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        {end && (
+                          <div>
+                            <h1>Fin de partie !</h1>
+                            Score - {room.player1} {room.scoreP1} |{" "}
+                            {room.scoreP2} {room.player2}
+                            <p>{room.winner} remporte la partie</p>
+                            <button onClick={NavHome}>Retourner au Home</button>
+                          </div>
+                        )}
+                        {!end && (
+                          <div>
+                            Score - {room.player1} {room.scoreP1} |{" "}
+                            {room.scoreP2} {room.player2}
+                          </div>
+                        )}
+                      </div>
+                      <div
+                        className={`player-rect player1`}
+                        style={{ top: player1Pos }}
+                      ></div>
+                      <div
+                        className={`player-rect player2`}
+                        style={{ top: player2Pos }}
+                      ></div>
+                      <div
+                        className="ball"
+                        style={{ left: BallXpos, top: BallYpos }}
+                      ></div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div id="rightbox">
+                {ImgUrlP2 && (
+                  <div>
+                    <h2>{usernameP2}</h2>
+                    <img src={ImgUrlP2} className="avatar" alt="Menu 3" />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <nav>
+          <ul>
+            <li className="menu-item">
+              <a onClick={navigateToHome}>
+                <img src={folder6} alt="Menu 3" />
+                <p>Home</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={() => navToGamePage()}>
+                <img src={folder2} alt="Menu 3" />
+                <p>Game</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToProfPage}>
+                <img src={folder1} alt="Menu 3" />
+                <p>Profile</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToSettings}>
+                <img src={folder} alt="Menu 3" />
+                <p>Settings</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToFriends}>
+                <img src={folder0} alt="Menu 3" />
+                <p>Friends</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <footer>
+        <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
+          LOG OUT{" "}
+        </button>
+        <img src={logo} className="logo" alt="icon" />
+      </footer>
     </div>
   );
 };

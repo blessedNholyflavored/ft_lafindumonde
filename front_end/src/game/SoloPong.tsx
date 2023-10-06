@@ -264,7 +264,7 @@ export const MiniGame = () => {
            <h1> score </h1>
            </div>
         <div className="tablo">
-          <table>
+          <table >
             <thead>
               <tr>
                 <th>#</th>
@@ -273,14 +273,14 @@ export const MiniGame = () => {
               </tr>
             </thead>
             <tbody>
-              {playerScores.map((tab: MiniScore, index: number) => (
+              {playerScores. map((tab: MiniScore, index: number) => (
                 <tr key={index}>
                   <td>{tab.place}</td>
                   <td>{tab.username}</td>
                   <td>{tab.scoreMiniGame}</td>
                   <td>
-                    <button onClick={() => navToProfil(tab.id.toString())}>
-                      Voir Profil
+                    <button className="buttonprfl" onClick={() => navToProfil(tab.id.toString())}>
+                      see profile
                     </button>
                   </td>
                 </tr>
@@ -289,7 +289,7 @@ export const MiniGame = () => {
           </table>
         </div>
       </div>
-      { countdown <= 0 && (
+      {/* { countdown <= 0 && ( */}
       <div
       className="div2"
         ref={gameAreaRef}
@@ -331,7 +331,7 @@ export const MiniGame = () => {
           </>
         )}
       </div>
-       )}
+       {/* )} */}
         </div>
       </main>
         <nav>

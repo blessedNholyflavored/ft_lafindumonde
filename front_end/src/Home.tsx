@@ -51,7 +51,6 @@ const Home: React.FC<HomeProps> = () => {
       );
       if (response.ok) {
         const pictureURL = await response.text();
-        //console.log("aaaaaaA",pictureURL);
         if (pictureURL.includes("https")) {
           setImgUrl(pictureURL);
         } else {
