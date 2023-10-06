@@ -87,6 +87,10 @@ export const Chat = () => {
   const [kickChan, setKickChan] = useState("");
   const [kickReason, setKickReason] = useState("");
 
+
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+  };
+
   async function fetchYourRoomsList() {
     try {
       const response = await fetch(
@@ -126,7 +130,7 @@ export const Chat = () => {
           )
         );
         setChannelsJoin(friendInfo);
-      }
+      } else setChannelsJoin(data);
     } catch (error) {
       console.error("Erreur :", error);
       return [];
@@ -158,7 +162,7 @@ export const Chat = () => {
           })
         );
         setChannels(friendInfo);
-      }
+      } else setChannels(data);
     } catch (error) {
       console.error("Erreur :", error);
       return [];
@@ -312,10 +316,10 @@ export const Chat = () => {
     }
     if (socket) {
       socket.on("refreshListRoom", () => {
+        fetchYourRooms();
         fetchPossibleInvite();
         fetchInviteSend();
         fetchInviteReceive();
-        fetchYourRooms();
         fetchRooms();
       });
     }
@@ -330,10 +334,12 @@ export const Chat = () => {
     }
     if (socket) {
       socket.on("refreshForOne", () => {
-        fetchYourRooms();
         setTimeout(() => {
+          fetchYourRooms();
           fetchRooms();
         }, 500);
+        setActiveChannel(0);
+        setShowChatChannel(false);
       });
     }
 
@@ -363,12 +369,18 @@ export const Chat = () => {
 
     if (socket) {
       socket.on("refreshAfterKick", (roomName: string, reason: string) => {
-        window.location.reload();
-        window.location.href = "/chat";
-        localStorage.setItem(
-          "kickMessage",
-          "You have been kicked from " + roomName + ". Raison: " + reason
-        );
+        // window.location.reload();
+        // window.location.href = "/chat";
+        navigate("/chat");
+
+          socket.emit("reloadListRoomForOne");
+        // localStorage.setItem(
+        //   "kickMessage",
+        //   "You have been kicked from " + roomName + ". Raison: " + reason
+        // );
+        setShowNotification(true);
+        setNotifyMSG("You have been kicked from " + roomName + ". Raison: " + reason);
+        setNotifyType(2);
       });
     }
     if (socket) {
@@ -433,7 +445,18 @@ export const Chat = () => {
     fetchPossibleInvite();
     fetchInviteSend();
     fetchInviteReceive();
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      if (socket) {
+      }
+    };
+
   }, [activeChannel]);
+
+  
 
   const checkRoomAlreadyExist = async () => {
     try {
@@ -478,15 +501,16 @@ export const Chat = () => {
   const createRoom = async () => {
     if ((await checkRoomAlreadyExist()) === false) {
       socket.emit("createChatRoom", valueRoom, selectedOption, password);
-      socket.emit("ActuAtRoomCreate", valueRoom, selectedOption);
       setTimeout(() => {
+        socket.emit("ActuAtRoomCreate", valueRoom, selectedOption);
         socket.emit("reloadListRoomAtJoin", valueRoom);
-      }, 100);
+      }, 300);
     } else {
       setShowNotification(true);
       setNotifyMSG("Name deja pris mon gars !");
       setNotifyType(2);
     }
+    setValueRoom("");
     return "";
   };
 
@@ -495,12 +519,15 @@ export const Chat = () => {
       setShowNotification(true);
       setNotifyMSG("Room n'existe pas !");
       setNotifyType(2);
+      setValueRoom("");
+
       return "";
     }
     if ((await checkIfAlreadyIn()) === true) {
       setShowNotification(true);
       setNotifyMSG("Tu es deja dans le channel !");
       setNotifyType(2);
+      setValueRoom("");
       return "";
     }
     if ((await checkRoomAlreadyExist()) === true) {
@@ -513,6 +540,7 @@ export const Chat = () => {
       setNotifyMSG("Room n'existe pas !");
       setNotifyType(2);
     }
+    setValueRoom("");
     return "";
   };
 

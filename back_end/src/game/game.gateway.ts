@@ -599,6 +599,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     @SubscribeMessage('reloadMessRoom')
     async onNewMessageRoom(@MessageBody() id: string,@ConnectedSocket() socket: Socket)
     {
+      if (!id)
+        return ;
       let user1;
       const Ids = this.chatService.getUsersInRoom(id);
       (await Ids).forEach((userId) => {
@@ -615,6 +617,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     @SubscribeMessage('reloadListRoom')
     async onNewListRoom(@MessageBody() id: string,@ConnectedSocket() socket: Socket)
     {
+
+
+      console.log("roomid:   ", id);
       let user1;
       const Ids = this.chatService.getUsersInRoom(id);
       (await Ids).forEach((userId) => {
