@@ -41,6 +41,7 @@ export const ChatChannel = () => {
   const [userIsBanned, setUserIsBanned] = useState(false);
   const [userIsMuted, setUserIsMuted] = useState(false);
   const [selectedUser, setSelectedUser] = useState(0);
+  const [muteTimeLeft, setMuteTimeLeft] = useState(0);
   const [selectedUserRole, setSelectedUserRole] = useState("USER");
   const [selectedUserIsMuted, setSelectedUserIsMuted] = useState<string | any>(
     "false"
@@ -238,6 +239,29 @@ export const ChatChannel = () => {
     return "";
   }
 
+  async function fetchMuteTimeLeft(userId: number) {
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/chat/timeMute/${userId}/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des messages privés.");
+      } else {
+        const data = await response.text();
+        console.log("time left du mute:   ", data);
+        setMuteTimeLeft(parseInt(data));
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+    return "";
+  }
+
   useEffect(() => {
     if (reactu === 0) {
       setTimeout(() => {
@@ -271,6 +295,12 @@ export const ChatChannel = () => {
         const scores = await checkBanned(user?.id);
       }
     }
+
+    async function MuteTimeLeft() {
+      if (user) {
+        const scores = await fetchMuteTimeLeft(user?.id);
+      }
+    }
     if (socket) {
       socket.on("refreshMessagesRoom", () => {
         fetchRoomMessage();
@@ -283,11 +313,24 @@ export const ChatChannel = () => {
         fetchUserRole();
       });
     }
+
+    if (socket) {
+      socket.on(
+        "refreshAfterMute",
+        (roomName: string, reason: string, time: number) => {
+          MuteTimeLeft();
+          setUserIsMuted(false);
+          UserIsmuted();
+        }
+      );
+    }
+
     fetchRoomMessage();
     fetchUserRole();
     fetchUserInRoom();
     UserIsmuted();
     UserIsbanned();
+    MuteTimeLeft();
   }, [reactu]);
 
   const onSubmit = () => {
@@ -301,6 +344,7 @@ export const ChatChannel = () => {
   };
 
   const leftChannel = async () => {
+    if (!id) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/leftChan/${id}/${user?.id}`,
@@ -315,13 +359,13 @@ export const ChatChannel = () => {
     } catch (error) {
       console.error("Erreur:", error);
     }
+    // setTimeout(() => {
+    //   socket.emit("reloadMessRoom", id);
+    // }, 100);
     setTimeout(() => {
-      socket.emit("reloadMessRoom", id);
-    }, 100);
-    setTimeout(() => {
-      window.location.reload();
-      window.location.href = "/chat";
-    }, 100);
+      socket.emit("reloadListRoomForOne", id);
+    }, 500);
+    navigate("/chat");
   };
 
   const kickFromChannel = async (userId: number) => {
@@ -727,6 +771,30 @@ export const ChatChannel = () => {
     } else setChangeStatutButton(true);
   }
 
+  const handleEnter = (e: { key: string }) => {
+    if (e.key === "Enter") {
+      onSubmit();
+    }
+  };
+
+  const decrementMuteTimeLeft = () => {
+    if (muteTimeLeft > 0) {
+      setMuteTimeLeft((prevTime) => prevTime - 1);
+    } else if (muteTimeLeft <= 0 && muteTimeLeft >= -2) {
+      fetchMuteTimeLeft(user?.id as number);
+      setUserIsMuted(false);
+      setValue("");
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(decrementMuteTimeLeft, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [muteTimeLeft]);
+
   return (
     <div>
       <div>
@@ -775,7 +843,7 @@ export const ChatChannel = () => {
         <div>
           <input
             type="text"
-            value={value}
+            value={muteTimeLeft + " secondes time left for you mute"}
             onChange={(e) => setValue(e.target.value)}
           />
           <button disabled>Submit</button>
@@ -787,6 +855,7 @@ export const ChatChannel = () => {
             type="text"
             value={value}
             onChange={(e) => setValue(e.target.value)}
+            onKeyPress={handleEnter}
           />
           <button onClick={onSubmit}>Submit</button>
         </div>

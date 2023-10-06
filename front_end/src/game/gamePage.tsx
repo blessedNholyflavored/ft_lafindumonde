@@ -2,27 +2,33 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import io, { Socket } from "socket.io-client";
 import { User } from "../interfaces";
-import icon from "./img/buttoncomp.png";
-import logo from "./img/logo42.png";
+import icon from "./../img/buttoncomp.png";
 import chat_pic from "./img/fill.pic.png";
 import "../App.css";
 import "../style/Home.css";
+import "../style/Game.css";
 import "../style/Logout.css";
 import { Logout } from "../components/auth/Logout";
 import { useAuth } from "../components/auth/AuthProvider";
 import { WebsocketContext } from "../WebsocketContext";
-import folder from "./img/folder0.png";
-import folder1 from "./img/folder2.png";
-import folder2 from "./img/folder3.png";
-import folder3 from "./img/folder4.png";
-import folder4 from "./img/folder5.png";
-import folder0 from "./img/folder1.png";
-import nav from "./img/buttoncomp.png";
+
+import nav from "./../img/buttoncomp.png";
 import gaming from "./img/gamingpreview.png";
-import love from "./img/42lov.png";
 import chatpic from "./img/chatpic.png";
 import gradient from "./img/gradient.png";
 import Notify from "../Notify";
+import folder from "./../img/folder0.png";
+import folder1 from "./../img/folder2.png";
+import folder2 from "./../img/folder3.png";
+import folder0 from "./../img/folder1.png";
+import folder6 from "./../img/folder4.png";
+import logo from "./../img/logo42.png"
+import pink from "./../img/drivepink.png";
+import yellow from "./../img/driveyellow.png";
+import blue from "./../img/driveblue.png";
+import green from "./../img/drivegreen.png";
+import sadpepe from "./../img/sadpepe.png";
+import sponge from "./../img/sponge.jpg";
 
 export const GamePage = () => {
   const socket = useContext(WebsocketContext);
@@ -51,6 +57,7 @@ export const GamePage = () => {
       );
       if (response.ok) {
         const recup = await response.text();
+        console.log(recup);
         // setStatus(recup);
         recupStatus = recup;
       }
@@ -134,16 +141,114 @@ export const GamePage = () => {
     navigate("/solopong");
   };
 
-  const navigateToProfPage = () => {
-    navigate(`/users/profile/${user?.id}`);
-  };
-
   const handleCloseNotification = () => {
     setShowNotification(false);
   };
 
+
+  const navigateToHome = () => {
+    navigate("/");
+  };
+
+  const navigateToProfPage = () => {
+    navigate(`/users/profile/${user?.id}`);
+  };
+
+  const navigateToChat = () => {
+    navigate("/chat");
+  };
+
+
+  const navigateToFriends = () => {
+    navigate("/friends");
+  };
+
+  const navigateToSettings = () => {
+    navigate("/settings");
+  };
+  const navToGamePage = () => {
+    navigate("/gamePage");
+  };
+
+  const navToLeaderboard = () => {
+    navigate("/leaderboard");
+  }
+
+
   return (
-    <div className="game_img">
+<div>
+
+<header>
+    <div>
+      <img src={nav} alt="Menu 1" />
+    </div>
+    <h1>TRANSCENDENCE</h1>
+  </header>
+  <div className="flex-bg">
+    <main>
+
+    <div className="fullpage">
+        <div className="navbarbox">
+        <img src={icon}  alt="icon" />
+           <h1> Game </h1>
+           </div>
+
+    <div className="gamecss">
+      <div className="trollgame">
+            <p> 42 LOVES U </p>
+            <img src={sadpepe} />
+          </div>
+
+          <div className="trollgame2">
+            <p> it was so hard </p>
+            <img src={sponge} />
+          </div>
+
+          <div className="game1">
+            <p> PLAY THE GAME </p>
+            <div className="gamecss">
+
+  <div className="column" onClick={() => handlePlayerSelect("1")}>
+  <img src={pink} alt="Menu 3" />
+  <button  className="game_img_btn">
+        Quick play
+      </button>
+  </div>
+  <div className="column"  onClick={() => handlePlayerSelect222("1")}>
+  <img src={blue} alt="Menu 3" />
+  <button
+       
+        className="game_img_btn"
+      >
+        Ranked play
+      </button>
+  </div>
+
+  
+  <div className="column" onClick={() => NavToSoloPong()} >
+  <img src={green} alt="Menu 3" />
+  <button 
+          
+          className="game_img_btn"
+      >
+        Solo game
+      </button>
+  </div>
+  <div className="column"  onClick={() => navToLeaderboard()}>
+  <img src={yellow} alt="Menu 3" />
+
+  <button className="game_img_btn" > leaderboard
+      </button>
+      {(queueCount > 0 || queueCountBonus > 0) && (
+        <p>loading...</p>
+      )}
+      {queueCount === 2 && <p>La partie commence entre Ldinaut et Mcouppe !</p>}
+      {inGame === 1 && <p>Deja en game mon reuf !</p>}
+  </div>
+  </div>
+
+          </div>
+
       <div>
         {showNotification && (
           <Notify
@@ -154,26 +259,52 @@ export const GamePage = () => {
           />
         )}
       </div>
-      <button onClick={() => handlePlayerSelect("1")} className="game_img_btn">
-        RECHERCHE DE PARTIE
-      </button>
-      <button
-        onClick={() => handlePlayerSelect222("1")}
-        className="game_img_btn"
-      >
-        RECHERCHE DE SUPER PARTIE
-      </button>
-      <button onClick={() => NavToSoloPong()} className="game_img_btn">
-        Mini Jeu
-      </button>
-      <button onClick={navigateToProfPage} className="game_img_btn">
-        My Profile
-      </button>
-      {(queueCount > 0 || queueCountBonus > 0) && (
-        <p>En attente d'autres joueurs...</p>
-      )}
-      {queueCount === 2 && <p>La partie commence entre Ldinaut et Mcouppe !</p>}
-      {inGame === 1 && <p>Deja en game mon reuf !</p>}
+
+    </div>
+    </div>
+
+    </main>
+    <nav>
+          <ul>
+          <li className="menu-item">
+              <a onClick={navigateToHome}>
+                <img src={folder6} alt="Menu 3" />
+                <p>Home</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={() => navToGamePage()}>
+                <img src={folder2} alt="Menu 3" />
+                <p>Game</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToProfPage}>
+                <img src={folder1} alt="Menu 3" />
+                <p>Profile</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToSettings}>
+                <img src={folder} alt="Menu 3" />
+                <p>Settings</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToFriends}>
+                <img src={folder0} alt="Menu 3" />
+                <p>Friends</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+    </div>
+    <footer>
+        <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
+          LOG OUT{" "}
+        </button>
+        <img src={logo} className="logo" alt="icon" />
+      </footer>
     </div>
   );
 };

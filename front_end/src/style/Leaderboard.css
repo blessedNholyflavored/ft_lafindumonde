@@ -8,3 +8,26 @@ table {
   border-collapse: collapse;
   border: 3px solid;
 }
+
+.buttonleader {
+  /* position: relative; */
+  display: inline-flex;
+  align-items: center;
+  /* justify-content: center; */
+  align-items: center;
+  cursor: pointer;
+  font-family: IBM Plex Mono;
+  color: #000;
+  border: solid #000;
+  background-color: #6a5acd;
+  border-radius: 0.5em;
+  border-width: 3px;
+  height: 30px;
+  padding: 10px;
+  margin: 0;
+  box-shadow: 3px 4px 0px 0px #000;
+}
+
+.buttonleader:hover {
+  background-color: pink;
+}

@@ -2,6 +2,15 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import { useAuth } from "../components/auth/AuthProvider";
 import { WebsocketContext } from "../WebsocketContext";
 import { useNavigate } from "react-router-dom";
+import nav from "./../img/buttoncomp.png";
+import folder from "./../img/folder0.png";
+import folder1 from "./../img/folder2.png";
+import folder2 from "./../img/folder3.png";
+import folder0 from "./../img/folder1.png";
+import folder6 from "./../img/folder4.png";
+import { Logout } from "../components/auth/Logout";
+import logo from "./../img/logo42.png"
+
 
 interface MiniScore {
   id: number;
@@ -15,8 +24,8 @@ export const MiniGame = () => {
   const [player2, setPlayer2] = useState(300);
   const [keyCode, setKeyCode] = useState("");
   const gameAreaRef = useRef<HTMLDivElement>(null);
-  const mapy = 400;
-  const mapx = 700;
+  const mapy = 450;
+  const mapx = 900;
   const ballSpeed = 6;
   const [player1Point, setPoint1] = useState(0);
   const [player2Point, setPoint2] = useState(0);
@@ -191,8 +200,47 @@ export const MiniGame = () => {
     window.location.reload();
   };
 
+  const navigateToHome = () => {
+    navigate("/");
+  };
+
+  const navigateToProfPage = () => {
+    navigate(`/users/profile/${user?.id}`);
+  };
+
+  const navigateToChat = () => {
+    navigate("/chat");
+  };
+
+
+  const navigateToFriends = () => {
+    navigate("/friends");
+  };
+
+  const navigateToSettings = () => {
+    navigate("/settings");
+  };
+  const navToGamePage = () => {
+    navigate("/gamePage");
+  };
+
   return (
     <div>
+      <header>
+    <div>
+      <img src={nav} alt="Menu 1" />
+    </div>
+    <h1>TRANSCENDENCE</h1>
+  </header>
+  <div className="flex-bg">
+    <main style={{color:"black"}}>
+    <div className="parent">
+
+<div className="div1">
+<div className="navbarbox">
+        <img src={nav}  alt="icon" />
+           <h1> hi! </h1>
+           </div>
       <p>Hello {user?.username}</p>
       {countdown > 1 && <div className="countdown">{countdown}</div>}
       {countdown === 1 && <div className="countdown ready">Ready ?</div>}
@@ -202,20 +250,24 @@ export const MiniGame = () => {
       >
         {end && (
           <div>
-            <p>
-              La partie est terminée. Nombre de rebonds Joueur 1 : {rebounds}
+            <p className="text-game">
+              game's over. total rebound from player: {rebounds}
             </p>
-            <button onClick={restartGame}>Recommencer</button>
+            <button className="buttongame" onClick={restartGame}>restart</button>
           </div>
         )}
       </div>
-      <div style={{ float: "right" }}>
-        <h2>Scores des joueurs :</h2>
-        <div>
+      </div>
+      
+      <div style={{ float: "right" }} className="div3">
+      <div className="navbarbox">
+           <h1> score </h1>
+           </div>
+        <div className="tablo">
           <table>
             <thead>
               <tr>
-                <th>Rank</th>
+                <th>#</th>
                 <th>Username</th>
                 <th>Score</th>
               </tr>
@@ -239,13 +291,14 @@ export const MiniGame = () => {
       </div>
       { countdown <= 0 && (
       <div
+      className="div2"
         ref={gameAreaRef}
         tabIndex={0}
         onKeyDown={playerMove}
         style={{
           width: mapx,
           height: mapy,
-          border: "7px solid black",
+          // border: "7px solid black",
           position: "relative",
         }}
       >
@@ -257,11 +310,13 @@ export const MiniGame = () => {
                 position: "absolute",
                 width: 10,
                 height: 400,
-                backgroundColor: "blue",
+                // backgroundColor: "blue",
                 top: player1,
                 left: 0,
               }}
-            ></div>
+            >
+              
+            </div>
             <div
               style={{
                 position: "absolute",
@@ -276,7 +331,51 @@ export const MiniGame = () => {
           </>
         )}
       </div>
-      )}
+       )}
+        </div>
+      </main>
+        <nav>
+          <ul>
+          <li className="menu-item">
+              <a onClick={navigateToHome}>
+                <img src={folder6} alt="Menu 3" />
+                <p>Home</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={() => navToGamePage()}>
+                <img src={folder2} alt="Menu 3" />
+                <p>Game</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToProfPage}>
+                <img src={folder1} alt="Menu 3" />
+                <p>Profile</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToSettings}>
+                <img src={folder} alt="Menu 3" />
+                <p>Settings</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToFriends}>
+                <img src={folder0} alt="Menu 3" />
+                <p>Friends</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+    </div>
+    <footer>
+        <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
+          LOG OUT{" "}
+        </button>
+        <img src={logo} className="logo" alt="icon" />
+      </footer>
     </div>
   );
 };

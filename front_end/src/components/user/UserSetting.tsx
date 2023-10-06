@@ -358,27 +358,18 @@ export const UserSetting: React.FC = () => {
 
       <div className="flex-bg">
         <main>
-          {/* <div className="mainpage"> */}
-          {/* <div className="navbarmainpage">
-			<img src={icon} className="buttonnav" alt="icon" />
-			<p className="titlemainpage"> TRANSCENDENCE </p>
-		</div> */}
-          {/* <div className="Insidemain">
-			<div className="navbarbox">
-				<img src={icon} className="buttonnav" alt="icon" />
-				<p className="titlebox"> SETTINGS </p>
-			</div> */}
-
+        
           <div className="threerow">
-            {/* deuxieme */}
             <div className="boxrowsettings">
               <div className="navbarsmallbox">
               {isLocal === false ? (<p className="boxtitle"> CHANGE USERNAME </p>) : (<p className="boxtitle"> CHANGE INFOS </p>)}
               </div>
+              
+          <div className="changesett">
               <form className="formsettings" onSubmit={handleSubmit}>
                 <label className="labelcss">
                   <input
-                    className="inputcss"
+                    // className="inputcss"
                     type="text"
                     value={newUsername}
                     minLength={3}
@@ -392,17 +383,13 @@ export const UserSetting: React.FC = () => {
                   update
                 </button>
               </form>
-              <div className="footersmallbox">
-                <br></br>
-              </div>
-              {/* OPTIONAL PASSWORD AND EMAIL CHANGE LOCAL USER */}
+             
               {isLocal === true && (
                 <>
-                  <div>
                     <form className="formsettings" onSubmit={handleSubmitPass}>
                       <label className="labelcss">
                         <input
-                          className="inputcss"
+                          // className="inputcss"
                           type="password"
                           value={newPass}
                           minLength={8}
@@ -415,15 +402,12 @@ export const UserSetting: React.FC = () => {
                         update
                       </button>
                     </form>
-                    <div className="footersmallbox">
-                      <br></br>
-                    </div>
-                  </div>
+                    
                   <div>
                     <form className="formsettings" onSubmit={handleSubmitMail}>
                       <label className="labelcss">
                         <input
-                          className="inputcss"
+                          // className="inputcss"
                           type="email"
                           value={newMail}
                           placeholder="type new mail"
@@ -435,12 +419,10 @@ export const UserSetting: React.FC = () => {
                         update
                       </button>
                     </form>
-                    <div className="footersmallbox">
-                      <br></br>
-                    </div>
                   </div>
                 </>
               )}
+              </div>
             </div>
 
             {/* deuxieme */}
@@ -448,17 +430,16 @@ export const UserSetting: React.FC = () => {
               <div className="navbarsmallbox">
                 <p className="boxtitle"> CHANGE AVATAR </p>
               </div>
+          <div className="changesett">
               <img src={ImgUrl} alt="user avatar"></img>
-              <div>
+              <div className="avatardiv">
                 <input
-                  type="file"
+                    type="file"
                   accept="image/*"
                   onChange={handleFileChange}
                 />
-                <button onClick={changePic}>Upload</button>
-              </div>
-              <div className="footersmallbox">
-                <br></br>
+                <button className="buttonsettings" onClick={changePic}>Upload</button>
+                </div>
               </div>
             </div>
 
@@ -467,6 +448,7 @@ export const UserSetting: React.FC = () => {
               <div className="navbarsmallbox">
                 <p className="boxtitle"> 2FAC AUTH </p>
               </div>
+          <div className="changesett">
               <div className="twoFA">
               {is2FA != true && (
                 <button
@@ -483,6 +465,7 @@ export const UserSetting: React.FC = () => {
                 >
                   disable
                 </button>
+              </div>
               </div>
               <div className="footersmallbox">
                 <br></br>

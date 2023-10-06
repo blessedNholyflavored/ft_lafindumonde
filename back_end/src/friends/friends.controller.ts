@@ -84,6 +84,8 @@ export class FriendsController {
     const senderId = id;
     const recipientId = id1;
     const amitie = await this.friendsService.sendFriendRequest(senderId, recipientId);
+    if (amitie == null)
+      return "exist";
     return amitie;
   }
   

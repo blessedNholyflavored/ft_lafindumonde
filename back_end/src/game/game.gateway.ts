@@ -599,6 +599,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     @SubscribeMessage('reloadMessRoom')
     async onNewMessageRoom(@MessageBody() id: string,@ConnectedSocket() socket: Socket)
     {
+      if (!id)
+        return ;
       let user1;
       const Ids = this.chatService.getUsersInRoom(id);
       (await Ids).forEach((userId) => {
@@ -615,6 +617,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     @SubscribeMessage('reloadListRoom')
     async onNewListRoom(@MessageBody() id: string,@ConnectedSocket() socket: Socket)
     {
+
+
+      console.log("roomid:   ", id);
       let user1;
       const Ids = this.chatService.getUsersInRoom(id);
       (await Ids).forEach((userId) => {
@@ -711,7 +716,21 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (key === NuserId)
             user1 = value;
         });
-        user1.emit("refreshAfterBan", roomName, data[2], data[3]);
+        user1.emit("refreshAfterBan", data[1], roomName, data[2], data[3]);
+      }
+
+      @SubscribeMessage('reloadListFriendPage')
+      async onReloadListFriendPage(@MessageBody() userId:number ,@ConnectedSocket() socket: Socket)
+      {
+        let user1;
+        const NuserId = Number(userId);
+        this.playerConnections.forEach((value, key) => {
+          if (key === NuserId)
+            user1 = value;
+        });
+        if (user1)
+          user1.emit("refreshListFriendPage");
+        socket.emit("refreshListFriendPage");
       }
 
       @SubscribeMessage('reloadListFriendPage')

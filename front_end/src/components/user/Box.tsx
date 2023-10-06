@@ -140,6 +140,7 @@ const Box = (props: any) => {
     navigate("/chat");
   };
 
+
   const navigateToFriends = () => {
     navigate("/friends");
   };

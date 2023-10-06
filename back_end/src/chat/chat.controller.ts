@@ -99,6 +99,18 @@ export class ChatController {
     return this.chatService.getRoomName(id);
   }
 
+  @Get('/timeMute/:id/:id1')
+  async onTimeMute(@Param('id') id: string, @Param('id1') roomId: string, )
+  {
+    return this.chatService.timeLeftMuteUser(id, roomId);
+  }
+
+  @Get('/timeBan/:id/:id1')
+  async onTimeBan(@Param('id') id: string, @Param('id1') roomId: string, )
+  {
+    return this.chatService.timeLeftBanUser(id, roomId);
+  }
+
   @Get('/usersNotInRoom/:id/:id1')
   async recupUserNotInChan(@Param('id') id: number, @Param('id1') userId: string)
   {
