@@ -14,6 +14,7 @@ import { AuthDto } from './dto/auth.dto';
 // import { UserAchievements } from '../user/user.interface';
 import { merge } from 'lodash';
 import { plainToClass } from 'class-transformer';
+import { parse } from 'path';
 
 const prisma = new PrismaClient();
 
@@ -155,6 +156,20 @@ export class UserService {
 	}
   }
 
+  async fetchLostGames(id: string) : Promise<number>
+  {
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(id) },
+      select: { game1: true, game2: true },
+    });
+    if (!user) {
+      return 0;
+    }
+    const allGames = [...user.game1, ...user.game2];
+    const lostGames = allGames.filter(game => game.winnerId !== parseInt(id));
+    return lostGames.length;
+  }
+
   async getMini()
   {
 	const ret: MiniScore[] = [];
@@ -222,7 +237,7 @@ export class UserService {
       },
     });
   }
-  
+
   async updateUserStatuIG(id: number, newStatus: USER_STATUS) {
     const updateUser = await prisma.user.update({
       where: { id: id },

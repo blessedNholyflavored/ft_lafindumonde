@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../auth/AuthProvider";
+import { useParams } from "react-router-dom";
 
 export const GameHistory = (props: any) => {
   const { user, setUser } = useAuth();
   const [gameData, setGameData] = useState<Game[]>([]);
+  const { id } = useParams();
 
   useEffect(() => {
     FetchGames();
@@ -23,10 +25,9 @@ export const GameHistory = (props: any) => {
   }
 
   const FetchGames = async () => {
-    const userId = user?.id;
     try {
       const response = await fetch(
-        `http://${window.location.hostname}:3000/users/${userId}/games-data`,
+        `http://${window.location.hostname}:3000/users/${id}/games-data`,
         {
           method: "GET",
           credentials: "include",
