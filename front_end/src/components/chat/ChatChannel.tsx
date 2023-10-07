@@ -255,26 +255,29 @@ export const ChatChannel = () => {
   }
 
   async function fetchMuteTimeLeft(userId: number) {
-    try {
-      const response = await fetch(
-        `http://${window.location.hostname}:3000/chat/timeMute/${userId}/${id}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+    if (id) {
+      try {
+        const response = await fetch(
+          `http://${window.location.hostname}:3000/chat/timeMute/${userId}/${id}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
 
-      if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des messages privés.");
-      } else {
-        const data = await response.text();
-        console.log("time left du mute:   ", data);
-        setMuteTimeLeft(parseInt(data));
+        if (!response.ok) {
+          throw new Error(
+            "Erreur lors de la récupération des messages privés."
+          );
+        } else {
+          const data = await response.text();
+          setMuteTimeLeft(parseInt(data));
+        }
+      } catch (error: any) {
+        console.log(error);
       }
-    } catch (error: any) {
-      console.log(error);
+      return "";
     }
-    return "";
   }
 
   useEffect(() => {
@@ -352,7 +355,8 @@ export const ChatChannel = () => {
     UserIsmuted();
     UserIsbanned();
     MuteTimeLeft();
-  }, [reactu]);
+    if (userIsBanned === true) navigate("/chat");
+  }, [reactu, userIsBanned]);
 
   const onSubmit = () => {
     if (value.length > 0) {
@@ -507,7 +511,7 @@ export const ChatChannel = () => {
       console.error("Erreur:", error);
     }
     setTimeout(() => {
-    socket.emit("UnmuteUser", userId);
+      socket.emit("UnmuteUser", userId);
     }, 100);
     setSelectedUser(0);
   };
@@ -628,7 +632,7 @@ export const ChatChannel = () => {
     }
     setTimeout(() => {
       socket.emit("reloadMessRoom", id);
-    }, 100);
+    }, 150);
     // window.location.reload();
   }
 
@@ -810,9 +814,18 @@ export const ChatChannel = () => {
     setShowNotification(false);
   };
 
+  async function messagePage(recipientId: string) {
+    setSelectedUser(0);
+    navigate(`/chat/priv/${recipientId}`);
+  }
+
   useEffect(() => {
     const interval = setInterval(decrementMuteTimeLeft, 1000);
-
+    if (muteTimeLeft <= 0 && muteTimeLeft >= -2) {
+      fetchMuteTimeLeft(user?.id as number);
+      setUserIsMuted(false);
+      setValue("");
+    }
     return () => {
       clearInterval(interval);
     };
@@ -1025,6 +1038,10 @@ export const ChatChannel = () => {
                       Debloquer
                     </button>
                   )}
+                  <button onClick={() => messagePage(users.id.toString())}>
+                    Envoyer un message
+                  </button>
+
                   {yourRole === "OWNER" && (
                     <div>
                       {selectedUserRole === "USER" && (

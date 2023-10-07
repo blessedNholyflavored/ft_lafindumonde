@@ -21,6 +21,7 @@ import { Interval } from '@nestjs/schedule';
 import { disconnect } from 'process';
 import { AuthService } from 'src/auth/auth.service';
 import { ChatService } from 'src/chat/chat.service';
+import { USER_STATUS } from '@prisma/client'; // Renommez "User" en "PrismaUser"
 
 // ici add de l'authorisation de recup des credentials du front (le token)
 @WebSocketGateway({
@@ -81,13 +82,28 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       console.log("connected");
       if (socket && socket.user)
       {
+        const checkIn = await this.userService.getStatusUser(socket.user.id);
         this.playerConnections.forEach((value, key) => {
-          value.emit("SomeoneGoOnlineOrOffline");
+          console.log("avant:   ", key);
         });
-        this.playerConnections.set(socket.user.id, socket);
-        this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');
-      }
+        console.log(checkIn);
+        if (checkIn != USER_STATUS.OFFLINE)
+          {
+            console.log("aaaaaaaaaaaa");
+            socket.disconnect(true);
+          }
+          else{
 
+            this.playerConnections.forEach((value, key) => {
+              value.emit("SomeoneGoOnlineOrOffline");
+            });
+            this.playerConnections.set(socket.user.id, socket);
+            this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');
+            this.playerConnections.forEach((value, key) => {
+              console.log("apres:   ", key);
+            });
+          }
+      }
   }
   
   

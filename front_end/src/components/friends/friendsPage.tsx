@@ -25,11 +25,13 @@ interface friendsSend {
   recipientId: number;
   username: string;
   isBlocked: boolean;
+  pictureURL: string;
 }
 
 interface onlinePlayers {
   id: string;
   username: string;
+  pictureURL: string;
 }
 
 export const FriendsPage: React.FC = () => {
@@ -51,6 +53,7 @@ export const FriendsPage: React.FC = () => {
   const [notifyType, setNotifyType] = useState<number>(0);
   const navigate = useNavigate();
   const [selectedUser, setSelectedUser] = useState(0);
+  let [ImgURL, setImgURL] = useState<string>("");
 
   async function fetchfriendsSend() {
     try {
@@ -72,9 +75,8 @@ export const FriendsPage: React.FC = () => {
             status: string;
             recipientId: number;
           }) => {
-            // Utilisez recupUsername pour obtenir le nom d'utilisateur
             friend.username = await recupUsername(friend.recipientId);
-            return friend; // Retournez l'ami mis à jour
+            return friend;
           }
         )
       );
@@ -106,8 +108,10 @@ export const FriendsPage: React.FC = () => {
             status: string;
             senderId: number;
             isBlocked: boolean;
+            pictureURL: string;
           }) => {
             friend.username = await recupUsername(friend.senderId);
+            friend.pictureURL = await displayPic(friend.senderId);
             if (user)
               friend.isBlocked = await checkBlocked(
                 friend.senderId.toString(),
@@ -139,19 +143,24 @@ export const FriendsPage: React.FC = () => {
         const data = await response.json();
         if (data.length > 0) {
           const friendObjects = data[0].friends;
-          const friendInfo = friendObjects.map(
-            (friend: {
-              isBlocked: boolean;
-              id: number;
-              username: any;
-              status: any;
-            }) => ({
-              username: friend.username,
-              status: friend.status,
-              senderId: user?.id,
-              recipientId: friend.id,
-              // isBlocked: checkBlocked(friend.id.toString()),
-            })
+          const friendInfo = await Promise.all(
+            friendObjects.map(
+              async (friend: {
+                isBlocked: boolean;
+                id: number;
+                username: any;
+                status: any;
+              }) => {
+                const pictureURL = await displayPic(friend.id);
+                return {
+                  username: friend.username,
+                  status: friend.status,
+                  senderId: user?.id,
+                  recipientId: friend.id,
+                  pictureURL: pictureURL,
+                };
+              }
+            )
           );
           setFriends(friendInfo);
         }
@@ -176,27 +185,34 @@ export const FriendsPage: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         if (data.length > 0) {
-          const friendObjects = data;
-          const friendInfo = friendObjects.map(
-            (block: {
-              isBlocked: boolean;
-              id: number;
-              username: any;
-              status: any;
-            }) => ({
-              username: block.username,
-              status: block.status,
-              senderId: user?.id,
-              recipientId: block.id,
-            })
+          const friendInfo = await Promise.all(
+            data.map(
+              async (block: {
+                isBlocked: boolean;
+                id: number;
+                username: any;
+                status: any;
+              }) => {
+                const pictureURL = await displayPic(block.id);
+                return {
+                  username: block.username,
+                  status: block.status,
+                  senderId: user?.id,
+                  recipientId: block.id,
+                  pictureURL: pictureURL,
+                };
+              }
+            )
           );
           setBlocked(friendInfo);
-        } else setBlocked(data);
+        } else {
+          setBlocked(data);
+        }
       } else {
         console.log("error: HTTP request failed");
       }
     } catch (error) {
-      console.error("Error fetching friends:", error);
+      console.error("Error fetching blocked friends:", error);
     }
   };
 
@@ -213,23 +229,28 @@ export const FriendsPage: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         if (data.length > 0) {
-          const friendObjects = data;
-
-          const friendInfo = friendObjects.map(
-            (user: { id: number; username: any }) => ({
-              username: user.username,
-              id: user.id,
+          const friendInfo = await Promise.all(
+            data.map(async (user: { id: number; username: any }) => {
+              const pictureURL = await displayPic(user.id);
+              return {
+                username: user.username,
+                id: user.id,
+                pictureURL: pictureURL,
+              };
             })
           );
           setOnlinePlayers(friendInfo);
-        } else setOnlinePlayers(data);
+        } else {
+          setOnlinePlayers(data);
+        }
       } else {
         console.log("error: HTTP request failed");
       }
     } catch (error) {
-      console.error("Error fetching friends:", error);
+      console.error("Error fetching online players:", error);
     }
   };
+
   useEffect(() => {
     if (socket) {
       socket.on("SomeoneGoOnlineOrOffline", () => {
@@ -257,6 +278,7 @@ export const FriendsPage: React.FC = () => {
           fetchBlocked();
           fetchOnlinePlayers();
         }, 1000);
+        setSelectedUser(0);
       });
     }
 
@@ -300,7 +322,7 @@ export const FriendsPage: React.FC = () => {
       return userData;
     } catch (error) {
       console.error("Erreur :", error);
-      return null; // En cas d'erreur, renvoyez null ou une valeur par défaut
+      return null;
     }
   }
 
@@ -555,6 +577,45 @@ export const FriendsPage: React.FC = () => {
     if (flag === 1) setSelectedUser(0);
   };
 
+  const displayPic = async (userId: number) => {
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/${userId}/avatar`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        const pictureURL = await response.text();
+        if (pictureURL.includes("https")) {
+          return pictureURL;
+          // setImgURL(pictureURL);
+        } else {
+          try {
+            const response = await fetch(
+              `http://${window.location.hostname}:3000/users/uploads/${pictureURL}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            if (response.ok) {
+              const blob = await response.blob();
+              const absoluteURL = URL.createObjectURL(blob);
+              return absoluteURL;
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return ImgURL;
+  };
+
   return (
     <>
       {/* <body> */}
@@ -591,8 +652,21 @@ export const FriendsPage: React.FC = () => {
                   {friends.length > 0 ? (
                     friends.map((friend, index) => (
                       <div key={index}>
-                        <div>{friend.username}</div>
-                        <div>{friend.status}</div>
+                        <img
+                          src={friend.pictureURL}
+                          className="avatar"
+                          alt="photo casse"
+                        />
+                        <button
+                          onClick={() => handleUserClick(friend.recipientId)}
+                          // disabled={user?.id.toString() === friend.id}
+                        >
+                          <div>{friend.username}</div>
+                        </button>
+
+                        {selectedUser === friend.recipientId && (
+                        <div>
+                          <div>{friend.status}</div>
                         <button
                           onClick={() =>
                             deleteFriend(
@@ -627,6 +701,8 @@ export const FriendsPage: React.FC = () => {
                         >
                           Envoyer un message
                         </button>
+                        </div>
+                        )}
                       </div>
                     ))
                   ) : (
@@ -642,6 +718,11 @@ export const FriendsPage: React.FC = () => {
                   {blocked.length > 0 ? (
                     blocked.map((blocked, index) => (
                       <div key={index}>
+                        <img
+                          src={blocked.pictureURL}
+                          className="avatar"
+                          alt="photo casse"
+                        />
                         <div>{blocked.username}</div>
                         <div>{blocked.status}</div>
                         <button
@@ -676,6 +757,11 @@ export const FriendsPage: React.FC = () => {
                   {onlinePlayers.length > 0 && user ? (
                     onlinePlayers.map((friend, index) => (
                       <div key={index}>
+                        <img
+                          src={friend.pictureURL}
+                          className="avatar"
+                          alt="photo casse"
+                        />
                         <button
                           onClick={() => handleUserClick(parseInt(friend.id))}
                           disabled={user?.id.toString() === friend.id}
@@ -731,12 +817,15 @@ export const FriendsPage: React.FC = () => {
                     <div>
                       {friend.status === "PENDING" && !friend.isBlocked && (
                         <div className="requestinfo" key={friend.id}>
-                          {/* <div>ID: {friend.id}</div> */}
+                          <img
+                          src={friend.pictureURL}
+                          className="avatar"
+                          alt="photo casse"
+                        />
                           <div>Sender ID: {user?.username}</div>
                           <div style={{ fontStyle: "italic", fontSize: 12 }}>
                             Status: {friend.status}
                           </div>
-                          {/* <div>recipientId ID: {friend.username}</div> */}
                           <div className="bttnholder">
                             <button
                               className="acceptbutton"
@@ -771,6 +860,7 @@ export const FriendsPage: React.FC = () => {
                     <div>
                       {friend.status === "PENDING" && (
                         <li key={friend.id}>
+
                           <div>ID: {friend.id}</div>
                           <div>Status: {friend.status}</div>
                           <div>Sender ID: {user?.username}</div>

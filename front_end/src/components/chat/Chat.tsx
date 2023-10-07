@@ -246,7 +246,6 @@ export const Chat = () => {
 
         const usernames: privMSG[] = await Promise.all(promises);
         setPrivMSG(usernames);
-        console.log(privMSG);
       }
     } catch (error) {
       console.error("Erreur :", error);
@@ -274,8 +273,7 @@ export const Chat = () => {
   // }, []);
 
   async function checkBanned(userId: number, roomId: string) {
-    if (!roomId || parseInt(roomId) === 0)
-      return ;
+    if (!roomId || parseInt(roomId) === 0) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/banned/${userId}/${roomId}`,
@@ -298,7 +296,8 @@ export const Chat = () => {
   }
 
   async function fetchBanTimeLeft(roomId: number) {
-    if (!activeBanChannel || activeChannel === 0) return;
+    if (!roomId)
+      return ;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/timeBan/${user?.id}/${roomId}`,
@@ -313,6 +312,7 @@ export const Chat = () => {
       } else {
         const data = await response.text();
         setBanTimeLeft(parseInt(data));
+
       }
     } catch (error: any) {
       console.log(error);
@@ -363,6 +363,7 @@ export const Chat = () => {
         setTimeout(() => {
           fetchYourRooms();
           fetchRooms();
+          fetchPrivateConv();
         }, 500);
         setActiveChannel(0);
         setShowChatChannel(false);
@@ -432,21 +433,15 @@ export const Chat = () => {
     if (socket) {
       socket.on(
         "refreshAfterBan",
-        (roomId:number, roomName: string, reason: string, time: number) => {
-          // window.location.reload();
-          // window.location.href = "/chat";
+        async (
+          roomId: number,
+          roomName: string,
+          reason: string,
+          time: number
+        ) => {
           navigate("/chat");
           setActiveBanChannel(roomId);
-          // localStorage.setItem(
-          //   "banMessage",
-          //   "You have been banned from " +
-          //     roomNames +
-          //     ". Raison: " +
-          //     reason +
-          //     ", pendant: " +
-          //     time +
-          //     " minutes"
-          // );
+          setActiveChannel(roomId);
           setShowNotification(true);
           setNotifyMSG(
             "You have been banned from " +
@@ -468,23 +463,19 @@ export const Chat = () => {
     if (socket) {
       socket.on("refreshAfterUnban", async () => {
         fetchYourRooms();
+        setBanTimeLeft(-1);
       });
     }
 
-
-    
-
-    
-
     if (socket) {
       socket.on("refreshMessages", async () => {
-        await fetchPrivateConv();
-        console.log(privMSG);
+        fetchPrivateConv();
       });
     }
     if (socket) {
       socket.on("refreshMessagesRoom", () => {
         fetchPossibleInvite();
+        fetchPrivateConv();
       });
     }
     if (socket) {
@@ -500,6 +491,12 @@ export const Chat = () => {
     fetchInviteSend();
     fetchInviteReceive();
 
+    if (banTimeLeft <= 0 && activeBanChannel) {
+      setUserIsBanned(false);
+      checkBanned(user?.id as number, activeBanChannel as any);
+      setActiveBanChannel(0);
+    }
+
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
@@ -507,7 +504,7 @@ export const Chat = () => {
       if (socket) {
       }
     };
-  }, [activeChannel]);
+  }, [activeChannel, banTimeLeft]);
 
   const checkRoomAlreadyExist = async () => {
     try {
@@ -870,25 +867,31 @@ export const Chat = () => {
     setShowNotification(false);
   };
 
-  const decrementBanTimeLeft = () => {
-    if (banTimeLeft > 0) {
-      console.log(banTimeLeft);
-      setBanTimeLeft((prevTime) => prevTime - 1);
-    } else if (banTimeLeft <= 0 && banTimeLeft >= -2) {
-      fetchBanTimeLeft(activeBanChannel as number);
-      setUserIsBanned(false);
-      checkBanned(user?.id as number, activeBanChannel as any);
-      setActiveBanChannel(0);
-    }
+  const desacButton = () => {
+    setShowChatChannel(false);
+    setActiveChannel(0);
+    setSelectedPrivateConv(recipient as any);
   };
 
-  useEffect(() => {
-    const interval = setInterval(decrementBanTimeLeft, 1000);
+  // const decrementBanTimeLeft = () => {
+  //   if (banTimeLeft > 0) {
+  //     console.log('cacaacaca');
+  //     setBanTimeLeft((prevTime) => prevTime - 1);
+  //   } else if (banTimeLeft <= 0 && banTimeLeft >= -2) {
+  //     fetchBanTimeLeft(activeBanChannel as number);
+  //     setUserIsBanned(false);
+  //     checkBanned(user?.id as number, activeBanChannel as any);
+  //     setActiveBanChannel(0);
+  //   }
+  // };
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [banTimeLeft]);
+  // useEffect(() => {
+  //   const interval = setInterval(decrementBanTimeLeft, 1000);
+
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [banTimeLeft]);
 
   return (
     <div className="main_chat_box" style={{ background: "darkgreen" }}>
@@ -1022,7 +1025,7 @@ export const Chat = () => {
           {channelsJoin.map((chan) => (
             <div key={chan.id}>
               <button
-                onClick={ () => {
+                onClick={() => {
                   if (chan.AmIBanned === "false") {
                     navToChan(chan.id);
                     if (showChatChannel) {
@@ -1036,6 +1039,7 @@ export const Chat = () => {
                       setIsPrivatechan(1);
                     } else setIsPrivatechan(0);
                   } else {
+                    fetchBanTimeLeft(chan.id);
                     setActiveBanChannel(chan.id);
                     setNotifyMSG(
                       "t bannis mon reuf pour " + banTimeLeft + " secondes"
@@ -1138,6 +1142,9 @@ export const Chat = () => {
       {!showChatChannel && id && <ChatChannel />}
       {!showConv && recipient && <PrivateChat />}
       {showConv && <PrivateChat />}
+      {(showConv || recipient) && showChatChannel && (
+        <div>{desacButton() as any}</div>
+      )}
     </div>
   );
 };
