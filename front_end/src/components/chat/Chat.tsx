@@ -296,8 +296,7 @@ export const Chat = () => {
   }
 
   async function fetchBanTimeLeft(roomId: number) {
-    if (!roomId)
-      return ;
+    if (!roomId) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/timeBan/${user?.id}/${roomId}`,
@@ -312,7 +311,6 @@ export const Chat = () => {
       } else {
         const data = await response.text();
         setBanTimeLeft(parseInt(data));
-
       }
     } catch (error: any) {
       console.log(error);
@@ -364,9 +362,12 @@ export const Chat = () => {
           fetchYourRooms();
           fetchRooms();
           fetchPrivateConv();
+          fetchPossibleInvite();
+          fetchInviteReceive();
         }, 500);
         setActiveChannel(0);
         setShowChatChannel(false);
+        setIsPrivatechan(0);
       });
     }
 
@@ -627,7 +628,7 @@ export const Chat = () => {
       }
     }
     setTimeout(() => {
-      socket.emit("ActuAtRoomCreate");
+      socket.emit("reloadListRoom");
     }, 300);
     setActiveChannel(0);
   };
@@ -848,7 +849,7 @@ export const Chat = () => {
     } catch (error) {
       console.error("Erreur:", error);
     }
-    window.location.reload();
+    socket.emit("reloadListRoom");
   }
 
   const handleJoinClick = (id: number) => {

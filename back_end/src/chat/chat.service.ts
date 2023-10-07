@@ -519,6 +519,15 @@ async createInvite(senderId: string, recipientId: string, roomId: string): Promi
 
 async refuseInvite(id: string)
 {
+  const recup = await prisma.chatroomInvitations.findUnique({
+    where: {
+      id: parseInt(id),
+    }
+  })
+
+  if (!recup)
+    return ;
+  
   const friendShipUpdate = await prisma.chatroomInvitations.update({
     where: {
       id: parseInt(id),
