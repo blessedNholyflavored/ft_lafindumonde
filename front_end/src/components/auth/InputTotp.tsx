@@ -4,7 +4,7 @@ import "./../../style/Login.css";
 import icon from "../../img/buttoncomp.png";
 import { useAuth } from "./AuthProvider";
 import { Navigate } from "react-router-dom";
-import api from "../../AxiosInstance";
+import api from "../../services/AxiosInstance";
 
 export const InputTotp: React.FC = () => {
   const { user, setUser } = useAuth();

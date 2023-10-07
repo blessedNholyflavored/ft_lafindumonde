@@ -5,7 +5,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import axios, { AxiosResponse } from "../../AxiosInstance";
+import axios, { AxiosResponse } from "../../services/AxiosInstance";
 import "./../../style/Loading.css";
 import "./../../App.css";
 import "./../../style/Profile.css";

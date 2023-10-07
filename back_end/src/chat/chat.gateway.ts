@@ -54,7 +54,10 @@ export class ChatGateway {
   @SubscribeMessage('joinChatRoom')
   async onJoinChatRoom(@MessageBody() data: {nameRoom:string, option:string, hash:string},@ConnectedSocket() socket: Socket)
   {
-    this.chatService.JoinRoom(data[0], data[1], data[2], socket.user.id.toString())
+    const ret = await this.chatService.JoinRoom(data[0], data[1], data[2], socket.user.id.toString())
+    if (ret === 2)
+      socket.emit("NotifyBadPWD");
+      
   }
 
   @SubscribeMessage('newMessageRoom')

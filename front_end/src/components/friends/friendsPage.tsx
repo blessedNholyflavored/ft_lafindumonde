@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import { useAuth } from "../auth/AuthProvider";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { WebsocketContext } from "../../WebsocketContext";
-import Notify from "../../Notify";
+import { WebsocketContext } from "../../services/WebsocketContext";
+import Notify from "../../services/Notify";
 import nav from "./../../img/buttoncomp.png";
 import { Logout } from "../auth/Logout";
 import logo from "./../../img/logo42.png";
@@ -665,43 +665,43 @@ export const FriendsPage: React.FC = () => {
                         </button>
 
                         {selectedUser === friend.recipientId && (
-                        <div>
-                          <div>{friend.status}</div>
-                        <button
-                          onClick={() =>
-                            deleteFriend(
-                              friend.senderId.toString(),
-                              friend.recipientId.toString()
-                            )
-                          }
-                        >
-                          Delete
-                        </button>
-                        <button
-                          onClick={() =>
-                            BlockFriend(
-                              friend.senderId.toString(),
-                              friend.recipientId.toString()
-                            )
-                          }
-                        >
-                          Bloquer
-                        </button>
-                        <button
-                          onClick={() =>
-                            navToProfil(friend.recipientId.toString())
-                          }
-                        >
-                          Voir Profile
-                        </button>
-                        <button
-                          onClick={() =>
-                            messagePage(friend.recipientId.toString())
-                          }
-                        >
-                          Envoyer un message
-                        </button>
-                        </div>
+                          <div>
+                            <div>{friend.status}</div>
+                            <button
+                              onClick={() =>
+                                deleteFriend(
+                                  friend.senderId.toString(),
+                                  friend.recipientId.toString()
+                                )
+                              }
+                            >
+                              Delete
+                            </button>
+                            <button
+                              onClick={() =>
+                                BlockFriend(
+                                  friend.senderId.toString(),
+                                  friend.recipientId.toString()
+                                )
+                              }
+                            >
+                              Bloquer
+                            </button>
+                            <button
+                              onClick={() =>
+                                navToProfil(friend.recipientId.toString())
+                              }
+                            >
+                              Voir Profile
+                            </button>
+                            <button
+                              onClick={() =>
+                                messagePage(friend.recipientId.toString())
+                              }
+                            >
+                              Envoyer un message
+                            </button>
+                          </div>
                         )}
                       </div>
                     ))
@@ -818,10 +818,10 @@ export const FriendsPage: React.FC = () => {
                       {friend.status === "PENDING" && !friend.isBlocked && (
                         <div className="requestinfo" key={friend.id}>
                           <img
-                          src={friend.pictureURL}
-                          className="avatar"
-                          alt="photo casse"
-                        />
+                            src={friend.pictureURL}
+                            className="avatar"
+                            alt="photo casse"
+                          />
                           <div>Sender ID: {user?.username}</div>
                           <div style={{ fontStyle: "italic", fontSize: 12 }}>
                             Status: {friend.status}
@@ -860,7 +860,6 @@ export const FriendsPage: React.FC = () => {
                     <div>
                       {friend.status === "PENDING" && (
                         <li key={friend.id}>
-
                           <div>ID: {friend.id}</div>
                           <div>Status: {friend.status}</div>
                           <div>Sender ID: {user?.username}</div>

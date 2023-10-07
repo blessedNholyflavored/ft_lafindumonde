@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "./components/auth/AuthProvider";
+import { useAuth } from "../components/auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import { Logout } from "./components/auth/Logout";
-import nav from "./img/buttoncomp.png";
-import logo from "./img/logo42.png";
-import icon from "./img/buttoncomp.png";
-import folder from "./img/folder0.png";
-import folder1 from "./img/folder2.png";
-import folder2 from "./img/folder3.png";
-import folder3 from "./img/folder4.png";
-import folder4 from "./img/folder5.png";
-import folder0 from "./img/folder1.png";
-import folder6 from "./img/folder6.png";
+import { Logout } from "../components/auth/Logout";
+import nav from "../img/buttoncomp.png";
+import logo from "../img/logo42.png";
+import icon from "../img/buttoncomp.png";
+import folder from "../img/folder0.png";
+import folder1 from "../img/folder2.png";
+import folder2 from "../img/folder3.png";
+import folder3 from "../img/folder4.png";
+import folder4 from "../img/folder5.png";
+import folder0 from "../img/folder1.png";
+import folder6 from "../img/folder6.png";
 
-import "./style/Profile.css";
-import "./style/Home.css";
-import "./style/Leaderboard.css";
+import "../style/Profile.css";
+import "../style/Home.css";
+import "../style/Leaderboard.css";
 
 interface PlayerScore {
   place: number;

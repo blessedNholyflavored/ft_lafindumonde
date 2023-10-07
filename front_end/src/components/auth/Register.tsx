@@ -6,7 +6,7 @@ import logo from "../../img/logo42.png";
 import icon from "../../img/buttoncomp.png";
 import champi from "../../img/champi.png";
 import { useAuth } from "./AuthProvider";
-import Notify from "../../Notify";
+import Notify from "../../services/Notify";
 import { useNavigate } from "react-router-dom";
 
 export function Register() {

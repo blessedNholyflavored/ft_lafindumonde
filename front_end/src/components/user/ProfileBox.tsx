@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import icon from "../../img/iconpic.png";
 import FriendshipComponent from "./../friends/friendship"; // Assurez-vous que le chemin d'importation est correct
 import { useAuth } from "../auth/AuthProvider";
-import { WebsocketContext } from "../../WebsocketContext";
+import { WebsocketContext } from "../../services/WebsocketContext";
 
 export enum FriendsInvitationStatus {
   ACCEPTED = "ACCEPTED",

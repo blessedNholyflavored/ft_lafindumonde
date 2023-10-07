@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { User, Room } from "../interfaces"; // Assurez-vous d'importer les interfaces correctes
+import { User, Room } from "../interfaces/interfaces"; // Assurez-vous d'importer les interfaces correctes
 //import './AppTest.css'
 import "../App.css";
 import { useAuth } from "../components/auth/AuthProvider";
 import { useNavigate, useParams } from "react-router-dom";
-import { WebsocketContext } from "../WebsocketContext";
+import { WebsocketContext } from "../services/WebsocketContext";
 
 interface PongGameProps {
   socket: Socket | null;
@@ -28,7 +28,6 @@ const SuperPong: React.FC<PongGameProps> = () => {
   const [SpeedBallY, setSpeedBallY] = useState<number>(0);
   const [countdown, setCountdown] = useState(3);
   const [checkstatus, setCheckStatus] = useState(false);
-
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
     if (countdown > 0) {
@@ -136,9 +135,7 @@ const SuperPong: React.FC<PongGameProps> = () => {
     } catch (error) {}
   }
 
-
   useEffect(() => {
-
     if (socket && checkstatus === false) {
       setTimeout(() => {
         getstatus();
@@ -208,8 +205,6 @@ const SuperPong: React.FC<PongGameProps> = () => {
     }
 
     if (socket && room && room.end) setEnd(1);
-
-
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 

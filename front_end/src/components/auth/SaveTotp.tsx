@@ -4,8 +4,8 @@ import "./../../style/Login.css";
 import icon from "../../img/buttoncomp.png";
 import { useAuth } from "./AuthProvider";
 import { useNavigate, Navigate, useLocation } from "react-router-dom";
-import api from "../../AxiosInstance";
-import Notify from "../../Notify";
+import api from "../../services/AxiosInstance";
+import Notify from "../../services/Notify";
 
 export const SaveTotp: React.FC = () => {
   const { user } = useAuth();
@@ -28,40 +28,38 @@ export const SaveTotp: React.FC = () => {
     e.preventDefault();
     if (user) {
       // try {
-        const response = await fetch(
-          `http://${window.location.hostname}:3000/auth/submitCode?code=${receivedCode}`
-        , {
-          method: 'POST',
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/auth/submitCode?code=${receivedCode}`,
+        {
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           credentials: "include",
-        });
-        if (response.status === 200) {
-          return navigate("/");
         }
-        else if (response.status === 401){
-          setShowNotification(true);
-          setNotifyMSG("Something is wrong with your inputs !");
-          setNotifyType(3);
-          setReceivedCode("");
-        }
-        else
-          throw (response);
+      );
+      if (response.status === 200) {
+        return navigate("/");
+      } else if (response.status === 401) {
+        setShowNotification(true);
+        setNotifyMSG("Something is wrong with your inputs !");
+        setNotifyType(3);
+        setReceivedCode("");
+      } else throw response;
     }
   };
 
   if (user) {
     return (
       <div className="Totp">
-      {showNotification && (
-        <Notify
-          message={notifyMSG}
-          type={notifyType}
-          senderId={sender}
-          onClose={handleCloseNotification}
-        />
-      )}
+        {showNotification && (
+          <Notify
+            message={notifyMSG}
+            type={notifyType}
+            senderId={sender}
+            onClose={handleCloseNotification}
+          />
+        )}
         <div className="boxTotp">
           <div className="navbarbox navAuth">
             <img src={icon} className="buttonnav" alt="icon" />

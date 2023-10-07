@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import "./Notify.css";
+import "../style/Notify.css";
 import { Link, useNavigate } from "react-router-dom"; // Importez Link depuis react-router-dom
 
 // Définissez une interface pour les props du composant

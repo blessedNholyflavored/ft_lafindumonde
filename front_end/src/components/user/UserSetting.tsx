@@ -6,7 +6,7 @@ import logo from "../../img/logo42.png";
 import { useAuth } from "../auth/AuthProvider";
 import { Logout } from "./../auth/Logout";
 import { useNavigate } from "react-router-dom";
-import api from "../../AxiosInstance";
+import api from "../../services/AxiosInstance";
 import "../../../src/style/Home.css";
 import folder from "./../../img/folder0.png";
 import folder1 from "./../../img/folder2.png";
@@ -16,7 +16,7 @@ import folder4 from "./../../img/folder5.png";
 import folder0 from "./../../img/folder1.png";
 import folder6 from "./../../img/folder6.png";
 import nav from "../../img/buttoncomp.png";
-import Notify from "../../Notify";
+import Notify from "../../services/Notify";
 
 export const UserSetting: React.FC = () => {
   const [newUsername, setNewUsername] = useState("");
@@ -43,19 +43,18 @@ export const UserSetting: React.FC = () => {
   const check2FA = async () => {
     const userID = user?.id;
     try {
-      const res = await fetch(`http://${window.location.hostname}:3000/auth/checkIs2FA`,
-      {  method:'GET',
-        credentials: 'include',
-      })
-      if (res.ok){
+      const res = await fetch(
+        `http://${window.location.hostname}:3000/auth/checkIs2FA`,
+        { method: "GET", credentials: "include" }
+      );
+      if (res.ok) {
         set2FA(false);
       }
-      if (res.status === 418){
+      if (res.status === 418) {
         set2FA(true);
       }
-    }
-    catch(error){
-      throw(error);
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -121,14 +120,17 @@ export const UserSetting: React.FC = () => {
     const userId = user?.id;
     console.log("dans front user id = ", userId);
     try {
-      const response = await fetch(`http://${window.location.hostname}:3000/users/update-pass`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ password: newPass }),
-        credentials: "include",
-      });
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/update-pass`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ password: newPass }),
+          credentials: "include",
+        }
+      );
       if (response.ok) {
         setShowNotification(true);
         setNotifyMSG("Password successfully updated !");
@@ -149,14 +151,17 @@ export const UserSetting: React.FC = () => {
   const handleSubmitMail = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://${window.location.hostname}:3000/users/update-mail`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: newMail }),
-        credentials: "include",
-      });
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/update-mail`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: newMail }),
+          credentials: "include",
+        }
+      );
       if (response.ok) {
         setShowNotification(true);
         setNotifyMSG("Mail successfully updated !");
@@ -358,34 +363,37 @@ export const UserSetting: React.FC = () => {
 
       <div className="flex-bg">
         <main>
-        
           <div className="threerow">
             <div className="boxrowsettings">
               <div className="navbarsmallbox">
-              {isLocal === false ? (<p className="boxtitle"> CHANGE USERNAME </p>) : (<p className="boxtitle"> CHANGE INFOS </p>)}
+                {isLocal === false ? (
+                  <p className="boxtitle"> CHANGE USERNAME </p>
+                ) : (
+                  <p className="boxtitle"> CHANGE INFOS </p>
+                )}
               </div>
-              
-          <div className="changesett">
-              <form className="formsettings" onSubmit={handleSubmit}>
-                <label className="labelcss">
-                  <input
-                    // className="inputcss"
-                    type="text"
-                    value={newUsername}
-                    minLength={3}
-                    maxLength={10}
-                    required={true}
-                    placeholder="type new username"
-                    onChange={(e) => setNewUsername(e.target.value)}
-                  />
-                </label>
-                <button className="buttonsettings" type="submit">
-                  update
-                </button>
-              </form>
-             
-              {isLocal === true && (
-                <>
+
+              <div className="changesett">
+                <form className="formsettings" onSubmit={handleSubmit}>
+                  <label className="labelcss">
+                    <input
+                      // className="inputcss"
+                      type="text"
+                      value={newUsername}
+                      minLength={3}
+                      maxLength={10}
+                      required={true}
+                      placeholder="type new username"
+                      onChange={(e) => setNewUsername(e.target.value)}
+                    />
+                  </label>
+                  <button className="buttonsettings" type="submit">
+                    update
+                  </button>
+                </form>
+
+                {isLocal === true && (
+                  <>
                     <form className="formsettings" onSubmit={handleSubmitPass}>
                       <label className="labelcss">
                         <input
@@ -402,26 +410,29 @@ export const UserSetting: React.FC = () => {
                         update
                       </button>
                     </form>
-                    
-                  <div>
-                    <form className="formsettings" onSubmit={handleSubmitMail}>
-                      <label className="labelcss">
-                        <input
-                          // className="inputcss"
-                          type="email"
-                          value={newMail}
-                          placeholder="type new mail"
-                          required={true}
-                          onChange={(e) => setNewMail(e.target.value)}
-                        />
-                      </label>
-                      <button className="buttonsettings" type="submit">
-                        update
-                      </button>
-                    </form>
-                  </div>
-                </>
-              )}
+
+                    <div>
+                      <form
+                        className="formsettings"
+                        onSubmit={handleSubmitMail}
+                      >
+                        <label className="labelcss">
+                          <input
+                            // className="inputcss"
+                            type="email"
+                            value={newMail}
+                            placeholder="type new mail"
+                            required={true}
+                            onChange={(e) => setNewMail(e.target.value)}
+                          />
+                        </label>
+                        <button className="buttonsettings" type="submit">
+                          update
+                        </button>
+                      </form>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -430,15 +441,17 @@ export const UserSetting: React.FC = () => {
               <div className="navbarsmallbox">
                 <p className="boxtitle"> CHANGE AVATAR </p>
               </div>
-          <div className="changesett">
-              <img src={ImgUrl} alt="user avatar"></img>
-              <div className="avatardiv">
-                <input
+              <div className="changesett">
+                <img src={ImgUrl} alt="user avatar"></img>
+                <div className="avatardiv">
+                  <input
                     type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
-                <button className="buttonsettings" onClick={changePic}>Upload</button>
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                  <button className="buttonsettings" onClick={changePic}>
+                    Upload
+                  </button>
                 </div>
               </div>
             </div>
@@ -448,24 +461,23 @@ export const UserSetting: React.FC = () => {
               <div className="navbarsmallbox">
                 <p className="boxtitle"> 2FAC AUTH </p>
               </div>
-          <div className="changesett">
-              <div className="twoFA">
-              {is2FA != true && (
-                <button
-                  className="acceptbutton"
-                  onClick={() => twoFAEnable(navigate, user)}
-                >
-                  enable
-                </button>
-              
-              )}
-                <button
-                  className="deletebutton"
-                  onClick={() => twoFADisable({ user, setUser })}
-                >
-                  disable
-                </button>
-              </div>
+              <div className="changesett">
+                <div className="twoFA">
+                  {is2FA != true && (
+                    <button
+                      className="acceptbutton"
+                      onClick={() => twoFAEnable(navigate, user)}
+                    >
+                      enable
+                    </button>
+                  )}
+                  <button
+                    className="deletebutton"
+                    onClick={() => twoFADisable({ user, setUser })}
+                  >
+                    disable
+                  </button>
+                </div>
               </div>
               <div className="footersmallbox">
                 <br></br>
@@ -481,7 +493,7 @@ export const UserSetting: React.FC = () => {
                 <img src={folder6} alt="Menu 3" />
                 <p>Home</p>
               </a>
-            </li> 
+            </li>
             <li className="menu-item">
               <a onClick={() => navToGamePage()}>
                 <img src={folder2} alt="Menu 3" />
