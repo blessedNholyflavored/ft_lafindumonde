@@ -97,8 +97,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
             });
             this.playerConnections.set(socket.user.id, socket);
             this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');
-            this.playerConnections.forEach((value, key) => {
-            });
+
           }
       }
   }
@@ -184,7 +183,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       if (key === NuserId)
         user1 = value;
     });
-    user1.emit("friendShipNotif");
+    if (user1)
+      user1.emit("friendShipNotif");
   }
 
 // gestion des differentes listes d'attentes (partie classique ou partie bonus)
