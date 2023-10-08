@@ -84,12 +84,10 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       {
         const checkIn = await this.userService.getStatusUser(socket.user.id);
         this.playerConnections.forEach((value, key) => {
-          console.log("avant:   ", key);
         });
         console.log(checkIn);
         if (checkIn != USER_STATUS.OFFLINE)
           {
-            console.log("aaaaaaaaaaaa");
             socket.disconnect(true);
           }
           else{
@@ -100,7 +98,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
             this.playerConnections.set(socket.user.id, socket);
             this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');
             this.playerConnections.forEach((value, key) => {
-              console.log("apres:   ", key);
             });
           }
       }
@@ -641,7 +638,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     async onNewListRoom(@MessageBody() id: string,@ConnectedSocket() socket: Socket)
     {
 
-
+      if (!id)
+        return ;
       console.log("roomid:   ", id);
       let user1;
       const Ids = this.chatService.getUsersInRoom(id);

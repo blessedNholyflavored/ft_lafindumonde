@@ -7,11 +7,11 @@ import { Navigate, useParams } from "react-router-dom";
 import icon from "../../img/buttoncomp.png";
 import logo from "../../img/logo42.png";
 import { Logout } from "./../auth/Logout";
-import { WebsocketContext } from "../../WebsocketContext";
+import { WebsocketContext } from "../../services/WebsocketContext";
 import { useNavigate } from "react-router-dom";
 import ChatChannel from "./ChatChannel";
 import PrivateChat from "./PrivateChat";
-import Notify from "../../Notify";
+import Notify from "../../services/Notify";
 
 type MessagePayload = {
   content: string;
@@ -341,10 +341,10 @@ export const Chat = () => {
     if (socket) {
       socket.on("refreshListRoom", () => {
         fetchYourRooms();
-        fetchPossibleInvite();
         fetchInviteSend();
         fetchInviteReceive();
         fetchRooms();
+        fetchPossibleInvite();
       });
     }
     if (socket) {
@@ -483,6 +483,14 @@ export const Chat = () => {
       socket.on("NotifyReceiveChannelInvit", () => {
         fetchInviteReceive();
       });
+
+      if (socket) {
+        socket.on("NotifyBadPWD", () => {
+          setNotifyMSG("Wrong password");
+          setNotifyType(2);
+          setShowNotification(true);
+        });
+      }
     }
 
     fetchYourRooms();
@@ -628,7 +636,7 @@ export const Chat = () => {
       }
     }
     setTimeout(() => {
-      socket.emit("reloadListRoom");
+      socket.emit("ActuAtRoomCreate");
     }, 300);
     setActiveChannel(0);
   };
@@ -688,7 +696,7 @@ export const Chat = () => {
             })
           );
           setNotInRoom(friendInfo);
-        }
+        } else setNotInRoom(data);
       } catch (error) {
         console.error("Erreur :", error);
         return [];
@@ -820,7 +828,9 @@ export const Chat = () => {
         }
       );
       if (response.ok) {
-        alert("Invitation created successfully.");
+        setNotifyMSG("Invite sent");
+        setNotifyType(2);
+        setShowNotification(true);
       } else {
         console.error("Error creating friendship: request is pending");
         alert("Error creating friendship: request is pending");

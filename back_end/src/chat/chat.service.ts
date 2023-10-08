@@ -208,7 +208,7 @@ export class ChatService {
 
     
 
-    async JoinRoom(nameRoom: string, option: UserChannelVisibility, hash: string, userId: string): Promise<void> {
+    async JoinRoom(nameRoom: string, option: UserChannelVisibility, hash: string, userId: string){
       const allChatRooms = await this.getAllChatRooms();
       const chatRoom = allChatRooms.find((room) => room.name === nameRoom);
     
@@ -220,12 +220,12 @@ export class ChatService {
       });
     
       if (existingUserRoom) {
-        return;
+        return 0;
       }
     
       if (chatRoom.visibility == UserChannelVisibility.PWD_PROTECTED) {
 				if (await bcrypt.compare(hash, chatRoom.hash) === false){
-          return;
+          return 2;
         }
       }
     
@@ -252,6 +252,7 @@ export class ChatService {
           role: 'USER',
         },
       });
+      return 1;
     }
     
   
@@ -429,6 +430,8 @@ async getUsersInRoomForList(roomId: string) {
 
 
 async getUsersInRoom(roomId: string): Promise<number[]> {
+  if (!roomId)
+    return ;
   const usersInRoom = await prisma.userOnChannel.findMany({
     where: {
       channelId: parseInt(roomId),

@@ -7,7 +7,7 @@ import "./style/Home.css";
 import "./style/Logout.css";
 import { Logout } from "./components/auth/Logout";
 import { useAuth } from "./components/auth/AuthProvider";
-import { WebsocketContext } from "./WebsocketContext";
+import { WebsocketContext } from "./services/WebsocketContext";
 import folder from "./img/folder0.png";
 import folder1 from "./img/folder2.png";
 import folder2 from "./img/folder3.png";
@@ -17,7 +17,7 @@ import nav from "./img/buttoncomp.png";
 import gaming from "./img/gamingpreview.png";
 import love from "./img/42lov.png";
 import chatpic from "./img/chatpic.png";
-import Notify from "./Notify";
+import Notify from "./services/Notify";
 
 interface HomeProps {
   socket: Socket | null;
@@ -177,7 +177,7 @@ const Home: React.FC<HomeProps> = () => {
         </main>
         <nav>
           <ul>
-          <li className="menu-item">
+            <li className="menu-item">
               <a onClick={navigateToHome}>
                 <img src={folder6} alt="Menu 3" />
                 <p>Home</p>

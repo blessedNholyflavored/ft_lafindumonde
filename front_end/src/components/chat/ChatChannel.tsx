@@ -7,9 +7,9 @@ import { Navigate, useParams } from "react-router-dom";
 import icon from "../../img/buttoncomp.png";
 import logo from "../../img/logo42.png";
 import { Logout } from "./../auth/Logout";
-import { WebsocketContext } from "../../WebsocketContext";
+import { WebsocketContext } from "../../services/WebsocketContext";
 import { useNavigate } from "react-router-dom";
-import Notify from "../../Notify";
+import Notify from "../../services/Notify";
 
 interface messages {
   start_at: string;
@@ -1095,7 +1095,8 @@ export const ChatChannel = () => {
                                   onClick={() => MuteFromChannel(users.id)}
                                   disabled={
                                     isNaN(parseInt(timeMute)) ||
-                                    parseInt(timeMute) === 0
+                                    parseInt(timeMute) === 0 ||
+                                    timeMute.length > 3
                                   }
                                 >
                                   Submit
@@ -1134,7 +1135,8 @@ export const ChatChannel = () => {
                                   onClick={() => BanFromChannel(users.id)}
                                   disabled={
                                     isNaN(parseInt(timeBan)) ||
-                                    parseInt(timeBan) === 0
+                                    parseInt(timeBan) === 0 ||
+                                    timeBan.length > 3
                                   }
                                 >
                                   Submit

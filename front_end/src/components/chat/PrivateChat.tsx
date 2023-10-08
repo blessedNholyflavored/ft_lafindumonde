@@ -7,7 +7,7 @@ import { Navigate, useParams } from "react-router-dom";
 import icon from "../../img/buttoncomp.png";
 import logo from "../../img/logo42.png";
 import { Logout } from "./../auth/Logout";
-import { WebsocketContext } from "../../WebsocketContext";
+import { WebsocketContext } from "../../services/WebsocketContext";
 import { useNavigate } from "react-router-dom";
 
 type MessagePayload = {
@@ -44,8 +44,6 @@ export const PrivateChat = () => {
   const navigate = useNavigate();
   const socket = useContext(WebsocketContext);
   const [isBlocked, setIsBlocked] = useState<string>("");
-
-
 
   async function fetchPrivMessageList() {
     try {
@@ -131,8 +129,7 @@ export const PrivateChat = () => {
     }
     checkBlocked(recipient as any, user?.id as any);
     fetchPrivMessage();
-    if (isBlocked === "true")
-      navigate("/chat");
+    if (isBlocked === "true") navigate("/chat");
   }, [isBlocked]);
 
   const onSubmit = () => {
@@ -234,33 +231,28 @@ export const PrivateChat = () => {
     }
   };
 
-
   return (
     <div>
-      {recipient && isBlocked === "false" &&  (
-            <button onClick={() => BlockFriend(recipient.toString())}>
-              Bloquer
-            </button>
-          )}
-          {isBlocked === "true" && recipient && (
-            <button
-              onClick={() =>
-                removeBlocked(
-                  user?.id.toString() as any,
-                  recipient.toString()
-                )
-              }
-            >
-              Debloquer
-            </button>
-          )}
-          {recipient && (
+      {recipient && isBlocked === "false" && (
+        <button onClick={() => BlockFriend(recipient.toString())}>
+          Bloquer
+        </button>
+      )}
+      {isBlocked === "true" && recipient && (
+        <button
+          onClick={() =>
+            removeBlocked(user?.id.toString() as any, recipient.toString())
+          }
+        >
+          Debloquer
+        </button>
+      )}
+      {recipient && (
         <ul>
           <h1>Liste des msgs envoyes :</h1>
           {messageListSend.length > 0 && user ? (
             messageListSend.map((friend, index) => (
               <div>
-
                 {friend.recipientId === user?.id && (
                   <div style={{ backgroundColor: "red", float: "left" }}>
                     <div key={index}>
@@ -294,7 +286,6 @@ export const PrivateChat = () => {
               value={value}
               onChange={(e) => setValue(e.target.value)}
               onKeyPress={handleEnter}
-
             />
             <button onClick={onSubmit}>Submit</button>
           </div>

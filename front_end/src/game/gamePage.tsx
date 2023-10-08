@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import io, { Socket } from "socket.io-client";
-import { User } from "../interfaces";
+import { User } from "../interfaces/interfaces";
 import icon from "./../img/buttoncomp.png";
 import chat_pic from "./img/fill.pic.png";
 import "../App.css";
@@ -10,13 +10,13 @@ import "../style/Game.css";
 import "../style/Logout.css";
 import { Logout } from "../components/auth/Logout";
 import { useAuth } from "../components/auth/AuthProvider";
-import { WebsocketContext } from "../WebsocketContext";
+import { WebsocketContext } from "../services/WebsocketContext";
 
 import nav from "./../img/buttoncomp.png";
 import gaming from "./img/gamingpreview.png";
 import chatpic from "./img/chatpic.png";
 import gradient from "./img/gradient.png";
-import Notify from "../Notify";
+import Notify from "../services/Notify";
 import folder from "./../img/folder0.png";
 import folder1 from "./../img/folder2.png";
 import folder2 from "./../img/folder3.png";
@@ -207,19 +207,19 @@ export const GamePage = () => {
                     onClick={() => handlePlayerSelect("1")}
                   >
                     <img src={pink} alt="Menu 3" />
-                    <button className="game_img_btn">Quick play</button>
+                    <button className="game_img_btn">Classic Pong</button>
                   </div>
                   <div
                     className="column"
                     onClick={() => handlePlayerSelect222("1")}
                   >
                     <img src={blue} alt="Menu 3" />
-                    <button className="game_img_btn">Ranked play</button>
+                    <button className="game_img_btn">Blind Pong</button>
                   </div>
 
                   <div className="column" onClick={() => NavToSoloPong()}>
                     <img src={green} alt="Menu 3" />
-                    <button className="game_img_btn">Solo game</button>
+                    <button className="game_img_btn">Mini jeu</button>
                   </div>
                   <div className="column" onClick={() => navToLeaderboard()}>
                     <img src={yellow} alt="Menu 3" />

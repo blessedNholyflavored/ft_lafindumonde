@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { User, Room } from "../interfaces"; // Assurez-vous d'importer les interfaces correctes
+import { User, Room } from "../interfaces/interfaces"; // Assurez-vous d'importer les interfaces correctes
 import "../App.css";
 import "../style/Home.css";
 import "../style/Profile.css";
@@ -8,7 +8,7 @@ import "../style/Game.css";
 import "../App.css";
 import { useAuth } from "../components/auth/AuthProvider";
 import { useNavigate, useParams } from "react-router-dom";
-import { WebsocketContext } from "../WebsocketContext";
+import { WebsocketContext } from "../services/WebsocketContext";
 import { count } from "console";
 import nav from "./../img/buttoncomp.png";
 import folder from "./../img/folder0.png";
@@ -178,9 +178,7 @@ const PongGame: React.FC = () => {
       socket.emit("gameFinished", id);
     }
 
-    if (usernameP1 && usernameP2 && countdown > 0)
-      catchPic();
-
+    if (usernameP1 && usernameP2 && countdown > 0) catchPic();
 
     if (socket && countdown > 0) {
       socket.on("sendRoomAtStart", (recuproom: Room) => {
@@ -251,7 +249,17 @@ const PongGame: React.FC = () => {
         socket.off("startGame");
       }
     };
-  }, [socket, room, end, BallXpos, BallYpos, SpeedBallX, SpeedBallY, usernameP1, usernameP2]);
+  }, [
+    socket,
+    room,
+    end,
+    BallXpos,
+    BallYpos,
+    SpeedBallX,
+    SpeedBallY,
+    usernameP1,
+    usernameP2,
+  ]);
 
   useEffect(() => {
     if (socket && !end) {

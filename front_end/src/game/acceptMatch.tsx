@@ -5,7 +5,7 @@ import "../style/Home.css";
 import "../style/Logout.css";
 import { Logout } from "../components/auth/Logout";
 import { useAuth } from "../components/auth/AuthProvider";
-import { WebsocketContext } from "../WebsocketContext";
+import { WebsocketContext } from "../services/WebsocketContext";
 
 const AcceptMatch: React.FC = () => {
   const { id } = useParams();

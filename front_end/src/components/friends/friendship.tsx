@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useAuth } from "../auth/AuthProvider";
 import { useNavigate, useParams } from "react-router-dom";
-import { WebsocketContext } from "../../WebsocketContext";
+import { WebsocketContext } from "../../services/WebsocketContext";
 //
 
 export enum FriendsInvitationStatus {
@@ -22,14 +22,13 @@ export const FriendshipComponent = ({
   const navigate = useNavigate();
   const [accepted, setAccepted] = useState(false);
 
-
   useEffect(() => {
     fetchFriendshipStatus();
     if (socket) {
       socket.on("refreshListFriendPage", () => {
         fetchFriendshipStatus();
       });
-  }
+    }
   });
   async function checkBlockedForNotify(senderId: string, recipientId: string) {
     try {
@@ -80,7 +79,7 @@ export const FriendshipComponent = ({
             false
         )
           socket.emit("notifyFriendShip", id);
-          socket.emit("reloadListFriendPage", id);
+        socket.emit("reloadListFriendPage", id);
         alert("Friendship created successfully.");
       } else {
         console.error("Error creating friendship: request is pending");
