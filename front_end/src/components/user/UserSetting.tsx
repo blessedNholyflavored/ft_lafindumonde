@@ -8,6 +8,7 @@ import { Logout } from "./../auth/Logout";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/AxiosInstance";
 import "../../../src/style/Home.css";
+import champi from "../../img/champi.png";
 import folder from "./../../img/folder0.png";
 import folder1 from "./../../img/folder2.png";
 import folder2 from "./../../img/folder3.png";
@@ -32,6 +33,7 @@ export const UserSetting: React.FC = () => {
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
   const [sender, setSender] = useState<number>(0);
+  const [changes, setChanges] = useState<number>(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -271,6 +273,51 @@ export const UserSetting: React.FC = () => {
     }
   };
 
+  const randomPic = async () => {
+    const id = Math.floor(Math.random() * 151) + 1;
+    let newPokeImg;
+    try {
+      await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`, {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((resData) => {
+          console.log(resData.sprites.front_default);
+          newPokeImg = resData.sprites.other.home.front_default;
+        })
+        .catch(() => (newPokeImg = champi.toString()));
+
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/pokePic`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            pictureURL: newPokeImg,
+          }),
+          credentials: "include",
+        }
+      );
+      // setImgUrl(newPokeImg as any);
+      console.log("cdscds", response);
+      // if (response.status === 401) {
+      //   console.log("oui erreur ouuuh");
+      // }
+      if (response.ok) {
+        setShowNotification(true);
+        setNotifyMSG("You successfully changed your avatar!");
+        setNotifyType(2);
+      } else {
+        setShowNotification(true);
+        setNotifyMSG("Something went wrong !");
+        setNotifyType(3);
+      }
+      displayPic();
+    } catch (err) {}
+  };
+
   const navigateToProfPage = () => {
     navigate(`/users/profile/${user?.id}`);
   };
@@ -315,9 +362,7 @@ export const UserSetting: React.FC = () => {
         );
         setNotifyType(3);
       }
-    } catch (error) {
-      console.log("Error while de-2fa-ing : ", error);
-    }
+    } catch (error) {}
   };
 
   const twoFAEnable = async (navigate: any, user: any) => {
@@ -451,6 +496,24 @@ export const UserSetting: React.FC = () => {
                   />
                   <button className="buttonsettings" onClick={changePic}>
                     Upload
+                  </button>
+                </div>
+                <div>
+                  <button
+                    className="buttonsettings"
+                    onClick={() => {
+                      randomPic();
+                      setShowNotification(true);
+                      setNotifyMSG("You successfully changed your avatar!");
+                      setNotifyType(2);
+                      setChanges(changes + 1);
+                      setTimeout(() => {
+                        displayPic();
+                      }, 300);
+                    }}
+                    disabled={changes === 1}
+                  >
+                    Generate new avater
                   </button>
                 </div>
               </div>

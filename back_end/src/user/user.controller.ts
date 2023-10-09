@@ -15,6 +15,7 @@ import {
   NotAcceptableException,
 	ValidationPipe,
 	UsePipes,
+	UnauthorizedException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -211,6 +212,15 @@ export class UsersController {
     }
     return ret;
   }
+
+	@Post("/pokePic")
+	async pokePic(@Req() req: any, @Res() res:any, @Body() pic: any){
+		const photo = await this.userService.updatePicture(req.user.id.toString(), pic.pictureURL.toString());
+		const ret = await this.userService.getUserByID(req.user.id);
+		console.log(photo);
+		return photo;
+		// throw new UnauthorizedException("youpi");
+	}
 
   // @Get('/scoresMG')
   // async GetAllScores()

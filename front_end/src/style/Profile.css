@@ -352,6 +352,10 @@ input::file-selector-button {
   background-color: greenyellow;
 }
 
+.buttonsettings:disabled {
+  display: none;
+}
+
 .changesett {
   margin-top: 15%;
 }

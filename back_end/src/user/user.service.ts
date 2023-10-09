@@ -120,7 +120,6 @@ export class UserService {
   }
 
   async updatePicture(id: string, newURL: string) {
-    console.log(newURL);
     const updateUser = await prisma.user.update({
       where: { id: parseInt(id) },
       data: { pictureURL: newURL },

@@ -37,14 +37,24 @@ export function Register() {
   // sending input to back_end to verify and register
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    let dogimg;
+    const id = Math.floor(Math.random() * 151);
+    let pokeimg;
 
-    await fetch(`https://dog.ceo/api/breeds/image/random`, {
+    await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`, {
       method: "GET",
     })
-      .then((response) => response.json())
-      .then((responseData) => (dogimg = responseData.message.toString()))
-      .catch(() => (dogimg = champi.toString()));
+      .then((res) => res.json())
+      .then((resData) => {
+        console.log(resData.sprites.front_default);
+        pokeimg = resData.sprites.other.home.front_default;
+      })
+      .catch(() => (pokeimg = champi.toString()));
+    // await fetch(`https://dog.ceo/api/breeds/image/random`, {
+    //   method: "GET",
+    // })
+    //   .then((response) => response.json())
+    //   .then((responseData) => (dogimg = responseData.message.toString()))
+    //   .catch(() => (dogimg = champi.toString()));
     const res = await fetch(
       `http://${window.location.hostname}:3000/auth/register`,
       {
@@ -56,7 +66,7 @@ export function Register() {
           email: inputEmail,
           password: inputPassword,
           username: inputUsername,
-          pictureURL: dogimg,
+          pictureURL: pokeimg,
         }),
         credentials: "include",
       }
