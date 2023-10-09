@@ -20,6 +20,7 @@ import icon from "./../img/buttoncomp.png";
 import { Logout } from "../components/auth/Logout";
 import logo from "./../img/logo42.png";
 
+
 const PongGame: React.FC = () => {
   const { id } = useParams();
   const [room, setRoom] = useState<Room | null>(null);
@@ -44,6 +45,25 @@ const PongGame: React.FC = () => {
   let [ImgUrlP2, setImgUrlP2] = useState<string>("");
   let [usernameP1, setUsernameP1] = useState<string>("");
   let [usernameP2, setUsernameP2] = useState<string>("");
+
+
+  useEffect(() => {
+    const handlePopstate = () => {
+      // Comparer la longueur de l'historique avant et après l'événement de navigation
+      const isBackButtonUsed = window.history.length > 1;
+      if (isBackButtonUsed) {
+        socket.emit("ttt");
+      }
+    };
+
+    window.addEventListener('popstate', handlePopstate);
+
+    // Nettoyez l'écouteur d'événement lorsque le composant est démonté
+    return () => {
+      window.removeEventListener('popstate', handlePopstate);
+    };
+  }, []); // Assurez-vous de ne passer aucun dépendance pour useEffect pour éviter les problèmes de performance
+
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
     if (countdown > 0) {

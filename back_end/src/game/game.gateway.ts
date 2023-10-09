@@ -825,4 +825,10 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
 
             socket.emit("sendRoomAtStart", Sroom);
       }
+
+      @SubscribeMessage('ttt')
+      async ttt(@ConnectedSocket() socket: Socket)
+      {
+        console.log("dvfvdfvfdvfdvfd')");
+      }
 }
