@@ -20,12 +20,12 @@ interface MiniScore {
 
 export const MiniGame = () => {
   const [player1, setPlayer1] = useState(0);
-  const [player2, setPlayer2] = useState(300);
+  const [player2, setPlayer2] = useState(200);
   const [keyCode, setKeyCode] = useState("");
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const mapy = 400;
   const mapx = 700;
-  const ballSpeed = 6;
+  const [ballSpeed, setBallSpeed] = useState(5);
   const [player1Point, setPoint1] = useState(0);
   const [player2Point, setPoint2] = useState(0);
   const [player1tsc, setPoint1tsc] = useState(0);
@@ -62,7 +62,6 @@ export const MiniGame = () => {
     if (countdown !== 0 && counter === 0) {
       startCountdown();
     }
-    console.log("ooooooooo:   ", counter);
   }, [counter]);
 
   async function fetchPlayerScores() {
@@ -122,6 +121,7 @@ export const MiniGame = () => {
   }, [ballDir, counter]);
 
   useEffect(() => {
+    const randomValue: number = Math.random();
     if (counter === 1) {
       if (end) return;
       if (ball.y >= mapy - 8 || ball.y <= 0) {
@@ -140,22 +140,37 @@ export const MiniGame = () => {
             ball.y <= player1 + 400)
         ) {
           if (ball.y <= player2 - 20 || ball.y <= player1 - 20)
+          {
             setBallDir((prevBallDir: { x: number; y: number }) => ({
               ...prevBallDir,
-              y: -prevBallDir.y - 0.25,
+              y: -prevBallDir.y - randomValue,
+              x: -prevBallDir.x,
+
+              
             }));
-          if (ball.y <= player2 + 20 || ball.y <= player1 + 20)
+          }
+          else if (ball.y <= player2 + 20 || ball.y <= player1 + 20)
+          {
             setBallDir((prevBallDir: { x: number; y: number }) => ({
               ...prevBallDir,
-              y: -prevBallDir.y + 0.3,
+              y: -prevBallDir.y + randomValue,
+              x: -prevBallDir.x,
+
             }));
+          }
+          else
+          {
           setBallDir((prevBallDir: { x: number; y: number }) => ({
             ...prevBallDir,
             x: -prevBallDir.x,
+            y: -prevBallDir.y + randomValue / 2,
           }));
+          }
 
           if (ball.x < mapx / 2) {
             setRebounds((prevRebounds) => prevRebounds + 1);
+            setBallSpeed(ballSpeed + 0.1);
+              
           }
         } else if (ball.x >= mapx - 8 - 10) {
           setEnd(true);
