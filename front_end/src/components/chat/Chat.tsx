@@ -947,6 +947,31 @@ export const Chat = () => {
     navigate("/");
   };
 
+  const leftChannel = async () => {
+    if (!id) return;
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/chat/leftChan/${id}/${user?.id}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+    // setTimeout(() => {
+    //   socket.emit("reloadMessRoom", id);
+    // }, 100);
+    setTimeout(() => {
+      socket.emit("reloadListRoomForOne", id);
+    }, 500);
+    navigate("/chat");
+  };
+
   return (
     <>
 
@@ -1154,6 +1179,12 @@ export const Chat = () => {
             }}
             disabled={activeChannel === chan.id}
           >
+            {activeChannel === chan.id && (
+                                <div>
+          <button onClick={leftChannel}>Quitter le channel ?</button>
+        </div>
+            )}
+
             <div>
               {chan.name} ---  {chan.visibility}
             </div>
@@ -1214,7 +1245,10 @@ export const Chat = () => {
         <div className="navbarmainpage nav_box">
           <img src={icon} className="buttonnav" alt="icon" />
           <p className="title_box">CONV WITH {activeChannelName}</p> 
-          {/* <PrivateChat /> */}
+          {!showConv && recipient && <PrivateChat />}
+      {showConv && <PrivateChat />}
+      {showChatChannel && <ChatChannel />}
+      {!showChatChannel && id && <ChatChannel />}
         </div>
       </div>
       {/* <div>
@@ -1269,10 +1303,10 @@ export const Chat = () => {
       </div>
       </div>
       </div> 
-      {showChatChannel && <ChatChannel />}
-      {!showChatChannel && id && <ChatChannel />}
-      {!showConv && recipient && <PrivateChat />}
-      {showConv && <PrivateChat />}
+      {/* {showChatChannel && <ChatChannel />}
+      {!showChatChannel && id && <ChatChannel />} */}
+      {/* {!showConv && recipient && <PrivateChat />}
+      {showConv && <PrivateChat />} */}
       {(showConv || recipient) && showChatChannel && (
         <div>{desacButton() as any}</div>
       )}

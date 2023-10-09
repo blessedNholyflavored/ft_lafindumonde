@@ -844,10 +844,6 @@ export const ChatChannel = () => {
         />
       )}
       <div>
-        <div>
-          <button onClick={leftChannel}>Quitter le channel ?</button>
-        </div>
-
         {id && (
           <ul>
             <h1>Liste des messages envoyés :</h1>
