@@ -92,6 +92,8 @@ export const ChatChannel = () => {
   }
 
   async function fetchRoomMessageList() {
+    if (!id)
+      return ;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/recupRoomMess/${id}`,
