@@ -8,13 +8,12 @@ import { Logout } from "./../auth/Logout";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/AxiosInstance";
 import "../../../src/style/Home.css";
-import folder from "./../../img/folder0.png";
-import folder1 from "./../../img/folder2.png";
-import folder2 from "./../../img/folder3.png";
-import folder3 from "./../../img/folder4.png";
-import folder4 from "./../../img/folder5.png";
-import folder0 from "./../../img/folder1.png";
-import folder6 from "./../../img/folder6.png";
+import foldergreen from "../../img/foldergreen.png";
+import folderblue from "../../img/folderblue.png";
+import folderpink from "../../img/folderpink.png";
+import folderyellow from "../../img/folderyellow.png";
+import folderwhite from "../../img/folderwhite.png";
+import folderviolet from "../../img/folderviolet.png";
 import nav from "../../img/buttoncomp.png";
 import Notify from "../../services/Notify";
 
@@ -363,124 +362,136 @@ export const UserSetting: React.FC = () => {
 
       <div className="flex-bg">
         <main>
-          <div className="threerow">
-            <div className="boxrowsettings">
-              <div className="navbarsmallbox">
-                {isLocal === false ? (
-                  <p className="boxtitle"> CHANGE USERNAME </p>
-                ) : (
-                  <p className="boxtitle"> CHANGE INFOS </p>
-                )}
-              </div>
+          <div className="fullpage">
+            <div className="navbarbox">
+              <img src={icon} alt="icon" />
+              <h1> SETTINGS </h1>
+            </div>
+            <div className="threerow">
+              <div className="boxrowsettings">
+                <div className="navbarsmallbox">
+                  {isLocal === false ? (
+                    <p className="boxtitle"> CHANGE USERNAME </p>
+                  ) : (
+                    <p className="boxtitle"> CHANGE INFOS </p>
+                  )}
+                </div>
 
-              <div className="changesett">
-                <form className="formsettings" onSubmit={handleSubmit}>
-                  <label className="labelcss">
-                    <input
-                      // className="inputcss"
-                      type="text"
-                      value={newUsername}
-                      minLength={3}
-                      maxLength={10}
-                      required={true}
-                      placeholder="type new username"
-                      onChange={(e) => setNewUsername(e.target.value)}
-                    />
-                  </label>
-                  <button className="buttonsettings" type="submit">
-                    update
-                  </button>
-                </form>
+                <div className="changesett">
+                  <form className="formsettings" onSubmit={handleSubmit}>
+                    <label className="labelcss">
+                      <input
+                        // className="inputcss"
+                        type="text"
+                        value={newUsername}
+                        minLength={3}
+                        maxLength={10}
+                        required={true}
+                        placeholder="type new username"
+                        onChange={(e) => setNewUsername(e.target.value)}
+                      />
+                    </label>
+                    <button className="buttonsettings" type="submit">
+                      update
+                    </button>
+                  </form>
 
-                {isLocal === true && (
-                  <>
-                    <form className="formsettings" onSubmit={handleSubmitPass}>
-                      <label className="labelcss">
-                        <input
-                          // className="inputcss"
-                          type="password"
-                          value={newPass}
-                          minLength={8}
-                          required={true}
-                          placeholder="type new password"
-                          onChange={(e) => setNewPass(e.target.value)}
-                        />
-                      </label>
-                      <button className="buttonsettings" type="submit">
-                        update
-                      </button>
-                    </form>
-
-                    <div>
+                  {isLocal === true && (
+                    <>
                       <form
                         className="formsettings"
-                        onSubmit={handleSubmitMail}
+                        onSubmit={handleSubmitPass}
                       >
                         <label className="labelcss">
                           <input
                             // className="inputcss"
-                            type="email"
-                            value={newMail}
-                            placeholder="type new mail"
+                            type="password"
+                            value={newPass}
+                            minLength={8}
                             required={true}
-                            onChange={(e) => setNewMail(e.target.value)}
+                            placeholder="type new password"
+                            onChange={(e) => setNewPass(e.target.value)}
                           />
                         </label>
                         <button className="buttonsettings" type="submit">
                           update
                         </button>
                       </form>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
 
-            {/* deuxieme */}
-            <div className="boxrowsettings">
-              <div className="navbarsmallbox">
-                <p className="boxtitle"> CHANGE AVATAR </p>
-              </div>
-              <div className="changesett">
-                <img src={ImgUrl} alt="user avatar"></img>
-                <div className="avatardiv">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
-                  <button className="buttonsettings" onClick={changePic}>
-                    Upload
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* troisieme */}
-            <div className="boxrowsettings">
-              <div className="navbarsmallbox">
-                <p className="boxtitle"> 2FAC AUTH </p>
-              </div>
-              <div className="changesett">
-                <div className="twoFA">
-                  {is2FA != true && (
-                    <button
-                      className="acceptbutton"
-                      onClick={() => twoFAEnable(navigate, user)}
-                    >
-                      enable
-                    </button>
+                      <div>
+                        <form
+                          className="formsettings"
+                          onSubmit={handleSubmitMail}
+                        >
+                          <label className="labelcss">
+                            <input
+                              // className="inputcss"
+                              type="email"
+                              value={newMail}
+                              placeholder="type new mail"
+                              required={true}
+                              onChange={(e) => setNewMail(e.target.value)}
+                            />
+                          </label>
+                          <button className="buttonsettings" type="submit">
+                            update
+                          </button>
+                        </form>
+                      </div>
+                    </>
                   )}
-                  <button
-                    className="deletebutton"
-                    onClick={() => twoFADisable({ user, setUser })}
-                  >
-                    disable
-                  </button>
                 </div>
               </div>
-              <div className="footersmallbox">
-                <br></br>
+
+              {/* deuxieme */}
+              <div className="boxrowsettings">
+                <div className="navbarsmallbox">
+                  <p className="boxtitle"> CHANGE AVATAR </p>
+                </div>
+                <div className="changesett avatarsett">
+                  <div className="centered-img">
+                    <img src={ImgUrl} alt="user avatar" />
+                  </div>
+                  <div className="avatardiv">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      
+                    />
+                    <button className="buttonsettings" onClick={changePic}>
+                      Upload
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* troisieme */}
+              <div className="boxrowsettings">
+                <div className="navbarsmallbox">
+                  <p className="boxtitle"> 2FAC AUTH </p>
+                </div>
+                <div className="changesett">
+                  <div className="twoFA">
+                    {is2FA != true && (
+                      <button
+                        className="acceptbutton"
+                        onClick={() => twoFAEnable(navigate, user)}
+                      >
+                        enable
+                      </button>
+                    )}
+                    <button
+                      className="deletebutton"
+                      onClick={() => twoFADisable({ user, setUser })}
+                    >
+                      disable
+                    </button>
+                  </div>
+                </div>
+                <div className="footersmallbox">
+                  <br></br>
+                </div>
               </div>
             </div>
           </div>
@@ -490,31 +501,31 @@ export const UserSetting: React.FC = () => {
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
-                <img src={folder6} alt="Menu 3" />
+                <img src={folderviolet} alt="Menu 3" />
                 <p>Home</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={() => navToGamePage()}>
-                <img src={folder2} alt="Menu 3" />
+                <img src={folderblue} alt="Menu 3" />
                 <p>Game</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToProfPage}>
-                <img src={folder1} alt="Menu 3" />
+                <img src={folderpink} alt="Menu 3" />
                 <p>Profile</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToSettings}>
-                <img src={folder} alt="Menu 3" />
+                <img src={foldergreen} alt="Menu 3" />
                 <p>Settings</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToFriends}>
-                <img src={folder0} alt="Menu 3" />
+                <img src={folderwhite} alt="Menu 3" />
                 <p>Friends</p>
               </a>
             </li>
@@ -522,7 +533,7 @@ export const UserSetting: React.FC = () => {
         </nav>
       </div>
 
-      <footer>
+      <footer className="footersettings">
         <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
           LOG OUT{" "}
         </button>
