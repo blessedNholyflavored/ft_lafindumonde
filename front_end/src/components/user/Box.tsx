@@ -13,11 +13,12 @@ import { WebsocketContext } from "../../services/WebsocketContext";
 import { GameHistory } from "./GameHistory";
 import { useParams } from "react-router-dom";
 import nav from "./../../img/buttoncomp.png";
-import folder from "./../../img/folder0.png";
-import folder1 from "./../../img/folder2.png";
-import folder2 from "./../../img/folder3.png";
-import folder0 from "./../../img/folder1.png";
-import folder6 from "./../../img/folder4.png";
+import foldergreen from "../../img/foldergreen.png";
+import folderblue from "../../img/folderblue.png";
+import folderpink  from "../../img/folderpink.png";
+import folderyellow from "../../img/folderyellow.png";
+import folderwhite from "../../img/folderwhite.png";
+import folderviolet from "../../img/folderviolet.png";
 import { Logout } from "../auth/Logout";
 import { useNavigate } from "react-router-dom";
 import "@fontsource/ibm-plex-mono";
@@ -214,31 +215,31 @@ const Box = (props: any) => {
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
-                <img src={folder6} alt="Menu 3" className="profileNavIcon" />
+                <img src={folderviolet} alt="Menu 3" className="profileNavIcon" />
                 <p>Home</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={() => navToGamePage()}>
-                <img src={folder2} alt="Menu 3" className="profileNavIcon" />
+                <img src={folderblue} alt="Menu 3" className="profileNavIcon" />
                 <p>Game</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToProfPage}>
-                <img src={folder1} alt="Menu 3" className="profileNavIcon" />
+                <img src={foldergreen} alt="Menu 3" className="profileNavIcon" />
                 <p>Profile</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToSettings}>
-                <img src={folder} alt="Menu 3" className="profileNavIcon" />
+                <img src={folderyellow} alt="Menu 3" className="profileNavIcon" />
                 <p>Settings</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToFriends}>
-                <img src={folder0} alt="Menu 3" className="profileNavIcon" />
+                <img src={folderwhite} alt="Menu 3" className="profileNavIcon" />
                 <p>Friends</p>
               </a>
             </li>

@@ -1,10 +1,12 @@
 .twoFA {
-  display: inline-block;
+  display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
 .twoFA button {
+  margin: 10px;
   cursor: pointer;
   font-family: IBM Plex Mono;
   font-size: 32px;
@@ -14,7 +16,7 @@
   border-width: 3px;
   height: 60px;
   padding: 10px 16px;
-  margin: 10% 10%;
+  margin: 10px;
   box-shadow: 3px 4px 0px 0px #000;
 }
 
@@ -32,10 +34,10 @@
 }
 
 .acceptbutton:hover {
-  background-color: #84ffcc;
+  background-color: #0BDA51;
   color: #111;
 }
 
 .deletebutton:hover {
-  background-color: #6d065c;
+   background-color: #CE2029
 }

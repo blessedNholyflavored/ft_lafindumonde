@@ -7,13 +7,12 @@ import Notify from "../../services/Notify";
 import nav from "./../../img/buttoncomp.png";
 import { Logout } from "../auth/Logout";
 import logo from "./../../img/logo42.png";
-import folder from "./../../img/folder0.png";
-import folder1 from "./../../img/folder2.png";
-import folder2 from "./../../img/folder3.png";
-import folder3 from "./../../img/folder4.png";
-import folder4 from "./../../img/folder5.png";
-import folder0 from "./../../img/folder1.png";
-import folder6 from "./../../img/folder6.png";
+import foldergreen from "./../../img/foldergreen.png";
+import folderblue from "./../../img/folderblue.png";
+import folderpink  from "./../../img/folderpink.png";
+import folderyellow from "./../../img/folderyellow.png";
+import folderwhite from "./../../img/folderwhite.png";
+import folderviolet from "./../../img/folderviolet.png";
 import icon from "../../img/buttoncomp.png";
 import "../../style/Profile.css";
 import "../../style/Home.css";
@@ -562,9 +561,9 @@ export const FriendsPage: React.FC = () => {
     navigate("/");
   };
 
-  // const handleCloseNotification = () => {
-  //   setShowNotification(false);
-  // };
+  const navToGamePage = () => {
+    navigate("/gamePage");
+  };
 
   const navigateToSettings = () => {
     navigate("/settings");
@@ -656,18 +655,19 @@ export const FriendsPage: React.FC = () => {
                           src={friend.pictureURL}
                           className="avatar"
                           alt="photo casse"
-                        />
+                          />
+                          <div style={{fontWeight: "bold"}}>{friend.username}</div>
                         <button
+                          className="buttonseemore"
                           onClick={() => handleUserClick(friend.recipientId)}
                           // disabled={user?.id.toString() === friend.id}
-                        >
-                          <div>{friend.username}</div>
+                        > see more
                         </button>
 
                         {selectedUser === friend.recipientId && (
                           <div>
-                            <div>{friend.status}</div>
                             <button
+                              className="onlinebttn"
                               onClick={() =>
                                 deleteFriend(
                                   friend.senderId.toString(),
@@ -675,9 +675,10 @@ export const FriendsPage: React.FC = () => {
                                 )
                               }
                             >
-                              Delete
+                              delete
                             </button>
                             <button
+                              className="onlinebttn"
                               onClick={() =>
                                 BlockFriend(
                                   friend.senderId.toString(),
@@ -685,28 +686,30 @@ export const FriendsPage: React.FC = () => {
                                 )
                               }
                             >
-                              Bloquer
+                              block
                             </button>
                             <button
+                              className="onlinebttn"
                               onClick={() =>
                                 navToProfil(friend.recipientId.toString())
                               }
                             >
-                              Voir Profile
+                              see profile
                             </button>
                             <button
+                              className="onlinebttn"
                               onClick={() =>
                                 messagePage(friend.recipientId.toString())
                               }
                             >
-                              Envoyer un message
+                              send a message
                             </button>
                           </div>
                         )}
                       </div>
                     ))
                   ) : (
-                    <div>ptdr t'as pas de pote</div>
+                    <div className="emptymessage">🩷🩷🩷🩷 <br></br>please make some friends<br></br>🩷🩷🩷🩷 </div>
                   )}
                 </ul>
               </div>
@@ -723,29 +726,30 @@ export const FriendsPage: React.FC = () => {
                           className="avatar"
                           alt="photo casse"
                         />
-                        <div>{blocked.username}</div>
-                        <div>{blocked.status}</div>
+                        <div style={{fontWeight: "bold"}}>{blocked.username}</div>
                         <button
-                          onClick={() =>
+                              className="onlinebttn"
+                              onClick={() =>
                             removeBlocked(
                               blocked.senderId.toString(),
                               blocked.recipientId.toString()
                             )
                           }
                         >
-                          Debloquer
+                          unblock
                         </button>
                         <button
-                          onClick={() =>
+                              className="onlinebttn"
+                              onClick={() =>
                             navToProfil(blocked.recipientId.toString())
                           }
                         >
-                          Voir Profile
+                          see profile
                         </button>
                       </div>
                     ))
                   ) : (
-                    <div>tu aimes tlm</div>
+                    <div className="emptymessage">🩷🩷🩷🩷 <br></br>you didn't block anyone. yet.<br></br>🩷🩷🩷🩷</div>
                   )}
                 </ul>
               </div>
@@ -762,11 +766,13 @@ export const FriendsPage: React.FC = () => {
                           className="avatar"
                           alt="photo casse"
                         />
+                        <div className="name1">{friend.username}</div>
                         <button
+                          className="buttonseemore"
                           onClick={() => handleUserClick(parseInt(friend.id))}
                           disabled={user?.id.toString() === friend.id}
                         >
-                          <div>{friend.username}</div>
+                          see more
                         </button>
                         {selectedUser === parseInt(friend.id) && (
                           <div>
@@ -804,7 +810,7 @@ export const FriendsPage: React.FC = () => {
                       </div>
                     ))
                   ) : (
-                    <div>ptdr ya personne</div>
+                    <div className="emptymessage">🩷🩷🩷🩷 <br></br>no one's here, you're all alone<br></br>🩷🩷🩷🩷</div>
                   )}
                 </div>
               </div>
@@ -813,44 +819,48 @@ export const FriendsPage: React.FC = () => {
                   <p className="boxtitle"> Friend requests </p>
                 </div>
                 <div className="requests">
-                  {friendsRequest.map((friend) => (
-                    <div>
-                      {friend.status === "PENDING" && !friend.isBlocked && (
-                        <div className="requestinfo" key={friend.id}>
-                          <img
-                            src={friend.pictureURL}
-                            className="avatar"
-                            alt="photo casse"
-                          />
-                          <div>Sender ID: {user?.username}</div>
-                          <div style={{ fontStyle: "italic", fontSize: 12 }}>
-                            Status: {friend.status}
+                  {friendsRequest.length === 0 ? (
+                    <div className="emptymessage">🩷🩷🩷🩷 <br></br>  such empty. not that popular? <br></br>🩷🩷🩷🩷</div>
+                  ) : (
+                    friendsRequest.map((friend) => (
+                      <div>
+                        {friend.status === "PENDING" && !friend.isBlocked && (
+                          <div className="requestinfo" key={friend.id}>
+                            <img
+                              src={friend.pictureURL}
+                              className="avatar"
+                              alt="photo casse"
+                            />
+                            <div>{friend?.username}</div>
+                            <div style={{ fontStyle: "italic", fontSize: 12 }}>
+                              Status: {friend.status}
+                            </div>
+                            <div className="bttnholder">
+                              <button
+                                className="acceptbutton"
+                                onClick={() =>
+                                  AcceptFriend(friend.id, friend.senderId)
+                                }
+                              >
+                                accept
+                              </button>
+                              <button
+                                className="deletebutton"
+                                onClick={() =>
+                                  RefuseFriend(friend.id, friend.senderId)
+                                }
+                              >
+                                delete
+                              </button>
+                            </div>
                           </div>
-                          <div className="bttnholder">
-                            <button
-                              className="acceptbutton"
-                              onClick={() =>
-                                AcceptFriend(friend.id, friend.senderId)
-                              }
-                            >
-                              accept
-                            </button>
-                            <button
-                              className="deletebutton"
-                              onClick={() =>
-                                RefuseFriend(friend.id, friend.senderId)
-                              }
-                            >
-                              delete
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                        )}
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
-              <div className="boxrowtest">
+              {/* <div className="boxrowtest">
                 <div className="navbarsmallbox">
                   <p className="boxtitle"> INFO </p>
                 </div>
@@ -876,7 +886,7 @@ export const FriendsPage: React.FC = () => {
                     </div>
                   ))}
                 </ul>
-              </div>
+              </div> */}
             </div>
           </div>
         </main>
@@ -884,38 +894,39 @@ export const FriendsPage: React.FC = () => {
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
-                <img src={folder6} alt="Menu 3" />
+                <img src={folderviolet} alt="Menu 3" />
                 <p>Home</p>
               </a>
             </li>
             <li className="menu-item">
-              <a onClick={() => NavToSoloPong()}>
-                <img src={folder2} alt="Menu 3" />
+              <a onClick={() => navToGamePage()}>
+                <img src={folderblue} alt="Menu 3" />
                 <p>Game</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToProfPage}>
-                <img src={folder1} alt="Menu 3" />
+                <img src={folderpink} alt="Menu 3" />
                 <p>Profile</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToSettings}>
-                <img src={folder} alt="Menu 3" />
+                <img src={folderyellow} alt="Menu 3" />
                 <p>Settings</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToFriends}>
-                <img src={folder0} alt="Menu 3" />
+                <img src={foldergreen} alt="Menu 3" />
                 <p>Friends</p>
               </a>
             </li>
           </ul>
         </nav>
+        
       </div>
-      <footer>
+      <footer className="footerfriends">
         <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
           LOG OUT{" "}
         </button>

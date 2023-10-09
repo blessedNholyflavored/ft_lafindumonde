@@ -55,8 +55,13 @@
 .podium__city {
   text-align: center;
   padding: 0 0.5rem;
+  color : black;
+  font-weight: 900;
 }
 
+.avatar{
+margin-bottom: 15px;
+}
 .podium__number {
   width: 27px;
   height: 75px;
