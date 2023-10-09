@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../auth/AuthProvider";
+import { useParams } from "react-router-dom";
 
 export const GameHistory = (props: any) => {
   const { user, setUser } = useAuth();
   const [gameData, setGameData] = useState<Game[]>([]);
+  const { id } = useParams();
+  const [imgUrl1, setImgUrl1] = useState<string>("");
+  const [imgUrl2, setImgUrl2] = useState<string>("");
 
   useEffect(() => {
     FetchGames();
@@ -20,13 +24,53 @@ export const GameHistory = (props: any) => {
     scrP2: number;
     superGame: number;
     super: string;
+    pictureURLP1: string;
+    pictureURLP2: string;
   }
 
-  const FetchGames = async () => {
-    const userId = user?.id;
+  const displayPic = async (userId: number, pos: number) => {
     try {
       const response = await fetch(
-        `http://${window.location.hostname}:3000/users/${userId}/games-data`,
+        `http://${window.location.hostname}:3000/users/${userId}/avatar`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        const pictureURL = await response.text();
+        if (pictureURL.includes("https")) {
+          if (pos === 1) setImgUrl1(pictureURL);
+          if (pos === 2) setImgUrl2(pictureURL);
+        } else {
+          try {
+            const response = await fetch(
+              `http://${window.location.hostname}:3000/users/uploads/${pictureURL}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            if (response.ok) {
+              const blob = await response.blob();
+              const absoluteURL = URL.createObjectURL(blob);
+              if (pos === 1) setImgUrl1(pictureURL);
+              if (pos === 2) setImgUrl2(pictureURL);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const FetchGames = async () => {
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/${id}/games-data`,
         {
           method: "GET",
           credentials: "include",
@@ -67,6 +111,10 @@ export const GameHistory = (props: any) => {
           } catch (error) {
             console.log(error);
           }
+          displayPic(updatedGameData[i].userId1, 1);
+          displayPic(updatedGameData[i].userId2, 2);
+          updatedGameData[i].pictureURLP1 = imgUrl1;
+          updatedGameData[i].pictureURLP2 = imgUrl2;
           i++;
         }
         setGameData(updatedGameData.reverse());
@@ -99,10 +147,12 @@ export const GameHistory = (props: any) => {
               <tr key={index}>
                 <td>{game.super}</td>
                 <td>{game.start_at}</td>
+                <img src={game.pictureURLP1}></img>
                 <td>{game.username1}</td>
                 <td>{game.scrP1}</td>
                 <td>{game.scrP2}</td>
                 <td>{game.username2}</td>
+                <img src={game.pictureURLP2}></img>
               </tr>
             ))}
           </tbody>

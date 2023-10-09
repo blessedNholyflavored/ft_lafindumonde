@@ -144,8 +144,8 @@ export class UsersController {
   @Get('/:id/username')
   async getUsernameById(@Param('id') id: string)
   {
-	const user = this.userService.getUsernameById(id);
-	return user;
+    const user = this.userService.getUsernameById(id);
+    return user;
   }
 
   @Get('/:id')
@@ -157,8 +157,15 @@ export class UsersController {
   @Get('/:id/games-data')
   async fetchGameData(@Param('id') id: string)
   {
-	const games = await this.userService.fetchAllGames(id);
-	return (games);
+    const games = await this.userService.fetchAllGames(id);
+    return (games);
+  }
+
+  @Get("/:id/lostgames-data")
+  async fetchLostGame(@Param('id') id: string) : Promise<number>
+  {
+    const lostGames = await this.userService.fetchLostGames(id);
+    return (lostGames);
   }
 
   @Get('/status/:id')

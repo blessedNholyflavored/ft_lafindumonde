@@ -263,6 +263,10 @@
   font-family: IBM Plex Mono;
 }
 
+.textscore {
+  font-size: 15px;
+}
+
 .boxrowsettings {
   width: 20vw;
   height: 400px;
