@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../auth/AuthProvider";
 import { useParams } from "react-router-dom";
+import "../../style/Profile.css";
+//import { format, parseISO } from "date-fns";
 
 export const GameHistory = (props: any) => {
   const { user, setUser } = useAuth();
@@ -40,8 +42,8 @@ export const GameHistory = (props: any) => {
       if (response.ok) {
         const pictureURL = await response.text();
         if (pictureURL.includes("https")) {
-          if (pos === 1) setImgUrl1(pictureURL);
-          if (pos === 2) setImgUrl2(pictureURL);
+          if (pos === 1) return pictureURL;
+          if (pos === 2) return pictureURL;
         } else {
           try {
             const response = await fetch(
@@ -54,8 +56,8 @@ export const GameHistory = (props: any) => {
             if (response.ok) {
               const blob = await response.blob();
               const absoluteURL = URL.createObjectURL(blob);
-              if (pos === 1) setImgUrl1(pictureURL);
-              if (pos === 2) setImgUrl2(pictureURL);
+              if (pos === 1) return absoluteURL;
+              if (pos === 2) return absoluteURL;
             }
           } catch (error) {
             console.error(error);
@@ -67,6 +69,16 @@ export const GameHistory = (props: any) => {
     }
   };
 
+  // const formatDate = (dateString: string) => {
+  //   const options = {
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "numeric",
+  //     hour: "numeric",
+  //     minute: "numeric",
+  //   };
+  //   return new Date(dateString).toLocaleDateString(undefined, options as any);
+  // };
   const FetchGames = async () => {
     try {
       const response = await fetch(
@@ -82,10 +94,7 @@ export const GameHistory = (props: any) => {
         //console.log("ICI", updatedGameData);
         let i: number = 0;
         while (i < updatedGameData.length) {
-          let date: string = updatedGameData[i].start_at.split("T");
-          let day: string = date[0].replace(/-/g, "/");
-          let hour = date[1].split(".")[0];
-          updatedGameData[i].start_at = day + " " + hour;
+
           if (updatedGameData[i].superGame === 1) {
             updatedGameData[i].super = "☆";
           }
@@ -111,12 +120,20 @@ export const GameHistory = (props: any) => {
           } catch (error) {
             console.log(error);
           }
-          displayPic(updatedGameData[i].userId1, 1);
-          displayPic(updatedGameData[i].userId2, 2);
-          updatedGameData[i].pictureURLP1 = imgUrl1;
-          updatedGameData[i].pictureURLP2 = imgUrl2;
+          updatedGameData[i].pictureURLP1 = await displayPic(
+            updatedGameData[i].userId1,
+            1
+          );
+          updatedGameData[i].pictureURLP2 = await displayPic(
+            updatedGameData[i].userId2,
+            2
+          );
+          console.log("sfsdfsf", imgUrl1);
+          //updatedGameData[i].pictureURLP1 = imgUrl1;
+          //updatedGameData[i].pictureURLP2 = imgUrl2;
           i++;
         }
+
         setGameData(updatedGameData.reverse());
         //console.log("update", gameData);
         //console.log("update", typeof gameData[0].superGame);
@@ -131,7 +148,20 @@ export const GameHistory = (props: any) => {
   return (
     <>
       <div style={{ color: "black" }}>
-        <table>
+        {gameData.map((game: Game, index: number) => (
+          <div className="gameHistory" key={index}>
+            <img className="avatar" src={game.pictureURLP1} alt="p1 avatar" />
+            <p>{game.username1}</p>
+            <div className="scores">
+              {game.scrP1} - {game.scrP2}
+            </div>
+            <img className="avatar" src={game.pictureURLP2} alt="p2 avatar" />
+            <p>{game.username2}</p>
+            <p>{game.start_at}</p>
+          </div>
+        ))}
+
+        {/* <table>
           <thead>
             <tr>
               <th></th>
@@ -147,7 +177,7 @@ export const GameHistory = (props: any) => {
               <tr key={index}>
                 <td>{game.super}</td>
                 <td>{game.start_at}</td>
-                <img src={game.pictureURLP1}></img>
+                <td>{game.pictureURLP1}</td>
                 <td>{game.username1}</td>
                 <td>{game.scrP1}</td>
                 <td>{game.scrP2}</td>
@@ -156,7 +186,7 @@ export const GameHistory = (props: any) => {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> */}
       </div>
       <div className="footersmallbox">
         <br></br>

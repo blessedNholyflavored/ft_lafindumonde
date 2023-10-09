@@ -505,3 +505,7 @@ input::file-selector-button {
   align-items: center;
   height: 25vh;
 }
+.gameHistory {
+  color: black;
+  display: flex;
+}

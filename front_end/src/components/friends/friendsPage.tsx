@@ -256,6 +256,8 @@ export const FriendsPage: React.FC = () => {
       socket.on("SomeoneGoOnlineOrOffline", () => {
         setTimeout(() => {
           fetchOnlinePlayers();
+          fetchBlocked();
+          fetchFriends();
         }, 1000);
       });
     }
@@ -664,6 +666,7 @@ export const FriendsPage: React.FC = () => {
                           // disabled={user?.id.toString() === friend.id}
                         > see more
                         </button>
+                        <div>{friend.status}</div>
 
                         {selectedUser === friend.recipientId && (
                           <div>
