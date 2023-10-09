@@ -16,6 +16,7 @@ import folderviolet from "./../../img/folderviolet.png";
 import icon from "../../img/buttoncomp.png";
 import "../../style/Profile.css";
 import "../../style/Home.css";
+import folderred from "../../img/folderred.png";
 
 interface friendsSend {
   id: string;
@@ -920,6 +921,12 @@ export const FriendsPage: React.FC = () => {
               <a onClick={navigateToFriends}>
                 <img src={foldergreen} alt="Menu 3" />
                 <p>Friends</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToChat}>
+                <img src={folderred} alt="Menu 3" />
+                <p>Chat</p>
               </a>
             </li>
           </ul>

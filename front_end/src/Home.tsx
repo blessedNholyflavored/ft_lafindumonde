@@ -14,6 +14,7 @@ import folderpink  from "./img/folderpink.png";
 import folderyellow from "./img/folderyellow.png";
 import folderwhite from "./img/folderwhite.png";
 import folderviolet from "./img/folderviolet.png";
+import folderred from "./img/folderred.png";
 import nav from "./img/buttoncomp.png";
 import gaming from "./img/gamingpreview.png";
 import love from "./img/42lov.png";
@@ -206,6 +207,12 @@ const Home: React.FC<HomeProps> = () => {
               <a onClick={navigateToFriends}>
                 <img src={folderwhite} alt="Menu 3" />
                 <p>Friends</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToChat}>
+                <img src={folderred} alt="Menu 3" />
+                <p>Chat</p>
               </a>
             </li>
           </ul>
