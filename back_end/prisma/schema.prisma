@@ -26,6 +26,7 @@ model User {
 	pictureURL	String?
 	enabled2FA	Boolean?
 	totpKey		String?
+	totpQRCode String?
 	log2FA		Boolean?
 	loginLoc	Boolean?
 	ELO			Int?

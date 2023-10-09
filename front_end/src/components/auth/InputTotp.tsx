@@ -4,25 +4,45 @@ import "./../../style/Login.css";
 import icon from "../../img/buttoncomp.png";
 import { useAuth } from "./AuthProvider";
 import { Navigate } from "react-router-dom";
+import Notify from "../../services/Notify";
 import api from "../../services/AxiosInstance";
 
 export const InputTotp: React.FC = () => {
   const { user, setUser } = useAuth();
   const [receivedCode, setReceivedCode] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
+  const [notifyMSG, setNotifyMSG] = useState<string>("");
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const [sender, setSender] = useState<number>(0);
   // const navigate = useNavigate();
+
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
 
   const totpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (user) {
       try {
-        const response = await api.post(
-          `/auth/submitInput?code=${receivedCode}`
+        const response = await fetch(
+          `http://${window.location.hostname}:3000/auth/submitInput?code=${receivedCode}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
         );
         if (response.status === 200) {
-          setUser(response.data);
+          const data = await response.json();
+          setUser(data.user);
           window.location.reload();
-        } else {
-          console.error("Error: ", response.data);
+        } else if (response.status === 401) {
+          setShowNotification(true);
+          setNotifyMSG("Something is wrong with your inputs !");
+          setNotifyType(3);
+          setReceivedCode("");
         }
       } catch (error) {
         console.error("Error: ", error);
@@ -33,6 +53,14 @@ export const InputTotp: React.FC = () => {
   if (user && user.enabled2FA) {
     return (
       <div className="Totp">
+        {showNotification && (
+          <Notify
+            message={notifyMSG}
+            type={notifyType}
+            senderId={sender}
+            onClose={handleCloseNotification}
+          />
+        )}
         <div className="boxTotp">
           <div className="navbarbox navAuth">
             <img src={icon} className="buttonnav" alt="icon" />

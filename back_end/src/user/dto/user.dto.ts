@@ -14,4 +14,5 @@ export class UserDto {
   level: number;
   password: string;
   totpKey: string;
+	totpQRCode: string;
 }

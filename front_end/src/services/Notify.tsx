@@ -38,8 +38,13 @@ const Notify: React.FC<NotificationProps> = ({
         credentials: "include",
       }
     );
-    const data = await res.json();
-    return navigate(`/totpSave?qrCodeImg=${encodeURIComponent(data.code)}`);
+    if (res.status != 200) {
+      return navigate(`/settings`);
+    } else {
+      return navigate(`/totpSave`);
+    }
+    // const data = await res.json();
+    // return navigate(`/totpSave?qrCodeImg=${encodeURIComponent(data.code)}`);
   };
   return (
     <>

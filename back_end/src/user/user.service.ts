@@ -445,10 +445,11 @@ export class UserService {
     return updateUser;
   }
 
-  async add2FAKey(hash: string, id: number) {
+  async add2FAKey(hash: string, qrcode: string, id: number) {
     const updateUser = await prisma.user.update({
       where: { id: id },
-      data: { totpKey: hash },
+      data: { totpKey: hash,
+							totpQRCode: qrcode },
     });
     return updateUser;
   }

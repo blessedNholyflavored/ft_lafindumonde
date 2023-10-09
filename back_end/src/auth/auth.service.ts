@@ -8,6 +8,7 @@ import * as crypto from 'crypto';
 import * as cookie from 'cookie';
 import { encode } from 'hi-base32';
 import * as qrcode from 'qrcode';
+// import * as imageDataURI from "image-data-uri";
 import Socket from 'src/gateway/types/socket';
 import { AuthDto } from 'src/user/dto/auth.dto';
 
@@ -66,7 +67,9 @@ export class AuthService {
 		const totpSecret = this.keyGenerator();
 		const issuer =  'ft_lafindumonde';
 		const qrCodeImg = await qrcode.toDataURL(`otpauth://totp/${issuer}:${user.id}?secret=${totpSecret}&issuer=${issuer}`);
-		await this.userService.add2FAKey(totpSecret, user.id);
+		// const qrCodeImg = await imageDataURI.decode(qrCodeImgEncoded).dataBase64;
+		// console.log("GENERATING QRCODE :",qrCodeImg);
+		await this.userService.add2FAKey(totpSecret, qrCodeImg, user.id);
 		return {qrCodeImg, user};
 	}
 

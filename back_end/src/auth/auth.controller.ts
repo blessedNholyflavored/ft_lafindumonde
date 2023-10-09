@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards, UsePipes, ValidationPipe, BadRequestException, UnauthorizedException, ConflictException, NotAcceptableException, ImATeapotException } from "@nestjs/common";
+import { Controller, Get, Post, Redirect, Req, Res, Body, UseGuards, UsePipes, ValidationPipe, BadRequestException, UnauthorizedException, ConflictException, NotAcceptableException, ImATeapotException, ForbiddenException } from "@nestjs/common";
 import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
 import { FortyTwoAuthGuard } from "./guards/FortyTwo-auth.guard";
@@ -40,7 +40,7 @@ export class AuthController{
 		}
 		const user = await this.authService.retrieveUser(body);
 		const token = await this.authService.login(user);
-		res.cookie('access_token', token.access_token, {httpOnly: true}).json({user: this.userService.exclude(user, ['totpKey', 'password']), token}).statusCode(200).send();
+		res.cookie('access_token', token.access_token, {httpOnly: true, sameSite: true}).json({user: this.userService.exclude(user, ['totpKey', 'totpQRCode','password']), token}).statusCode(200).send();
 
 	}
 
@@ -67,7 +67,7 @@ export class AuthController{
 			throw new UnauthorizedException("Wrong password");
 		//creates JWT
 		const token = await this.authService.login(user);
-		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user,['totpKey', 'password']), token});
+		res.cookie('access_token', token.access_token, {httpOnly: true, sameSite: true}).status(200).json({user: this.userService.exclude(user,['totpKey', 'totpQRCode', 'password']), token});
     }
 
 	@Post('register')
@@ -87,7 +87,7 @@ export class AuthController{
 		//setting token and ending registering
 		const token = await this.authService.login(user);
 		await this.userService.setLog2FA(user, false);
-		res.cookie('access_token', token.access_token, {httpOnly: true}).status(200).json({user: this.userService.exclude(user, ['totpKey', 'password']), token});
+		res.cookie('access_token', token.access_token, {httpOnly: true, sameSite: true}).status(200).json({user: this.userService.exclude(user, ['totpKey', 'totpQRCode', 'password']), token});
 	}
     /************************
      * 
@@ -106,14 +106,14 @@ export class AuthController{
     async callback(@Req() req:any, @Res() res: any){
       const token = await this.authService.login(req.user);
 			await this.userService.setLog2FA(req.user, false);
-      res.cookie('access_token', token.access_token, {httpOnly: true }).redirect('http://' + process.env.HOSTNAME + ':8080/');
+      res.cookie('access_token', token.access_token, {httpOnly: true , sameSite: true}).redirect('http://' + process.env.HOSTNAME + ':8080/');
       return token;
     }
 
     @Get('me')
     @UseGuards(AuthGuard('jwt'))
     async protected(@Req() req: any) {
-        return this.userService.exclude(req.user, ['totpKey', 'password']);
+        return this.userService.exclude(req.user, ['totpKey','totpQRCode', 'password']);
     }
 
     /************************
@@ -132,7 +132,11 @@ export class AuthController{
             await this.userService.disable2FA(req.user.id);
         }
         const { qrCodeImg, user } = await this.authService.generate2FAkey(req.user);
-        return res.json({code: qrCodeImg});
+				if (qrCodeImg && user)
+					return res.status(200).send();
+				else
+					throw new BadRequestException('Wrong request');
+        // return res.json({code: qrCodeImg});
     }
 
     @Get('checkIs2FA')
@@ -155,9 +159,9 @@ export class AuthController{
                 console.log("2FA correctly disabled !");
             else
                 console.log("An issue happened disabling 2fa ???");
-            return this.userService.exclude(updtUser, ['totpKey', 'password']);
+            return this.userService.exclude(updtUser, ['totpKey','totpQRCode', 'password']);
         }
-        return this.userService.exclude(req.user, ['totpKey', 'password']);
+        return this.userService.exclude(req.user, ['totpKey', 'totpQRCode', 'password']);
     }
 
     /************************
@@ -177,8 +181,8 @@ export class AuthController{
         }*/
         const user = await this.userService.getUserByID(req.user.id);
         await this.userService.enable2FA(user.id);
-		await this.userService.setLog2FA(user, true);
-        return res.status(200).json(this.userService.exclude(user, ['totpKey', 'password']));
+				await this.userService.setLog2FA(user, true);
+        return res.status(200).json(this.userService.exclude(user, ['totpKey', 'totpQRCode','password']));
     }
 
 	// submit input during auth login
@@ -188,7 +192,17 @@ export class AuthController{
 		const user = await this.userService.getUserByID(req.user.id);
 		//set user.log2FA a true
 		const updtUser = await this.userService.setLog2FA(user, true);
-		return res.status(200).json(this.userService.exclude(updtUser, ['totpKey', 'password']));
+		return res.status(200).json(this.userService.exclude(updtUser, ['totpKey','totpQRCode', 'password']));
+	}
+
+	@Get('getQRCode')
+	@UseGuards(...AuthenticatedGuard)
+	async getQRCodeImg(@Req() req: any, @Res() res: any) {
+		const user = await this.userService.getUserByID(req.user.id);
+		if (!user)
+			throw new ForbiddenException();
+		return (res.status(200).json({qrCode: user.totpQRCode}))
+		// return (res.status(200).json(user.totpQRCode));
 	}
     /************************
      * 

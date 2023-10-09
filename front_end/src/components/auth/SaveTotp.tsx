@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./../../App.css";
 import "./../../style/Login.css";
 import icon from "../../img/buttoncomp.png";
 import { useAuth } from "./AuthProvider";
 import { useNavigate, Navigate, useLocation } from "react-router-dom";
 import api from "../../services/AxiosInstance";
+
 import Notify from "../../services/Notify";
 
 export const SaveTotp: React.FC = () => {
@@ -16,9 +17,14 @@ export const SaveTotp: React.FC = () => {
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
   const [sender, setSender] = useState<number>(0);
+  const [qrCode, setQRCode] = useState("");
+
+  useEffect(() => {
+    getQRCodeImg();
+  }, []);
 
   const searchParams = new URLSearchParams(location.search);
-  const qrCodeImg = searchParams.get("qrCodeImg");
+  // const qrCodeImg = searchParams.get("qrCodeImg");
 
   const handleCloseNotification = () => {
     setShowNotification(false);
@@ -49,6 +55,40 @@ export const SaveTotp: React.FC = () => {
     }
   };
 
+  const getQRCodeImg = async () => {
+    if (user) {
+      const res = await fetch(
+        `http://${window.location.hostname}:3000/auth/getQRCode`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (res.ok) {
+        try {
+          //display QRcode
+          // console.log(res.json());
+          const data = await res.json();
+          const qrCodeExtract = data.qrCode;
+          // console.log(atob(qrCodeExtract));
+          // console.log("oui");
+          setQRCode(`${qrCodeExtract}`);
+          return;
+        } catch {
+          setShowNotification(true);
+          setNotifyMSG("Have you done something nasty ? Not cool ....");
+          setNotifyType(3);
+          setQRCode(`http://${window.location.hostname}:8080/pepe.png`);
+        }
+      } else {
+        setShowNotification(true);
+        setNotifyMSG("Have you done something nasty ? Not cool ....");
+        setNotifyType(3);
+        setQRCode(`http://${window.location.hostname}:8080/pepe.png`);
+      }
+    }
+  };
+
   if (user) {
     return (
       <div className="Totp">
@@ -72,9 +112,7 @@ export const SaveTotp: React.FC = () => {
               the app inside your authenticator in order to log in easily by
               reloading the code input that follows upon authentication.
             </p>
-            {qrCodeImg && (
-              <img src={qrCodeImg} alt="qr code" className="imgQRcode" />
-            )}
+            {qrCode && <img src={qrCode} alt="qr code" className="imgQRcode" />}
             <p className="textTotp">
               Now you can use the input box below to confirm your identity with
               the code you received :

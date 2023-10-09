@@ -37,9 +37,6 @@ export class UsersController {
   friendService: any;
   constructor(private readonly userService: UserService) {}
 
-  //cette function est commentée parce que pas sécurisée
-  // si besoin de l'utiliser pour une feature definitive
-  // il faudra trouver comment virer les champs totpKey et pwd
 /*
   @Get('/')
   findAll() {
@@ -151,7 +148,7 @@ export class UsersController {
   @Get('/:id')
   async getUserById(@Param('id') id: number) {
     const ret = await this.userService.getID(id.toString());
-    return this.userService.exclude(ret, ['totpKey', 'password']);
+    return this.userService.exclude(ret, ['totpKey', 'totpQRCode', 'password']);
   }
   
   @Get('/:id/games-data')
