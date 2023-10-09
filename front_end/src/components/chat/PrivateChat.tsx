@@ -287,7 +287,8 @@ export const PrivateChat = () => {
               onChange={(e) => setValue(e.target.value)}
               onKeyPress={handleEnter}
             />
-            <button onClick={onSubmit}>Submit</button>
+            <button onClick={onSubmit}
+            disabled={value.length > 80}>Submit</button>
           </div>
         )}
       </div>

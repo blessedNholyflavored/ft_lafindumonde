@@ -69,7 +69,9 @@ const PongGame: React.FC = () => {
   };
   useEffect(() => {
     if (countdown === 3) {
-      socket.emit("recupRoomAtStart", id);
+      setTimeout(() => {
+        socket.emit("recupRoomAtStart", id);
+      }, 300);
     }
     if (countdown !== 0 && end === 0) {
       startCountdown();
@@ -178,6 +180,7 @@ const PongGame: React.FC = () => {
 
     if (socket && countdown > 0) {
       socket.on("sendRoomAtStart", (recuproom: Room) => {
+        console.log(recuproom);
         setUsernameP1(recuproom.player1 as string);
         setUsernameP2(recuproom.player2 as string);
       });
@@ -255,6 +258,7 @@ const PongGame: React.FC = () => {
     SpeedBallY,
     usernameP1,
     usernameP2,
+    countdown,
   ]);
 
   useEffect(() => {

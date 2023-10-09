@@ -162,25 +162,25 @@ export const Classement = () => {
               <img src={icon} alt="icon" />
               <h1> LEADERBOARD </h1>
             </div>
-            {/* <div>
-              {playerScores.map((tab: PlayerScore, index: number) => (
-                  <div key={index}>
-                    {tab.place === 1 && <div>{setFirst(tab) as any}</div>}
-                    {tab.place === 2 && <div>{setSecond(tab) as any}</div>}
-                    {tab.place === 3 && <div>{setThird(tab) as any}</div>}
-                  </div>
-              ))}
-            </div> */}
-
             <div className="container podium">
               <div className="podium__item">
-                <p className="podium__city"  style={{backgroundColor: "black",}}>{second?.username}</p>
+                <p
+                  className="podium__city"
+                  style={{ backgroundColor: "black" }}
+                >
+                  {second?.username}
+                </p>
                 <img src={second?.pictureURL} className="avatar"></img>
 
                 <div className="podium__rank second">2</div>
               </div>
               <div className="podium__item">
-                <p className="podium__city"  style={{backgroundColor: "black",}}>{first?.username}</p>
+                <p
+                  className="podium__city"
+                  style={{ backgroundColor: "black" }}
+                >
+                  {first?.username}
+                </p>
                 <img src={first?.pictureURL} className="avatar"></img>
 
                 <div className="podium__rank first">
@@ -200,7 +200,12 @@ export const Classement = () => {
                 </div>
               </div>
               <div className="podium__item">
-                <p className="podium__city"  style={{backgroundColor: "black",}}>{third?.username}</p>
+                <p
+                  className="podium__city"
+                  style={{ backgroundColor: "black" }}
+                >
+                  {third?.username}
+                </p>
                 <img src={third?.pictureURL} className="avatar"></img>
 
                 <div className="podium__rank third">3</div>
