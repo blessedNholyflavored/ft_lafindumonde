@@ -50,6 +50,7 @@ model User {
 
 	userOnChanel		UserOnChannel[]
 	RoomMessSent		ChatroomMessage[]
+	
 
 }
 
