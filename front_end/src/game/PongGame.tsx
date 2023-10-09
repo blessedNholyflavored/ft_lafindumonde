@@ -11,14 +11,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import { WebsocketContext } from "../services/WebsocketContext";
 import { count } from "console";
 import nav from "./../img/buttoncomp.png";
-import folder from "./../img/folder0.png";
-import folder1 from "./../img/folder2.png";
-import folder2 from "./../img/folder3.png";
-import folder0 from "./../img/folder1.png";
-import folder6 from "./../img/folder4.png";
+import foldergreen from "./../img/foldergreen.png";
+import folderblue from "./../img/folderblue.png";
+import folderpink  from "./../img/folderpink.png";
+import folderyellow from "./../img/folderyellow.png";
+import folderwhite from "./../img/folderwhite.png";
+import folderviolet from "./../img/folderviolet.png";
 import icon from "./../img/buttoncomp.png";
 import { Logout } from "../components/auth/Logout";
 import logo from "./../img/logo42.png";
+
 
 const PongGame: React.FC = () => {
   const { id } = useParams();
@@ -45,6 +47,25 @@ const PongGame: React.FC = () => {
   let [usernameP1, setUsernameP1] = useState<string>("");
   let [usernameP2, setUsernameP2] = useState<string>("");
 
+
+  useEffect(() => {
+    const handlePopstate = () => {
+      // Comparer la longueur de l'historique avant et après l'événement de navigation
+      const isBackButtonUsed = window.history.length > 1;
+      if (isBackButtonUsed) {
+        socket.emit("ttt");
+      }
+    };
+
+    window.addEventListener('popstate', handlePopstate);
+
+    // Nettoyez l'écouteur d'événement lorsque le composant est démonté
+    return () => {
+      window.removeEventListener('popstate', handlePopstate);
+    };
+  }, []); // Assurez-vous de ne passer aucun dépendance pour useEffect pour éviter les problèmes de performance
+
+
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
     if (countdown > 0) {
       socket?.emit("reloadCountdown", id);
@@ -69,7 +90,9 @@ const PongGame: React.FC = () => {
   };
   useEffect(() => {
     if (countdown === 3) {
-      socket.emit("recupRoomAtStart", id);
+      setTimeout(() => {
+        socket.emit("recupRoomAtStart", id);
+      }, 300);
     }
     if (countdown !== 0 && end === 0) {
       startCountdown();
@@ -104,11 +127,7 @@ const PongGame: React.FC = () => {
 
   const catchPic = () => {
     if (socket) {
-      console.log(usernameP1, " ", user?.username);
-
       if (usernameP1 === user?.username) {
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-
         socket.emit("AskForIdOpponent", id, 1);
       } else if (usernameP2 === user?.username) {
         socket.emit("AskForIdOpponent", id, 2);
@@ -182,6 +201,7 @@ const PongGame: React.FC = () => {
 
     if (socket && countdown > 0) {
       socket.on("sendRoomAtStart", (recuproom: Room) => {
+        console.log(recuproom);
         setUsernameP1(recuproom.player1 as string);
         setUsernameP2(recuproom.player2 as string);
       });
@@ -259,6 +279,7 @@ const PongGame: React.FC = () => {
     SpeedBallY,
     usernameP1,
     usernameP2,
+    countdown,
   ]);
 
   useEffect(() => {
@@ -271,8 +292,8 @@ const PongGame: React.FC = () => {
 
   useEffect(() => {
     if (socket && end) {
-      if (user?.username !== room?.winner && updatelvl === 0) {
-        socket?.emit("updateLevelExpELO", user?.id, id);
+      if (user?.username === room?.winner && updatelvl === 0) {
+        socket?.emit("updateLevelExpELO", user?.id, playerId2, id);
         setUpdatelvl(1);
       }
     }
@@ -302,7 +323,6 @@ const PongGame: React.FC = () => {
   };
 
   const displayPic = async (userId: number, pos: number) => {
-    console.log("cdcscdcdsdcdcdsc");
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/users/${userId}/avatar`,
@@ -445,31 +465,31 @@ const PongGame: React.FC = () => {
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
-                <img src={folder6} alt="Menu 3" />
+                <img src={folderviolet} alt="Menu 3" />
                 <p>Home</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={() => navToGamePage()}>
-                <img src={folder2} alt="Menu 3" />
+                <img src={foldergreen} alt="Menu 3" />
                 <p>Game</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToProfPage}>
-                <img src={folder1} alt="Menu 3" />
+                <img src={folderpink} alt="Menu 3" />
                 <p>Profile</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToSettings}>
-                <img src={folder} alt="Menu 3" />
+                <img src={folderyellow} alt="Menu 3" />
                 <p>Settings</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToFriends}>
-                <img src={folder0} alt="Menu 3" />
+                <img src={folderwhite} alt="Menu 3" />
                 <p>Friends</p>
               </a>
             </li>

@@ -69,10 +69,18 @@
   border: 1px solid black;
 }
 
+.fullpage2 {
+  background-color: white;
+  height: 100%;
+  margin-left: 2.5vw;
+  width: 80vw;
+  border: 1px solid black;
+}
+
 .fullpage1 {
   background-size: cover;
   background-position: center;
-  background-image: url("../img/gradient.jpg");
+  background-image: url("../img/pinkgradient.png");
   height: 90%;
   margin-left: 2.5vw;
   width: 80vw;
@@ -160,26 +168,22 @@
 .threerow {
   display: flex;
   justify-content: center;
-  position: absolute;
-  top: 20%;
-  left: 20%;
-  margin-top: -50px;
-  margin-left: -50px;
+  margin-top: 2vh;
 }
 
 .boxrowsettings:nth-child(1) {
-  background-color: #5a4fcf;
+  background-color: #4d7bff;
   border-bottom: 2rem solid black;
 }
 
 .boxrowsettings:nth-child(2) {
-  background-color: #ff66cc;
+  background-color: #ff90ff;
   border-bottom: 2rem solid black;
 }
 
 /* TEMPORAIRE */
 .boxrowsettings:nth-child(3) {
-  background-color: #fffdd0;
+  background-color: #ffff50;
   border-bottom: 2rem solid black;
 }
 /* TEMPORAIRE */
@@ -263,6 +267,10 @@
   font-family: IBM Plex Mono;
 }
 
+.textscore {
+  font-size: 15px;
+}
+
 .boxrowsettings {
   width: 20vw;
   height: 400px;
@@ -273,7 +281,7 @@
 }
 
 .boxrowsettings img {
-  height: 120px;
+  width: 30%;
 }
 
 .formsettings {
@@ -293,11 +301,27 @@ input {
   border: 1px solid black;
   border-radius: 20px;
   color: white;
+  margin-bottom: 10px;
 }
 
 .avatardiv {
-  display: flex;
+  display: inline-block;
   justify-content: center;
+  align-items: center;
+}
+
+.changesett.avatarsett,
+.changesett {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 25vh;
+}
+
+.centered-img img {
+  width: 30%; /* Make the img 20% of its original size */
 }
 
 input[type="file"] {
@@ -308,8 +332,14 @@ input[type="file"] {
   border: 1px solid black;
   border-radius: 20px;
   color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+.input {
+  display: none;
+}
 input::file-selector-button {
   /* position: relative; */
   /* display: flex; */
@@ -442,4 +472,44 @@ input::file-selector-button {
   padding: 10px;
   margin: 0;
   box-shadow: 3px 4px 0px 0px #000;
+}
+
+.name1 {
+  font-weight: 800;
+}
+
+.buttonseemore {
+  position: relative;
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  cursor: pointer;
+  font-family: IBM Plex Mono;
+  color: #000;
+  border: solid #000;
+  border-radius: 0.5em;
+  border-width: 3px;
+  height: 30px;
+  padding: 10px;
+  margin: 0;
+  box-shadow: 3px 4px 0px 0px #000;
+}
+
+.onlinebttn,
+.buttonseemore {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptymessage {
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 25vh;
+}
+.gameHistory {
+  color: black;
+  display: flex;
 }

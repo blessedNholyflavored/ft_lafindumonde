@@ -516,6 +516,7 @@ export const Chat = () => {
   }, [activeChannel, banTimeLeft]);
 
   const checkRoomAlreadyExist = async () => {
+    if (!valueRoom) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/checkRoomName/${valueRoom}`,
@@ -568,6 +569,8 @@ export const Chat = () => {
       setNotifyType(2);
     }
     setValueRoom("");
+    setIsButtonDisabled(true);
+    setPassword("");
     return "";
   };
 
@@ -577,7 +580,7 @@ export const Chat = () => {
       setNotifyMSG("Room n'existe pas !");
       setNotifyType(2);
       setValueRoom("");
-
+      setIsButtonDisabled(true);
       return "";
     }
     if ((await checkIfAlreadyIn()) === true) {
@@ -585,6 +588,7 @@ export const Chat = () => {
       setNotifyMSG("Tu es deja dans le channel !");
       setNotifyType(2);
       setValueRoom("");
+      setIsButtonDisabled(true);
       return "";
     }
     if ((await checkRoomAlreadyExist()) === true) {
@@ -598,6 +602,7 @@ export const Chat = () => {
       setNotifyType(2);
     }
     setValueRoom("");
+    setIsButtonDisabled(true);
     return "";
   };
 
@@ -982,7 +987,7 @@ export const Chat = () => {
                             pass
                           )
                         }
-                        disabled={pass.length === 0}
+                        disabled={pass.length === 0 || pass.length > 15}
                       >
                         Join
                       </button>
@@ -1142,10 +1147,26 @@ export const Chat = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         )}
-        <button onClick={createRoom} disabled={isButtonDisabled}>
+        <button
+          onClick={createRoom}
+          disabled={
+            isButtonDisabled ||
+            (selectedOption === "protected" &&
+              (password.length === 0 || password.length > 15)) ||
+            valueRoom.length > 15
+          }
+        >
           Créer une nouvelle room
         </button>
-        <button onClick={joinRoom} disabled={isButtonDisabled}>
+        <button
+          onClick={joinRoom}
+          disabled={
+            isButtonDisabled ||
+            (selectedOption === "protected" &&
+              (password.length === 0 || password.length > 15)) ||
+            valueRoom.length > 15
+          }
+        >
           Rejoindre une room existante
         </button>
       </div>

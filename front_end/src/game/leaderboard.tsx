@@ -5,13 +5,12 @@ import { Logout } from "../components/auth/Logout";
 import nav from "../img/buttoncomp.png";
 import logo from "../img/logo42.png";
 import icon from "../img/buttoncomp.png";
-import folder from "../img/folder0.png";
-import folder1 from "../img/folder2.png";
-import folder2 from "../img/folder3.png";
-import folder3 from "../img/folder4.png";
-import folder4 from "../img/folder5.png";
-import folder0 from "../img/folder1.png";
-import folder6 from "../img/folder6.png";
+import foldergreen from "../img/foldergreen.png";
+import folderblue from "../img/folderblue.png";
+import folderpink  from "../img/folderpink.png";
+import folderyellow from "../img/folderyellow.png";
+import folderwhite from "../img/folderwhite.png";
+import folderviolet from "../img/folderviolet.png";
 
 import "../style/Profile.css";
 import "../style/Home.css";
@@ -23,17 +22,59 @@ interface PlayerScore {
   ELO: number;
   id: number;
   rank: string;
+  pictureURL: string;
 }
 
 export const Classement = () => {
   const [playerScores, setPlayerScores] = useState<PlayerScore[]>([]);
+  const [first, setFirst] = useState<PlayerScore>();
+  const [second, setSecond] = useState<PlayerScore>();
+  const [third, setThird] = useState<PlayerScore>();
   const { user, setUser } = useAuth();
   const userId = user?.id;
   const navigate = useNavigate();
+  const [imgUrl, setImgUrl] = useState<string>("");
 
   useEffect(() => {
     fetchPlayerScores();
   }, []);
+
+  const displayPic = async (userId: number) => {
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/${userId}/avatar`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        const pictureURL = await response.text();
+        if (pictureURL.includes("https")) {
+          return pictureURL;
+        } else {
+          try {
+            const response = await fetch(
+              `http://${window.location.hostname}:3000/users/uploads/${pictureURL}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            if (response.ok) {
+              const blob = await response.blob();
+              const absoluteURL = URL.createObjectURL(blob);
+              return pictureURL;
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   async function fetchPlayerScores() {
     try {
@@ -58,10 +99,15 @@ export const Classement = () => {
               credentials: "include",
             }
           );
+          const respondePicture = await displayPic(updatedGameData[i].id);
           if (response.ok) {
             updatedGameData[i].rank = await response.text();
+            updatedGameData[i].pictureURL = respondePicture;
           }
         } catch (error) {}
+        if (i === 0) setFirst(updatedGameData[i]);
+        if (i === 1) setSecond(updatedGameData[i]);
+        if (i === 2) setThird(updatedGameData[i]);
       }
       setPlayerScores(updatedGameData);
     } catch (error) {
@@ -110,19 +156,32 @@ export const Classement = () => {
 
       <div className="flex-bg">
         <main>
-          <div className="fullpage">
+          <div className="fullpage2">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
               <h1> LEADERBOARD </h1>
             </div>
-
             <div className="container podium">
               <div className="podium__item">
-                <p className="podium__city">Annecy</p>
+                <p
+                  className="podium__city"
+                  style={{ backgroundColor: "black" }}
+                >
+                  {second?.username}
+                </p>
+                <img src={second?.pictureURL} className="avatar"></img>
+
                 <div className="podium__rank second">2</div>
               </div>
               <div className="podium__item">
-                <p className="podium__city">Saint-Gervais</p>
+                <p
+                  className="podium__city"
+                  style={{ backgroundColor: "black" }}
+                >
+                  {first?.username}
+                </p>
+                <img src={first?.pictureURL} className="avatar"></img>
+
                 <div className="podium__rank first">
                   <svg
                     className="podium__number"
@@ -140,7 +199,14 @@ export const Classement = () => {
                 </div>
               </div>
               <div className="podium__item">
-                <p className="podium__city">Clermont-Ferrand Essentielle</p>
+                <p
+                  className="podium__city"
+                  style={{ backgroundColor: "black" }}
+                >
+                  {third?.username}
+                </p>
+                <img src={third?.pictureURL} className="avatar"></img>
+
                 <div className="podium__rank third">3</div>
               </div>
             </div>
@@ -148,6 +214,7 @@ export const Classement = () => {
             <div className="leaderboard">
               <table className="leadertab">
                 <thead>
+                <br></br>
                   <tr>
                     <th>Rank</th>
                     <th>Username</th>
@@ -186,6 +253,7 @@ export const Classement = () => {
                       </td>
                     </tr>
                   ))}
+                  <br></br>
                 </tbody>
               </table>
             </div>
@@ -195,31 +263,31 @@ export const Classement = () => {
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
-                <img src={folder6} alt="Menu 3" />
+                <img src={folderviolet} alt="Menu 3" />
                 <p>Home</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={() => navToGamePage()}>
-                <img src={folder2} alt="Menu 3" />
+                <img src={foldergreen} alt="Menu 3" />
                 <p>Game</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToProfPage}>
-                <img src={folder1} alt="Menu 3" />
+                <img src={folderpink} alt="Menu 3" />
                 <p>Profile</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToSettings}>
-                <img src={folder} alt="Menu 3" />
+                <img src={folderyellow} alt="Menu 3" />
                 <p>Settings</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToFriends}>
-                <img src={folder0} alt="Menu 3" />
+                <img src={folderwhite} alt="Menu 3" />
                 <p>Friends</p>
               </a>
             </li>

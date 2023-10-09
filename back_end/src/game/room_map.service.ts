@@ -7,8 +7,6 @@ export class RoomMapService {
 
   addRoom(id: string, room: Room): void {
     this.roomMap[id] = room;
-    console.log("dans add: ", this.roomMap[id]);
-    console.log("dans addroom id->   ", id);
   }
 
   getRoom(id: string): Room {
