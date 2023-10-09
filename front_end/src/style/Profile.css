@@ -443,3 +443,8 @@ input::file-selector-button {
   margin: 0;
   box-shadow: 3px 4px 0px 0px #000;
 }
+
+.gameHistory {
+  color: black;
+  /* display: flex; */
+}
