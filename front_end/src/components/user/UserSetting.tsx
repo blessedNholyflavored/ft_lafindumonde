@@ -190,7 +190,6 @@ export const UserSetting: React.FC = () => {
       );
       if (response.ok) {
         const pictureURL = await response.text();
-        //console.log("aaaaaaA",pictureURL);
         if (pictureURL.includes("https")) {
           setImgUrl(pictureURL);
         } else {
@@ -248,8 +247,6 @@ export const UserSetting: React.FC = () => {
         if (response.ok) {
           const result = await response.json();
           setImgUrl(result.pictureURL);
-          //setImgUrl(URL.createObjectURL(blob));
-          //console.log("DDDDDDDDDDDDDDDDDDDDDD", result.pictureURL);
           alert("profil picture mise à jour avec succès !");
           displayPic();
         } else {

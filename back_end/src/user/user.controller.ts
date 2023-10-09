@@ -4,7 +4,7 @@ import {
   Post,
   Body,
   Res,
-	Req,
+  Req,
   Param,
   UploadedFile,
   UseInterceptors,
@@ -13,8 +13,8 @@ import {
   UseGuards,
   ConflictException,
   NotAcceptableException,
-	ValidationPipe,
-	UsePipes,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -28,8 +28,7 @@ import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
 import { throwError } from 'rxjs';
 import { AuthDto } from './dto/auth.dto';
 import { MailDto, PassDto, UsernameDto } from './dto/settings.dto';
-
-
+import { format, parseISO } from 'date-fns';
 
 @Controller('users')
 @UseGuards(...AuthenticatedGuard)
@@ -40,7 +39,7 @@ export class UsersController {
   //cette function est commentée parce que pas sécurisée
   // si besoin de l'utiliser pour une feature definitive
   // il faudra trouver comment virer les champs totpKey et pwd
-/*
+  /*
   @Get('/')
   findAll() {
     const users = this.userService.findUser();
@@ -48,34 +47,38 @@ export class UsersController {
   }
 */
   @Post('/update-username')
-	@UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe())
   async updating_username(@Req() req: any, @Body() username: UsernameDto) {
     //console.log(username);
     console.log('service update username ', req.user.id);
     const newUsername = username['username'];
-    if (await this.userService.updateUsername(req.user.id, newUsername) == false)
-      throw new ConflictException("username not available");
+    if (
+      (await this.userService.updateUsername(req.user.id, newUsername)) == false
+    )
+      throw new ConflictException('username not available');
   }
 
   @Post('/update-pass')
-	@UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe())
   updating_password(@Req() req: any, @Body() password: PassDto) {
     //console.log(username);
     console.log('service update username ', req.user.id);
     const newPassword = password['password'];
     this.userService.updatePassword(req.user.id, newPassword);
   }
-  
+
   @Post('/update-mail')
-	@UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe())
   async updating_mail(@Req() req: any, @Body() mail: MailDto) {
     //console.log(username);
     //console.log('service update username ', req.user.id);
     const newMail = mail['email'];
-    if (await this.userService.mailChecker(newMail.toString()) === false)
-			throw new ConflictException("email already taken !");
-		if (await this.userService.FortyTwoMailCheck(newMail.toString()) === false)
-			throw new NotAcceptableException("email domain not allowed");
+    if ((await this.userService.mailChecker(newMail.toString())) === false)
+      throw new ConflictException('email already taken !');
+    if (
+      (await this.userService.FortyTwoMailCheck(newMail.toString())) === false
+    )
+      throw new NotAcceptableException('email domain not allowed');
     this.userService.updateMail(req.user.id, newMail);
   }
 
@@ -114,7 +117,7 @@ export class UsersController {
           console.log('IFFFFFFFFFFFFFFFFF');
           cb(null, true);
         } else {
-			console.log(file.mimetype);
+          console.log(file.mimetype);
           console.log('ELSSEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
           cb(
             new HttpException(
@@ -142,8 +145,7 @@ export class UsersController {
   }
 
   @Get('/:id/username')
-  async getUsernameById(@Param('id') id: string)
-  {
+  async getUsernameById(@Param('id') id: string) {
     const user = this.userService.getUsernameById(id);
     return user;
   }
@@ -153,19 +155,17 @@ export class UsersController {
     const ret = await this.userService.getID(id.toString());
     return this.userService.exclude(ret, ['totpKey', 'password']);
   }
-  
+
   @Get('/:id/games-data')
-  async fetchGameData(@Param('id') id: string)
-  {
+  async fetchGameData(@Param('id') id: string) {
     const games = await this.userService.fetchAllGames(id);
-    return (games);
+    return games;
   }
 
-  @Get("/:id/lostgames-data")
-  async fetchLostGame(@Param('id') id: string) : Promise<number>
-  {
+  @Get('/:id/lostgames-data')
+  async fetchLostGame(@Param('id') id: string): Promise<number> {
     const lostGames = await this.userService.fetchLostGames(id);
-    return (lostGames);
+    return lostGames;
   }
 
   @Get('/status/:id')
@@ -175,49 +175,46 @@ export class UsersController {
   }
 
   @Get('/leaderboard/:id')
-  async getLeaderboardData(@Param('id') id: number)
-  {
+  async getLeaderboardData(@Param('id') id: number) {
     const data = await this.userService.getLeaderboard();
     //console.log(data);
-    return (data);
+    return data;
   }
 
   @Get('/mini/:id')
-  async getMini(@Param('id') id: number)
-  {
+  async getMini(@Param('id') id: number) {
     const data = await this.userService.getMini();
     //console.log(data);
-    return (data);
+    return data;
   }
 
   @Get('/:id/isloc')
-  async checkIsLocal(@Param('id') id: string)
-  {
+  async checkIsLocal(@Param('id') id: string) {
     const data = await this.userService.isLocal(id);
-    return (data);
+    return data;
   }
 
-  @Get("/:id/rank")
+  @Get('/:id/rank')
   async calculDivision(@Param('id') id: string): Promise<string> {
     const user = await this.userService.getUserByID(parseInt(id));
     let ret: string;
 
     if (user.ELO >= 0 && user.ELO <= 1029) {
-      ret = "iron";
+      ret = 'iron';
     } else if (user.ELO >= 1030 && user.ELO <= 1089) {
-      ret = "silver";
+      ret = 'silver';
     } else if (user.ELO >= 1090 && user.ELO <= 1149) {
-      ret = "gold";
+      ret = 'gold';
     } else if (user.ELO >= 1150 && user.ELO <= 1219) {
-      ret = "platinum";
+      ret = 'platinum';
     } else if (user.ELO >= 1220 && user.ELO <= 1299) {
-      ret = "diamond";
+      ret = 'diamond';
     } else if (user.ELO >= 1300 && user.ELO <= 1399) {
-      ret = "master";
+      ret = 'master';
     } else if (user.ELO >= 1400) {
-      ret = "top challenger";
+      ret = 'top challenger';
     } else {
-      ret = "no rank";
+      ret = 'no rank';
     }
     return ret;
   }
