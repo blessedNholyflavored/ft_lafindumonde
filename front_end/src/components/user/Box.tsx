@@ -19,6 +19,7 @@ import folderpink  from "../../img/folderpink.png";
 import folderyellow from "../../img/folderyellow.png";
 import folderwhite from "../../img/folderwhite.png";
 import folderviolet from "../../img/folderviolet.png";
+import folderred from "../../img/folderred.png";
 import { Logout } from "../auth/Logout";
 import { useNavigate } from "react-router-dom";
 import "@fontsource/ibm-plex-mono";
@@ -241,6 +242,12 @@ const Box = (props: any) => {
               <a onClick={navigateToFriends}>
                 <img src={folderwhite} alt="Menu 3" className="profileNavIcon" />
                 <p>Friends</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToChat}>
+                <img src={folderred} alt="Menu 3" />
+                <p>Chat</p>
               </a>
             </li>
           </ul>

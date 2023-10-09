@@ -11,6 +11,7 @@ import folderpink  from "../img/folderpink.png";
 import folderyellow from "../img/folderyellow.png";
 import folderwhite from "../img/folderwhite.png";
 import folderviolet from "../img/folderviolet.png";
+import folderred from "../img/folderred.png";
 
 import "../style/Profile.css";
 import "../style/Home.css";
@@ -289,6 +290,12 @@ export const Classement = () => {
               <a onClick={navigateToFriends}>
                 <img src={folderwhite} alt="Menu 3" />
                 <p>Friends</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToChat}>
+                <img src={folderred} alt="Menu 3" />
+                <p>Chat</p>
               </a>
             </li>
           </ul>

@@ -206,22 +206,30 @@
 }
 
 #leftbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   float: left;
-  background: Red;
+  /* background: Red; */
+  color: black;
   width: 25%;
   height: 280px;
 }
 #middlebox {
   float: left;
-  background: Green;
+  /* background: Green; */
   width: 50%;
   height: 280px;
 }
 #rightbox {
   float: right;
-  background: blue;
   width: 25%;
   height: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+
 }
 
 .avatar {
@@ -229,4 +237,10 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
+}
+
+
+.fullpage.ponggame{
+  background-image: url("./../img/bluegradient.jpeg");
+  background-size: cover;
 }
