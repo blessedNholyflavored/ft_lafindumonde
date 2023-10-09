@@ -104,11 +104,7 @@ const PongGame: React.FC = () => {
 
   const catchPic = () => {
     if (socket) {
-      console.log(usernameP1, " ", user?.username);
-
       if (usernameP1 === user?.username) {
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-
         socket.emit("AskForIdOpponent", id, 1);
       } else if (usernameP2 === user?.username) {
         socket.emit("AskForIdOpponent", id, 2);
@@ -271,8 +267,8 @@ const PongGame: React.FC = () => {
 
   useEffect(() => {
     if (socket && end) {
-      if (user?.username !== room?.winner && updatelvl === 0) {
-        socket?.emit("updateLevelExpELO", user?.id, id);
+      if (user?.username === room?.winner && updatelvl === 0) {
+        socket?.emit("updateLevelExpELO", user?.id, playerId2, id);
         setUpdatelvl(1);
       }
     }
@@ -302,7 +298,6 @@ const PongGame: React.FC = () => {
   };
 
   const displayPic = async (userId: number, pos: number) => {
-    console.log("cdcscdcdsdcdcdsc");
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/users/${userId}/avatar`,

@@ -78,14 +78,12 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       const user = await this.authService.getUserBySocket(socket);
       if (!user)
         socket.disconnect(true);
-    //  socket.emit("coucou");
       console.log("connected");
       if (socket && socket.user)
       {
         const checkIn = await this.userService.getStatusUser(socket.user.id);
         this.playerConnections.forEach((value, key) => {
         });
-        console.log(checkIn);
         if (checkIn != USER_STATUS.OFFLINE)
           {
             socket.disconnect(true);
@@ -108,7 +106,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     this.playerQueue.splice(0, 1);
     this.playerQueue2.splice(0, 1);
     this.socketQueue.splice(0, 1);
-    // console.log(socket.user);
     console.log("diconnected");
     if (socket && socket.user)
     {
@@ -153,6 +150,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     const recupRoom = this.roomMapService.getRoom(roomId);
     let user1;
     let user2;
+    if (!recupRoom || !recupRoom.idP1 || !recupRoom.idP2)
+      return ;
     const NuserId = Number(recupRoom.idP1);
     const NuserId2 = Number(recupRoom.idP2);
     this.playerConnections.forEach((value, key) => {
@@ -192,7 +191,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
   async onJoinQueue(@MessageBody() data: {player: number, type: number}, @ConnectedSocket() socket: Socket,){
     const player = data[0];
     const type = data[1]
-    console.log(type);
     if (type == 1)
     {
       if (!this.playerQueueBonus.includes(player)) {
@@ -459,6 +457,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     let NuserId;
 
     let recupRoom = this.roomMapService.getRoom(id.toString());
+    if (!recupRoom || !recupRoom.idP1 || !recupRoom.idP2)
+      return ;
     if (socket.user.id == recupRoom.idP1)
       NuserId = recupRoom.idP2;
     else
@@ -522,12 +522,16 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
   }
 
   @SubscribeMessage('updateLevelExpELO')
-  async onupdateLevelExpELO(@MessageBody() data: {loserID: number, roomID: number}, @ConnectedSocket() socket: Socket) {
+  async onupdateLevelExpELO(@MessageBody() data: {user1ID: number, user2ID: number, roomID: number}, @ConnectedSocket() socket: Socket) {
 
-    const recupRoom = this.roomMapService.getRoom(data[1]);
-    if (recupRoom && recupRoom.winnerid)
-      this.userService.updateLevelExpELO(data[0], recupRoom.winnerid);
-
+    const recupRoom = this.roomMapService.getRoom(data[2]);
+    if (data[0] && recupRoom)
+    {
+      if (recupRoom.idP1 == data[0])
+        this.userService.updateLevelExpELO(recupRoom.idP2, data[0]);
+      else if (recupRoom.idP2 == data[0])
+        this.userService.updateLevelExpELO(recupRoom.idP1, data[0]);
+    }
   }
 
   // Update score du USer dans la db pour le mini-jeu
@@ -543,9 +547,11 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     let user1;
     const NuserId = Number(recipient);
     this.playerConnections.forEach((value, key) => {
+      console.log(NuserId, " ", key);
       if (key === NuserId)
         user1 = value;
     });
+    console.log(user1);
     if (user1)
       user1.emit("receiveInvite", socket.user.id);
   }

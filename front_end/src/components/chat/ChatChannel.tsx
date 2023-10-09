@@ -901,7 +901,9 @@ export const ChatChannel = () => {
             onChange={(e) => setValue(e.target.value)}
             onKeyPress={handleEnter}
           />
-          <button onClick={onSubmit}>Submit</button>
+          <button onClick={onSubmit} disabled={value.length > 80}>
+            Submit
+          </button>
         </div>
       )}
 
@@ -916,7 +918,7 @@ export const ChatChannel = () => {
             />
             <button
               onClick={() => ChangeStatutChan("PWD_PROTECTED")}
-              disabled={newPass.length === 0}
+              disabled={newPass.length === 0 || newPass.length > 15}
             >
               Change Password
             </button>
@@ -1064,7 +1066,10 @@ export const ChatChannel = () => {
                               value={reasonKick}
                               onChange={(e) => setReasonKick(e.target.value)}
                             />
-                            <button onClick={() => kickFromChannel(users.id)}>
+                            <button
+                              onClick={() => kickFromChannel(users.id)}
+                              disabled={reasonKick.length > 30}
+                            >
                               Submit
                             </button>
                           </div>
@@ -1096,7 +1101,8 @@ export const ChatChannel = () => {
                                   disabled={
                                     isNaN(parseInt(timeMute)) ||
                                     parseInt(timeMute) === 0 ||
-                                    timeMute.length > 3
+                                    timeMute.length > 3 ||
+                                    reasonMute.length > 30
                                   }
                                 >
                                   Submit
@@ -1136,7 +1142,8 @@ export const ChatChannel = () => {
                                   disabled={
                                     isNaN(parseInt(timeBan)) ||
                                     parseInt(timeBan) === 0 ||
-                                    timeBan.length > 3
+                                    timeBan.length > 3 ||
+                                    reasonBan.length > 30
                                   }
                                 >
                                   Submit

@@ -199,6 +199,12 @@ export const MiniGame = () => {
     setCounter(0);
     setEnd(false);
     setRebounds(0);
+    setBallSpeed(5);
+    setBallDir((prevBallDir: { x: number; y: number }) => ({
+      ...prevBallDir,
+      x: 1,
+      y: 0,
+    }));
   };
 
   const navigateToHome = () => {

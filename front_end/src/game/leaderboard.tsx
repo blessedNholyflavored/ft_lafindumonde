@@ -23,17 +23,59 @@ interface PlayerScore {
   ELO: number;
   id: number;
   rank: string;
+  pictureURL: string;
 }
 
 export const Classement = () => {
   const [playerScores, setPlayerScores] = useState<PlayerScore[]>([]);
+  const [first, setFirst] = useState<PlayerScore>();
+  const [second, setSecond] = useState<PlayerScore>();
+  const [third, setThird] = useState<PlayerScore>();
   const { user, setUser } = useAuth();
   const userId = user?.id;
   const navigate = useNavigate();
+  const [imgUrl, setImgUrl] = useState<string>("");
 
   useEffect(() => {
     fetchPlayerScores();
   }, []);
+
+  const displayPic = async (userId: number) => {
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/${userId}/avatar`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        const pictureURL = await response.text();
+        if (pictureURL.includes("https")) {
+          return pictureURL;
+        } else {
+          try {
+            const response = await fetch(
+              `http://${window.location.hostname}:3000/users/uploads/${pictureURL}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            if (response.ok) {
+              const blob = await response.blob();
+              const absoluteURL = URL.createObjectURL(blob);
+              return pictureURL;
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   async function fetchPlayerScores() {
     try {
@@ -58,10 +100,15 @@ export const Classement = () => {
               credentials: "include",
             }
           );
+          const respondePicture = await displayPic(updatedGameData[i].id);
           if (response.ok) {
             updatedGameData[i].rank = await response.text();
+            updatedGameData[i].pictureURL = respondePicture;
           }
         } catch (error) {}
+        if (i === 0) setFirst(updatedGameData[i]);
+        if (i === 1) setSecond(updatedGameData[i]);
+        if (i === 2) setThird(updatedGameData[i]);
       }
       setPlayerScores(updatedGameData);
     } catch (error) {
@@ -115,14 +162,27 @@ export const Classement = () => {
               <img src={icon} alt="icon" />
               <h1> LEADERBOARD </h1>
             </div>
+            {/* <div>
+              {playerScores.map((tab: PlayerScore, index: number) => (
+                  <div key={index}>
+                    {tab.place === 1 && <div>{setFirst(tab) as any}</div>}
+                    {tab.place === 2 && <div>{setSecond(tab) as any}</div>}
+                    {tab.place === 3 && <div>{setThird(tab) as any}</div>}
+                  </div>
+              ))}
+            </div> */}
 
             <div className="container podium">
               <div className="podium__item">
-                <p className="podium__city">Annecy</p>
+                <p className="podium__city"  style={{backgroundColor: "black",}}>{second?.username}</p>
+                <img src={second?.pictureURL} className="avatar"></img>
+
                 <div className="podium__rank second">2</div>
               </div>
               <div className="podium__item">
-                <p className="podium__city">Saint-Gervais</p>
+                <p className="podium__city"  style={{backgroundColor: "black",}}>{first?.username}</p>
+                <img src={first?.pictureURL} className="avatar"></img>
+
                 <div className="podium__rank first">
                   <svg
                     className="podium__number"
@@ -140,7 +200,9 @@ export const Classement = () => {
                 </div>
               </div>
               <div className="podium__item">
-                <p className="podium__city">Clermont-Ferrand Essentielle</p>
+                <p className="podium__city"  style={{backgroundColor: "black",}}>{third?.username}</p>
+                <img src={third?.pictureURL} className="avatar"></img>
+
                 <div className="podium__rank third">3</div>
               </div>
             </div>
