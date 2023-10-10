@@ -343,6 +343,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     
       let recupRoom = this.roomMapService.getRoom(id.toString());
       let flag = 0;
+      let emitTime = 0;
 
       if (recupRoom && recupRoom.ball)
       {
@@ -431,7 +432,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           roomID: recupRoom.idRoom, end: recupRoom.end, speedX: recupRoom.ball.speedX,
           speedY: recupRoom.ball.speedY}
 
-
+          this.server.to(recupRoom.idRoom.toString()).emit('CheckAlwaysIG', roomUpdate);
+          this.server.to(recupRoom.idRoom.toString()).emit('CheckAlwaysIG2', roomUpdate);
           this.server.to(recupRoom.idRoom.toString()).emit('ballMoovON', roomUpdate);
           if (flag === 2)
           {
@@ -814,7 +816,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           return ;
        let recupRoom = this.roomMapService.getRoom(roomId.toString());
        
-       console.log("roomIDDDDDD: ", recupRoom);
        if (!recupRoom)
        return ;
           const Sroom: roomSend = {player1: recupRoom.player1.username, player2: recupRoom.player2.username,

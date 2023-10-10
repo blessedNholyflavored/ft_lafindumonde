@@ -48,26 +48,9 @@ const PongGame: React.FC = () => {
   let [usernameP2, setUsernameP2] = useState<string>("");
 
 
-  useEffect(() => {
-    const handlePopstate = () => {
-      // Comparer la longueur de l'historique avant et après l'événement de navigation
-      const isBackButtonUsed = window.history.length > 1;
-      if (isBackButtonUsed) {
-        socket.emit("ttt");
-      }
-    };
-
-    window.addEventListener('popstate', handlePopstate);
-
-    // Nettoyez l'écouteur d'événement lorsque le composant est démonté
-    return () => {
-      window.removeEventListener('popstate', handlePopstate);
-    };
-  }, []); // Assurez-vous de ne passer aucun dépendance pour useEffect pour éviter les problèmes de performance
-
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-    if (countdown > 0) {
+    if (countdown > 0 && countdown < 2) {
       socket?.emit("reloadCountdown", id);
       setCountdown(-999);
       // window.location.href = "/gamePage";
@@ -77,6 +60,8 @@ const PongGame: React.FC = () => {
     setEnd(1);
     // NavHome();
   };
+
+
 
   const startCountdown = () => {
     const countdownInterval = setInterval(() => {
@@ -88,7 +73,19 @@ const PongGame: React.FC = () => {
       startGameFCT();
     }, 4000);
   };
+
+
   useEffect(() => {
+
+    
+
+    if (socket)
+    {
+        socket.on("CheckAlwaysIG2", (recupRoom: Room) => {
+          console.log(recupRoom.end);
+    });
+  }
+
     if (countdown === 3) {
       setTimeout(() => {
         socket.emit("recupRoomAtStart", id);
@@ -201,7 +198,6 @@ const PongGame: React.FC = () => {
 
     if (socket && countdown > 0) {
       socket.on("sendRoomAtStart", (recuproom: Room) => {
-        console.log(recuproom);
         setUsernameP1(recuproom.player1 as string);
         setUsernameP2(recuproom.player2 as string);
       });

@@ -136,7 +136,7 @@ export const PrivateChat = () => {
     if (value.length > 0) {
       socket.emit("newMessage", value, recipient);
       setTimeout(() => {
-        socket.emit("reloadMessages", value, recipient);
+        socket.emit("refreshMessages", value, recipient);
       }, 100);
       setValue("");
     }
@@ -199,7 +199,7 @@ export const PrivateChat = () => {
     } catch (error) {
       console.error("Erreur:", error);
     }
-    socket.emit("refreshMessages", recipient);
+    socket.emit("reloadListRoomForOne", recipient);
     navigate("/chat");
     // window.location.reload();
   }

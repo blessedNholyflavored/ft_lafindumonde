@@ -272,6 +272,8 @@ export const Chat = () => {
 
         const usernames: privMSG[] = await Promise.all(promises);
         setPrivMSG(usernames);
+      } else {
+        setPrivMSG(data);
       }
     } catch (error) {
       console.error("Erreur :", error);
@@ -502,7 +504,9 @@ export const Chat = () => {
     if (socket) {
       socket.on("refreshMessagesRoom", () => {
         fetchPossibleInvite();
-        fetchPrivateConv();
+        setTimeout(() => {
+          fetchPrivateConv();
+        }, 300);
       });
     }
     if (socket) {
@@ -1185,7 +1189,6 @@ export const Chat = () => {
                                 if (showChatButton === false)
                                   setShowChatButton(true);
                                 else setShowChatButton(true);
-
                                 if (chan.AmIBanned === "false") {
                                   navToChan(chan.id, chan.name);
                                   if (showChatChannel) {

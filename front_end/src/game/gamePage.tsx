@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import io, { Socket } from "socket.io-client";
-import { User } from "../interfaces/interfaces";
+import { Room, User } from "../interfaces/interfaces";
 import icon from "./../img/buttoncomp.png";
 import chat_pic from "./img/fill.pic.png";
 import "../App.css";
@@ -45,6 +45,7 @@ export const GamePage = () => {
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
   const [sender, setSender] = useState<number>(0);
+
 
   const handlePlayerSelect = async (player: string) => {
     setSelectedPlayer(player);
@@ -123,6 +124,7 @@ export const GamePage = () => {
   };
 
   useEffect(() => {
+
     setTimeout(() => {
       const leftGame = localStorage.getItem("leftGame");
       if (leftGame) {
@@ -137,6 +139,13 @@ export const GamePage = () => {
     socket.on("heLeftTheGame", () => {
       localStorage.setItem("leftGame", "Your oppenent has left the game");
     });
+
+    if (socket)
+    {
+        socket.on("CheckAlwaysIG", (recupRoom: Room) => {
+          console.log(recupRoom.end);
+    });
+  }
   });
 
   const NavToSoloPong = () => {
