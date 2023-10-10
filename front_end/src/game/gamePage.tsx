@@ -183,7 +183,7 @@ export const GamePage = () => {
         <h1>TRANSCENDENCE</h1>
       </header>
       <div className="flex-bg">
-        <main className="gameMain">
+        <main className="commonmain">
           <div className="fullpage">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
@@ -251,7 +251,7 @@ export const GamePage = () => {
             </div>
           </div>
         </main>
-        <nav className="gameMainNav">
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>

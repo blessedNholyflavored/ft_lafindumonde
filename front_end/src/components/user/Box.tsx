@@ -15,7 +15,7 @@ import { useParams } from "react-router-dom";
 import nav from "./../../img/buttoncomp.png";
 import foldergreen from "../../img/foldergreen.png";
 import folderblue from "../../img/folderblue.png";
-import folderpink  from "../../img/folderpink.png";
+import folderpink from "../../img/folderpink.png";
 import folderyellow from "../../img/folderyellow.png";
 import folderwhite from "../../img/folderwhite.png";
 import folderviolet from "../../img/folderviolet.png";
@@ -163,7 +163,7 @@ const Box = (props: any) => {
       </header>
 
       <div className="flex-bg">
-        <main>
+        <main className="commonmain">
           {showNotification && (
             <Notify
               message={notifyMSG}
@@ -212,11 +212,15 @@ const Box = (props: any) => {
           {/* // <Friendslist type="friends"/> */}
           {/* // <Scorelist type ="scorelist"/> */}
         </main>
-        <nav className="profileNav">
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
-                <img src={folderviolet} alt="Menu 3" className="profileNavIcon" />
+                <img
+                  src={folderviolet}
+                  alt="Menu 3"
+                  className="profileNavIcon"
+                />
                 <p>Home</p>
               </a>
             </li>
@@ -228,19 +232,31 @@ const Box = (props: any) => {
             </li>
             <li className="menu-item">
               <a onClick={navigateToProfPage}>
-                <img src={foldergreen} alt="Menu 3" className="profileNavIcon" />
+                <img
+                  src={foldergreen}
+                  alt="Menu 3"
+                  className="profileNavIcon"
+                />
                 <p>Profile</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToSettings}>
-                <img src={folderyellow} alt="Menu 3" className="profileNavIcon" />
+                <img
+                  src={folderyellow}
+                  alt="Menu 3"
+                  className="profileNavIcon"
+                />
                 <p>Settings</p>
               </a>
             </li>
             <li className="menu-item">
               <a onClick={navigateToFriends}>
-                <img src={folderwhite} alt="Menu 3" className="profileNavIcon" />
+                <img
+                  src={folderwhite}
+                  alt="Menu 3"
+                  className="profileNavIcon"
+                />
                 <p>Friends</p>
               </a>
             </li>

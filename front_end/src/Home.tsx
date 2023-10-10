@@ -10,7 +10,7 @@ import { useAuth } from "./components/auth/AuthProvider";
 import { WebsocketContext } from "./services/WebsocketContext";
 import foldergreen from "./img/foldergreen.png";
 import folderblue from "./img/folderblue.png";
-import folderpink  from "./img/folderpink.png";
+import folderpink from "./img/folderpink.png";
 import folderyellow from "./img/folderyellow.png";
 import folderwhite from "./img/folderwhite.png";
 import folderviolet from "./img/folderviolet.png";
@@ -153,7 +153,7 @@ const Home: React.FC<HomeProps> = () => {
         )}
       </div>
       <div className="flex-bg">
-        <main>
+        <main className="commonmain">
           <div className="home">
             <p> HOME </p>
             <div className="inside">
@@ -177,7 +177,7 @@ const Home: React.FC<HomeProps> = () => {
             <img src={gaming} />
           </div>
         </main>
-        <nav>
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>

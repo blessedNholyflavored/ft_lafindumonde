@@ -83,30 +83,6 @@ main h2 {
   padding: 1rem 1vw;
 }
 
-@media (width < 1500px) {
-  .mainFriendship {
-    padding-right: 0;
-    padding-left: 1vw;
-  }
-  .friendshipNav {
-    display: inline-block;
-    padding: 1rem 0;
-    margin: auto 1vw;
-  }
-}
-
-@media (width < 1800px) {
-  .gameMainNav {
-    display: inline-block;
-    padding: 1rem 0;
-    margin: auto 1vw;
-    justify-items: center;
-  }
-  .gameMain {
-    padding: 2vh 0;
-  }
-}
-
 nav {
   width: 10vw;
   display: grid;
@@ -307,4 +283,21 @@ footer {
 
 .popup {
   border: 1px solid black;
+}
+
+/*************************************
+*
+*												RESPONSIVE
+*
+**************************************/
+@media (width < 1800px) {
+  .commonnav {
+    display: inline-block;
+    padding: 1rem 0;
+    margin: auto 1vw;
+    justify-items: center;
+  }
+  .commonmain {
+    padding: 2vh 0;
+  }
 }
