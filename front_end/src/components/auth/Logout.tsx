@@ -1,4 +1,3 @@
-//import api from './../../AxiosInstance';
 import "./../../App.css";
 import "./../../style/Logout.css";
 
@@ -9,6 +8,7 @@ export async function Logout(context: any) {
       credentials: "include",
     });
     context.setUser(null);
+    window.location.reload();
   } catch (error) {
     console.error("Error : ", error);
   }

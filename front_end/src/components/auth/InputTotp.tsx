@@ -5,7 +5,6 @@ import icon from "../../img/buttoncomp.png";
 import { useAuth } from "./AuthProvider";
 import { Navigate } from "react-router-dom";
 import Notify from "../../services/Notify";
-import api from "../../services/AxiosInstance";
 
 export const InputTotp: React.FC = () => {
   const { user, setUser } = useAuth();

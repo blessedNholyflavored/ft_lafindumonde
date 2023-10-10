@@ -5,12 +5,9 @@ import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import * as cookie from 'cookie';
 import { encode } from 'hi-base32';
 import * as qrcode from 'qrcode';
-// import * as imageDataURI from "image-data-uri";
 import Socket from 'src/gateway/types/socket';
-import { AuthDto } from 'src/user/dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -90,4 +87,5 @@ export class AuthService {
 	passwordChecker(input: string, user: User){
 		return (bcrypt.compare(input, user.password));
 	}
+
 }

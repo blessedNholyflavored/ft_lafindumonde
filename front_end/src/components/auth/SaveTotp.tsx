@@ -4,7 +4,6 @@ import "./../../style/Login.css";
 import icon from "../../img/buttoncomp.png";
 import { useAuth } from "./AuthProvider";
 import { useNavigate, Navigate, useLocation } from "react-router-dom";
-import api from "../../services/AxiosInstance";
 
 import Notify from "../../services/Notify";
 
