@@ -1048,7 +1048,7 @@ export const Chat = () => {
                                     )
                                   }
                                 >
-                                  ACCEPT
+                                  accept request
                                   <div></div>
                                 </button>
                                 <button
@@ -1093,8 +1093,9 @@ export const Chat = () => {
                                 chan.visibility === "PWD_PROTECTED" && (
                                   <div>
                                     <input
+                                      className="inputpasswd"
                                       type="password"
-                                      placeholder="Entrez le mot de passe"
+                                      placeholder="enter password"
                                       value={pass}
                                       onChange={handlePasswordChange}
                                     />
@@ -1142,7 +1143,9 @@ export const Chat = () => {
                 <div className="small-box">
                   <div>
                     <ul>
-                      <p>slide in your dm</p>
+                      <div className="navbarsmallbox">
+                        <p style={{ color: "white" }}>slide in your dm</p>
+                      </div>
                       {privMSG.length === 0 ||
                       privMSG.every((priv) => priv.isBlocked === "true") ? (
                         <p>no dm</p>
@@ -1165,7 +1168,7 @@ export const Chat = () => {
                                 disabled={selectedPrivateConv === priv.id}
                               >
                                 <div>
-                                  {priv.username} + {priv.status}
+                                  {priv.username} - {priv.status}
                                 </div>
                               </button>
                             )}
@@ -1177,7 +1180,9 @@ export const Chat = () => {
 
                   <div>
                     <ul>
-                      <p>joined channels</p>
+                      <div className="navbarsmallbox">
+                        <p style={{ color: "white" }}>joined channels</p>
+                      </div>
                       {channelsJoin.length === 0 ? (
                         <p>no chan joined</p>
                       ) : (
@@ -1221,12 +1226,15 @@ export const Chat = () => {
                             </button>
                             {activeChannel === chan.id &&
                               showChatButton === true && (
-                                <div>
-                                  <button onClick={leftChannel}>
-                                    Quitter le channel ?
-                                  </button>
-                                </div>
-                              )}
+                            <div>
+                              <button
+                                className="buttonseemore buttonchan leave"
+                                onClick={leftChannel}
+                              >
+                                Leave chan
+                              </button>
+                            </div>
+                             )}
                           </div>
                         ))
                       )}
@@ -1272,27 +1280,24 @@ export const Chat = () => {
                   </div>
                 </div>
                 <div className="small-box wider-box">
-                  <div className="chat_list">
+                  {/* <div className="chat_list">
                     <div className="navbarmainpage nav_box">
                       <img src={icon} className="buttonnav" alt="icon" />
                       <p className="title_box">WHO'S ONLINE</p>
                     </div>
-                  </div>
-                  <div className="message_box">
-                    <div className="navbarmainpage nav_box">
-                      <img src={icon} className="buttonnav" alt="icon" />
-                      <p className="title_box">CONV WITH {activeChannelName}</p>
-                      {!showConv && recipient && <PrivateChat />}
-                      {showConv && <PrivateChat />}
+                  </div> */}
+                  {/* <div className="message_box"> */}
+                    {/* <div className="navbarmainpage nav_box"> */}
+                      {/* <img src={icon} className="buttonnav" alt="icon" /> */}
+                      {/* <p className="title_box">CONV WITH {activeChannelName}</p> */}
+                      {/* <div className="chatbox">  */}
+                       {!showConv && recipient && <PrivateChat />}
+                     {showConv && <PrivateChat />}
                       {showChatChannel && <ChatChannel />}
                       {!showChatChannel && id && <ChatChannel />}
-                    </div>
-                  </div>
-                  {/* <div>
-        <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
-          LOG OUT{" "}
-        </button>
-      </div> */}
+                      {/* </div> */}
+                    {/* </div> */}
+                  {/* </div> */}
                 </div>
                 <div className="small-box">
                   <div>
