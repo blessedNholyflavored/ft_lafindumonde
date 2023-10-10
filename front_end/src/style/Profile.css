@@ -145,19 +145,23 @@
 }
 
 .boxrowtest2 {
-  /* width: 25%; */
   margin: 20px;
   border: 1px solid black;
-  border-bottom: 4rem solid black;
+  border-bottom: 3vh solid black;
   box-shadow: 10px 12px 0px 0px #000;
   box-sizing: border-box;
-  /* padding: 10px; */
   width: 15vw;
   height: 35vh;
   background-color: white;
 }
 
-.logo {
+.boxrowtest2 ul {
+  height: 29vh;
+  margin: 0;
+  overflow-y: scroll;
+}
+
+.boxrowtest2 .logo {
   text-align: right;
   float: right;
   margin-right: 10px;
@@ -433,6 +437,9 @@ input::file-selector-button {
   justify-content: center;
   color: #000;
   margin-top: 10px;
+  height: 29vh;
+  margin: 0;
+  overflow-y: scroll;
 }
 
 .bttnholder {
@@ -440,6 +447,16 @@ input::file-selector-button {
   flex-direction: row;
   justify-content: center;
   gap: 10px;
+}
+@media (width < 1000px) {
+  .bttnholder {
+    display: inline-block;
+    margin: 1vh 0;
+    width: 50%;
+  }
+  .bttnholder button {
+    margin: 1vh 0;
+  }
 }
 
 .requestinfo {
@@ -452,6 +469,9 @@ input::file-selector-button {
   justify-content: center;
   color: #000;
   margin-top: 10px;
+  height: 29vh;
+  margin: 0;
+  overflow-y: scroll;
 }
 
 .onlinebttn {

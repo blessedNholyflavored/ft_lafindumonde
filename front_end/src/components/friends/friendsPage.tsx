@@ -9,7 +9,7 @@ import { Logout } from "../auth/Logout";
 import logo from "./../../img/logo42.png";
 import foldergreen from "./../../img/foldergreen.png";
 import folderblue from "./../../img/folderblue.png";
-import folderpink  from "./../../img/folderpink.png";
+import folderpink from "./../../img/folderpink.png";
 import folderyellow from "./../../img/folderyellow.png";
 import folderwhite from "./../../img/folderwhite.png";
 import folderviolet from "./../../img/folderviolet.png";
@@ -628,7 +628,7 @@ export const FriendsPage: React.FC = () => {
         <h1>TRANSCENDENCE</h1>
       </header>
       <div className="flex-bg">
-        <main className="mainFriendship">
+        <main className="gameMain">
           <div>
             {showNotification && (
               <Notify
@@ -658,13 +658,17 @@ export const FriendsPage: React.FC = () => {
                           src={friend.pictureURL}
                           className="avatar"
                           alt="photo casse"
-                          />
-                          <div style={{fontWeight: "bold"}}>{friend.username}</div>
+                        />
+                        <div style={{ fontWeight: "bold" }}>
+                          {friend.username}
+                        </div>
                         <button
                           className="buttonseemore"
                           onClick={() => handleUserClick(friend.recipientId)}
                           // disabled={user?.id.toString() === friend.id}
-                        > see more
+                        >
+                          {" "}
+                          see more
                         </button>
                         <div>{friend.status}</div>
 
@@ -713,7 +717,9 @@ export const FriendsPage: React.FC = () => {
                       </div>
                     ))
                   ) : (
-                    <div className="emptymessage">🩷🩷🩷🩷 <br></br>please make some friends<br></br>🩷🩷🩷🩷 </div>
+                    <div className="emptymessage">
+                      🩷🩷🩷🩷 <br></br>please make some friends<br></br>🩷🩷🩷🩷{" "}
+                    </div>
                   )}
                 </ul>
               </div>
@@ -730,10 +736,12 @@ export const FriendsPage: React.FC = () => {
                           className="avatar"
                           alt="photo casse"
                         />
-                        <div style={{fontWeight: "bold"}}>{blocked.username}</div>
+                        <div style={{ fontWeight: "bold" }}>
+                          {blocked.username}
+                        </div>
                         <button
-                              className="onlinebttn"
-                              onClick={() =>
+                          className="onlinebttn"
+                          onClick={() =>
                             removeBlocked(
                               blocked.senderId.toString(),
                               blocked.recipientId.toString()
@@ -743,8 +751,8 @@ export const FriendsPage: React.FC = () => {
                           unblock
                         </button>
                         <button
-                              className="onlinebttn"
-                              onClick={() =>
+                          className="onlinebttn"
+                          onClick={() =>
                             navToProfil(blocked.recipientId.toString())
                           }
                         >
@@ -753,7 +761,9 @@ export const FriendsPage: React.FC = () => {
                       </div>
                     ))
                   ) : (
-                    <div className="emptymessage">🩷🩷🩷🩷 <br></br>you didn't block anyone. yet.<br></br>🩷🩷🩷🩷</div>
+                    <div className="emptymessage">
+                      🩷🩷🩷🩷 <br></br>you didn't block anyone. yet.<br></br>🩷🩷🩷🩷
+                    </div>
                   )}
                 </ul>
               </div>
@@ -814,7 +824,9 @@ export const FriendsPage: React.FC = () => {
                       </div>
                     ))
                   ) : (
-                    <div className="emptymessage">🩷🩷🩷🩷 <br></br>no one's here, you're all alone<br></br>🩷🩷🩷🩷</div>
+                    <div className="emptymessage">
+                      🩷🩷🩷🩷 <br></br>no one's here, you're all alone<br></br>🩷🩷🩷🩷
+                    </div>
                   )}
                 </div>
               </div>
@@ -824,7 +836,9 @@ export const FriendsPage: React.FC = () => {
                 </div>
                 <div className="requests">
                   {friendsRequest.length === 0 ? (
-                    <div className="emptymessage">🩷🩷🩷🩷 <br></br>  such empty. not that popular? <br></br>🩷🩷🩷🩷</div>
+                    <div className="emptymessage">
+                      🩷🩷🩷🩷 <br></br> such empty. not that popular? <br></br>🩷🩷🩷🩷
+                    </div>
                   ) : (
                     friendsRequest.map((friend) => (
                       <div>
@@ -894,7 +908,7 @@ export const FriendsPage: React.FC = () => {
             </div>
           </div>
         </main>
-        <nav className="friendshipNav">
+        <nav className="gameMainNav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
@@ -934,7 +948,6 @@ export const FriendsPage: React.FC = () => {
             </li>
           </ul>
         </nav>
-        
       </div>
       <footer className="footerfriends">
         <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>

@@ -79,8 +79,32 @@ main h2 {
 .friendshipNav {
   width: 7vw;
   display: grid;
-  justify-items: center;
+  justify-items: end;
   padding: 1rem 1vw;
+}
+
+@media (width < 1500px) {
+  .mainFriendship {
+    padding-right: 0;
+    padding-left: 1vw;
+  }
+  .friendshipNav {
+    display: inline-block;
+    padding: 1rem 0;
+    margin: auto 1vw;
+  }
+}
+
+@media (width < 1800px) {
+  .gameMainNav {
+    display: inline-block;
+    padding: 1rem 0;
+    margin: auto 1vw;
+    justify-items: center;
+  }
+  .gameMain {
+    padding: 2vh 0;
+  }
 }
 
 nav {
@@ -138,7 +162,6 @@ footer {
   /* width: 100%; */
 }
 
-
 .footerfriends {
   padding: 1rem;
   text-align: center;
@@ -149,8 +172,6 @@ footer {
   height: 150px;
   /* width: 100%; */
 }
-
-
 
 /* .home {
   position: absolute;

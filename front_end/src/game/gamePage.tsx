@@ -19,7 +19,7 @@ import gradient from "./img/gradient.png";
 import Notify from "../services/Notify";
 import foldergreen from "./../img/foldergreen.png";
 import folderblue from "./../img/folderblue.png";
-import folderpink  from "./../img/folderpink.png";
+import folderpink from "./../img/folderpink.png";
 import folderyellow from "./../img/folderyellow.png";
 import folderwhite from "./../img/folderwhite.png";
 import folderviolet from "./../img/folderviolet.png";
@@ -183,7 +183,7 @@ export const GamePage = () => {
         <h1>TRANSCENDENCE</h1>
       </header>
       <div className="flex-bg">
-        <main>
+        <main className="gameMain">
           <div className="fullpage">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
@@ -251,7 +251,7 @@ export const GamePage = () => {
             </div>
           </div>
         </main>
-        <nav>
+        <nav className="gameMainNav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
