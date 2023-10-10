@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./../../App.css";
 import "./../../style/Chat.css";
+import "./../../style/Profile.css";
 import "./../../style/Logout.css";
 import { useAuth } from "./../auth/AuthProvider";
 import { Navigate, useParams } from "react-router-dom";
@@ -998,7 +999,7 @@ export const Chat = () => {
       </header>
       <div className="flex-bg">
         <main>
-          <div className="fullpage">
+          <div className="fullpage fullpagechat">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
               <h1> Chat </h1>
@@ -1019,7 +1020,7 @@ export const Chat = () => {
                 <div className="small-box ">
                   <div>
                     <ul>
-                      <div className="navbarsmallbox">
+                      <div className="navbarsmallbox chantitle">
                         <p style={{ color: "white" }}>received invitations</p>
                       </div>
                       {invReceive.length === 0 ? (
@@ -1069,7 +1070,7 @@ export const Chat = () => {
 
                   <div>
                     <ul>
-                      <div className="navbarsmallbox">
+                      <div className="navbarsmallbox chantitle">
                         <p style={{ color: "white" }}>available channels</p>
                       </div>
                       {channels.length === 0 ? (
@@ -1143,7 +1144,7 @@ export const Chat = () => {
                 <div className="small-box">
                   <div>
                     <ul>
-                      <div className="navbarsmallbox">
+                      <div className="navbarsmallbox chantitle">
                         <p style={{ color: "white" }}>slide in your dm</p>
                       </div>
                       {privMSG.length === 0 ||
@@ -1180,7 +1181,7 @@ export const Chat = () => {
 
                   <div>
                     <ul>
-                      <div className="navbarsmallbox">
+                      <div className="navbarsmallbox chantitle">
                         <p style={{ color: "white" }}>joined channels</p>
                       </div>
                       {channelsJoin.length === 0 ? (
@@ -1287,33 +1288,38 @@ export const Chat = () => {
                     </div>
                   </div> */}
                   {/* <div className="message_box"> */}
-                    {/* <div className="navbarmainpage nav_box"> */}
                       {/* <img src={icon} className="buttonnav" alt="icon" /> */}
-                      {/* <p className="title_box">CONV WITH {activeChannelName}</p> */}
                       {/* <div className="chatbox">  */}
                        {!showConv && recipient && <PrivateChat />}
                      {showConv && <PrivateChat />}
+                  {/* <div className="navbarsmallbox "> */}
+                  {/* <p style={{color:"black"}} className="title_box">CONV WITH {activeChannelName}</p> */}
                       {showChatChannel && <ChatChannel />}
-                      {!showChatChannel && id && <ChatChannel />}
                       {/* </div> */}
+                      {!showChatChannel && id && <ChatChannel />}
                     {/* </div> */}
                   {/* </div> */}
                 </div>
                 <div className="small-box">
                   <div>
+                    <div className="navbarsmallbox chantitle putain">
+                        <p style={{ color: "white" }}>create new chan</p>
+                      </div>
                     <input
+                    className="labelcss select-chat"
                       type="text"
                       placeholder="Nom de la room"
                       value={valueRoom}
                       onChange={handleInputChange}
                     />
                     <select
+                      className="buttonseemore selectfield"
                       value={selectedOption}
                       onChange={handleOptionChange}
                     >
-                      <option value="public">Public</option>
-                      <option value="private">Private</option>
-                      <option value="protected">Protected</option>
+                      <option value="public">public</option>
+                      <option value="private">private</option>
+                      <option value="protected">protected</option>
                     </select>
                     {selectedOption === "protected" && (
                       <input
@@ -1324,6 +1330,7 @@ export const Chat = () => {
                       />
                     )}
                     <button
+                                    className="buttonseemore buttonchan"
                       onClick={createRoom}
                       disabled={
                         isButtonDisabled ||
@@ -1332,9 +1339,11 @@ export const Chat = () => {
                         valueRoom.length > 15
                       }
                     >
-                      Créer une nouvelle room
+                      create new room
                     </button>
                     <button
+                                    className="buttonseemore buttonchan"
+
                       onClick={joinRoom}
                       disabled={
                         isButtonDisabled ||
@@ -1343,7 +1352,7 @@ export const Chat = () => {
                         valueRoom.length > 15
                       }
                     >
-                      Rejoindre une room existante
+                      join existing room
                     </button>
                   </div>
                 </div>

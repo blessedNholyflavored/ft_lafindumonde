@@ -70,11 +70,12 @@
 }
 
 .fullpage2 {
-  background-color: white;
   height: 100%;
   margin-left: 2.5vw;
   width: 80vw;
   border: 1px solid black;
+  background-image: url("./../img/12.jpg");
+  background-size: cover;
 }
 
 .fullpage1 {
@@ -514,4 +515,18 @@ input::file-selector-button {
 .gameHistory {
   color: black;
   display: flex;
+}
+
+
+.buttnprofilefriend{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: normal !important;
+  margin-left: 5vh; 
+}
+
+.gamehist-score{
+  height: 5px;
+  font-size: 70%;
 }

@@ -94,7 +94,6 @@ export const GameHistory = (props: any) => {
         //console.log("ICI", updatedGameData);
         let i: number = 0;
         while (i < updatedGameData.length) {
-
           if (updatedGameData[i].superGame === 1) {
             updatedGameData[i].super = "☆";
           }
@@ -151,13 +150,13 @@ export const GameHistory = (props: any) => {
         {gameData.map((game: Game, index: number) => (
           <div className="gameHistory" key={index}>
             <img className="avatar" src={game.pictureURLP1} alt="p1 avatar" />
-            <p>{game.username1}</p>
+            <p className="buttonseemore buttonchan gamehist-score">{game.username1}</p>
             <div className="scores">
               {game.scrP1} - {game.scrP2}
             </div>
             <img className="avatar" src={game.pictureURLP2} alt="p2 avatar" />
-            <p>{game.username2}</p>
-            <p>{game.start_at}</p>
+            <p className="buttonseemore buttonchan gamehist-score">{game.username2}</p>
+            <p className="buttonseemore buttonchan gamehist-score">{game.start_at}</p>
           </div>
         ))}
 

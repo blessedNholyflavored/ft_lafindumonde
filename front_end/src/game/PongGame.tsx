@@ -398,7 +398,7 @@ const PongGame: React.FC = () => {
                   {user && (
                     <h2>Vous êtes connecté en tant que {user.username}</h2>
                   )}
-                  {!end && <button onClick={NavHome}>Quitter la partie</button>}
+                  {!end && <button className="buttonseemore"  onClick={NavHome}>Quitter la partie</button>}
                   {room && room.player1 && room.player2 && (
                     <div>
                       <p>
@@ -418,7 +418,7 @@ const PongGame: React.FC = () => {
                             Score - {room.player1} {room.scoreP1} |{" "}
                             {room.scoreP2} {room.player2}
                             <p>{room.winner} remporte la partie</p>
-                            <button onClick={NavHome}>Retourner au Home</button>
+                            <button className="buttonseemore"  onClick={NavHome}>Retourner au Home</button>
                           </div>
                         )}
                         {!end && (

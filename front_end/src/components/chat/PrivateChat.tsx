@@ -351,7 +351,7 @@ export const PrivateChat = () => {
                   </div>
                 ))
               ) : (
-                <div>pas de message</div>
+                <div>no messages yet!</div>
               )}
               <div id="bottom"></div>
             </ul>
@@ -391,7 +391,7 @@ export const PrivateChat = () => {
                   }}
                   disabled={value.length > 80}
                 >
-                  Submit
+                  send
                 </button>
               </div>
             )}

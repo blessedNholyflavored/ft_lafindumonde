@@ -1,7 +1,6 @@
  .main_chat_box{
 	margin: 30px auto;
 	position: relative;
-	display: flex;
 	justify-content:space-evenly
 } 
 /* .main_chat_box{
@@ -38,17 +37,19 @@
 .divdeschats {
 	display: flex;
 	justify-content: space-between;
-	gap : 10px
+	gap : 10px;
 }
 .small-box {
 	flex: 1;
 	height: 500px;
 	border:6px solid var(--greyscale-k, #000);
-	box-shadow: 10px 12px 0px 0px #000;
+	/* box-shadow: 10px 12px 0px 0px #000; */
 	margin: 5px;
+	background-color: white;
 }
 .wider-box {
 	display: flex;
+	background-color: white;
 
 	flex: 2; /* This makes the 3rd div twice as wide */
 }
@@ -112,7 +113,7 @@
 }
 
 .sentmessage{
-	align-self: flex-end;
+	align-self: flex-start;
 	background-color: #B9D9EB;
 	max-width: 30em;
 	padding: 0.125em 2.5em;
@@ -124,7 +125,7 @@
 .receivedmessage{
 	background-color: #0BDA51;
   margin-bottom: 2px;
-  align-self: flex-start;
+  align-self: flex-end;
 	max-width: 30em;
 	padding: 0.125em 2.5em;
 	border-radius: 1rem;
@@ -146,7 +147,6 @@
 }
 
 .testingchat{
-	background-color: rgb(255, 255, 255);
 	width: -webkit-fill-available;
 	overflow: auto;	
 }
@@ -179,4 +179,48 @@
 	margin-right: 10px; /* Add some space between input and button */
   }
   
- 
+ .onlinelist button	{ 
+	background-color: red;
+ }
+/* 
+ .testingchat.channelchat{
+	width: -webkit-fill-available;
+	overflow: auto;	
+	display: flex;
+	flex-direction: row-reverse;
+} */
+
+.sendingzonechannel {
+	position: sticky;
+	bottom: 0;
+	background-color: #fff; /* Background color for input area */
+	padding: 10px; /* Add padding for spacing */
+	display: flex;
+	justify-content: center; /* Center the input and button horizontally */
+  }
+
+
+  .navbarsmallbox.chantitle{
+	border-radius: 15px;
+	margin-bottom: 3px;	
+	width: 40%;
+	display: inline-flex;
+  }
+
+  .fullpagechat{
+	background-image: url("./../img/gradient.jpg");
+  }
+
+
+  .selectfield{
+	padding: 0;
+  }
+
+  .select-chat{
+	margin-top: 10%;
+  }
+
+
+  .navbarsmallbox.chantitle.putain{
+	margin-top: 5%;
+}
