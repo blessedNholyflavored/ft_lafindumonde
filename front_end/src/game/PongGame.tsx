@@ -371,7 +371,7 @@ const PongGame: React.FC = () => {
       </header>
       <div className="flex-bg">
         <main>
-          <div className="fullpage">
+          <div className="fullpage ponggame">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
               <h1> game </h1>

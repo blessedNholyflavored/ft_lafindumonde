@@ -44,3 +44,43 @@
 	background-color: white;
     background-image: url(../img/social.png);
 }
+
+.divdeschats {
+	display: flex;
+	justify-content: space-between;
+}
+.small-box {
+	flex: 1;
+	/* height: 100px; */
+	border:6px solid var(--greyscale-k, #000);
+	box-shadow: 10px 12px 0px 0px #000;
+	margin: 5px;
+}
+.wider-box {
+	display: flex;
+
+	flex: 2; /* This makes the 3rd div twice as wide */
+}
+
+.buttonchan:hover{
+	background-color: #B9D9EB;
+}
+
+.buttonnotchan:hover{
+	background-color: #FA8072;
+}
+
+.buttonokchan:hover{
+	background-color: #0BDA51;
+}
+
+.firstsmall{
+	display: flex;
+	flex-direction: column;
+}
+
+
+.small-box:nth-child(1) {
+	/* border: #0BDA51 2px solid; */
+	overflow: auto;
+}

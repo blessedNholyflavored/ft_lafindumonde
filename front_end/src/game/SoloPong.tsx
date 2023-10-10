@@ -166,7 +166,7 @@ export const MiniGame = () => {
             x: -prevBallDir.x,
             y: -prevBallDir.y + randomValue / 2,
           }));
-          }
+        }
 
           if (ball.x < mapx / 2) {
             setRebounds((prevRebounds) => prevRebounds + 1);

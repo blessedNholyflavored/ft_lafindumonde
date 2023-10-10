@@ -5,6 +5,7 @@ import "./../../style/Logout.css";
 import { useAuth } from "./../auth/AuthProvider";
 import { Navigate, useParams } from "react-router-dom";
 import icon from "../../img/buttoncomp.png";
+import nav from "../../img/buttoncomp.png";
 import logo from "../../img/logo42.png";
 import { Logout } from "./../auth/Logout";
 import { WebsocketContext } from "../../services/WebsocketContext";
@@ -12,6 +13,16 @@ import { useNavigate } from "react-router-dom";
 import ChatChannel from "./ChatChannel";
 import PrivateChat from "./PrivateChat";
 import Notify from "../../services/Notify";
+import "../../style/Profile.css";
+import "../../style/Home.css";
+
+import foldergreen from "../../img/foldergreen.png";
+import folderblue from "../../img/folderblue.png";
+import folderpink from "../../img/folderpink.png";
+import folderyellow from "../../img/folderyellow.png";
+import folderwhite from "../../img/folderwhite.png";
+import folderviolet from "../../img/folderviolet.png";
+import folderred from "../../img/folderred.png";
 
 type MessagePayload = {
   content: string;
@@ -30,6 +41,7 @@ interface privMSG {
   id: number;
   username: string;
   isBlocked: string;
+  status: string;
 }
 
 interface channels {
@@ -83,11 +95,14 @@ export const Chat = () => {
   const [pass, setpass] = useState("");
   const [isPromptOpen, setIsPromptOpen] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const [showChatButton, setShowChatButton] = useState(false);
+
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
   const [banTimeLeft, setBanTimeLeft] = useState<number>(0);
   const [kickChan, setKickChan] = useState("");
   const [kickReason, setKickReason] = useState("");
+  const [activeChannelName, setActiveChannelName] = useState("");
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {};
 
@@ -230,7 +245,7 @@ export const Chat = () => {
       const data = await response.json();
 
       if (data.length > 0) {
-        const promises = data.map(async (userId: string, isBlocked: string) => {
+        const promises = data.map(async (userId: string, isBlocked: string, status: string) => {
           const username = await fetchUsernameById(userId);
           const isBlockedResponse = await fetch(
             `http://${window.location.hostname}:3000/friends/blocked/${userId}/${user?.id}`,
@@ -241,7 +256,16 @@ export const Chat = () => {
           );
           const blocked = await isBlockedResponse.text();
           isBlocked = blocked;
-          return { id: userId, username, isBlocked };
+          const statusResponse = await fetch(
+            `http://${window.location.hostname}:3000/users/status/${userId}`,
+            {
+              method: "GET",
+              credentials: "include",
+            }
+          );
+          const repStatus = await statusResponse.text();
+          status = repStatus;
+          return { id: userId, username, isBlocked, status };
         });
 
         const usernames: privMSG[] = await Promise.all(promises);
@@ -606,7 +630,7 @@ export const Chat = () => {
     return "";
   };
 
-  const navToChan = async (id: number) => {
+  const navToChan = async (id: number, name: string) => {
     if (user) {
       await checkBanned(user?.id, id.toString());
     }
@@ -615,6 +639,7 @@ export const Chat = () => {
     } else {
       navigate(`/chat/chan/${id}`);
       setActiveChannel(id);
+      setActiveChannelName(name);
     }
   };
 
@@ -909,275 +934,463 @@ export const Chat = () => {
   //   };
   // }, [banTimeLeft]);
 
+  const navigateToProfPage = () => {
+    navigate(`/users/profile/${user?.id}`);
+  };
+
+  const navigateToChat = () => {
+    navigate("/chat");
+  };
+
+  const navToGamePage = () => {
+    navigate("/gamePage");
+  };
+
+  const navigateToFriends = () => {
+    navigate("/friends");
+  };
+
+  const navigateToSettings = () => {
+    navigate("/settings");
+  };
+  const navigateToHome = () => {
+    navigate("/");
+  };
+
+  const leftChannel = async () => {
+    if (!id) return;
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/chat/leftChan/${id}/${user?.id}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des scores.");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+    // setTimeout(() => {
+    //   socket.emit("reloadMessRoom", id);
+    // }, 100);
+    setTimeout(() => {
+      socket.emit("reloadListRoomForOne", id);
+    }, 500);
+    navigate("/chat");
+  };
+
   return (
-    <div className="main_chat_box" style={{ background: "darkgreen" }}>
-      <div>
-        {showNotification && (
-          <Notify
-            message={notifyMSG}
-            type={notifyType}
-            senderId={0}
-            onClose={handleCloseNotification}
-          />
-        )}
-      </div>
-      <div>
-        <ul>
-          <h1>Liste des invitations recues :</h1>
-          {invReceive.map((chan) => (
-            <div key={chan.id}>
-              {!chan.isBlocked && (
-                <div>
-                  <button
-                    onClick={() =>
-                      clickToJoinChan(
-                        parseInt(chan.id),
-                        chan.chatRoomName,
-                        "PUBLIC",
-                        ""
-                      )
-                    }
-                  >
-                    <div>
-                      inviter par: {chan.username} pour le chan:{" "}
-                      {chan.chatRoomName}
-                    </div>
-                  </button>
-                  <button onClick={() => refuseInvite(chan.id.toString())}>
-                    Cancel invite
-                  </button>
-                </div>
-              )}
+    <>
+      <header>
+        <div>
+          <img src={nav} alt="Menu 1" />
+        </div>
+        <h1>TRANSCENDENCE</h1>
+      </header>
+      <div className="flex-bg">
+        <main>
+          <div className="fullpage">
+            <div className="navbarbox">
+              <img src={icon} alt="icon" />
+              <h1> Chat </h1>
             </div>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <ul>
-          <h1>Liste des channels disponible :</h1>
-          {channels.map((chan) => (
-            <div key={chan.id}>
+
+            <div className="main_chat_box">
               <div>
-                {isPromptOpen}
-                <button
-                  onClick={() => handleJoinClick(chan.id)}
-                  disabled={activeChannel === chan.id}
-                >
-                  <div>
-                    id: {chan.id} --- name chan: {chan.name} --- options:{" "}
-                    {chan.visibility}
-                  </div>
-                </button>
-                {isPromptOpen === true &&
-                  activeChannel === chan.id &&
-                  chan.visibility === "PWD_PROTECTED" && (
-                    <div>
-                      <input
-                        type="password"
-                        placeholder="Entrez le mot de passe"
-                        value={pass}
-                        onChange={handlePasswordChange}
-                      />
-                      <button
-                        onClick={() =>
-                          clickToJoinChan(
-                            chan.id,
-                            chan.name,
-                            "PWD_PROTECTED",
-                            pass
-                          )
-                        }
-                        disabled={pass.length === 0 || pass.length > 15}
-                      >
-                        Join
-                      </button>
-                    </div>
-                  )}
-                {chan.visibility === "PUBLIC" && activeChannel === chan.id && (
-                  <button
-                    onClick={() =>
-                      clickToJoinChan(chan.id, chan.name, "PUBLIC", "")
-                    }
-                  >
-                    Join
-                  </button>
+                {showNotification && (
+                  <Notify
+                    message={notifyMSG}
+                    type={notifyType}
+                    senderId={0}
+                    onClose={handleCloseNotification}
+                  />
                 )}
               </div>
-            </div>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <ul>
-          <h1>Liste des convos privées :</h1>
-          {privMSG.map((priv) => (
-            <div key={priv.id}>
-              {priv.isBlocked === "false" && (
-                <button
-                  onClick={() => {
-                    navToPrivateConv(priv.id);
-                    if (showConv) {
-                      handleButtonConv();
-                    } else {
-                      setShowConv(true);
-                      setShowChatChannel(false);
-                      setActiveChannel(0);
-                    }
-                  }}
-                  disabled={selectedPrivateConv === priv.id}
-                >
+              <div className="divdeschats">
+                <div className="small-box ">
                   <div>
-                    id: {priv.id} --- username: {priv.username}
+                    <ul>
+                      <div className="navbarsmallbox">
+                        <p style={{ color: "white" }}>received invitations</p>
+                      </div>
+                      {invReceive.length === 0 ? (
+                        <p>no invitations</p>
+                      ) : (
+                        invReceive.map((chan) => (
+                          <div key={chan.id}>
+                            {!chan.isBlocked && (
+                              <div>
+                                <p
+                                  style={{
+                                    fontWeight: "bold",
+                                    marginBottom: "0",
+                                  }}
+                                >
+                                  {chan.chatRoomName}
+                                </p>
+                                <button
+                                  className="buttonseemore buttonokchan"
+                                  onClick={() =>
+                                    clickToJoinChan(
+                                      parseInt(chan.id),
+                                      chan.chatRoomName,
+                                      "PUBLIC",
+                                      ""
+                                    )
+                                  }
+                                >
+                                  ACCEPT
+                                  <div></div>
+                                </button>
+                                <button
+                                  className="buttonseemore buttonnotchan"
+                                  onClick={() =>
+                                    refuseInvite(chan.id.toString())
+                                  }
+                                >
+                                  deny request
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      )}
+                    </ul>
                   </div>
-                </button>
-              )}
-            </div>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <ul>
-          <h1>Liste des channels join :</h1>
-          {channelsJoin.map((chan) => (
-            <div key={chan.id}>
-              <button
-                onClick={() => {
-                  if (chan.AmIBanned === "false") {
-                    navToChan(chan.id);
-                    if (showChatChannel) {
-                      handleButton();
-                    } else {
-                      setShowChatChannel(true);
-                      setShowConv(false);
-                      setSelectedPrivateConv(0);
-                    }
-                    if (chan.visibility === "PRIVATE") {
-                      setIsPrivatechan(1);
-                    } else setIsPrivatechan(0);
-                  } else {
-                    fetchBanTimeLeft(chan.id);
-                    setActiveBanChannel(chan.id);
-                    setNotifyMSG(
-                      "t bannis mon reuf pour " + banTimeLeft + " secondes"
-                    );
-                    setShowNotification(true);
-                    setNotifyType(2);
-                  }
-                }}
-                disabled={activeChannel === chan.id}
-              >
-                <div>
-                  id: {chan.id} --- name chan: {chan.name} --- options:{" "}
-                  {chan.visibility}
+
+                  <div>
+                    <ul>
+                      <div className="navbarsmallbox">
+                        <p style={{ color: "white" }}>available channels</p>
+                      </div>
+                      {channels.length === 0 ? (
+                        <p>no available chan for u </p>
+                      ) : (
+                        channels.map((chan) => (
+                          <div key={chan.id}>
+                            <div>
+                              {isPromptOpen}
+                              <button
+                                className="buttonseemore buttonchan"
+                                onClick={() => handleJoinClick(chan.id)}
+                                disabled={activeChannel === chan.id}
+                              >
+                                <div>
+                                  {chan.name} --- {chan.visibility}
+                                </div>
+                              </button>
+                              {isPromptOpen === true &&
+                                activeChannel === chan.id &&
+                                chan.visibility === "PWD_PROTECTED" && (
+                                  <div>
+                                    <input
+                                      type="password"
+                                      placeholder="Entrez le mot de passe"
+                                      value={pass}
+                                      onChange={handlePasswordChange}
+                                    />
+                                    <button
+                                      className="buttonseemore buttonchan"
+                                      onClick={() =>
+                                        clickToJoinChan(
+                                          chan.id,
+                                          chan.name,
+                                          "PWD_PROTECTED",
+                                          pass
+                                        )
+                                      }
+                                      disabled={
+                                        pass.length === 0 || pass.length > 15
+                                      }
+                                    >
+                                      Join
+                                    </button>
+                                  </div>
+                                )}
+                              {chan.visibility === "PUBLIC" &&
+                                activeChannel === chan.id && (
+                                  <button
+                                    className="buttonseemore buttonchan"
+                                    onClick={() =>
+                                      clickToJoinChan(
+                                        chan.id,
+                                        chan.name,
+                                        "PUBLIC",
+                                        ""
+                                      )
+                                    }
+                                  >
+                                    Join
+                                  </button>
+                                )}
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </ul>
+                  </div>
                 </div>
-              </button>
-            </div>
-          ))}
-          <div>
-            {isPrivatechan === 1 && (
-              <div>
-                <ul>
-                  <h1>Liste des gens que tu peux inviter :</h1>
-                  {notInRoom.map((chan) => (
-                    <div key={chan.id}>
+                <div className="small-box">
+                  <div>
+                    <ul>
+                      <p>slide in your dm</p>
+                      {privMSG.length === 0 ||
+                      privMSG.every((priv) => priv.isBlocked === "true") ? (
+                        <p>no dm</p>
+                      ) : (
+                        privMSG.map((priv) => (
+                          <div key={priv.id}>
+                            {priv.isBlocked === "false" && (
+                              <button
+                                className="buttonseemore buttonchan"
+                                onClick={() => {
+                                  navToPrivateConv(priv.id);
+                                  if (showConv) {
+                                    handleButtonConv();
+                                  } else {
+                                    setShowConv(true);
+                                    setShowChatChannel(false);
+                                    setActiveChannel(0);
+                                  }
+                                }}
+                                disabled={selectedPrivateConv === priv.id}
+                              >
+                                <div>{priv.username} + {priv.status}</div>
+                              </button>
+                            )}
+                          </div>
+                        ))
+                      )}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <ul>
+                      <p>joined channels</p>
+                      {channelsJoin.length === 0 ? (
+                        <p>no chan joined</p>
+                      ) : (
+                        channelsJoin.map((chan) => (
+                          <div key={chan.id}>
+                            <button
+                              className="buttonseemore buttonchan"
+                              onClick={() => {
+                                if (chan.AmIBanned === "false") {
+                                  navToChan(chan.id, chan.name);
+                                  if (showChatChannel) {
+                                    handleButton();
+                                  } else {
+                                    setShowChatChannel(true);
+                                    setShowConv(false);
+                                    setSelectedPrivateConv(0);
+                                  }
+                                  if (chan.visibility === "PRIVATE") {
+                                    setIsPrivatechan(1);
+                                  } else setIsPrivatechan(0);
+                                } else {
+                                  fetchBanTimeLeft(chan.id);
+                                  setActiveBanChannel(chan.id);
+                                  setNotifyMSG(
+                                    "you've been banned for " +
+                                      banTimeLeft +
+                                      " seconds"
+                                  );
+                                  setShowNotification(true);
+                                  setNotifyType(2);
+                                }
+                              }}
+                              disabled={activeChannel === chan.id}
+                            >
+                              <div>
+                                {chan.name} --- {chan.visibility}
+                              </div>
+                            </button>
+                            {activeChannel === chan.id &&
+                              showChatButton === true && (
+                                <div>
+                                  <button onClick={leftChannel}>
+                                    Quitter le channel ?
+                                  </button>
+                                </div>
+                              )}
+                          </div>
+                        ))
+                      )}
                       <div>
-                        id: {chan.id} - user {chan.username}
+                        {isPrivatechan === 1 && (
+                          <div>
+                            <ul>
+                              <p>invite them!</p>
+                              {notInRoom.map((chan) => (
+                                <div key={chan.id}>
+                                  <div style={{ fontWeight: "bold" }}>
+                                    {chan.username}
+                                  </div>
+                                  <button
+                                    className="buttonseemore buttonchan"
+                                    onClick={() => clickToInvite(chan.id)}
+                                  >
+                                    Invite to chan
+                                  </button>
+                                </div>
+                              ))}
+                            </ul>
+                            <ul>
+                              <p>you already invited</p>
+                              {invSend.map((invsend) => (
+                                <div key={invsend.id}>
+                                  <div>{invsend.username}</div>
+                                  <button
+                                    className="buttonseemore buttonnotchan"
+                                    onClick={() =>
+                                      refuseInvite(invsend.id.toString())
+                                    }
+                                  >
+                                    Cancel invite
+                                  </button>
+                                </div>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                       </div>
-                      <button onClick={() => clickToInvite(chan.id)}>
-                        Invite to chan
-                      </button>
+                    </ul>
+                  </div>
+                </div>
+                <div className="small-box wider-box">
+                  <div className="chat_list">
+                    <div className="navbarmainpage nav_box">
+                      <img src={icon} className="buttonnav" alt="icon" />
+                      <p className="title_box">WHO'S ONLINE</p>
                     </div>
-                  ))}
-                </ul>
-                <ul>
-                  <h1>Liste des gens que as inviter :</h1>
-                  {invSend.map((invsend) => (
-                    <div key={invsend.id}>
-                      <div>
-                        id: {invsend.id} - user {invsend.username}
-                      </div>
-                      <button
-                        onClick={() => refuseInvite(invsend.id.toString())}
-                      >
-                        Cancel invite
-                      </button>
+                  </div>
+                  <div className="message_box">
+                    <div className="navbarmainpage nav_box">
+                      <img src={icon} className="buttonnav" alt="icon" />
+                      <p className="title_box">CONV WITH {activeChannelName}</p>
+                      {!showConv && recipient && <PrivateChat />}
+                      {showConv && <PrivateChat />}
+                      {showChatChannel && <ChatChannel />}
+                      {!showChatChannel && id && <ChatChannel />}
                     </div>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </ul>
-      </div>
-      <div className="chat_list">
-        <div className="navbarmainpage nav_box">
-          <img src={icon} className="buttonnav" alt="icon" />
-          <p className="title_box">WHO'S ONLINE</p>
-        </div>
-      </div>
-      <div className="message_box">
-        <div className="navbarmainpage nav_box">
-          <img src={icon} className="buttonnav" alt="icon" />
-          <p className="title_box">CONV WITH m a c h i n</p>
-        </div>
-      </div>
-      <div>
+                  </div>
+                  {/* <div>
         <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
           LOG OUT{" "}
         </button>
+      </div> */}
+                </div>
+                <div className="small-box">
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Nom de la room"
+                      value={valueRoom}
+                      onChange={handleInputChange}
+                    />
+                    <select
+                      value={selectedOption}
+                      onChange={handleOptionChange}
+                    >
+                      <option value="public">Public</option>
+                      <option value="private">Private</option>
+                      <option value="protected">Protected</option>
+                    </select>
+                    {selectedOption === "protected" && (
+                      <input
+                        type="password"
+                        placeholder="Mot de passe"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    )}
+                    <button
+                      onClick={createRoom}
+                      disabled={
+                        isButtonDisabled ||
+                        (selectedOption === "protected" &&
+                          (password.length === 0 || password.length > 15)) ||
+                        valueRoom.length > 15
+                      }
+                    >
+                      Créer une nouvelle room
+                    </button>
+                    <button
+                      onClick={joinRoom}
+                      disabled={
+                        isButtonDisabled ||
+                        (selectedOption === "protected" &&
+                          (password.length === 0 || password.length > 15)) ||
+                        valueRoom.length > 15
+                      }
+                    >
+                      Rejoindre une room existante
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {/* {showChatChannel && <ChatChannel />}
+      {!showChatChannel && id && <ChatChannel />} */}
+              {/* {!showConv && recipient && <PrivateChat />}
+      {showConv && <PrivateChat />} */}
+              {(showConv || recipient) && showChatChannel && (
+                <div>{desacButton() as any}</div>
+              )}
+            </div>
+          </div>
+        </main>
+        <nav>
+          <ul>
+            <li className="menu-item">
+              <a onClick={navigateToHome}>
+                <img src={folderviolet} alt="Menu 3" />
+                <p>Home</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={() => navToGamePage()}>
+                <img src={folderblue} alt="Menu 3" />
+                <p>Game</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToProfPage}>
+                <img src={folderpink} alt="Menu 3" />
+                <p>Profile</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToSettings}>
+                <img src={folderyellow} alt="Menu 3" />
+                <p>Settings</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToFriends}>
+                <img src={folderwhite} alt="Menu 3" />
+                <p>Friends</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToChat}>
+                <img src={foldergreen} alt="Menu 3" />
+                <p>Chat</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
 
-      <div>
-        <input
-          type="text"
-          placeholder="Nom de la room"
-          value={valueRoom}
-          onChange={handleInputChange}
-        />
-        <select value={selectedOption} onChange={handleOptionChange}>
-          <option value="public">Public</option>
-          <option value="private">Private</option>
-          <option value="protected">Protected</option>
-        </select>
-        {selectedOption === "protected" && (
-          <input
-            type="password"
-            placeholder="Mot de passe"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        )}
-        <button
-          onClick={createRoom}
-          disabled={
-            isButtonDisabled ||
-            (selectedOption === "protected" &&
-              (password.length === 0 || password.length > 15)) ||
-            valueRoom.length > 15
-          }
-        >
-          Créer une nouvelle room
+      <footer>
+        <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
+          LOG OUT{" "}
         </button>
-        <button
-          onClick={joinRoom}
-          disabled={
-            isButtonDisabled ||
-            (selectedOption === "protected" &&
-              (password.length === 0 || password.length > 15)) ||
-            valueRoom.length > 15
-          }
-        >
-          Rejoindre une room existante
-        </button>
-      </div>
-      {showChatChannel && <ChatChannel />}
-      {!showChatChannel && id && <ChatChannel />}
-      {!showConv && recipient && <PrivateChat />}
-      {showConv && <PrivateChat />}
-      {(showConv || recipient) && showChatChannel && (
-        <div>{desacButton() as any}</div>
-      )}
-    </div>
+        <img src={logo} className="logo" alt="icon" />
+      </footer>
+    </>
   );
 };
 

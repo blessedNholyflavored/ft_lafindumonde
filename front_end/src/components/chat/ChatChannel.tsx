@@ -26,6 +26,7 @@ interface users {
   role: string;
   isBlocked: string;
   isMuted: string;
+  status: string;
 }
 
 export const ChatChannel = () => {
@@ -92,8 +93,7 @@ export const ChatChannel = () => {
   }
 
   async function fetchRoomMessageList() {
-    if (!id)
-      return ;
+    if (!id) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/recupRoomMess/${id}`,
@@ -200,6 +200,7 @@ export const ChatChannel = () => {
               role: string;
               isBlocked: string;
               isMuted: string;
+              status: string;
             }) => {
               if (user) {
                 const isBlockedResponse = await fetch(
@@ -216,11 +217,24 @@ export const ChatChannel = () => {
                     credentials: "include",
                   }
                 );
-                if (isBlockedResponse.ok && isMutedResponse.ok) {
+                const statusResponse = await fetch(
+                  `http://${window.location.hostname}:3000/users/status/${friend.id}`,
+                  {
+                    method: "GET",
+                    credentials: "include",
+                  }
+                );
+                if (
+                  isBlockedResponse.ok &&
+                  isMutedResponse.ok &&
+                  statusResponse.ok
+                ) {
                   const isBlocked = isBlockedResponse.text();
                   friend.isBlocked = await isBlocked;
                   const isMuted = isMutedResponse.text();
                   friend.isMuted = await isMuted;
+                  const status = statusResponse.text();
+                  friend.status = await status;
                 }
               }
               return friend;
@@ -348,6 +362,14 @@ export const ChatChannel = () => {
     if (socket) {
       socket.on("refreshAfterUnmute", async () => {
         setMuteTimeLeft(-1);
+      });
+    }
+
+    if (socket) {
+      socket.on("SomeoneGoOnlineOrOffline", () => {
+        setTimeout(() => {
+          fetchUserInRoom();
+        }, 150);
       });
     }
 
@@ -844,10 +866,6 @@ export const ChatChannel = () => {
         />
       )}
       <div>
-        <div>
-          <button onClick={leftChannel}>Quitter le channel ?</button>
-        </div>
-
         {id && (
           <ul>
             <h1>Liste des messages envoyés :</h1>
@@ -1013,8 +1031,8 @@ export const ChatChannel = () => {
                 disabled={user?.id === users.id}
               >
                 <div>
-                  id: {users.id} --- name users: {users.username} --- role:{" "}
-                  {users.role}
+                  id: {users.id} --- name users: {users.username} --- role:
+                  {users.role} --- status: {users.status}
                 </div>
               </button>
               {showMenu && selectedUser === users.id && (
