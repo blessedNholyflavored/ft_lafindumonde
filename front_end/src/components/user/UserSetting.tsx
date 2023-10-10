@@ -271,6 +271,7 @@ export const UserSetting: React.FC = () => {
   };
 
   const randomPic = async () => {
+    // pokemon avatar generator on all 1st gen pokemons
     const id = Math.floor(Math.random() * 151) + 1;
     let newPokeImg;
     try {
@@ -281,8 +282,13 @@ export const UserSetting: React.FC = () => {
         .then((resData) => {
           newPokeImg = resData.sprites.other.home.front_default;
         })
-        .catch(() => (newPokeImg = champi.toString()));
+        .catch(
+          () =>
+            (newPokeImg =
+              "https://i.kym-cdn.com/entries/icons/original/000/027/475/Screen_Shot_2018-10-25_at_11.02.15_AM.png")
+        );
 
+      // sending image to update avatar in db
       const response = await fetch(
         `http://${window.location.hostname}:3000/users/pokePic`,
         {
@@ -296,20 +302,13 @@ export const UserSetting: React.FC = () => {
           credentials: "include",
         }
       );
-      // setImgUrl(newPokeImg as any);
-      // if (response.status === 401) {
-      //   console.log("oui erreur ouuuh");
-      // }
-      if (response.ok) {
-        setShowNotification(true);
-        setNotifyMSG("You successfully changed your avatar!");
-        setNotifyType(2);
-      } else {
+      if (!response.ok) {
+        // this response to post request only handle bad case
+        // response.ok is something it doesn't want to hear about :(
         setShowNotification(true);
         setNotifyMSG("Something went wrong !");
         setNotifyType(3);
       }
-      displayPic();
     } catch (err) {}
   };
 
@@ -341,39 +340,56 @@ export const UserSetting: React.FC = () => {
 
   const twoFADisable = async (context: any) => {
     try {
-      const res = await api.get("/auth/2FAdisable");
-      context.setUser(res.data);
-      if (res.data.log2FA) {
-        setShowNotification(true);
-        setNotifyMSG(
-          "You successfully disabled the two factor authentication!"
-        );
-        setNotifyType(2);
-        set2FA(false);
-      } else {
+      const res = await fetch(
+        `http://${window.location.hostname}:3000/auth/2FAdisable`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (res.status === 409) {
         setShowNotification(true);
         setNotifyMSG(
           "You can't disable something that wasn't enabled, weirdoo !!!"
         );
         setNotifyType(3);
+      } else if (!res.ok) {
+        setShowNotification(true);
+        setNotifyMSG(
+          "are you trying to break our website AND our nerves ? :'(((("
+        );
+        setNotifyType(3);
+      } else {
+        const data = await res.json();
+        context.setUser(data);
+        // honestly next checks are really overkill since error case are already handled
+        // but I guess a bit more of error handling is always useful !
+        if (data.log2FA) {
+          setShowNotification(true);
+          setNotifyMSG(
+            "You successfully disabled the two factor authentication!"
+          );
+          setNotifyType(2);
+          set2FA(false);
+        } else {
+          setShowNotification(true);
+          setNotifyMSG(
+            "You can't disable something that wasn't enabled, weirdoo !!!"
+          );
+          setNotifyType(3);
+        }
       }
     } catch (error) {}
   };
 
   const twoFAEnable = async (navigate: any, user: any) => {
+    // all logic is handled in Notify.tsx (which is not the best way to do it sorry,,,,,,,,,)
     if (user.loginLoc === true) {
       setShowNotification(true);
       setNotifyMSG("You can't enable 2FA with this type of account !");
       setNotifyType(3);
-      return;
-    }
-    // if (user.log2FA ===true){
-    //   setShowNotification(true);
-    //   setNotifyMSG("Do you really want to reset two-factor authentication")
-    //   setNotifyType(4);
-    //   setSender(sender);
-    // }
-    else {
+      // return;
+    } else {
       setShowNotification(true);
       setNotifyMSG(
         "Are you ready to save the QR code you will be provided in the next page ?"
@@ -449,6 +465,7 @@ export const UserSetting: React.FC = () => {
                             type="password"
                             value={newPass}
                             minLength={8}
+                            maxLength={20}
                             required={true}
                             placeholder="type new password"
                             onChange={(e) => setNewPass(e.target.value)}
@@ -503,16 +520,20 @@ export const UserSetting: React.FC = () => {
                     <button
                       className="buttonsettings"
                       onClick={() => {
+                        // as post in randomPic() doesn't handle res.ok for mysterious reasons
+                        // we choose to handle notif and stuff here directly
                         randomPic();
                         setShowNotification(true);
                         setNotifyMSG("You successfully changed your avatar!");
                         setNotifyType(2);
                         setChanges(changes + 1);
                         setTimeout(() => {
+                          // timer to call displayPic() but not spamming it
                           displayPic();
                         }, 300);
                       }}
                       disabled={changes === 1}
+                      // adding the disabled stuff to avoid too many request as this external api isn't enough solid
                     >
                       Generate new avatar
                     </button>

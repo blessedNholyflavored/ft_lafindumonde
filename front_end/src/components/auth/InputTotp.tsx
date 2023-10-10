@@ -14,7 +14,6 @@ export const InputTotp: React.FC = () => {
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
   const [sender, setSender] = useState<number>(0);
-  // const navigate = useNavigate();
 
   const handleCloseNotification = () => {
     setShowNotification(false);
@@ -35,10 +34,12 @@ export const InputTotp: React.FC = () => {
           }
         );
         if (response.status === 200) {
+          // if user passed successfully totpGuards
           const data = await response.json();
           setUser(data.user);
           window.location.reload();
         } else if (response.status === 401) {
+          // if he gets an Unauthorized error
           setShowNotification(true);
           setNotifyMSG("Something is wrong with your inputs !");
           setNotifyType(3);

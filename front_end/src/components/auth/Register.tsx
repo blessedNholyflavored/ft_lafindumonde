@@ -26,6 +26,7 @@ export function Register() {
       navigate("/");
     }
   }, [navigate, user]);
+
   const handleCloseNotification = () => {
     setShowNotification(false);
   };
@@ -34,12 +35,13 @@ export function Register() {
     navigate("/local_login");
   };
 
-  // sending input to back_end to verify and register
+  // sending input to back_end to verify and register and giving random avatar
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const id = Math.floor(Math.random() * 151);
-    let pokeimg;
 
+    // pokemon avatar generator
+    const id = Math.floor(Math.random() * 151) + 1;
+    let pokeimg;
     await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`, {
       method: "GET",
     })
@@ -47,13 +49,19 @@ export function Register() {
       .then((resData) => {
         pokeimg = resData.sprites.other.home.front_default;
       })
-      .catch(() => (pokeimg = champi.toString()));
+      .catch(
+        () =>
+          (pokeimg =
+            "https://i.kym-cdn.com/entries/icons/original/000/027/475/Screen_Shot_2018-10-25_at_11.02.15_AM.png")
+      );
     // await fetch(`https://dog.ceo/api/breeds/image/random`, {
     //   method: "GET",
     // })
     //   .then((response) => response.json())
     //   .then((responseData) => (dogimg = responseData.message.toString()))
     //   .catch(() => (dogimg = champi.toString()));
+
+    // register backend auth logic by sending inputs
     const res = await fetch(
       `http://${window.location.hostname}:3000/auth/register`,
       {
@@ -71,14 +79,15 @@ export function Register() {
       }
     );
     if (res.status === 409) {
+      // email already existing in db
       setShowNotification(true);
       setNotifyMSG("Email is already taken !");
       setNotifyType(3);
       setInputPassword("");
       setInputUsername("");
       setInputEmail("");
-      //TODO: add a return to general login or SignIn only in this case
     } else if (res.status === 406) {
+      // email is in 42 format --> must use 42 Oauth system
       setShowNotification(true);
       setNotifyMSG("You must use 42 LogIn system !");
       setNotifyType(3);
@@ -86,6 +95,7 @@ export function Register() {
       setInputUsername("");
       setInputEmail("");
     } else if (!res.ok) {
+      //something else failed (validationPipes like wrong mail format mostly)
       setShowNotification(true);
       setNotifyMSG("Something is wrong with your inputs !");
       setNotifyType(3);
@@ -93,15 +103,12 @@ export function Register() {
       setInputUsername("");
       setInputEmail("");
     } else {
+      // everything went well user is correctly set
       const data = await res.json();
       setUser(data.user);
       window.location.reload();
     }
   };
-
-  // const returnHome = () => {
-  //   navigate("/");
-  // };
 
   const fortyTwoLogin = () => {
     window.location.href = `http://${window.location.hostname}:3000/auth/login42`;
@@ -149,6 +156,7 @@ export function Register() {
                 value={inputPassword}
                 placeholder="********"
                 minLength={8}
+                maxLength={20}
                 required={true}
                 onChange={(e) => setInputPassword(e.target.value)}
               />
