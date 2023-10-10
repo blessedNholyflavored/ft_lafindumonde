@@ -47,6 +47,8 @@ export const PrivateChat = () => {
   const socket = useContext(WebsocketContext);
   const [isBlocked, setIsBlocked] = useState<string>("");
   let messages: messages;
+  const bottomEl = useRef<null | HTMLDivElement>(null);
+
 
   async function fetchPrivMessageList() {
     try {
@@ -117,6 +119,8 @@ export const PrivateChat = () => {
       return [];
     }
   }
+
+
   async function fetchLastMessage() {
     try {
       const response = await fetch(
@@ -189,19 +193,6 @@ export const PrivateChat = () => {
         const scores = await fetchPrivMessageList();
       }
     }
-
-      // if (socket) {
-      //   socket.on("refreshMessages", () => {
-      //     fetchPrivMessage();
-      //     setTimeout(() => {
-      //       scrollToBottom();
-      //     }, 300);
-      //   });
-      // }
-
-
-
-   
 
     checkBlocked(recipient as any, user?.id as any);
     fetchPrivMessage();
@@ -307,7 +298,6 @@ export const PrivateChat = () => {
     }
   };
 
-  const bottomEl = useRef<null | HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     bottomEl?.current?.scrollIntoView({ behavior: "smooth" });

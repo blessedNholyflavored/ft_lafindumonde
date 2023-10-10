@@ -641,7 +641,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       socket.emit("refreshMessages");
     }
 
-    @SubscribeMessage('reloadMessRoom')
+    @SubscribeMessage('reloadMessRoomTEST')
     async onNewMessageRoom(@MessageBody() id: string,@ConnectedSocket() socket: Socket)
     {
       if (!id)
@@ -649,11 +649,14 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       let user1;
       const Ids = this.chatService.getUsersInRoom(id);
       (await Ids).forEach((userId) => {
+      console.log(userId);
+
         this.playerConnections.forEach((value, key) => {
           if (key === userId)
             user1 = value;
           if (user1) {
             user1.emit("refreshMessagesRoom");
+            user1 = null;
           }
         });
       });
@@ -840,11 +843,5 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
             roomID: recupRoom.idRoom};
 
             socket.emit("sendRoomAtStart", Sroom);
-      }
-
-      @SubscribeMessage('ttt')
-      async ttt(@ConnectedSocket() socket: Socket)
-      {
-        console.log("dvfvdfvfdvfdvfd')");
       }
 }

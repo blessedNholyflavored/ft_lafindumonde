@@ -30,6 +30,19 @@ export class ChatController {
   }
 
   
+  
+  @Get('/recupRoomMessLast/:id/')
+  async recupRoomMessLast(@Param('id') id: number, @Req() req:any)
+  {
+		// check if user emitting request is in the room
+		const usersInRoom = await this.chatService.getUsersInRoom(id.toString());
+		if (usersInRoom.includes(req.user.id) === false)
+		{
+			throw new UnauthorizedException("User isn't in room");
+		}
+    return this.chatService.recupRoomMessLast(id.toString());
+  }
+
   @Get('/recupRoomMess/:id/')
   async recupRoomMess(@Param('id') id: number, @Req() req:any)
   {

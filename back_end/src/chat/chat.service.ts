@@ -386,6 +386,27 @@ async recupRoomMess(roomId:string)
 }
 }
 
+async recupRoomMessLast(roomId:string)
+{
+  const ret1 = await prisma.chatroom.findUnique({
+    where: {
+      id: parseInt(roomId),
+    },
+    select: {
+      roomMess : true,
+    }
+});
+
+      if (ret1)
+        {
+            const ret = merge(ret1);
+            const allGames: privateMessage[] = [...ret.roomMess].sort(
+                (a, b) => Date.parse(a.start_at) - Date.parse(b.start_at)
+            );
+        return (allGames[allGames.length - 1]);
+}
+}
+
 async  recupUserNotInChan(roomId: string, userId: string) {
   try {
     const usersInChannel = await prisma.userOnChannel.findMany({

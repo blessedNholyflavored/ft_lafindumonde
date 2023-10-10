@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import "./../../App.css";
 import "./../../style/Chat.css";
 import "./../../style/Logout.css";
@@ -69,6 +69,8 @@ export const ChatChannel = () => {
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
   const [sender, setSender] = useState<number>(0);
+  let messages: messages;
+  const bottomEl = useRef<null | HTMLDivElement>(null);
 
   async function fetchUsernameById(userId: string) {
     try {
@@ -296,6 +298,81 @@ export const ChatChannel = () => {
     }
   }
 
+  async function fetchLastMessage() {
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/chat/recupRoomMessLast/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des messages privés.");
+      }
+      messages = await response.json();
+      console.log(messages);
+      try {
+        const senderResponse = await fetch(
+          `http://${window.location.hostname}:3000/users/${messages.senderId}/username`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        const rolesenderResponse = await fetch(
+          `http://${window.location.hostname}:3000/chat/getRole/${messages.senderId}/${id}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        const isBlockedResponse = await fetch(
+          `http://${window.location.hostname}:3000/friends/blocked/${messages.senderId}/${user?.id}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        if (
+          senderResponse.ok &&
+          rolesenderResponse.ok &&
+          isBlockedResponse.ok
+        ) {
+          const senderUsername = await senderResponse.text();
+          const senderRole = await rolesenderResponse.text();
+          const isBlocked = await isBlockedResponse.text();
+
+          messages.senderUsername = senderUsername;
+          messages.senderRole = senderRole;
+          messages.isBlocked = isBlocked;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      setMessageList((prevMessages) => [...prevMessages, messages]);
+      return messages;
+    } catch (error) {
+      console.error("Erreur :", error);
+      return null;
+    }
+  }
+
+  const scrollToBottom = () => {
+    bottomEl?.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("refreshMessagesRoom", () => {
+        setTimeout(() => {
+          fetchLastMessage();
+          scrollToBottom();
+        }, 300);
+      });
+    }
+  }, []);
+
   useEffect(() => {
     if (reactu === 0) {
       setTimeout(() => {
@@ -335,12 +412,7 @@ export const ChatChannel = () => {
         const scores = await fetchMuteTimeLeft(user?.id);
       }
     }
-    if (socket) {
-      socket.on("refreshMessagesRoom", () => {
-        fetchRoomMessage();
-        fetchUserInRoom();
-      });
-    }
+
     if (socket) {
       socket.on("refreshListRoom", () => {
         fetchUserInRoom();
@@ -386,7 +458,7 @@ export const ChatChannel = () => {
     if (value.length > 0) {
       socket.emit("newMessageRoom", value, id);
       setTimeout(() => {
-        socket.emit("reloadMessRoom", id);
+        socket.emit("reloadMessRoomTEST", id);
       }, 100);
     }
     setValue("");
@@ -866,18 +938,18 @@ export const ChatChannel = () => {
         />
       )}
       {/* <div className="realchat"> */}
-        <div >
+      <div>
         {id && (
           <ul>
             {messageListSend.length > 0 && user ? (
               messageListSend.map((friend, index) => (
                 <div className="messorder" key={index}>
                   {friend.senderId === user?.id && (
-                    <div className="sentmessage" >
+                    <div className="sentmessage">
                       <div>
                         {/* <div>{friend.start_at}</div> */}
                         <div className="whoschattin">
-                          {friend.senderUsername} 
+                          {friend.senderUsername}
                           {/* --- {friend.senderRole} */}
                         </div>
                         <div>{friend.content}</div>
@@ -886,12 +958,14 @@ export const ChatChannel = () => {
                   )}
                   {friend.senderId !== user?.id &&
                     friend.isBlocked === "false" && (
-                      <div className="receivedmessage" >
-                        <div >
+                      <div className="receivedmessage">
+                        <div>
                           {/* <div>{friend.start_at}</div> */}
-                          <div className="whoschattin">{friend.senderUsername}</div>
+                          <div className="whoschattin">
+                            {friend.senderUsername}
+                          </div>
                           <div>
-                            {friend.content} 
+                            {friend.content}
                             {/* --- {friend.senderRole} */}
                           </div>
                         </div>
@@ -902,6 +976,7 @@ export const ChatChannel = () => {
             ) : (
               <div>no messages yet!</div>
             )}
+            <div ref={bottomEl}></div>{" "}
           </ul>
         )}
       </div>
@@ -916,17 +991,19 @@ export const ChatChannel = () => {
         </div>
       )}
       {userIsMuted === false && (
-          <div className="sendingzonechannel">
-            <input
-          className="sendchanbttn"
+        <div className="sendingzonechannel">
+          <input
+            className="sendchanbttn"
             type="text"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyPress={handleEnter}
           />
-          <button 
-                className="buttonseemore buttonchan"
-                onClick={onSubmit} disabled={value.length > 80}>
+          <button
+            className="buttonseemore buttonchan"
+            onClick={onSubmit}
+            disabled={value.length > 80}
+          >
             send
           </button>
         </div>
@@ -1026,8 +1103,7 @@ export const ChatChannel = () => {
             </button>
           </div>
         )}
-{/* </div> */}
-         
+        {/* </div> */}
       </div>
       <div className="onlinepeople">
         <ul>
@@ -1039,8 +1115,7 @@ export const ChatChannel = () => {
                 disabled={user?.id === users.id}
               >
                 <div>
-                  {users.username} -
-                  {users.role} - {users.status}
+                  {users.username} -{users.role} - {users.status}
                 </div>
               </button>
               {showMenu && selectedUser === users.id && (
@@ -1233,7 +1308,6 @@ export const ChatChannel = () => {
         </ul>
       </div>
     </div>
-    
   );
 };
 
