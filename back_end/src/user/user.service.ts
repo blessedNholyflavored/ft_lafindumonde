@@ -152,7 +152,7 @@ export class UserService {
         ...game,
         start_at: format(new Date(game.start_at), 'dd/MM/yyyy HH:mm'),
       }));
-      return formattedAllGames.slice(0, 5);
+      return formattedAllGames.reverse().slice(0, 8);
     }
   }
 
@@ -461,8 +461,7 @@ export class UserService {
   async add2FAKey(hash: string, qrcode: string, id: number) {
     const updateUser = await prisma.user.update({
       where: { id: id },
-      data: { totpKey: hash,
-							totpQRCode: qrcode },
+      data: { totpKey: hash, totpQRCode: qrcode },
     });
     return updateUser;
   }
