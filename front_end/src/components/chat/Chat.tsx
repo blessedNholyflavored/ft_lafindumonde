@@ -245,28 +245,30 @@ export const Chat = () => {
       const data = await response.json();
 
       if (data.length > 0) {
-        const promises = data.map(async (userId: string, isBlocked: string, status: string) => {
-          const username = await fetchUsernameById(userId);
-          const isBlockedResponse = await fetch(
-            `http://${window.location.hostname}:3000/friends/blocked/${userId}/${user?.id}`,
-            {
-              method: "GET",
-              credentials: "include",
-            }
-          );
-          const blocked = await isBlockedResponse.text();
-          isBlocked = blocked;
-          const statusResponse = await fetch(
-            `http://${window.location.hostname}:3000/users/status/${userId}`,
-            {
-              method: "GET",
-              credentials: "include",
-            }
-          );
-          const repStatus = await statusResponse.text();
-          status = repStatus;
-          return { id: userId, username, isBlocked, status };
-        });
+        const promises = data.map(
+          async (userId: string, isBlocked: string, status: string) => {
+            const username = await fetchUsernameById(userId);
+            const isBlockedResponse = await fetch(
+              `http://${window.location.hostname}:3000/friends/blocked/${userId}/${user?.id}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            const blocked = await isBlockedResponse.text();
+            isBlocked = blocked;
+            const statusResponse = await fetch(
+              `http://${window.location.hostname}:3000/users/status/${userId}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            const repStatus = await statusResponse.text();
+            status = repStatus;
+            return { id: userId, username, isBlocked, status };
+          }
+        );
 
         const usernames: privMSG[] = await Promise.all(promises);
         setPrivMSG(usernames);
@@ -1158,7 +1160,9 @@ export const Chat = () => {
                                 }}
                                 disabled={selectedPrivateConv === priv.id}
                               >
-                                <div>{priv.username} + {priv.status}</div>
+                                <div>
+                                  {priv.username} + {priv.status}
+                                </div>
                               </button>
                             )}
                           </div>
@@ -1178,6 +1182,10 @@ export const Chat = () => {
                             <button
                               className="buttonseemore buttonchan"
                               onClick={() => {
+                                if (showChatButton === false)
+                                  setShowChatButton(true);
+                                else setShowChatButton(true);
+
                                 if (chan.AmIBanned === "false") {
                                   navToChan(chan.id, chan.name);
                                   if (showChatChannel) {
