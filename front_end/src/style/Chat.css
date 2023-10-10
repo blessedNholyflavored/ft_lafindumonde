@@ -33,21 +33,12 @@
     background-image: url(../img/social.png);
 }
 
-.message_box{
-	/* margin:0 15px; */
 
-	width: 500px;
-	height: 400px;
-	border: 1px solid black;
-	box-shadow: 10px 12px 0px 0px #000;
-	border-bottom: 1px solid #000;
-	background-color: white;
-    background-image: url(../img/social.png);
-}
 
 .divdeschats {
 	display: flex;
 	justify-content: space-between;
+	gap : 10px
 }
 .small-box {
 	flex: 1;
@@ -74,6 +65,11 @@
 	background-color: #0BDA51;
 }
 
+
+.leave:hover{
+	background-color: #FA8072;
+}
+
 .firstsmall{
 	display: flex;
 	flex-direction: column;
@@ -83,4 +79,29 @@
 .small-box:nth-child(1) {
 	/* border: #0BDA51 2px solid; */
 	overflow: auto;
+}
+
+.inputpasswd{
+	width: 40%;
+	height: 90%;;
+}
+
+
+.chatbox{
+	background-color: pink;
+}
+
+.message_box{
+
+	/* width: 500px; */
+	/* height: 400px; */
+	border: 1px solid black;
+	box-shadow: 10px 12px 0px 0px #000;
+	border-bottom: 1px solid #000;
+	background-color: white;
+    background-image: url(../img/social.png);
+}
+
+.onlinepeople{
+	background-color: aqua;
 }

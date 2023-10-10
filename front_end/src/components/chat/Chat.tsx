@@ -245,28 +245,30 @@ export const Chat = () => {
       const data = await response.json();
 
       if (data.length > 0) {
-        const promises = data.map(async (userId: string, isBlocked: string, status: string) => {
-          const username = await fetchUsernameById(userId);
-          const isBlockedResponse = await fetch(
-            `http://${window.location.hostname}:3000/friends/blocked/${userId}/${user?.id}`,
-            {
-              method: "GET",
-              credentials: "include",
-            }
-          );
-          const blocked = await isBlockedResponse.text();
-          isBlocked = blocked;
-          const statusResponse = await fetch(
-            `http://${window.location.hostname}:3000/users/status/${userId}`,
-            {
-              method: "GET",
-              credentials: "include",
-            }
-          );
-          const repStatus = await statusResponse.text();
-          status = repStatus;
-          return { id: userId, username, isBlocked, status };
-        });
+        const promises = data.map(
+          async (userId: string, isBlocked: string, status: string) => {
+            const username = await fetchUsernameById(userId);
+            const isBlockedResponse = await fetch(
+              `http://${window.location.hostname}:3000/friends/blocked/${userId}/${user?.id}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            const blocked = await isBlockedResponse.text();
+            isBlocked = blocked;
+            const statusResponse = await fetch(
+              `http://${window.location.hostname}:3000/users/status/${userId}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            const repStatus = await statusResponse.text();
+            status = repStatus;
+            return { id: userId, username, isBlocked, status };
+          }
+        );
 
         const usernames: privMSG[] = await Promise.all(promises);
         setPrivMSG(usernames);
@@ -1042,7 +1044,7 @@ export const Chat = () => {
                                     )
                                   }
                                 >
-                                  ACCEPT
+                                  accept request
                                   <div></div>
                                 </button>
                                 <button
@@ -1087,8 +1089,9 @@ export const Chat = () => {
                                 chan.visibility === "PWD_PROTECTED" && (
                                   <div>
                                     <input
+                                      className="inputpasswd"
                                       type="password"
-                                      placeholder="Entrez le mot de passe"
+                                      placeholder="enter password"
                                       value={pass}
                                       onChange={handlePasswordChange}
                                     />
@@ -1136,7 +1139,9 @@ export const Chat = () => {
                 <div className="small-box">
                   <div>
                     <ul>
-                      <p>slide in your dm</p>
+                      <div className="navbarsmallbox">
+                        <p style={{ color: "white" }}>slide in your dm</p>
+                      </div>
                       {privMSG.length === 0 ||
                       privMSG.every((priv) => priv.isBlocked === "true") ? (
                         <p>no dm</p>
@@ -1158,7 +1163,9 @@ export const Chat = () => {
                                 }}
                                 disabled={selectedPrivateConv === priv.id}
                               >
-                                <div>{priv.username} + {priv.status}</div>
+                                <div>
+                                  {priv.username} - {priv.status}
+                                </div>
                               </button>
                             )}
                           </div>
@@ -1169,7 +1176,9 @@ export const Chat = () => {
 
                   <div>
                     <ul>
-                      <p>joined channels</p>
+                      <div className="navbarsmallbox">
+                        <p style={{ color: "white" }}>joined channels</p>
+                      </div>
                       {channelsJoin.length === 0 ? (
                         <p>no chan joined</p>
                       ) : (
@@ -1208,14 +1217,17 @@ export const Chat = () => {
                                 {chan.name} --- {chan.visibility}
                               </div>
                             </button>
-                            {activeChannel === chan.id &&
-                              showChatButton === true && (
-                                <div>
-                                  <button onClick={leftChannel}>
-                                    Quitter le channel ?
-                                  </button>
-                                </div>
-                              )}
+                            {/* {activeChannel === chan.id &&
+                              showChatButton === true && ( */}
+                            <div>
+                              <button
+                                className="buttonseemore buttonchan leave"
+                                onClick={leftChannel}
+                              >
+                                Leave chan
+                              </button>
+                            </div>
+                            {/* )} */}
                           </div>
                         ))
                       )}
@@ -1272,16 +1284,11 @@ export const Chat = () => {
                       <img src={icon} className="buttonnav" alt="icon" />
                       <p className="title_box">CONV WITH {activeChannelName}</p>
                       {!showConv && recipient && <PrivateChat />}
-                      {showConv && <PrivateChat />}
-                      {showChatChannel && <ChatChannel />}
-                      {!showChatChannel && id && <ChatChannel />}
+                      <div className="chatbox">{showConv && <PrivateChat />}</div>
+                      <div className="chatbox">{showChatChannel && <ChatChannel />}
+                      {!showChatChannel && id && <ChatChannel />}</div>
                     </div>
                   </div>
-                  {/* <div>
-        <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
-          LOG OUT{" "}
-        </button>
-      </div> */}
                 </div>
                 <div className="small-box">
                   <div>

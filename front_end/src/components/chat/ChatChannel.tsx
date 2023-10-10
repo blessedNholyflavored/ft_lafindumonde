@@ -1022,6 +1022,7 @@ export const ChatChannel = () => {
           </div>
         )}
 
+          <div className="onlinepeople">
         <ul>
           <h1>Liste des utilisateurs :</h1>
           {usersInRoom.map((users) => (
@@ -1223,6 +1224,7 @@ export const ChatChannel = () => {
             </div>
           ))}
         </ul>
+      </div>
       </div>
     </div>
   );
