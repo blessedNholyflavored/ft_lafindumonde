@@ -42,7 +42,7 @@
 }
 .small-box {
 	flex: 1;
-	/* height: 100px; */
+	height: 500px;
 	border:6px solid var(--greyscale-k, #000);
 	box-shadow: 10px 12px 0px 0px #000;
 	margin: 5px;
@@ -105,3 +105,78 @@
 .onlinepeople{
 	background-color: aqua;
 }
+
+.realchat {
+	background-color: #FA8072;
+	position: absolute;
+}
+
+.sentmessage{
+	align-self: flex-end;
+	background-color: #B9D9EB;
+	max-width: 30em;
+	padding: 0.125em 2.5em;
+	border-radius: 1rem;
+  box-shadow:	0 0.125rem 0.5rem rgba(0, 0, 0, .3), 0 0.0625rem 0.125rem rgba(0, 0, 0, .2);
+  margin-bottom: 2px;
+}
+
+.receivedmessage{
+	background-color: #0BDA51;
+  margin-bottom: 2px;
+  align-self: flex-start;
+	max-width: 30em;
+	padding: 0.125em 2.5em;
+	border-radius: 1rem;
+  box-shadow:	0 0.125rem 0.5rem rgba(0, 0, 0, .3), 0 0.0625rem 0.125rem rgba(0, 0, 0, .2);
+}
+
+
+
+
+.messorder{
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+	
+}
+
+.whoschattin{
+	font-weight: 700;
+}
+
+.testingchat{
+	background-color: #;
+	width: -webkit-fill-available;
+	overflow: auto;	
+}
+
+.sendchanbttn{
+	position: inherit;
+}
+.chat-container {
+	display: flex;
+	flex-direction: column;
+	/* height: 100vh; Set a fixed height for the chat container */
+	justify-content: space-between;
+  }
+  
+  .chat-messages {
+	flex: 1; /* Allow chat messages to expand and fill available space */
+  }
+  
+  .sendingzoneprivate {
+	position: sticky;
+	bottom: 0;
+	background-color: #fff; /* Background color for input area */
+	padding: 10px; /* Add padding for spacing */
+	display: flex;
+	justify-content: center; /* Center the input and button horizontally */
+  }
+  
+  .sendingzoneprivate input {
+	flex: 1; /* Let the input grow and take available space */
+	margin-right: 10px; /* Add some space between input and button */
+  }
+  
+ 

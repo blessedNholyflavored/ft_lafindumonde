@@ -856,7 +856,7 @@ export const ChatChannel = () => {
   }, [muteTimeLeft]);
 
   return (
-    <div>
+    <div className="testingchat">
       {showNotification && (
         <Notify
           message={notifyMSG}
@@ -865,19 +865,20 @@ export const ChatChannel = () => {
           onClose={handleCloseNotification}
         />
       )}
-      <div>
+      {/* <div className="realchat"> */}
+        <div >
         {id && (
           <ul>
-            <h1>Liste des messages envoyés :</h1>
             {messageListSend.length > 0 && user ? (
               messageListSend.map((friend, index) => (
-                <div key={index}>
+                <div className="messorder" key={index}>
                   {friend.senderId === user?.id && (
-                    <div style={{ backgroundColor: "blue", float: "left" }}>
+                    <div className="sentmessage" >
                       <div>
-                        <div>{friend.start_at}</div>
-                        <div>
-                          {friend.senderUsername} --- {friend.senderRole}
+                        {/* <div>{friend.start_at}</div> */}
+                        <div className="whoschattin">
+                          {friend.senderUsername} 
+                          {/* --- {friend.senderRole} */}
                         </div>
                         <div>{friend.content}</div>
                       </div>
@@ -885,12 +886,13 @@ export const ChatChannel = () => {
                   )}
                   {friend.senderId !== user?.id &&
                     friend.isBlocked === "false" && (
-                      <div style={{ backgroundColor: "green", float: "right" }}>
-                        <div>
-                          <div>{friend.start_at}</div>
-                          <div>{friend.senderUsername}</div>
+                      <div className="receivedmessage" >
+                        <div >
+                          {/* <div>{friend.start_at}</div> */}
+                          <div className="whoschattin">{friend.senderUsername}</div>
                           <div>
-                            {friend.content} --- {friend.senderRole}
+                            {friend.content} 
+                            {/* --- {friend.senderRole} */}
                           </div>
                         </div>
                       </div>
@@ -910,19 +912,20 @@ export const ChatChannel = () => {
             value={muteTimeLeft + " secondes time left for you mute"}
             onChange={(e) => setValue(e.target.value)}
           />
-          <button disabled>Submit</button>
+          <button disabled>send</button>
         </div>
       )}
       {userIsMuted === false && (
         <div>
           <input
+          className="sendchanbttn"
             type="text"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyPress={handleEnter}
           />
           <button onClick={onSubmit} disabled={value.length > 80}>
-            Submit
+            send
           </button>
         </div>
       )}
@@ -1021,13 +1024,13 @@ export const ChatChannel = () => {
             </button>
           </div>
         )}
-
+{/* </div> */}
           <div className="onlinepeople">
         <ul>
-          <h1>Liste des utilisateurs :</h1>
           {usersInRoom.map((users) => (
             <div key={users.id}>
               <button
+                className="buttonseemore buttonchan"
                 onClick={() => handleUserClick(users.id)}
                 disabled={user?.id === users.id}
               >

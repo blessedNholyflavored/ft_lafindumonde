@@ -1187,6 +1187,10 @@ export const Chat = () => {
                             <button
                               className="buttonseemore buttonchan"
                               onClick={() => {
+                                if (showChatButton === false)
+                                  setShowChatButton(true);
+                                else setShowChatButton(true);
+
                                 if (chan.AmIBanned === "false") {
                                   navToChan(chan.id, chan.name);
                                   if (showChatChannel) {
@@ -1217,8 +1221,8 @@ export const Chat = () => {
                                 {chan.name} --- {chan.visibility}
                               </div>
                             </button>
-                            {/* {activeChannel === chan.id &&
-                              showChatButton === true && ( */}
+                            {activeChannel === chan.id &&
+                              showChatButton === true && (
                             <div>
                               <button
                                 className="buttonseemore buttonchan leave"
@@ -1227,7 +1231,7 @@ export const Chat = () => {
                                 Leave chan
                               </button>
                             </div>
-                            {/* )} */}
+                             )}
                           </div>
                         ))
                       )}
@@ -1273,22 +1277,24 @@ export const Chat = () => {
                   </div>
                 </div>
                 <div className="small-box wider-box">
-                  <div className="chat_list">
+                  {/* <div className="chat_list">
                     <div className="navbarmainpage nav_box">
                       <img src={icon} className="buttonnav" alt="icon" />
                       <p className="title_box">WHO'S ONLINE</p>
                     </div>
-                  </div>
-                  <div className="message_box">
-                    <div className="navbarmainpage nav_box">
-                      <img src={icon} className="buttonnav" alt="icon" />
-                      <p className="title_box">CONV WITH {activeChannelName}</p>
-                      {!showConv && recipient && <PrivateChat />}
-                      <div className="chatbox">{showConv && <PrivateChat />}</div>
-                      <div className="chatbox">{showChatChannel && <ChatChannel />}
-                      {!showChatChannel && id && <ChatChannel />}</div>
-                    </div>
-                  </div>
+                  </div> */}
+                  {/* <div className="message_box"> */}
+                    {/* <div className="navbarmainpage nav_box"> */}
+                      {/* <img src={icon} className="buttonnav" alt="icon" /> */}
+                      {/* <p className="title_box">CONV WITH {activeChannelName}</p> */}
+                      {/* <div className="chatbox">  */}
+                       {!showConv && recipient && <PrivateChat />}
+                     {showConv && <PrivateChat />}
+                      {showChatChannel && <ChatChannel />}
+                      {!showChatChannel && id && <ChatChannel />}
+                      {/* </div> */}
+                    {/* </div> */}
+                  {/* </div> */}
                 </div>
                 <div className="small-box">
                   <div>

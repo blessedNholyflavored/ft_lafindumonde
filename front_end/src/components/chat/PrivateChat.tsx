@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import "./../../App.css";
 import "./../../style/Chat.css";
 import "./../../style/Logout.css";
@@ -114,6 +114,7 @@ export const PrivateChat = () => {
       return [];
     }
   }
+
 
   useEffect(() => {
     async function fetchPrivMessage() {
@@ -232,65 +233,83 @@ export const PrivateChat = () => {
   };
 
   return (
-    <div>
-      {recipient && isBlocked === "false" && (
-        <button onClick={() => BlockFriend(recipient.toString())}>
-          Bloquer
-        </button>
-      )}
-      {isBlocked === "true" && recipient && (
-        <button
-          onClick={() =>
-            removeBlocked(user?.id.toString() as any, recipient.toString())
-          }
-        >
-          Debloquer
-        </button>
-      )}
-      {recipient && (
-        <ul>
-          <h1>Liste des msgs envoyes :</h1>
-          {messageListSend.length > 0 && user ? (
-            messageListSend.map((friend, index) => (
-              <div>
-                {friend.recipientId === user?.id && (
-                  <div style={{ backgroundColor: "red", float: "left" }}>
-                    <div key={index}>
-                      <div>{friend.start_at}</div>
-                      <div>{friend.senderUsername}</div>
-                      <div>{friend.content}</div>
-                    </div>
+    <div className="testingchat">
+      <div className="chat-container">
+        <div className="chat-messages">
+          {recipient && (
+            <ul>
+              {messageListSend.length > 0 && user ? (
+                messageListSend.map((friend, index) => (
+                  <div className="messorder">
+                    {friend.recipientId === user?.id && (
+                      <div className="sentmessage">
+                        <div>
+                          <div key={index}>
+                            {/* <div>{friend.start_at}</div> */}
+                            <div className="whoschattin">
+                              <div>{friend.senderUsername}</div>
+                            </div>
+                            <div>{friend.content}</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {friend.recipientId !== user?.id && (
+                      <div className="receivedmessage">
+                        <div>
+                          <div key={index}>
+                            <div className="whoschattin">
+                              <div>{friend.senderUsername}</div>
+                            </div>
+                            <div>{friend.content}</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
-                {friend.recipientId !== user?.id && (
-                  <div style={{ backgroundColor: "green", float: "right" }}>
-                    <div key={index}>
-                      <div>{friend.start_at}</div>
-                      <div>{friend.senderUsername}</div>
-                      <div>{friend.content}</div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))
-          ) : (
-            <div>pas de message</div>
+                ))
+              ) : (
+                <div>pas de message</div>
+              )}
+            </ul>
           )}
-        </ul>
-      )}
-      <div>
-        {recipient && (
-          <div>
-            <input
-              type="text"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              onKeyPress={handleEnter}
-            />
-            <button onClick={onSubmit}
-            disabled={value.length > 80}>Submit</button>
+          {recipient && isBlocked === "false" && (
+            <button 
+            className="buttonseemore buttonnotchan"
+            onClick={() => BlockFriend(recipient.toString())}>
+              block 
+            </button>
+          )}
+          {isBlocked === "true" && recipient && (
+            <button
+              className="buttonseemore buttonokchan"
+              onClick={() =>
+                removeBlocked(user?.id.toString() as any, recipient.toString())
+              }
+            >
+              unblock
+            </button>
+          )}
+          <div className="sendingzoneprivate">
+            {recipient && (
+              <div>
+                <input
+                  type="text"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  onKeyPress={handleEnter}
+                />
+                <button
+                  className="buttonseemore buttonchan"
+                  onClick={onSubmit}
+                  disabled={value.length > 80}
+                >
+                  Submit
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
