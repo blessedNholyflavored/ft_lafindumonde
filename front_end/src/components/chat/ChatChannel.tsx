@@ -856,7 +856,7 @@ export const ChatChannel = () => {
   }, [muteTimeLeft]);
 
   return (
-    <div className="testingchat">
+    <div className="testingchat channelchat">
       {showNotification && (
         <Notify
           message={notifyMSG}
@@ -900,7 +900,7 @@ export const ChatChannel = () => {
                 </div>
               ))
             ) : (
-              <div>pas de message</div>
+              <div>no messages yet!</div>
             )}
           </ul>
         )}
@@ -916,15 +916,17 @@ export const ChatChannel = () => {
         </div>
       )}
       {userIsMuted === false && (
-        <div>
-          <input
+          <div className="sendingzonechannel">
+            <input
           className="sendchanbttn"
             type="text"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyPress={handleEnter}
           />
-          <button onClick={onSubmit} disabled={value.length > 80}>
+          <button 
+                className="buttonseemore buttonchan"
+                onClick={onSubmit} disabled={value.length > 80}>
             send
           </button>
         </div>
@@ -1025,18 +1027,20 @@ export const ChatChannel = () => {
           </div>
         )}
 {/* </div> */}
-          <div className="onlinepeople">
+         
+      </div>
+      <div className="onlinepeople">
         <ul>
           {usersInRoom.map((users) => (
             <div key={users.id}>
               <button
-                className="buttonseemore buttonchan"
+                className="buttonseemore buttonchan onlinelist"
                 onClick={() => handleUserClick(users.id)}
                 disabled={user?.id === users.id}
               >
                 <div>
-                  id: {users.id} --- name users: {users.username} --- role:
-                  {users.role} --- status: {users.status}
+                  {users.username} -
+                  {users.role} - {users.status}
                 </div>
               </button>
               {showMenu && selectedUser === users.id && (
@@ -1228,8 +1232,8 @@ export const ChatChannel = () => {
           ))}
         </ul>
       </div>
-      </div>
     </div>
+    
   );
 };
 

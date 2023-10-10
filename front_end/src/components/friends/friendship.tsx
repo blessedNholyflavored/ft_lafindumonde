@@ -233,17 +233,16 @@ export const FriendshipComponent = ({
 
   //
   return (
-    <div>
+    <div className="buttnprofilefriend">
       {user && user.id.toString() !== recipientId && (
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>Sender ID: {user?.id}</label>
-          </div>
-          <div>
-            <label>Recipient ID: {recipientId}</label>
-          </div>
-          <button type="submit" disabled={checkButton()}>
-            {friendshipStatus}
+        <form 
+        onSubmit={handleSubmit}>
+          <button
+            className="buttonseemore buttonchan"
+            type="submit"
+            disabled={checkButton()}
+          >
+          friendship status:  {friendshipStatus}
           </button>
         </form>
       )}
@@ -251,6 +250,8 @@ export const FriendshipComponent = ({
         user &&
         user.id.toString() !== recipientId && (
           <button
+          className="buttonseemore buttonchan"
+
             onClick={() => BlockFriend(user?.id as any, id as string)}
             disabled={checkButton()}
           >
@@ -258,7 +259,10 @@ export const FriendshipComponent = ({
           </button>
         )}
       {user && user.id.toString() !== recipientId && (
-        <button onClick={() => inviteToMatch(user?.id as any, id as string)}>
+        <button 
+        className="buttonseemore buttonchan"
+      
+        onClick={() => inviteToMatch(user?.id as any, id as string)}>
           inviter en match ?
         </button>
       )}

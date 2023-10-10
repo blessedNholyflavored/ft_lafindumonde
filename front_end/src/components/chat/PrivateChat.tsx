@@ -269,7 +269,7 @@ export const PrivateChat = () => {
                   </div>
                 ))
               ) : (
-                <div>pas de message</div>
+                <div>no messages yet!</div>
               )}
             </ul>
           )}
@@ -304,7 +304,7 @@ export const PrivateChat = () => {
                   onClick={onSubmit}
                   disabled={value.length > 80}
                 >
-                  Submit
+                  send
                 </button>
               </div>
             )}

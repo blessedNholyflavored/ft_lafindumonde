@@ -219,7 +219,7 @@ const GameFriend: React.FC = () => {
       {countdown === 0 && <div className="countdown start">Start</div>}
       {/* </div> */}
       {user && <h2>Vous êtes connecté en tant que {user.username}</h2>}
-      {!end && <button onClick={NavHome}>Quitter la partie</button>}
+      {!end && <button className="buttonseemore" onClick={NavHome}>Quitter la partie</button>}
       {room && room.player1 && room.player2 && (
         <div>
           <p>

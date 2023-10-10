@@ -163,21 +163,22 @@ export const Classement = () => {
               <h1> LEADERBOARD </h1>
             </div>
             <div className="container podium">
+            { second?.username && (
               <div className="podium__item">
                 <p
                   className="podium__city"
-                  style={{ backgroundColor: "black" }}
                 >
                   {second?.username}
                 </p>
                 <img src={second?.pictureURL} className="avatar"></img>
 
                 <div className="podium__rank second">2</div>
+
               </div>
+                )}
               <div className="podium__item">
                 <p
                   className="podium__city"
-                  style={{ backgroundColor: "black" }}
                 >
                   {first?.username}
                 </p>
@@ -199,17 +200,18 @@ export const Classement = () => {
                   </svg>
                 </div>
               </div>
+                { third?.username && (
               <div className="podium__item">
                 <p
                   className="podium__city"
-                  style={{ backgroundColor: "black" }}
                 >
                   {third?.username}
                 </p>
-                <img src={third?.pictureURL} className="avatar"></img>
-
+                <img src={third?.pictureURL} className="avatar" alt="ya personne"></img>
+                  
                 <div className="podium__rank third">3</div>
               </div>
+                )}
             </div>
 
             <div className="leaderboard">
