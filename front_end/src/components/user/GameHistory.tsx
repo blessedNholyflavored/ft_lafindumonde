@@ -2,14 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../auth/AuthProvider";
 import { useParams } from "react-router-dom";
 import "../../style/Profile.css";
-//import { format, parseISO } from "date-fns";
 
 export const GameHistory = (props: any) => {
   const { user, setUser } = useAuth();
   const [gameData, setGameData] = useState<Game[]>([]);
   const { id } = useParams();
-  const [imgUrl1, setImgUrl1] = useState<string>("");
-  const [imgUrl2, setImgUrl2] = useState<string>("");
 
   useEffect(() => {
     FetchGames();
@@ -69,16 +66,6 @@ export const GameHistory = (props: any) => {
     }
   };
 
-  // const formatDate = (dateString: string) => {
-  //   const options = {
-  //     year: "numeric",
-  //     month: "long",
-  //     day: "numeric",
-  //     hour: "numeric",
-  //     minute: "numeric",
-  //   };
-  //   return new Date(dateString).toLocaleDateString(undefined, options as any);
-  // };
   const FetchGames = async () => {
     try {
       const response = await fetch(
@@ -91,10 +78,8 @@ export const GameHistory = (props: any) => {
       if (response.ok) {
         const data = await response.json();
         const updatedGameData = [...data];
-        //console.log("ICI", updatedGameData);
         let i: number = 0;
         while (i < updatedGameData.length) {
-
           if (updatedGameData[i].superGame === 1) {
             updatedGameData[i].super = "☆";
           }
@@ -128,15 +113,10 @@ export const GameHistory = (props: any) => {
             updatedGameData[i].userId2,
             2
           );
-          console.log("sfsdfsf", imgUrl1);
-          //updatedGameData[i].pictureURLP1 = imgUrl1;
-          //updatedGameData[i].pictureURLP2 = imgUrl2;
           i++;
         }
 
-        setGameData(updatedGameData.reverse());
-        //console.log("update", gameData);
-        //console.log("update", typeof gameData[0].superGame);
+        setGameData(updatedGameData);
       } else {
         console.log("response pas ok");
       }
@@ -147,46 +127,24 @@ export const GameHistory = (props: any) => {
 
   return (
     <>
-      <div style={{ color: "black" }}>
+      <div className="gameHistory">
         {gameData.map((game: Game, index: number) => (
-          <div className="gameHistory" key={index}>
-            <img className="avatar" src={game.pictureURLP1} alt="p1 avatar" />
-            <p>{game.username1}</p>
+          <div className="games" key={index}>
+            <p>{game.super}</p>
+            <div className="avatar-container">
+              <img className="" src={game.pictureURLP1} alt="p1 avatar" />
+              <p>{game.username1}</p>
+            </div>
             <div className="scores">
+              <p>{game.start_at}</p>
               {game.scrP1} - {game.scrP2}
             </div>
-            <img className="avatar" src={game.pictureURLP2} alt="p2 avatar" />
-            <p>{game.username2}</p>
-            <p>{game.start_at}</p>
+            <div className="avatar-container">
+              <img className="" src={game.pictureURLP2} alt="p2 avatar" />
+              <p>{game.username2}</p>
+            </div>
           </div>
         ))}
-
-        {/* <table>
-          <thead>
-            <tr>
-              <th></th>
-              <th>date</th>
-              <th>Player1</th>
-              <th></th>
-              <th></th>
-              <th>Player2</th>
-            </tr>
-          </thead>
-          <tbody>
-            {gameData.slice(0, 5).map((game: Game, index: number) => (
-              <tr key={index}>
-                <td>{game.super}</td>
-                <td>{game.start_at}</td>
-                <td>{game.pictureURLP1}</td>
-                <td>{game.username1}</td>
-                <td>{game.scrP1}</td>
-                <td>{game.scrP2}</td>
-                <td>{game.username2}</td>
-                <img src={game.pictureURLP2}></img>
-              </tr>
-            ))}
-          </tbody>
-        </table> */}
       </div>
       <div className="footersmallbox">
         <br></br>

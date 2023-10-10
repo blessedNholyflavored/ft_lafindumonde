@@ -7,7 +7,7 @@ import logo from "../img/logo42.png";
 import icon from "../img/buttoncomp.png";
 import foldergreen from "../img/foldergreen.png";
 import folderblue from "../img/folderblue.png";
-import folderpink  from "../img/folderpink.png";
+import folderpink from "../img/folderpink.png";
 import folderyellow from "../img/folderyellow.png";
 import folderwhite from "../img/folderwhite.png";
 import folderviolet from "../img/folderviolet.png";
@@ -65,7 +65,7 @@ export const Classement = () => {
             if (response.ok) {
               const blob = await response.blob();
               const absoluteURL = URL.createObjectURL(blob);
-              return pictureURL;
+              return absoluteURL;
             }
           } catch (error) {
             console.error(error);
@@ -215,7 +215,7 @@ export const Classement = () => {
             <div className="leaderboard">
               <table className="leadertab">
                 <thead>
-                <br></br>
+                  <br></br>
                   <tr>
                     <th>Rank</th>
                     <th>Username</th>

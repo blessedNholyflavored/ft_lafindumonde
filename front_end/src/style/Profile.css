@@ -259,7 +259,7 @@
 .lvlscore {
   display: flex;
   flex-direction: row;
-  font-size: 11px;
+  font-size: 13px;
   justify-content: center;
   align-items: center;
   text-align: left;
@@ -268,7 +268,7 @@
 }
 
 .textscore {
-  font-size: 15px;
+  font-size: 17px;
 }
 
 .boxrowsettings {
@@ -511,7 +511,27 @@ input::file-selector-button {
   align-items: center;
   height: 25vh;
 }
+
 .gameHistory {
+  overflow: auto;
+  width: 20vw;
+  height: 300px;
+}
+
+.games {
   color: black;
-  display: flex;
+  display: grid;
+  grid-template-columns: 0.01fr 1fr 1fr 1fr;
+  align-items: center;
+  border-bottom: #000;
+}
+.avatar-container p {
+  margin-top: 0;
+}
+
+.avatar-container img {
+  vertical-align: middle;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
 }
