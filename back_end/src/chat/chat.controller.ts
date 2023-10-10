@@ -23,6 +23,13 @@ export class ChatController {
     return this.chatService.recupMessById(id.toString(), id1.toString());
   }
 
+  @Get('/recupLastMess/:id/:id1')
+  async recupLastMess(@Param('id') id: number,@Param('id1') id1: number)
+  {
+    return this.chatService.recupLastMess(id.toString(), id1.toString());
+  }
+
+  
   @Get('/recupRoomMess/:id/')
   async recupRoomMess(@Param('id') id: number, @Req() req:any)
   {

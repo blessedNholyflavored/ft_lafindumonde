@@ -146,7 +146,7 @@
 }
 
 .testingchat{
-	background-color: #;
+	background-color: rgb(255, 255, 255);
 	width: -webkit-fill-available;
 	overflow: auto;	
 }

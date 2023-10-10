@@ -613,6 +613,20 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     }
 
 
+    @SubscribeMessage('reloadMessagesTEST')
+    async onNewMessageTEST(@MessageBody() data: {message:string, recipient:string},@ConnectedSocket() socket: Socket)
+    {
+      let user1;
+      const NuserId = Number(data[1]);
+      this.playerConnections.forEach((value, key) => {
+        if (key === NuserId)
+          user1 = value;
+      });
+      if (user1)
+        user1.emit("refreshMessagesTEST");
+      socket.emit("refreshMessagesTEST");
+    }
+
     @SubscribeMessage('reloadMessages')
     async onNewMessage(@MessageBody() data: {message:string, recipient:string},@ConnectedSocket() socket: Socket)
     {
@@ -622,7 +636,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
         if (key === NuserId)
           user1 = value;
       });
-      user1.emit("refreshMessages");
+      if (user1)
+        user1.emit("refreshMessages");
       socket.emit("refreshMessages");
     }
 
