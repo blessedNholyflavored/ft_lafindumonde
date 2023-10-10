@@ -67,8 +67,6 @@ export class AuthService {
 		const totpSecret = this.keyGenerator();
 		const issuer =  'ft_lafindumonde';
 		const qrCodeImg = await qrcode.toDataURL(`otpauth://totp/${issuer}:${user.id}?secret=${totpSecret}&issuer=${issuer}`);
-		// const qrCodeImg = await imageDataURI.decode(qrCodeImgEncoded).dataBase64;
-		// console.log("GENERATING QRCODE :",qrCodeImg);
 		await this.userService.add2FAKey(totpSecret, qrCodeImg, user.id);
 		return {qrCodeImg, user};
 	}

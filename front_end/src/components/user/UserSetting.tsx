@@ -278,7 +278,6 @@ export const UserSetting: React.FC = () => {
       })
         .then((res) => res.json())
         .then((resData) => {
-          console.log(resData.sprites.front_default);
           newPokeImg = resData.sprites.other.home.front_default;
         })
         .catch(() => (newPokeImg = champi.toString()));
@@ -297,7 +296,6 @@ export const UserSetting: React.FC = () => {
         }
       );
       // setImgUrl(newPokeImg as any);
-      console.log("cdscds", response);
       // if (response.status === 401) {
       //   console.log("oui erreur ouuuh");
       // }
@@ -515,7 +513,7 @@ export const UserSetting: React.FC = () => {
                       }}
                       disabled={changes === 1}
                     >
-                      Generate new avater
+                      Generate new avatar
                     </button>
                   </div>
                 </div>

@@ -20,10 +20,6 @@ export class ChatController {
   @Get('/recupMess/:id/:id1')
   async recupMess(@Param('id') id: number,@Param('id1') id1: number)
   {
-		console.log("///////////////STILL PENDING//////////////");
-		console.log("IN RECUP MESS/////");
-		console.log("id is:", id);
-		console.log("id1 is :", id1);
     return this.chatService.recupMessById(id.toString(), id1.toString());
   }
 

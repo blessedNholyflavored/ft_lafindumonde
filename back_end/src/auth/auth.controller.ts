@@ -150,6 +150,7 @@ export class AuthController{
     @Get('2FAdisable')
     @UseGuards(...AuthenticatedGuard)
     async twoFAdisabler(@Req() req: any){
+			//TODO: check with front if error ok and remove console log here
         if (req.user.enabled2FA == false)
             console.log("2FA is already disabled !");
         else {
@@ -175,10 +176,6 @@ export class AuthController{
     @Post('submitCode')
     @UseGuards(AuthGuard('jwt'), AuthGuard('totp'))
     async codeChecker(@Req() req: any, @Res() res: any, @Body() body: {userInput: string, userID: number}){
-        /*if (!body.userInput || !body.userID){
-            console.log(body);
-            throw new BadRequestException("input is missing or user is invalid");
-        }*/
         const user = await this.userService.getUserByID(req.user.id);
         await this.userService.enable2FA(user.id);
 				await this.userService.setLog2FA(user, true);
@@ -202,7 +199,6 @@ export class AuthController{
 		if (!user)
 			throw new ForbiddenException();
 		return (res.status(200).json({qrCode: user.totpQRCode}))
-		// return (res.status(200).json(user.totpQRCode));
 	}
     /************************
      * 
@@ -214,7 +210,6 @@ export class AuthController{
     @Get('logout')
 		@UseGuards(...AuthenticatedGuard)
     async   logout(@Res() res: any, @Req() req: any){
-			//console.log("IN LOGOUT:", req, req.user);
 			await this.userService.updateUserStatuIG(req.user.id, 'OFFLINE');
 			await this.userService.setLog2FA(req.user, false);
       res.clearCookie('access_token').status(200).send();

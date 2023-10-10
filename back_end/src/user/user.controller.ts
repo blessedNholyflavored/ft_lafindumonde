@@ -47,7 +47,6 @@ export class UsersController {
   @Post('/update-username')
   @UsePipes(new ValidationPipe())
   async updating_username(@Req() req: any, @Body() username: UsernameDto) {
-    //console.log(username);
     console.log('service update username ', req.user.id);
     const newUsername = username['username'];
     if (
@@ -59,7 +58,6 @@ export class UsersController {
   @Post('/update-pass')
   @UsePipes(new ValidationPipe())
   updating_password(@Req() req: any, @Body() password: PassDto) {
-    //console.log(username);
     console.log('service update username ', req.user.id);
     const newPassword = password['password'];
     this.userService.updatePassword(req.user.id, newPassword);
@@ -68,8 +66,6 @@ export class UsersController {
   @Post('/update-mail')
   @UsePipes(new ValidationPipe())
   async updating_mail(@Req() req: any, @Body() mail: MailDto) {
-    //console.log(username);
-    //console.log('service update username ', req.user.id);
     const newMail = mail['email'];
     if ((await this.userService.mailChecker(newMail.toString())) === false)
       throw new ConflictException('email already taken !');
@@ -175,14 +171,12 @@ export class UsersController {
   @Get('/leaderboard/:id')
   async getLeaderboardData(@Param('id') id: number) {
     const data = await this.userService.getLeaderboard();
-    //console.log(data);
     return data;
   }
 
   @Get('/mini/:id')
   async getMini(@Param('id') id: number) {
     const data = await this.userService.getMini();
-    //console.log(data);
     return data;
   }
 
@@ -221,9 +215,7 @@ export class UsersController {
 	async pokePic(@Req() req: any, @Res() res:any, @Body() pic: any){
 		const photo = await this.userService.updatePicture(req.user.id.toString(), pic.pictureURL.toString());
 		const ret = await this.userService.getUserByID(req.user.id);
-		console.log(photo);
 		return photo;
-		// throw new UnauthorizedException("youpi");
 	}
 
   // @Get('/scoresMG')

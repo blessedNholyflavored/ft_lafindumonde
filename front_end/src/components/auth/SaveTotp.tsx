@@ -66,12 +66,8 @@ export const SaveTotp: React.FC = () => {
       );
       if (res.ok) {
         try {
-          //display QRcode
-          // console.log(res.json());
           const data = await res.json();
           const qrCodeExtract = data.qrCode;
-          // console.log(atob(qrCodeExtract));
-          // console.log("oui");
           setQRCode(`${qrCodeExtract}`);
           return;
         } catch {

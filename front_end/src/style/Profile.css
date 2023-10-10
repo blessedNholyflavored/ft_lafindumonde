@@ -383,7 +383,9 @@ input::file-selector-button {
 }
 
 .buttonsettings:disabled {
-  display: none;
+  /* display: none; */
+  background-color: #424242;
+  cursor: default;
 }
 
 .changesett {

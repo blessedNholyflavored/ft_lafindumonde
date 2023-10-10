@@ -45,7 +45,6 @@ export function Register() {
     })
       .then((res) => res.json())
       .then((resData) => {
-        console.log(resData.sprites.front_default);
         pokeimg = resData.sprites.other.home.front_default;
       })
       .catch(() => (pokeimg = champi.toString()));
