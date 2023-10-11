@@ -159,7 +159,6 @@
   overflow: auto;
 }
 
-
 .boxrowtest2::-webkit-scrollbar {
   display: none;
 }
@@ -318,6 +317,11 @@ input {
   align-items: center;
 }
 
+.avatardiv input[type="file"] {
+  text-align: center;
+  line-height: 30px;
+}
+
 .changesett.avatarsett,
 .changesett {
   display: flex;
@@ -329,7 +333,7 @@ input {
 }
 
 .centered-img img {
-  width: 30%; /* Make the img 20% of its original size */
+  width: 30%;
 }
 
 input[type="file"] {
@@ -353,6 +357,7 @@ input::file-selector-button {
   /* display: flex; */
   justify-content: center;
   align-items: center;
+  text-align: center;
   display: inline-flex;
   cursor: pointer;
   font-family: IBM Plex Mono;
@@ -395,7 +400,6 @@ input::file-selector-button {
   background-color: #424242;
   cursor: default;
 }
-
 
 .acceptbutton {
   position: relative;
@@ -514,7 +518,7 @@ input::file-selector-button {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 25vh;
+  height: 24vh;
 }
 
 .gameHistory {
@@ -541,16 +545,15 @@ input::file-selector-button {
   border-radius: 50%;
 }
 
-
-.buttnprofilefriend{
+.buttnprofilefriend {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: normal !important;
-  margin-left: 5vh; 
+  margin-left: 5vh;
 }
 
-.gamehist-score{
+.gamehist-score {
   height: 5px;
   font-size: 70%;
 }
