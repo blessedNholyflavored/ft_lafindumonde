@@ -46,6 +46,7 @@
 	/* box-shadow: 10px 12px 0px 0px #000; */
 	margin: 5px;
 	background-color: white;
+	overflow: auto;
 }
 .wider-box {
 	display: flex;
