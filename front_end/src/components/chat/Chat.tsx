@@ -437,7 +437,7 @@ export const Chat = () => {
         // );
         setShowNotification(true);
         setNotifyMSG(
-          "You have been kicked from " + roomName + ". Raison: " + reason
+          "You have been kicked from " + roomName + ". Reason: " + reason
         );
         setNotifyType(2);
       });
@@ -450,9 +450,9 @@ export const Chat = () => {
           setNotifyMSG(
             "You have been muted from " +
               roomName +
-              ". Raison: " +
+              ". Reason: " +
               reason +
-              ", pendant: " +
+              ", for: " +
               time +
               " minutes"
           );
@@ -476,9 +476,9 @@ export const Chat = () => {
           setNotifyMSG(
             "You have been banned from " +
               roomName +
-              ". Raison: " +
+              ". Reason: " +
               reason +
-              ", pendant: " +
+              ", for: " +
               time +
               " minutes"
           );
@@ -1178,9 +1178,10 @@ export const Chat = () => {
                                 }}
                                 disabled={selectedPrivateConv === priv.id}
                               >
-                                <div>
-                                  {priv.username} - {priv.status}
-                                </div>
+                                {/* <div>
+                                  {priv.status === "ONLINE" && (
+                                  )}
+                                </div> */}
                               </button>
                             )}
                           </div>
@@ -1310,7 +1311,9 @@ export const Chat = () => {
                   {/* </div> */}
                   {/* </div> */}
                 </div>
-                <div className="small-box">
+                <div 
+                style={{overflow: "auto"}}
+                className="small-box">
                   <div>
                     <div className="navbarsmallbox chantitle putain">
                       <p style={{ color: "white" }}>create new chan</p>

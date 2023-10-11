@@ -18,8 +18,8 @@ import folderyellow from "./../img/folderyellow.png";
 import folderwhite from "./../img/folderwhite.png";
 import folderviolet from "./../img/folderviolet.png";
 import icon from "./../img/buttoncomp.png";
-import { Logout } from "../components/auth/Logout";
 import logo from "./../img/logo42.png";
+import { Logout } from "../components/auth/Logout";
 
 const PongGame: React.FC = () => {
   const { id } = useParams();
@@ -395,7 +395,8 @@ const PongGame: React.FC = () => {
                   </div>
                 )}
               </div>
-              <div id="middlebox">
+              <div id="middlebox" style={{width: mapx / 2,
+                    height: mapy / 3.5,}}>
                 <div
                   className="pong-game"
                   style={{
@@ -442,9 +443,7 @@ const PongGame: React.FC = () => {
                             Score - {room.player1} {room.scoreP1} |{" "}
                             {room.scoreP2} {room.player2}
                             <p>{room.winner} remporte la partie</p>
-                            <button className="buttonseemore" onClick={NavHome}>
-                              Retourner au Home
-                            </button>
+                            
                           </div>
                         )}
 
@@ -479,9 +478,12 @@ const PongGame: React.FC = () => {
                     </div>
                   )}
                 </div>
+                <button className="buttonseemore" style={{marginBottom:"5px"}} onClick={NavHome}>
+                              back to gamepage
+                            </button>
               </div>
 
-              </div>
+              
               <div id="rightbox">
                 {ImgUrlP2 && (
                   <div>
@@ -489,6 +491,7 @@ const PongGame: React.FC = () => {
                     <img src={ImgUrlP2} className="avatar" alt="Menu 3" />
                   </div>
                 )}
+            </div>
             </div>
           </div>
         </main>
