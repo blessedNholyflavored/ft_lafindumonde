@@ -13,14 +13,13 @@ import { count } from "console";
 import nav from "./../img/buttoncomp.png";
 import foldergreen from "./../img/foldergreen.png";
 import folderblue from "./../img/folderblue.png";
-import folderpink  from "./../img/folderpink.png";
+import folderpink from "./../img/folderpink.png";
 import folderyellow from "./../img/folderyellow.png";
 import folderwhite from "./../img/folderwhite.png";
 import folderviolet from "./../img/folderviolet.png";
 import icon from "./../img/buttoncomp.png";
 import { Logout } from "../components/auth/Logout";
 import logo from "./../img/logo42.png";
-
 
 const PongGame: React.FC = () => {
   const { id } = useParams();
@@ -46,7 +45,6 @@ const PongGame: React.FC = () => {
   let [ImgUrlP2, setImgUrlP2] = useState<string>("");
   let [usernameP1, setUsernameP1] = useState<string>("");
   let [usernameP2, setUsernameP2] = useState<string>("");
-
 
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -344,8 +342,8 @@ const PongGame: React.FC = () => {
             if (response.ok) {
               const blob = await response.blob();
               const absoluteURL = URL.createObjectURL(blob);
-              if (pos === 1) setImgUrlP1(pictureURL);
-              if (pos === 2) setImgUrlP2(pictureURL);
+              if (pos === 1) setImgUrlP1(absoluteURL);
+              if (pos === 2) setImgUrlP2(absoluteURL);
             }
           } catch (error) {
             console.error(error);
@@ -456,7 +454,7 @@ const PongGame: React.FC = () => {
             </div>
           </div>
         </main>
-
+        {/* 
         <nav>
           <ul>
             <li className="menu-item">
@@ -490,7 +488,7 @@ const PongGame: React.FC = () => {
               </a>
             </li>
           </ul>
-        </nav>
+        </nav> */}
       </div>
       <footer>
         <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
