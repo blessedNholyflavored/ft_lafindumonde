@@ -991,6 +991,7 @@ export const ChatChannel = () => {
           </ul>
         )}
       </div>
+      <div style={{position: "absolute", bottom:"0", justifyContent: "center"}}>
       {userIsMuted === true && (
         <div>
           <input
@@ -1019,6 +1020,7 @@ export const ChatChannel = () => {
           </button>
         </div>
       )}
+      </div>
       <div>
         {changeStatutButton && statutChan === "PWD_PROTECTED" && (
           <div>

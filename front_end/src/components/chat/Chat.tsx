@@ -546,6 +546,16 @@ export const Chat = () => {
     };
   }, [activeChannel, banTimeLeft]);
 
+  useEffect(() => {
+    if (socket) {
+      socket.on("SomeoneGoOnlineOrOffline", () => {
+        setTimeout(() => {
+          fetchPrivateConvList();
+        }, 500);
+      });
+    }
+  });
+
   const checkRoomAlreadyExist = async () => {
     if (!valueRoom) return;
     try {
@@ -1227,15 +1237,15 @@ export const Chat = () => {
                             </button>
                             {activeChannel === chan.id &&
                               showChatButton === true && (
-                            <div>
-                              <button
-                                className="buttonseemore buttonchan leave"
-                                onClick={leftChannel}
-                              >
-                                Leave chan
-                              </button>
-                            </div>
-                             )}
+                                <div>
+                                  <button
+                                    className="buttonseemore buttonchan leave"
+                                    onClick={leftChannel}
+                                  >
+                                    Leave chan
+                                  </button>
+                                </div>
+                              )}
                           </div>
                         ))
                       )}
@@ -1288,25 +1298,25 @@ export const Chat = () => {
                     </div>
                   </div> */}
                   {/* <div className="message_box"> */}
-                      {/* <img src={icon} className="buttonnav" alt="icon" /> */}
-                      {/* <div className="chatbox">  */}
-                       {!showConv && recipient && <PrivateChat />}
-                     {showConv && <PrivateChat />}
+                  {/* <img src={icon} className="buttonnav" alt="icon" /> */}
+                  {/* <div className="chatbox">  */}
+                  {!showConv && recipient && <PrivateChat />}
+                  {showConv && <PrivateChat />}
                   {/* <div className="navbarsmallbox "> */}
                   {/* <p style={{color:"black"}} className="title_box">CONV WITH {activeChannelName}</p> */}
-                      {showChatChannel && <ChatChannel />}
-                      {/* </div> */}
-                      {!showChatChannel && id && <ChatChannel />}
-                    {/* </div> */}
+                  {showChatChannel && <ChatChannel />}
+                  {/* </div> */}
+                  {!showChatChannel && id && <ChatChannel />}
+                  {/* </div> */}
                   {/* </div> */}
                 </div>
                 <div className="small-box">
                   <div>
                     <div className="navbarsmallbox chantitle putain">
-                        <p style={{ color: "white" }}>create new chan</p>
-                      </div>
+                      <p style={{ color: "white" }}>create new chan</p>
+                    </div>
                     <input
-                    className="labelcss select-chat"
+                      className="labelcss select-chat"
                       type="text"
                       placeholder="Nom de la room"
                       value={valueRoom}
@@ -1330,7 +1340,7 @@ export const Chat = () => {
                       />
                     )}
                     <button
-                                    className="buttonseemore buttonchan"
+                      className="buttonseemore buttonchan"
                       onClick={createRoom}
                       disabled={
                         isButtonDisabled ||
@@ -1342,8 +1352,7 @@ export const Chat = () => {
                       create new room
                     </button>
                     <button
-                                    className="buttonseemore buttonchan"
-
+                      className="buttonseemore buttonchan"
                       onClick={joinRoom}
                       disabled={
                         isButtonDisabled ||

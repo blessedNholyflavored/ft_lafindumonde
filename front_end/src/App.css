@@ -116,7 +116,7 @@ body {
   .ball {
     width: 10px;
     height: 10px;
-    background-color: red; /* Couleur de la balle */
+    background-color: rgb(0, 23, 128); /* Couleur de la balle */
     position: absolute;
   }
   

@@ -225,3 +225,9 @@
   .navbarsmallbox.chantitle.putain{
 	margin-top: 5%;
 }
+
+.chatmessagebar{
+	position: "absolute";
+	bottom:"0";
+	justify-content: "center";
+}
