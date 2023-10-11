@@ -228,7 +228,7 @@
 }
 
 .chatmessagebar{
-	position: "absolute";
-	bottom:"0";
-	justify-content: "center";
+    position: absolute;
+    left: 50%;
+	bottom: 30px;
 }

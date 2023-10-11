@@ -991,7 +991,7 @@ export const ChatChannel = () => {
           </ul>
         )}
       </div>
-      <div style={{position: "absolute", bottom:"0", justifyContent: "center"}}>
+      <div className="chatmessagebar">
       {userIsMuted === true && (
         <div>
           <input

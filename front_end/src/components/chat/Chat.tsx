@@ -1178,9 +1178,10 @@ export const Chat = () => {
                                 }}
                                 disabled={selectedPrivateConv === priv.id}
                               >
-                                <div>
-                                  {priv.username} - {priv.status}
-                                </div>
+                                {/* <div>
+                                  {priv.status === "ONLINE" && (
+                                  )}
+                                </div> */}
                               </button>
                             )}
                           </div>
