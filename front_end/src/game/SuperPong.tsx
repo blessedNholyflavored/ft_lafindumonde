@@ -415,7 +415,7 @@ const SuperPong: React.FC<PongGameProps> = () => {
                 Score - {room.player1} {room.scoreP1} | {room.scoreP2}{" "}
                 {room.player2}
                 <p>{room.winner} remporte la partie</p>
-                <button onClick={NavHome}>Retourner au Home</button>
+                <button onClick={NavHome}>pack to homepage</button>
               </div>
             )}
             {!end && (

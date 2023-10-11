@@ -105,7 +105,14 @@
 }
 
 .onlinepeople{
-	background-color: aqua;
+	position: absolute;
+	overflow: auto;
+	top:50%;
+	right: 4%;
+	border: 6px solid var(--greyscale-k, #000);
+	box-shadow: 10px 12px 0px 0px #000;
+	background-color: white;
+	color: black;
 }
 
 .realchat {
@@ -114,7 +121,7 @@
 }
 
 .sentmessage{
-	align-self: flex-start;
+	align-self: flex-end;
 	background-color: #B9D9EB;
 	max-width: 30em;
 	padding: 0.125em 2.5em;
@@ -126,7 +133,7 @@
 .receivedmessage{
 	background-color: #0BDA51;
   margin-bottom: 2px;
-  align-self: flex-end;
+  align-self: flex-start;
 	max-width: 30em;
 	padding: 0.125em 2.5em;
 	border-radius: 1rem;
@@ -231,4 +238,18 @@
     position: absolute;
     left: 50%;
 	bottom: 30px;
+}
+
+.statusbutton{
+	position: absolute;
+	top:76%;
+	right: 27%;
+	background-color: #FA8072	;
+}
+
+.statutbutton{
+	position: absolute;
+	top:70%;
+	right: 27%;
+	background-color: #FA8072	;
 }
