@@ -163,6 +163,7 @@
   
   .chat-messages {
 	flex: 1; /* Allow chat messages to expand and fill available space */
+	/* overflow-y: auto; */
   }
   
   .sendingzoneprivate {

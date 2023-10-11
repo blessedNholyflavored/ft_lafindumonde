@@ -48,7 +48,7 @@ export const PrivateChat = () => {
   const [isBlocked, setIsBlocked] = useState<string>("");
   let messages: messages;
   const bottomEl = useRef<null | HTMLDivElement>(null);
-
+  const messageListRef = useRef<any>(null);
 
   async function fetchPrivMessageList() {
     try {
@@ -113,13 +113,14 @@ export const PrivateChat = () => {
       );
       await Promise.all(usernamePromises);
       setMessageList(data);
+      scrollToBottom();
+
       return data[0];
     } catch (error) {
       console.error("Erreur :", error);
       return [];
     }
   }
-
 
   async function fetchLastMessage() {
     try {
@@ -298,15 +299,14 @@ export const PrivateChat = () => {
     }
   };
 
-
   const scrollToBottom = () => {
-    bottomEl?.current?.scrollIntoView({ behavior: "smooth" });
+    bottomEl?.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   };
 
   return (
     <div className="testingchat">
       <div className="chat-container">
-        <div className="chat-messages">
+        <div className="chat-messages" ref={bottomEl}>
           {recipient && (
             <ul>
               {messageListSend.length > 0 && user ? (
@@ -337,15 +337,14 @@ export const PrivateChat = () => {
                         </div>
                       </div>
                     )}
-                    <div ref={bottomEl}></div>{" "}
                   </div>
                 ))
               ) : (
                 <div>no messages yet!</div>
               )}
-              <div id="bottom"></div>
             </ul>
           )}
+          {/* <div ref={bottomEl}></div> */}
           {recipient && isBlocked === "false" && (
             <button
               className="buttonseemore buttonnotchan"

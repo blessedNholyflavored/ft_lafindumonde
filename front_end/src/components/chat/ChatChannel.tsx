@@ -359,7 +359,7 @@ export const ChatChannel = () => {
   }
 
   const scrollToBottom = () => {
-    bottomEl?.current?.scrollIntoView({ behavior: "smooth" });
+    bottomEl?.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   };
 
   useEffect(() => {
@@ -937,6 +937,7 @@ export const ChatChannel = () => {
           onClose={handleCloseNotification}
         />
       )}
+      <div ref={bottomEl}>
       {/* <div className="realchat"> */}
       <div>
         {id && (
@@ -976,7 +977,6 @@ export const ChatChannel = () => {
             ) : (
               <div>no messages yet!</div>
             )}
-            <div ref={bottomEl}></div>{" "}
           </ul>
         )}
       </div>
@@ -1008,7 +1008,6 @@ export const ChatChannel = () => {
           </button>
         </div>
       )}
-
       <div>
         {changeStatutButton && statutChan === "PWD_PROTECTED" && (
           <div>
@@ -1308,6 +1307,7 @@ export const ChatChannel = () => {
         </ul>
       </div>
     </div>
+</div>
   );
 };
 

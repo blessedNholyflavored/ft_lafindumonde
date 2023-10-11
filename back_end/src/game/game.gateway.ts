@@ -720,7 +720,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (key === NuserId)
             user1 = value;
         });
-        user1.emit("NotifyReceiveChannelInvit");
+        if (user1)
+          user1.emit("NotifyReceiveChannelInvit");
       }
 
       @SubscribeMessage('ActuAtRoomCreate')
@@ -740,7 +741,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (key === NuserId)
             user1 = value;
         });
-        user1.emit("refreshAfterKick", roomName, data[2]);
+        if (user1)
+          user1.emit("refreshAfterKick", roomName, data[2]);
       }
       @SubscribeMessage('muteFromChannel')
       async onMteFromChannel(@MessageBody() data: {userId:number, roomId:number, reason: string, time: number},@ConnectedSocket() socket: Socket)
@@ -752,7 +754,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (key === NuserId)
             user1 = value;
         });
-        user1.emit("refreshAfterMute", roomName, data[2], data[3]);
+        if (user1)
+          user1.emit("refreshAfterMute", roomName, data[2], data[3]);
       }
 
       @SubscribeMessage('banFromChannel')
@@ -765,7 +768,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (key === NuserId)
             user1 = value;
         });
-        user1.emit("refreshAfterBan", data[1], roomName, data[2], data[3]);
+        if (user1)
+          user1.emit("refreshAfterBan", data[1], roomName, data[2], data[3]);
       }
 
       @SubscribeMessage('reloadListFriendPage')
