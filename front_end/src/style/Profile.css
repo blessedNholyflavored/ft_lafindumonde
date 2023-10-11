@@ -316,6 +316,8 @@ input {
   align-items: center;
 }
 
+
+
 .changesett.avatarsett,
 .changesett {
   display: flex;
@@ -325,6 +327,8 @@ input {
   text-align: center;
   height: 25vh;
 }
+
+
 
 .centered-img img {
   width: 30%; /* Make the img 20% of its original size */

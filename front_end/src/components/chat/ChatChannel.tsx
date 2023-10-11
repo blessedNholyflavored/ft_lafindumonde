@@ -952,7 +952,7 @@ export const ChatChannel = () => {
         {/* <div className="realchat"> */}
         <div>
           {id && (
-            <ul>
+            <ul style={{marginBottom:"50px"}}>
               {messageListSend.length > 0 && user ? (
                 messageListSend.map((friend, index) => (
                   <div className="messorder" key={index}>
@@ -989,7 +989,9 @@ export const ChatChannel = () => {
                 <div>no messages yet!</div>
               )}
             </ul>
-          )}
+
+)}
+</div>
         </div>
         <div className="chatmessagebar">
           {userIsMuted === true && (
@@ -1385,7 +1387,6 @@ export const ChatChannel = () => {
             ))}
           </ul>
         </div>
-      </div>
     </div>
   );
 };
