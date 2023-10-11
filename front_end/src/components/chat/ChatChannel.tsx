@@ -302,8 +302,7 @@ export const ChatChannel = () => {
   }
 
   async function fetchLastMessage() {
-    if (!id)
-      return ;
+    if (!id) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/recupRoomMessLast/${id}`,
@@ -375,7 +374,7 @@ export const ChatChannel = () => {
         }, 300);
       });
     }
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (reactu === 0) {
@@ -469,6 +468,7 @@ export const ChatChannel = () => {
   const onSubmit = () => {
     if (value.length > 0) {
       socket.emit("newMessageRoom", value, id);
+      setValue("");
       setTimeout(() => {
         socket.emit("reloadMessRoomTEST", id);
       }, 100);
@@ -949,378 +949,402 @@ export const ChatChannel = () => {
         />
       )}
       <div ref={bottomEl}>
-      {/* <div className="realchat"> */}
-      <div>
-        {id && (
-          <ul>
-            {messageListSend.length > 0 && user ? (
-              messageListSend.map((friend, index) => (
-                <div className="messorder" key={index}>
-                  {friend.senderId === user?.id && (
-                    <div className="sentmessage">
-                      <div>
-                        {/* <div>{friend.start_at}</div> */}
-                        <div className="whoschattin">
-                          {friend.senderUsername}
-                          {/* --- {friend.senderRole} */}
-                        </div>
-                        <div>{friend.content}</div>
-                      </div>
-                    </div>
-                  )}
-                  {friend.senderId !== user?.id &&
-                    friend.isBlocked === "false" && (
-                      <div className="receivedmessage">
+        {/* <div className="realchat"> */}
+        <div>
+          {id && (
+            <ul>
+              {messageListSend.length > 0 && user ? (
+                messageListSend.map((friend, index) => (
+                  <div className="messorder" key={index}>
+                    {friend.senderId === user?.id && (
+                      <div className="sentmessage">
                         <div>
                           {/* <div>{friend.start_at}</div> */}
                           <div className="whoschattin">
                             {friend.senderUsername}
-                          </div>
-                          <div>
-                            {friend.content}
                             {/* --- {friend.senderRole} */}
                           </div>
+                          <div>{friend.content}</div>
                         </div>
                       </div>
                     )}
-                </div>
-              ))
-            ) : (
-              <div>no messages yet!</div>
-            )}
-          </ul>
-        )}
-      </div>
-      <div className="chatmessagebar">
-      {userIsMuted === true && (
-        <div>
-          <input
-            type="text"
-            value={muteTimeLeft + " secondes time left for you mute"}
-            onChange={(e) => setValue(e.target.value)}
-          />
-          <button disabled>send</button>
-        </div>
-      )}
-      {userIsMuted === false && (
-        <div className="sendingzonechannel">
-          <input
-            className="sendchanbttn"
-            type="text"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onKeyPress={handleEnter}
-          />
-          <button
-            className="buttonseemore buttonchan"
-            onClick={onSubmit}
-            disabled={value.length > 80}
-          >
-            send
-          </button>
-        </div>
-      )}
-      </div>
-      <div>
-        {changeStatutButton && statutChan === "PWD_PROTECTED" && (
-          <div>
-            <button onClick={() => handleOnChangeMDP()}>Changer le MDP</button>
-            <input
-              type="password"
-              value={newPass}
-              onChange={(e) => setNewPass(e.target.value)}
-            />
-            <button
-              onClick={() => ChangeStatutChan("PWD_PROTECTED")}
-              disabled={newPass.length === 0 || newPass.length > 15}
-            >
-              Change Password
-            </button>
-          </div>
-        )}
-        {yourRole === "OWNER" && (
-          <button
-            onClick={() => {
-              setChangeStatutButton(true);
-              getStatutChan();
-            }}
-          >
-            Changer le statut du chan
-          </button>
-        )}
-        {changeStatutButton && statutChan === "PUBLIC" && (
-          <div>
-            <button onClick={() => ChangeStatutChan("PRIVATE")}>
-              pass to Private
-            </button>
-            <div>
-              <button onClick={() => handleChangeToPWD()}>
-                pass to protected
-              </button>
-              {onPWD === true && (
-                <div>
-                  <input
-                    type="password"
-                    placeholder="newPass ?"
-                    value={newPass}
-                    onChange={(e) => setNewPass(e.target.value)}
-                  />
-
-                  <button
-                    onClick={() => ChangeStatutChan("PWD_PROTECTED")}
-                    disabled={newPass.length === 0}
-                  >
-                    pass to Protected
-                  </button>
-                </div>
+                    {friend.senderId !== user?.id &&
+                      friend.isBlocked === "false" && (
+                        <div className="receivedmessage">
+                          <div>
+                            {/* <div>{friend.start_at}</div> */}
+                            <div className="whoschattin">
+                              {friend.senderUsername}
+                            </div>
+                            <div>
+                              {friend.content}
+                              {/* --- {friend.senderRole} */}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                  </div>
+                ))
+              ) : (
+                <div>no messages yet!</div>
               )}
-            </div>
-          </div>
-        )}
-        {changeStatutButton && statutChan === "PRIVATE" && (
-          <div>
-            <button onClick={() => ChangeStatutChan("PUBLIC")}>
-              pass to Public
-            </button>
+            </ul>
+          )}
+        </div>
+        <div className="chatmessagebar">
+          {userIsMuted === true && (
             <div>
-              <button onClick={() => handleChangeToPWD()}>
-                pass to protected
-              </button>
-              {onPWD === true && (
-                <div>
-                  <input
-                    type="text"
-                    placeholder="newPass ?"
-                    value={newPass}
-                    onChange={(e) => setNewPass(e.target.value)}
-                  />
-                  <button
-                    onClick={() => ChangeStatutChan("PWD_PROTECTED")}
-                    disabled={newPass.length === 0}
-                  >
-                    pass to Protected
-                  </button>
-                </div>
-              )}
+              <input
+                type="text"
+                value={muteTimeLeft + " secondes time left for you mute"}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              <button disabled>send</button>
             </div>
-          </div>
-        )}
-        {changeStatutButton && statutChan === "PWD_PROTECTED" && (
-          <div>
-            <button onClick={() => ChangeStatutChan("PRIVATE")}>
-              pass to Private
-            </button>
-            <button onClick={() => ChangeStatutChan("PUBLIC")}>
-              pass to Public
-            </button>
-          </div>
-        )}
-        {/* </div> */}
-      </div>
-      <div className="onlinepeople">
-        <ul>
-          {usersInRoom.map((users) => (
-            <div key={users.id}>
+          )}
+          {userIsMuted === false && (
+            <div className="sendingzonechannel">
+              <input
+                className="sendchanbttn"
+                type="text"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                onKeyPress={handleEnter}
+              />
               <button
-                className="buttonseemore buttonchan onlinelist"
-                onClick={() => handleUserClick(users.id)}
-                disabled={user?.id === users.id}
+                className="buttonseemore buttonchan"
+                onClick={onSubmit}
+                disabled={value.length > 80}
               >
-                <div>
-                  {users.username} -{users.role} - {users.status}
-                </div>
+                send
               </button>
-              {showMenu && selectedUser === users.id && (
-                <div className="user-menu">
-                  <button
-                    onClick={() => inviteToMatch(user?.id as any, users.id)}
-                  >
-                    inviter en match ?
-                  </button>
-                  <button onClick={handleViewProfile}>Voir le profil</button>
-                  {users.isBlocked === "false" && (
-                    <button onClick={() => BlockFriend(users.id.toString())}>
-                      Bloquer
-                    </button>
-                  )}
-                  {users.isBlocked === "true" && (
+            </div>
+          )}
+        </div>
+        <div>
+          {changeStatutButton && statutChan === "PWD_PROTECTED" && (
+            <div>
+              <button onClick={() => handleOnChangeMDP()}>
+                Changer le MDP
+              </button>
+              <input
+                type="password"
+                value={newPass}
+                onChange={(e) => setNewPass(e.target.value)}
+              />
+              <button
+                onClick={() => ChangeStatutChan("PWD_PROTECTED")}
+                disabled={newPass.length === 0 || newPass.length > 15}
+              >
+                Change Password
+              </button>
+            </div>
+          )}
+          {yourRole === "OWNER" && (
+            <button
+              onClick={() => {
+                setChangeStatutButton(true);
+                getStatutChan();
+              }}
+            >
+              Changer le statut du chan
+            </button>
+          )}
+          {changeStatutButton && statutChan === "PUBLIC" && (
+            <div>
+              <button onClick={() => ChangeStatutChan("PRIVATE")}>
+                pass to Private
+              </button>
+              <div>
+                <button onClick={() => handleChangeToPWD()}>
+                  pass to protected
+                </button>
+                {onPWD === true && (
+                  <div>
+                    <input
+                      type="password"
+                      placeholder="newPass ?"
+                      value={newPass}
+                      onChange={(e) => setNewPass(e.target.value)}
+                    />
+
                     <button
-                      onClick={() =>
-                        removeBlocked(
-                          user?.id.toString() as any,
-                          users.id.toString()
-                        )
-                      }
+                      onClick={() => ChangeStatutChan("PWD_PROTECTED")}
+                      disabled={newPass.length === 0}
                     >
-                      Debloquer
+                      pass to Protected
                     </button>
-                  )}
-                  <button onClick={() => messagePage(users.id.toString())}>
-                    Envoyer un message
-                  </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          {changeStatutButton && statutChan === "PRIVATE" && (
+            <div>
+              <button onClick={() => ChangeStatutChan("PUBLIC")}>
+                pass to Public
+              </button>
+              <div>
+                <button onClick={() => handleChangeToPWD()}>
+                  pass to protected
+                </button>
+                {onPWD === true && (
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="newPass ?"
+                      value={newPass}
+                      onChange={(e) => setNewPass(e.target.value)}
+                    />
+                    <button
+                      onClick={() => ChangeStatutChan("PWD_PROTECTED")}
+                      disabled={newPass.length === 0}
+                    >
+                      pass to Protected
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          {changeStatutButton && statutChan === "PWD_PROTECTED" && (
+            <div>
+              <button onClick={() => ChangeStatutChan("PRIVATE")}>
+                pass to Private
+              </button>
+              <button onClick={() => ChangeStatutChan("PUBLIC")}>
+                pass to Public
+              </button>
+            </div>
+          )}
+          {/* </div> */}
+        </div>
+        <div className="onlinepeople">
+          <ul>
+            {usersInRoom.map((users) => (
+              <div key={users.id}>
+                <button
+                  className="buttonseemore buttonchan onlinelist"
+                  onClick={() => handleUserClick(users.id)}
+                  disabled={user?.id === users.id}
+                >
+                  <div>
+                    {users.status === "ONLINE" && (
+                      <span>
+                        {users.username}-{users.role} 🟢
+                      </span>
+                    )}
+                    {users.status === "INGAME" && (
+                      <span>
+                        {users.username}-{users.role} 🎮
+                      </span>
+                    )}
+                    {users.status === "OFFLINE" && (
+                      <span>
+                        {users.username}-{users.role} 🔴
+                      </span>
+                    )}
+                  </div>
+                </button>
+                {showMenu && selectedUser === users.id && (
+                  <div className="user-menu">
+                    <button
+                      onClick={() => inviteToMatch(user?.id as any, users.id)}
+                    >
+                      inviter en match ?
+                    </button>
+                    <button onClick={handleViewProfile}>Voir le profil</button>
+                    {users.isBlocked === "false" && (
+                      <button onClick={() => BlockFriend(users.id.toString())}>
+                        Bloquer
+                      </button>
+                    )}
+                    {users.isBlocked === "true" && (
+                      <button
+                        onClick={() =>
+                          removeBlocked(
+                            user?.id.toString() as any,
+                            users.id.toString()
+                          )
+                        }
+                      >
+                        Debloquer
+                      </button>
+                    )}
+                    <button onClick={() => messagePage(users.id.toString())}>
+                      Envoyer un message
+                    </button>
 
-                  {yourRole === "OWNER" && (
-                    <div>
-                      {selectedUserRole === "USER" && (
-                        <button onClick={() => passAdminOfChannel(users.id)}>
-                          Promote Admin
-                        </button>
-                      )}
-                      {selectedUserRole === "ADMIN" && (
-                        <button onClick={() => demoteAdminOfChannel(users.id)}>
-                          Demote Admin
-                        </button>
-                      )}
+                    {yourRole === "OWNER" && (
                       <div>
-                        <button onClick={() => handleKickButton()}>Kick</button>
-                        {onKick === true && (
-                          <div>
-                            <input
-                              type="text"
-                              placeholder="Reason ?"
-                              value={reasonKick}
-                              onChange={(e) => setReasonKick(e.target.value)}
-                            />
-                            <button
-                              onClick={() => kickFromChannel(users.id)}
-                              disabled={reasonKick.length > 30}
-                            >
-                              Submit
-                            </button>
-                          </div>
-                        )}
-                      </div>
-
-                      {selectedUserIsMuted === "false" && (
-                        <div>
-                          <div>
-                            <button onClick={() => handleMuteButton()}>
-                              Mute
-                            </button>
-                            {onMute === true && (
-                              <div>
-                                <input
-                                  type="text"
-                                  placeholder="Time ?"
-                                  value={timeMute}
-                                  onChange={(e) => setTimeMute(e.target.value)}
-                                />
-                                <input
-                                  type="text"
-                                  placeholder="Reason ?"
-                                  value={reasonMute}
-                                  onChange={(e) => setReason(e.target.value)}
-                                />
-                                <button
-                                  onClick={() => MuteFromChannel(users.id)}
-                                  disabled={
-                                    isNaN(parseInt(timeMute)) ||
-                                    parseInt(timeMute) === 0 ||
-                                    timeMute.length > 3 ||
-                                    reasonMute.length > 30
-                                  }
-                                >
-                                  Submit
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      {selectedUserIsMuted === "true" && (
-                        <button onClick={() => UnMuteFromChannel(users.id)}>
-                          Unmute
-                        </button>
-                      )}
-                      {selectedUserIsBanned === "false" && (
-                        <div>
-                          <div>
-                            <button onClick={() => handleBanButton()}>
-                              Ban
-                            </button>
-                            {onBan === true && (
-                              <div>
-                                <input
-                                  type="text"
-                                  placeholder="Time ?"
-                                  value={timeBan}
-                                  onChange={(e) => setTimeBan(e.target.value)}
-                                />
-                                <input
-                                  type="text"
-                                  placeholder="Reason ?"
-                                  value={reasonBan}
-                                  onChange={(e) => setReasonBan(e.target.value)}
-                                />
-                                <button
-                                  onClick={() => BanFromChannel(users.id)}
-                                  disabled={
-                                    isNaN(parseInt(timeBan)) ||
-                                    parseInt(timeBan) === 0 ||
-                                    timeBan.length > 3 ||
-                                    reasonBan.length > 30
-                                  }
-                                >
-                                  Submit
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      {selectedUserIsBanned === "true" && (
-                        <button onClick={() => UnbanFromChannel(users.id)}>
-                          Unban
-                        </button>
-                      )}
-                    </div>
-                  )}
-                  {yourRole === "ADMIN" && (
-                    <div>
-                      {selectedUserRole === "USER" && (
-                        <button onClick={() => passAdminOfChannel(users.id)}>
-                          Promote Admin
-                        </button>
-                      )}
-                      {selectedUserRole === "USER" && (
-                        <button onClick={() => kickFromChannel(users.id)}>
-                          kick
-                        </button>
-                      )}
-                      {selectedUserIsMuted === "false" &&
-                        selectedUserRole === "USER" && (
-                          <button onClick={() => MuteFromChannel(users.id)}>
-                            Mute
+                        {selectedUserRole === "USER" && (
+                          <button onClick={() => passAdminOfChannel(users.id)}>
+                            Promote Admin
                           </button>
                         )}
-                      {selectedUserIsMuted === "true" &&
-                        selectedUserRole === "USER" && (
+                        {selectedUserRole === "ADMIN" && (
+                          <button
+                            onClick={() => demoteAdminOfChannel(users.id)}
+                          >
+                            Demote Admin
+                          </button>
+                        )}
+                        <div>
+                          <button onClick={() => handleKickButton()}>
+                            Kick
+                          </button>
+                          {onKick === true && (
+                            <div>
+                              <input
+                                type="text"
+                                placeholder="Reason ?"
+                                value={reasonKick}
+                                onChange={(e) => setReasonKick(e.target.value)}
+                              />
+                              <button
+                                onClick={() => kickFromChannel(users.id)}
+                                disabled={reasonKick.length > 30}
+                              >
+                                Submit
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        {selectedUserIsMuted === "false" && (
+                          <div>
+                            <div>
+                              <button onClick={() => handleMuteButton()}>
+                                Mute
+                              </button>
+                              {onMute === true && (
+                                <div>
+                                  <input
+                                    type="text"
+                                    placeholder="Time ?"
+                                    value={timeMute}
+                                    onChange={(e) =>
+                                      setTimeMute(e.target.value)
+                                    }
+                                  />
+                                  <input
+                                    type="text"
+                                    placeholder="Reason ?"
+                                    value={reasonMute}
+                                    onChange={(e) => setReason(e.target.value)}
+                                  />
+                                  <button
+                                    onClick={() => MuteFromChannel(users.id)}
+                                    disabled={
+                                      isNaN(parseInt(timeMute)) ||
+                                      parseInt(timeMute) === 0 ||
+                                      timeMute.length > 3 ||
+                                      reasonMute.length > 30
+                                    }
+                                  >
+                                    Submit
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {selectedUserIsMuted === "true" && (
                           <button onClick={() => UnMuteFromChannel(users.id)}>
                             Unmute
                           </button>
                         )}
-                      {selectedUserIsBanned === "false" &&
-                        selectedUserRole === "USER" && (
-                          <button onClick={() => BanFromChannel(users.id)}>
-                            Ban
-                          </button>
+                        {selectedUserIsBanned === "false" && (
+                          <div>
+                            <div>
+                              <button onClick={() => handleBanButton()}>
+                                Ban
+                              </button>
+                              {onBan === true && (
+                                <div>
+                                  <input
+                                    type="text"
+                                    placeholder="Time ?"
+                                    value={timeBan}
+                                    onChange={(e) => setTimeBan(e.target.value)}
+                                  />
+                                  <input
+                                    type="text"
+                                    placeholder="Reason ?"
+                                    value={reasonBan}
+                                    onChange={(e) =>
+                                      setReasonBan(e.target.value)
+                                    }
+                                  />
+                                  <button
+                                    onClick={() => BanFromChannel(users.id)}
+                                    disabled={
+                                      isNaN(parseInt(timeBan)) ||
+                                      parseInt(timeBan) === 0 ||
+                                      timeBan.length > 3 ||
+                                      reasonBan.length > 30
+                                    }
+                                  >
+                                    Submit
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         )}
-                      {selectedUserIsBanned === "true" &&
-                        selectedUserRole === "USER" && (
+                        {selectedUserIsBanned === "true" && (
                           <button onClick={() => UnbanFromChannel(users.id)}>
                             Unban
                           </button>
                         )}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
-        </ul>
+                      </div>
+                    )}
+                    {yourRole === "ADMIN" && (
+                      <div>
+                        {selectedUserRole === "USER" && (
+                          <button onClick={() => passAdminOfChannel(users.id)}>
+                            Promote Admin
+                          </button>
+                        )}
+                        {selectedUserRole === "USER" && (
+                          <button onClick={() => kickFromChannel(users.id)}>
+                            kick
+                          </button>
+                        )}
+                        {selectedUserIsMuted === "false" &&
+                          selectedUserRole === "USER" && (
+                            <button onClick={() => MuteFromChannel(users.id)}>
+                              Mute
+                            </button>
+                          )}
+                        {selectedUserIsMuted === "true" &&
+                          selectedUserRole === "USER" && (
+                            <button onClick={() => UnMuteFromChannel(users.id)}>
+                              Unmute
+                            </button>
+                          )}
+                        {selectedUserIsBanned === "false" &&
+                          selectedUserRole === "USER" && (
+                            <button onClick={() => BanFromChannel(users.id)}>
+                              Ban
+                            </button>
+                          )}
+                        {selectedUserIsBanned === "true" &&
+                          selectedUserRole === "USER" && (
+                            <button onClick={() => UnbanFromChannel(users.id)}>
+                              Unban
+                            </button>
+                          )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
-</div>
   );
 };
 
