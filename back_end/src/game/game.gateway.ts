@@ -662,6 +662,27 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       });
     }
 
+    @SubscribeMessage('reloadMessRoom')
+    async onChangeStatus(@MessageBody() id: string,@ConnectedSocket() socket: Socket)
+    {
+      if (!id)
+        return ;
+      let user1;
+      const Ids = this.chatService.getUsersInRoom(id);
+      (await Ids).forEach((userId) => {
+      console.log(userId);
+
+        this.playerConnections.forEach((value, key) => {
+          if (key === userId)
+            user1 = value;
+          if (user1) {
+            user1.emit("refreshAfterStatusChange");
+            user1 = null;
+          }
+        });
+      });
+    }
+
     @SubscribeMessage('reloadListRoom')
     async onNewListRoom(@MessageBody() id: string,@ConnectedSocket() socket: Socket)
     {

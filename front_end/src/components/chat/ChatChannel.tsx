@@ -172,6 +172,9 @@ export const ChatChannel = () => {
 
         setMessageList(data);
       }
+      setTimeout(() => {
+        scrollToBottom();
+      }, 300);
     } catch (error) {
       console.log(error);
     }
@@ -299,6 +302,8 @@ export const ChatChannel = () => {
   }
 
   async function fetchLastMessage() {
+    if (!id)
+      return ;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/recupRoomMessLast/${id}`,
@@ -311,7 +316,6 @@ export const ChatChannel = () => {
         throw new Error("Erreur lors de la récupération des messages privés.");
       }
       messages = await response.json();
-      console.log(messages);
       try {
         const senderResponse = await fetch(
           `http://${window.location.hostname}:3000/users/${messages.senderId}/username`,
@@ -417,6 +421,14 @@ export const ChatChannel = () => {
       socket.on("refreshListRoom", () => {
         fetchUserInRoom();
         fetchUserRole();
+      });
+    }
+
+    if (socket) {
+      socket.on("refreshAfterStatusChange", () => {
+        fetchUserInRoom();
+        fetchUserRole();
+        fetchRoomMessage();
       });
     }
 
@@ -772,7 +784,6 @@ export const ChatChannel = () => {
     setTimeout(() => {
       socket.emit("reloadMessRoom", id);
     }, 100);
-    // window.location.reload();
     setSelectedUser(0);
   }
 
