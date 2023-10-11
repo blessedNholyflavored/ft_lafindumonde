@@ -77,12 +77,12 @@ const PongGame: React.FC = () => {
 
     
 
-    if (socket)
-    {
-        socket.on("CheckAlwaysIG2", (recupRoom: Room) => {
-          console.log(recupRoom.end);
-    });
-  }
+  //   if (socket)
+  //   {
+  //       socket.on("CheckAlwaysIG2", (recupRoom: Room) => {
+  //         console.log(recupRoom.end);
+  //   });
+  // }
 
     if (countdown === 3) {
       setTimeout(() => {

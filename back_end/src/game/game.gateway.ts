@@ -499,8 +499,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       if (key === NuserId)
         user1 = value;
     });
-    console.log(user1.user.username);
-    user1.emit("heLeftTheGame");
+    if (user1)
+      user1.emit("heLeftTheGame");
     }
   }
 
@@ -551,11 +551,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     let user1;
     const NuserId = Number(recipient);
     this.playerConnections.forEach((value, key) => {
-      console.log(NuserId, " ", key);
       if (key === NuserId)
         user1 = value;
     });
-    console.log(user1);
     if (user1)
       user1.emit("receiveInvite", socket.user.id);
   }
@@ -649,8 +647,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       let user1;
       const Ids = this.chatService.getUsersInRoom(id);
       (await Ids).forEach((userId) => {
-      console.log(userId);
-
         this.playerConnections.forEach((value, key) => {
           if (key === userId)
             user1 = value;
@@ -670,8 +666,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       let user1;
       const Ids = this.chatService.getUsersInRoom(id);
       (await Ids).forEach((userId) => {
-      console.log(userId);
-
         this.playerConnections.forEach((value, key) => {
           if (key === userId)
             user1 = value;
@@ -689,7 +683,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
 
       if (!id)
         return ;
-      console.log("roomid:   ", id);
       let user1;
       const Ids = this.chatService.getUsersInRoom(id);
       (await Ids).forEach((userId) => {
