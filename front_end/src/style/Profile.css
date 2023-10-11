@@ -295,8 +295,6 @@
 .formsettings {
   height: 47px;
   padding: 8px;
-  justify-content: center !important;
-  align-items: center;
   gap: 10px;
   display: flex;
 }
