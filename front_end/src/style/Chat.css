@@ -177,7 +177,6 @@
   .sendingzoneprivate {
 	position: sticky;
 	bottom: 0;
-	background-color: #fff; /* Background color for input area */
 	padding: 10px; /* Add padding for spacing */
 	display: flex;
 	justify-content: center; /* Center the input and button horizontally */
@@ -202,7 +201,6 @@
 .sendingzonechannel {
 	position: sticky;
 	bottom: 0;
-	background-color: #fff; /* Background color for input area */
 	padding: 10px; /* Add padding for spacing */
 	display: flex;
 	justify-content: center; /* Center the input and button horizontally */
@@ -237,7 +235,7 @@
 .chatmessagebar{
     position: absolute;
     left: 50%;
-	bottom: 30px;
+	bottom: 0px;
 }
 
 .statusbutton{

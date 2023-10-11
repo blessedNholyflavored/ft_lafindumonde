@@ -1095,9 +1095,17 @@ export const Chat = () => {
                                 onClick={() => handleJoinClick(chan.id)}
                                 disabled={activeChannel === chan.id}
                               >
-                                <div>
-                                  {chan.name} --- {chan.visibility}
-                                </div>
+                              <div>
+                                {chan.visibility === "PWD_PROTECTED" && (
+                                  <span>{chan.name} 🔑</span>
+                                )}
+                                {chan.visibility === "PUBLIC" && (
+                                  <span>{chan.name} 🔓</span>
+                                )}
+                                {chan.visibility === "PRIVATE" && (
+                                  <span>{chan.name} ⛔</span>
+                                )}
+                              </div>
                               </button>
                               {isPromptOpen === true &&
                                 activeChannel === chan.id &&
@@ -1178,10 +1186,17 @@ export const Chat = () => {
                                 }}
                                 disabled={selectedPrivateConv === priv.id}
                               >
-                                {/* <div>
+                                <div>
                                   {priv.status === "ONLINE" && (
+                                    <span>{priv.username} 🟢</span>
                                   )}
-                                </div> */}
+                                  {priv.status === "INGAME" && (
+                                    <span>{priv.username} 🎮</span>
+                                  )}
+                                  {priv.status === "OFFLINE" && (
+                                    <span>{priv.username} 🔴</span>
+                                  )}
+                                </div>
                               </button>
                             )}
                           </div>
@@ -1233,7 +1248,15 @@ export const Chat = () => {
                               disabled={activeChannel === chan.id}
                             >
                               <div>
-                                {chan.name} --- {chan.visibility}
+                                {chan.visibility === "PWD_PROTECTED" && (
+                                  <span>{chan.name} 🔑</span>
+                                )}
+                                {chan.visibility === "PUBLIC" && (
+                                  <span>{chan.name} 🔓</span>
+                                )}
+                                {chan.visibility === "PRIVATE" && (
+                                  <span>{chan.name} ⛔</span>
+                                )}
                               </div>
                             </button>
                             {activeChannel === chan.id &&

@@ -374,7 +374,7 @@ export const ChatChannel = () => {
         }, 300);
       });
     }
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (reactu === 0) {
@@ -468,6 +468,7 @@ export const ChatChannel = () => {
   const onSubmit = () => {
     if (value.length > 0) {
       socket.emit("newMessageRoom", value, id);
+      setValue("");
       setTimeout(() => {
         socket.emit("reloadMessRoomTEST", id);
       }, 100);
@@ -951,7 +952,7 @@ export const ChatChannel = () => {
         {/* <div className="realchat"> */}
         <div>
           {id && (
-            <ul>
+            <ul style={{marginBottom:"50px"}}>
               {messageListSend.length > 0 && user ? (
                 messageListSend.map((friend, index) => (
                   <div className="messorder" key={index}>
@@ -988,7 +989,9 @@ export const ChatChannel = () => {
                 <div>no messages yet!</div>
               )}
             </ul>
-          )}
+
+)}
+</div>
         </div>
         <div className="chatmessagebar">
           {userIsMuted === true && (
@@ -1005,7 +1008,10 @@ export const ChatChannel = () => {
             <button
               className="buttonseemore buttonchan"
               onClick={() => {
-                setChangeStatutButton(true);
+                if (changeStatutButton === false)
+                  setChangeStatutButton(true);
+                else
+                  setChangeStatutButton(false);
                 getStatutChan();
               }}
             >
@@ -1146,7 +1152,21 @@ export const ChatChannel = () => {
                   disabled={user?.id === users.id}
                 >
                   <div>
-                    {users.username} -{users.role} - {users.status}
+                    {users.status === "ONLINE" && (
+                      <span>
+                        {users.username}-{users.role} 🟢
+                      </span>
+                    )}
+                    {users.status === "INGAME" && (
+                      <span>
+                        {users.username}-{users.role} 🎮
+                      </span>
+                    )}
+                    {users.status === "OFFLINE" && (
+                      <span>
+                        {users.username}-{users.role} 🔴
+                      </span>
+                    )}
                   </div>
                 </button>
                 {showMenu && selectedUser === users.id && (
@@ -1367,7 +1387,6 @@ export const ChatChannel = () => {
             ))}
           </ul>
         </div>
-      </div>
     </div>
   );
 };

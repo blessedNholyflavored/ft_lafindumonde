@@ -273,9 +273,9 @@ const PongGame: React.FC = () => {
 
   useEffect(() => {
     if (socket && !end) {
-    return () => {
-      socket.emit("leaveGame", id);
-    }
+      return () => {
+        socket.emit("leaveGame", id);
+      };
     }
   }, [socket]);
 
@@ -395,8 +395,10 @@ const PongGame: React.FC = () => {
                   </div>
                 )}
               </div>
-              <div id="middlebox" style={{width: mapx / 2,
-                    height: mapy / 3.5,}}>
+              <div
+                id="middlebox"
+                style={{ width: mapx / 2, height: mapy / 3.5 }}
+              >
                 <div
                   className="pong-game"
                   style={{
@@ -416,20 +418,18 @@ const PongGame: React.FC = () => {
                     <div className="countdown start">Start</div>
                   )}
                   {/* </div> */}
-                  {user && (
-                    <h2>Vous êtes connecté en tant que {user.username}</h2>
-                  )}
-                  {!end && (
-                    <button className="buttonseemore" onClick={NavHome}>
-                      Quitter la partie
+                  {/* {user && (
+                    <button className="buttonseemore">
+                      you are currently logged as {user.username}
                     </button>
-                  )}
+                  )} */}
+                  {/* {!end && (
+                    <button className="buttonseemore" onClick={NavHome}>
+                      leave the game
+                    </button>
+                  )} */}
                   {room && room.player1 && room.player2 && (
                     <div>
-                      <p>
-                        La partie commence entre {room.player1} et{" "}
-                        {room.player2} !
-                      </p>
                       <div
                         style={{
                           textAlign: "center",
@@ -439,11 +439,10 @@ const PongGame: React.FC = () => {
                       >
                         {end && (
                           <div>
-                            <h1>Fin de partie !</h1>
+                            <p>game over</p>
                             Score - {room.player1} {room.scoreP1} |{" "}
                             {room.scoreP2} {room.player2}
-                            <p>{room.winner} remporte la partie</p>
-                            
+                            <p>{room.winner} wins!</p>
                           </div>
                         )}
 
@@ -478,12 +477,15 @@ const PongGame: React.FC = () => {
                     </div>
                   )}
                 </div>
-                <button className="buttonseemore" style={{marginBottom:"5px"}} onClick={NavHome}>
-                              back to gamepage
-                            </button>
+                <button
+                  className="buttonseemore"
+                  style={{ marginBottom: "5px" }}
+                  onClick={NavHome}
+                >
+                  back to gamepage
+                </button>
               </div>
 
-              
               <div id="rightbox">
                 {ImgUrlP2 && (
                   <div>
@@ -491,7 +493,7 @@ const PongGame: React.FC = () => {
                     <img src={ImgUrlP2} className="avatar" alt="Menu 3" />
                   </div>
                 )}
-            </div>
+              </div>
             </div>
           </div>
         </main>

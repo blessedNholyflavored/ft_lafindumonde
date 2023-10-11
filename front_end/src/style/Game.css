@@ -236,15 +236,14 @@
   height: 280px;
 }
 #rightbox {
-  float: right;
-  width: 25%;
-  height: 280px;
   display: flex;
   justify-content: center;
   align-items: center;
   color: black;
-
-}
+position: absolute;
+top:21%;
+right: 10%;
+  }
 
 .avatar {
   vertical-align: middle;
