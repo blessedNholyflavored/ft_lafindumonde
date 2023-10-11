@@ -73,6 +73,12 @@
   
 }
 
+.overflowdiv{
+  overflow: auto;
+  height: 93%;
+}
+
+
 
 
 .buttonleader {
@@ -128,21 +134,21 @@
 margin-bottom: 15px;
 }
 .podium__number {
-  width: 27px;
-  height: 75px;
+  width: 17px;
+  height: 55px;
 }
 
 .podium .first {
-  min-height: 300px;
+  min-height: 150px;
   background: #FF9C55
 }
 
 .podium .second {
-  min-height: 200px;
+  min-height: 120px;
   background: #1FC11B ;
 }
 
 .podium .third {
-  min-height: 100px;
+  min-height: 90px;
   background: #FF5555;
 }

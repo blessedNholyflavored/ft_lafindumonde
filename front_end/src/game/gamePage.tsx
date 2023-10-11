@@ -193,6 +193,7 @@ export const GamePage = () => {
       </header>
       <div className="flex-bg">
         <main>
+          
           <div className="fullpage">
             <div className="navbarbox">
               <img src={icon} alt="icon" />

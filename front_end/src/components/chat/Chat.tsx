@@ -1253,7 +1253,7 @@ export const Chat = () => {
                         {isPrivatechan === 1 && (
                           <div>
                             <ul>
-                              <p>invite them!</p>
+                              <p>invite them in {activeChannelName} :</p>
                               {notInRoom.map((chan) => (
                                 <div key={chan.id}>
                                   <div style={{ fontWeight: "bold" }}>

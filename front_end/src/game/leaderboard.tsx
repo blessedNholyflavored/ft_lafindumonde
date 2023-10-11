@@ -162,6 +162,7 @@ export const Classement = () => {
               <img src={icon} alt="icon" />
               <h1> LEADERBOARD </h1>
             </div>
+            <div className="overflowdiv">
             <div className="container podium">
             { second?.username && (
               <div className="podium__item">
@@ -260,6 +261,8 @@ export const Classement = () => {
                 </tbody>
               </table>
             </div>
+            </div>
+
           </div>
         </main>
         <nav>

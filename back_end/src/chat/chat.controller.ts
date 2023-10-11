@@ -1,4 +1,17 @@
-import { Controller, Get , Post , Body, Res , Req, Param, UploadedFile, UseInterceptors, UseGuards, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Res,
+  Req,
+  Param,
+  UploadedFile,
+  UseInterceptors,
+  UseGuards,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { User } from '.prisma/client';
@@ -10,133 +23,128 @@ import { ChatService } from './chat.service';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
 import { get } from 'http';
 
-
 @Controller('chat')
 @UseGuards(...AuthenticatedGuard)
 export class ChatController {
   friendService: any;
-  constructor(private chatService: ChatService,private readonly userService: UserService) {}
+  constructor(
+    private chatService: ChatService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get('/recupMess/:id/:id1')
-  async recupMess(@Param('id') id: number,@Param('id1') id1: number)
-  {
+  async recupMess(@Param('id') id: number, @Param('id1') id1: number) {
     return this.chatService.recupMessById(id.toString(), id1.toString());
   }
 
   @Get('/recupLastMess/:id/:id1')
-  async recupLastMess(@Param('id') id: number,@Param('id1') id1: number)
-  {
+  async recupLastMess(@Param('id') id: number, @Param('id1') id1: number) {
     return this.chatService.recupLastMess(id.toString(), id1.toString());
   }
 
-  
-  
   @Get('/recupRoomMessLast/:id/')
-  async recupRoomMessLast(@Param('id') id: number, @Req() req:any)
-  {
-		// check if user emitting request is in the room
-		const usersInRoom = await this.chatService.getUsersInRoom(id.toString());
-		if (usersInRoom.includes(req.user.id) === false)
-		{
-			throw new UnauthorizedException("User isn't in room");
-		}
+  async recupRoomMessLast(@Param('id') id: number, @Req() req: any) {
+    // check if user emitting request is in the room
+    const usersInRoom = await this.chatService.getUsersInRoom(id.toString());
+    if (usersInRoom.includes(req.user.id) === false) {
+      throw new UnauthorizedException("User isn't in room");
+    }
     return this.chatService.recupRoomMessLast(id.toString());
   }
 
   @Get('/recupRoomMess/:id/')
-  async recupRoomMess(@Param('id') id: number, @Req() req:any)
-  {
-		// check if user emitting request is in the room
-		const usersInRoom = await this.chatService.getUsersInRoom(id.toString());
-		if (usersInRoom.includes(req.user.id) === false)
-		{
-			throw new UnauthorizedException("User isn't in room");
-		}
+  async recupRoomMess(@Param('id') id: number, @Req() req: any) {
+    // check if user emitting request is in the room
+    const usersInRoom = await this.chatService.getUsersInRoom(id.toString());
+    if (usersInRoom.includes(req.user.id) === false) {
+      throw new UnauthorizedException("User isn't in room");
+    }
     return this.chatService.recupRoomMess(id.toString());
   }
 
   @Get('/getRole/:id/:id1')
-  async getRole(@Req() req: any, @Param('id') senderId: string,@Param('id1') roomId: number)
-  {
+  async getRole(
+    @Req() req: any,
+    @Param('id') senderId: string,
+    @Param('id1') roomId: number,
+  ) {
     return this.chatService.getRole(senderId.toString(), roomId.toString());
   }
 
   @Get('/getUserInRoom/:id/')
-  async getUserInRoom(@Param('id') roomId: number)
-  {
+  async getUserInRoom(@Param('id') roomId: number) {
     return this.chatService.getUsersInRoomForList(roomId.toString());
   }
-  
+
   @Get('/checkRoomName/:name')
-  async checkRoomName(@Param('name') name: string)
-  {
+  async checkRoomName(@Param('name') name: string) {
     return this.chatService.checkRoomExist(name);
   }
 
   @Get('/checkIfIn/:name/:id')
-  async checkIfIn(@Param('name') name: string, @Param('id') userId: string)
-  {
+  async checkIfIn(@Param('name') name: string, @Param('id') userId: string) {
     return this.chatService.checkIfIn(name, userId);
   }
 
   @Get('/recupYourRooms')
-  async recupYourRooms(@Req() req: any)
-  {
+  async recupYourRooms(@Req() req: any) {
     return this.chatService.recupYourRooms(req.user.id.toString());
   }
 
   @Get('/invSend/:id/:id1')
-  async invSend(@Param('id') id: string, @Param('id1') id1: string)
-  {
+  async invSend(@Param('id') id: string, @Param('id1') id1: string) {
     return this.chatService.recupInvSend(id, id1);
   }
 
   @Get('/recupRooms/')
-  async recupRooms(@Req() req: any)
-  {
+  async recupRooms(@Req() req: any) {
     return this.chatService.recupRooms(req.user.id.toString());
   }
 
   @Get('/recupPrivate/')
-  async recupPrivate(@Req() req: any)
-  {
+  async recupPrivate(@Req() req: any) {
     return this.chatService.recupPrivate(req.user.id.toString());
   }
 
   @Get('/invReceive/:id')
-  async recupInvReceive(@Param('id') id: string)
-  {
+  async recupInvReceive(@Param('id') id: string) {
     return this.chatService.recupInvReceive(id);
   }
 
   @Get('/roomName/:id')
-  async getRoomName(@Param('id') id: string)
-  {
+  async getRoomName(@Param('id') id: string) {
     return this.chatService.getRoomName(id);
   }
 
   @Get('/timeMute/:id/:id1')
-  async onTimeMute(@Param('id') id: string, @Param('id1') roomId: string, )
-  {
+  async onTimeMute(@Param('id') id: string, @Param('id1') roomId: string) {
     return this.chatService.timeLeftMuteUser(id, roomId);
   }
 
   @Get('/timeBan/:id/:id1')
-  async onTimeBan(@Param('id') id: string, @Param('id1') roomId: string, )
-  {
+  async onTimeBan(@Param('id') id: string, @Param('id1') roomId: string) {
     return this.chatService.timeLeftBanUser(id, roomId);
   }
 
   @Get('/usersNotInRoom/:id/:id1')
-  async recupUserNotInChan(@Param('id') id: number, @Param('id1') userId: string)
-  {
+  async recupUserNotInChan(
+    @Param('id') id: number,
+    @Param('id1') userId: string,
+  ) {
     return this.chatService.recupUserNotInChan(id.toString(), userId);
   }
 
   @Post('/invite/:id/:id1/:id2')
-  async invite(@Param('id') senderId: string,@Param('id1') recipientId: string,@Param('id2') roomId: string)
-  {
-    return this.chatService.createInvite(senderId.toString(),recipientId.toString(), roomId.toString());
+  async invite(
+    @Param('id') senderId: string,
+    @Param('id1') recipientId: string,
+    @Param('id2') roomId: string,
+  ) {
+    return this.chatService.createInvite(
+      senderId.toString(),
+      recipientId.toString(),
+      roomId.toString(),
+    );
   }
 
   @Post('refuse/:id')
@@ -150,12 +158,20 @@ export class ChatController {
   }
 
   @Post('ban/:id/:id1/:time')
-  banChan(@Param('id') roomId: string, @Param('id1') userId: string, @Param('time') time: number) {
+  banChan(
+    @Param('id') roomId: string,
+    @Param('id1') userId: string,
+    @Param('time') time: number,
+  ) {
     return this.chatService.banSomeone(roomId, userId, time);
   }
 
   @Post('mute/:id/:id1/:time')
-  muteSomeone(@Param('id') roomId: string, @Param('id1') userId: string, @Param('time') time: number) {
+  muteSomeone(
+    @Param('id') roomId: string,
+    @Param('id1') userId: string,
+    @Param('time') time: number,
+  ) {
     return this.chatService.muteSomeone(roomId, userId, time);
   }
 
@@ -169,41 +185,43 @@ export class ChatController {
     return this.chatService.unBanSomeone(roomId, userId);
   }
 
-
   @Get('/muted/:id/:id1')
-  async getStatusMute(@Param('id') userId: string, @Param('id1') roomId: string)
-  {
+  async getStatusMute(
+    @Param('id') userId: string,
+    @Param('id1') roomId: string,
+  ) {
     return this.chatService.getStatusMute(userId, roomId);
   }
 
   @Get('/banned/:id/:id1')
-  async getStatusBan(@Param('id') userId: string, @Param('id1') roomId: string)
-  {
+  async getStatusBan(
+    @Param('id') userId: string,
+    @Param('id1') roomId: string,
+  ) {
     return this.chatService.getStatusBan(userId, roomId);
   }
 
-
   @Post('/admin/:id/:id1')
-  async passAdmin(@Param('id') userId: string, @Param('id1') roomId: string)
-  {
+  async passAdmin(@Param('id') userId: string, @Param('id1') roomId: string) {
     return this.chatService.passAdmin(roomId, userId);
   }
 
   @Post('/demoteAdmin/:id/:id1')
-  async demoteAdmin(@Param('id') userId: string, @Param('id1') roomId: string)
-  {
+  async demoteAdmin(@Param('id') userId: string, @Param('id1') roomId: string) {
     return this.chatService.demoteAdmin(roomId, userId);
   }
 
   @Get('/statut/:id')
-  async getStatusChan(@Param('id') roomId: string)
-  {
+  async getStatusChan(@Param('id') roomId: string) {
     return this.chatService.getStatusChan(roomId);
   }
 
   @Post('/changeStatut/:id/:option/:pass')
-  async changeStatut(@Param('id') roomId: string, @Param('option') option: string, @Param('pass') pass: string)
-  {
+  async changeStatut(
+    @Param('id') roomId: string,
+    @Param('option') option: string,
+    @Param('pass') pass: string,
+  ) {
     return this.chatService.changeStatut(roomId, option, pass);
-  }  
+  }
 }

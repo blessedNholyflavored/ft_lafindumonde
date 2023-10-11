@@ -133,32 +133,29 @@ const ScoreList = (props: any) => {
 
   return (
     <div className="scorelist">
-      <div className="lvlscore">
-        <div className="imgstar">
-          <img src={star} className="star" alt="icon"></img>
-        </div>
-        <div className="textscore">
-          {achievement} <p className="under">congrats on level {level}!</p>
-        </div>
-      </div>
-      <div className="lvlscore">
-        <div className="imgstar">
-          <img src={star} className="star" alt="icon"></img>
-        </div>
-        <div className="textscore">
-          {achievementgame}
-          <p className="under">You've played {gameplayed} games!</p>
-        </div>
-      </div>
-      <div className="lvlscore">
-        <div className="imgstar">
-          <img src={star} className="star" alt="icon"></img>
-        </div>
-        <div className="textscore">
-          {gameLost} <p className="under"> you lost {nbgameLost} games!</p>
-        </div>{" "}
-      </div>
-    </div>
+
+
+
+<div className="profilecard">
+<p className="username">
+  <img src={star} className="icon" alt="icon"></img>
+  {achievement} <p className="under">congrats on level {level}!</p>
+</p>
+
+<p className="username">
+  <img src={star} className="icon" alt="icon"></img>
+  {achievementgame} 
+<p className="under">You've played {gameplayed} games!</p>
+</p>
+
+<p className="username">
+  <img src={star} className="icon" alt="icon"></img>
+{gameLost} <p className="under"> you lost {nbgameLost} games!</p>
+</p>
+
+</div>
+</div>
+
   );
 };
 
