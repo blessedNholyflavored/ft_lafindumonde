@@ -17,8 +17,6 @@ header h1 {
   text-align: center;
 }
 
-/* Styles for the main content */
-
 .flex-bg {
   display: flex;
   background-size: cover;
@@ -37,7 +35,6 @@ main h2 {
   font-size: 1.5rem;
 }
 
-/* Absolute-positioned elements within the main content */
 .absolute {
   position: absolute;
 }
@@ -115,7 +112,6 @@ ul {
   height: 50px;
 }
 
-/* Styles for the footer */
 footer {
   padding: 1rem;
   text-align: center;
@@ -149,14 +145,6 @@ footer {
   /* width: 100%; */
 }
 
-/* .home {
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  top: 20%;
-  left: 10%;
-  background-color: red;
-} */
 .home {
   top: 5%;
   left: 5%;
@@ -234,9 +222,7 @@ footer {
   display: flex;
   margin: 5px;
 }
-/* pour le responsive peut etre un display none si window < 800/900 px */
 .troll img {
-  /* height: 200px; */
   width: 15vw;
 }
 

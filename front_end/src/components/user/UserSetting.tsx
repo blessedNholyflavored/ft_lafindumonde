@@ -83,7 +83,6 @@ export const UserSetting: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const userId = user?.id;
-    console.log("dans front user id = ", userId);
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/users/update-username`,
@@ -118,7 +117,6 @@ export const UserSetting: React.FC = () => {
   const handleSubmitPass = async (e: React.FormEvent) => {
     e.preventDefault();
     const userId = user?.id;
-    console.log("dans front user id = ", userId);
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/users/update-pass`,
@@ -222,7 +220,6 @@ export const UserSetting: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       console.log(file.type);
-      console.log("QQQQQQQQQQQQQQQQQ", file);
       setNewPicture(file);
     }
   };
@@ -251,18 +248,15 @@ export const UserSetting: React.FC = () => {
           alert("profil picture mise à jour avec succès !");
           displayPic();
         } else {
-          //console.log("kkkkkkkkkk");
           const backError = await response.json();
           setError(backError.message);
           alert(backError.message);
         }
       } catch (error) {
-        //console.log("icicicci   ",error);
         if (error instanceof Response) {
           const backError = await error.json();
           setError(backError.message);
           alert(backError.message);
-          //console.log("llalalalaal   ", backError);
         }
       }
     }
@@ -300,9 +294,12 @@ export const UserSetting: React.FC = () => {
           credentials: "include",
         }
       );
-      if (!response.ok) {
-        // this response to post request only handle bad case
-        // response.ok is something it doesn't want to hear about :(
+      
+      if (response.ok) {
+        setShowNotification(true);
+        setNotifyMSG("You successfully changed your avatar!");
+        setNotifyType(2);
+      } else {
         setShowNotification(true);
         setNotifyMSG("Something went wrong !");
         setNotifyType(3);
@@ -386,8 +383,10 @@ export const UserSetting: React.FC = () => {
       setShowNotification(true);
       setNotifyMSG("You can't enable 2FA with this type of account !");
       setNotifyType(3);
-      // return;
-    } else {
+      return;
+    }
+   
+    else {
       setShowNotification(true);
       setNotifyMSG(
         "Are you ready to save the QR code you will be provided in the next page ?"
@@ -399,7 +398,6 @@ export const UserSetting: React.FC = () => {
 
   return (
     <>
-      {/* <body> */}
       {showNotification && (
         <Notify
           message={notifyMSG}
@@ -497,7 +495,6 @@ export const UserSetting: React.FC = () => {
                   )}
                 </div>
               </div>
-              {/* deuxieme */}
               <div className="boxrowsettings">
                 <div className="navbarsmallbox">
                   <p className="boxtitle"> CHANGE AVATAR </p>
@@ -618,7 +615,6 @@ export const UserSetting: React.FC = () => {
         </button>
         <img src={logo} className="logo" alt="icon" />
       </footer>
-      {/* </body> */}
     </>
   );
 };

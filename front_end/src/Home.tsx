@@ -29,6 +29,7 @@ const Home: React.FC<HomeProps> = () => {
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
   const [sender, setSender] = useState<number>(0);
+  const [username, setUsername] = useState<string>("");
 
   const socket = useContext(WebsocketContext);
   const navigate = useNavigate();
@@ -39,7 +40,32 @@ const Home: React.FC<HomeProps> = () => {
 
   useEffect(() => {
     displayPic();
+    fetchUsernameById();
   }, []);
+
+  async function fetchUsernameById() {
+    const id = user?.id;
+
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/${id}/username`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error(
+          `Erreur lors de la récupération de l'utilisateur avec l'ID ${id}.`
+        );
+      }
+      const userData = await response.text();
+      setUsername(userData);
+    } catch (error) {
+      console.error("Erreur :", error);
+      return null;
+    }
+  }
 
   const displayPic = async () => {
     const userId = user?.id;
@@ -158,7 +184,7 @@ const Home: React.FC<HomeProps> = () => {
             <p> HOME </p>
             <div className="inside">
               <img src={ImgUrl} className="homepic" />
-              <button className="homebut">WELCOME {user?.username}</button>
+              <button className="homebut">WELCOME {username}</button>
             </div>
           </div>
 

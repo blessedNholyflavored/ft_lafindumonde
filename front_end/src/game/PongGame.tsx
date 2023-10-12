@@ -72,13 +72,6 @@ const PongGame: React.FC = () => {
   };
 
   useEffect(() => {
-    //   if (socket)
-    //   {
-    //       socket.on("CheckAlwaysIG2", (recupRoom: Room) => {
-    //         console.log(recupRoom.end);
-    //   });
-    // }
-
     if (countdown === 3) {
       setTimeout(() => {
         socket.emit("recupRoomAtStart", id);
@@ -399,15 +392,7 @@ const PongGame: React.FC = () => {
                 id="middlebox"
                 style={{ width: mapx / 2, height: mapy / 3.5 }}
               >
-                <div
-                  className="pong-game"
-                  style={{
-                    color: "black",
-                    width: mapx / 2,
-                    height: mapy / 3.5,
-                  }}
-                >
-                  {/* <div className="countdown-container"> */}
+                <div className="countdownstyle ">
                   {countdown > 1 && (
                     <div className="countdown">{countdown}</div>
                   )}
@@ -417,6 +402,16 @@ const PongGame: React.FC = () => {
                   {countdown === 0 && (
                     <div className="countdown start">Start</div>
                   )}
+                </div>
+                <div
+                  className="pong-game"
+                  style={{
+                    color: "black",
+                    width: mapx / 2,
+                    height: mapy / 3.5,
+                  }}
+                >
+                  {/* <div className="countdown-container"> */}
                   {/* </div> */}
                   {/* {user && (
                     <button className="buttonseemore">
@@ -437,18 +432,24 @@ const PongGame: React.FC = () => {
                           marginBottom: "10px",
                         }}
                       >
-                        {end && (
+                        {end === 1 && (
                           <div>
-                            <p>game over</p>
-                            Score - {room.player1} {room.scoreP1} |{" "}
-                            {room.scoreP2} {room.player2}
+                            {room.winner === user?.username && (
+                              <h1>Victory !</h1>
+                            )}
+                            {room.winner !== user?.username && (
+                              <h1>Game over !</h1>
+                            )}
+                            final score
+                            <br></br>
+                            <b>{room.player1}</b> {room.scoreP1} |{" "}
+                            {room.scoreP2} <b>{room.player2}</b>
                             <p>{room.winner} wins!</p>
                           </div>
                         )}
-
-                        {!end && (
+                        {end === 0 && (
                           <div>
-                            Score - {room.player1} {room.scoreP1} |{" "}
+                            score - {room.player1} {room.scoreP1} |{" "}
                             {room.scoreP2} {room.player2}
                           </div>
                         )}
@@ -478,7 +479,7 @@ const PongGame: React.FC = () => {
                   )}
                 </div>
                 <button
-                  className="buttonseemore"
+                  className="buttonseemore backto"
                   style={{ marginBottom: "5px" }}
                   onClick={NavHome}
                 >

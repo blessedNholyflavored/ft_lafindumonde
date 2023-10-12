@@ -333,13 +333,16 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     }
   }
 
+  private pause(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
   // boucle de jeu
   startLoop(id: number) {
 
     let recupRoom = this.roomMapService.getRoom(id.toString());
 
-    this.roomIntervals[recupRoom.idRoom] = setInterval(() => {
+    this.roomIntervals[recupRoom.idRoom] = setInterval(async () => {
     
       let recupRoom = this.roomMapService.getRoom(id.toString());
       let flag = 0;
@@ -396,12 +399,16 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           recupRoom.ball.y = canvasHeight / 2;
           recupRoom.ball.speedX = -recupRoom.ball.speedX;
           recupRoom.scorePlayer2 += 1;
+            await this.pause(5000);
+
         }
         if (recupRoom.ball.x >= canvasWidth) {
           recupRoom.ball.x = canvasWidth / 2;
           recupRoom.ball.y = canvasHeight / 2;
           recupRoom.ball.speedX = -recupRoom.ball.speedX;
           recupRoom.scorePlayer1 += 1;
+            await this.pause(5000);
+
         }
 
         // Condition d'arret du jeu, si un joueur a atteint le nombre de points requis
@@ -848,10 +855,10 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       @SubscribeMessage('recupRoomAtStart')
       async OnRecupRoomAtStart(@MessageBody() roomId:number ,@ConnectedSocket() socket: Socket)
       {
+
         if(!roomId)
           return ;
        let recupRoom = this.roomMapService.getRoom(roomId.toString());
-       
        if (!recupRoom)
        return ;
           const Sroom: roomSend = {player1: recupRoom.player1.username, player2: recupRoom.player2.username,
@@ -859,7 +866,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
             ballY: 200, scoreP1: 0,
             scoreP2: 0, player1Y: 200, player2Y: 200, winner: '',
             roomID: recupRoom.idRoom};
-
             socket.emit("sendRoomAtStart", Sroom);
       }
 }

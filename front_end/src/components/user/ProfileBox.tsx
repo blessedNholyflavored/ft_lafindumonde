@@ -47,7 +47,7 @@ export const ProfileBox = (props: any) => {
         setElo(data.ELO);
         // }
       } else {
-        console.log("error : wrong shit");
+        console.log("error : wrong fetch");
       }
     } catch (error) {
       console.error("Error fetching usernames:", error);
