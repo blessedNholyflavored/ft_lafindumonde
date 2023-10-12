@@ -6,6 +6,17 @@ import "../App.css";
 import { useAuth } from "../components/auth/AuthProvider";
 import { useNavigate, useParams } from "react-router-dom";
 import { WebsocketContext } from "../services/WebsocketContext";
+import { Logout } from "../components/auth/Logout";
+import nav from "./../img/buttoncomp.png";
+import icon from "./../img/buttoncomp.png";
+import foldergreen from "./../img/foldergreen.png";
+import folderblue from "./../img/folderblue.png";
+import folderpink  from "./../img/folderpink.png";
+import folderyellow from "./../img/folderyellow.png";
+import folderwhite from "./../img/folderwhite.png";
+import folderviolet from "./../img/folderviolet.png";
+import folderred from "./../img/folderred.png";
+import logo from "./../img/logo42.png";
 
 interface PongGameProps {
   socket: Socket | null;
@@ -28,6 +39,13 @@ const SuperPong: React.FC<PongGameProps> = () => {
   const [SpeedBallY, setSpeedBallY] = useState<number>(0);
   const [countdown, setCountdown] = useState(3);
   const [checkstatus, setCheckStatus] = useState(false);
+  let [ImgUrlP1, setImgUrlP1] = useState<string>("");
+  let [ImgUrlP2, setImgUrlP2] = useState<string>("");
+  let [usernameP1, setUsernameP1] = useState<string>("");
+  let [usernameP2, setUsernameP2] = useState<string>("");
+  const [playerId1, setPlayerId1] = useState<number>(0);
+  const [playerId2, setPlayerId2] = useState<number>(0);
+
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
     if (countdown > 0) {
@@ -107,6 +125,70 @@ const SuperPong: React.FC<PongGameProps> = () => {
     window.location.reload();
   };
 
+
+  const displayPic = async (userId: number, pos: number) => {
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/users/${userId}/avatar`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        const pictureURL = await response.text();
+        if (pictureURL.includes("https")) {
+          if (pos === 1) setImgUrlP1(pictureURL);
+          if (pos === 2) setImgUrlP2(pictureURL);
+        } else {
+          try {
+            const response = await fetch(
+              `http://${window.location.hostname}:3000/users/uploads/${pictureURL}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            if (response.ok) {
+              const blob = await response.blob();
+              const absoluteURL = URL.createObjectURL(blob);
+              if (pos === 1) setImgUrlP1(pictureURL);
+              if (pos === 2) setImgUrlP2(pictureURL);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const catchPic = () => {
+    if (socket) {
+      if (usernameP1 === user?.username) {
+        socket.emit("AskForIdOpponent", id, 1);
+      } else if (usernameP2 === user?.username) {
+        socket.emit("AskForIdOpponent", id, 2);
+      }
+      socket.on("recupIdOpponent", (opponentId: number) => {
+        if (usernameP1 === user?.username) {
+          setPlayerId2(opponentId);
+          displayPic(user?.id as number, 1);
+          displayPic(opponentId, 2);
+        }
+        if (usernameP2 === user?.username) {
+          setPlayerId1(opponentId);
+          displayPic(user?.id as number, 2);
+          displayPic(opponentId, 1);
+        }
+      });
+    }
+  };
+
+
+  
   const startGameFCT = () => {
     if (socket && counter === 0) {
       socket?.emit("startGame", id);
@@ -254,8 +336,61 @@ const SuperPong: React.FC<PongGameProps> = () => {
     };
   }, []);
 
+
+  const navigateToHome = () => {
+    navigate("/");
+  };
+
+  const navigateToProfPage = () => {
+    navigate(`/users/profile/${user?.id}`);
+  };
+
+  const navigateToChat = () => {
+    navigate("/chat");
+  };
+
+  const navigateToFriends = () => {
+    navigate("/friends");
+  };
+
+  const navigateToSettings = () => {
+    navigate("/settings");
+  };
+  const navToGamePage = () => {
+    navigate("/gamePage");
+  };
+
+
   return (
-    <div className="pong-game">
+    <div>
+      <header>
+        <div>
+          <img src={nav} alt="Menu 1" />
+        </div>
+        <h1>TRANSCENDENCE</h1>
+      </header>
+
+
+      <div className="flex-bg">
+        <main>
+        <div className="fullpage ponggame">
+            <div className="navbarbox">
+              <img src={icon} alt="icon" />
+              <h1> game </h1>
+            </div>
+
+            <div id="boxes">
+              <div id="leftbox">
+                {ImgUrlP1 && (
+                  <div>
+                    <h2>{usernameP1}</h2>
+                    <img src={ImgUrlP1} className="avatar" alt="photo casse" />
+                  </div>
+                )}
+              </div>
+              <div id="middlebox">
+
+              <div className="pong-game" style={{ color: "black" }}>
       {user && <h2>Vous êtes connecté en tant que {user.username}</h2>}
       {/* <div className="countdown-container"> */}
       {countdown > 1 && <div className="countdown">{countdown}</div>}
@@ -280,7 +415,7 @@ const SuperPong: React.FC<PongGameProps> = () => {
                 Score - {room.player1} {room.scoreP1} | {room.scoreP2}{" "}
                 {room.player2}
                 <p>{room.winner} remporte la partie</p>
-                <button onClick={NavHome}>Retourner au Home</button>
+                <button onClick={NavHome}>pack to homepage</button>
               </div>
             )}
             {!end && (
@@ -309,6 +444,68 @@ const SuperPong: React.FC<PongGameProps> = () => {
           )}
         </div>
       )}
+          </div>
+          </div>
+
+<div id="rightbox">
+  {ImgUrlP2 && (
+    <div>
+      <h2>{usernameP2}</h2>
+      <img src={ImgUrlP2} className="avatar" alt="Menu 3" />
+    </div>
+  )}
+</div>
+          </div>
+
+    </div>
+    </main>
+    <nav className="profileNav">
+          <ul>
+            <li className="menu-item">
+              <a onClick={navigateToHome}>
+                <img src={folderviolet} alt="Menu 3" className="profileNavIcon" />
+                <p>Home</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={() => navToGamePage()}>
+                <img src={folderblue} alt="Menu 3" className="profileNavIcon" />
+                <p>Game</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToProfPage}>
+                <img src={foldergreen} alt="Menu 3" className="profileNavIcon" />
+                <p>Profile</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToSettings}>
+                <img src={folderyellow} alt="Menu 3" className="profileNavIcon" />
+                <p>Settings</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToFriends}>
+                <img src={folderwhite} alt="Menu 3" className="profileNavIcon" />
+                <p>Friends</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToChat}>
+                <img src={folderred} alt="Menu 3" />
+                <p>Chat</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <footer>
+        <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
+          LOG OUT{" "}
+        </button>
+        <img src={logo} className="logo" alt="icon" />
+      </footer>
     </div>
   );
 };

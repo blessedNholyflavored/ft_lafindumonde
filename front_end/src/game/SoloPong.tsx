@@ -5,12 +5,16 @@ import { useNavigate } from "react-router-dom";
 import nav from "./../img/buttoncomp.png";
 import foldergreen from "./../img/foldergreen.png";
 import folderblue from "./../img/folderblue.png";
+import folderred from "./../img/folderred.png";
 import folderpink  from "./../img/folderpink.png";
 import folderyellow from "./../img/folderyellow.png";
 import folderwhite from "./../img/folderwhite.png";
 import folderviolet from "./../img/folderviolet.png";
+import sadpepe from "./../img/sadpepe.png";
+import sponge from "./../img/sponge.jpg";
 import { Logout } from "../components/auth/Logout";
 import logo from "./../img/logo42.png";
+import damon from "./../img/damon.png";
 
 interface MiniScore {
   id: number;
@@ -239,10 +243,22 @@ export const MiniGame = () => {
         </div>
         <h1>TRANSCENDENCE</h1>
       </header>
-      <div className="flex-bg">
+      <div className="flex-bg ">
         <main style={{ color: "black" }}>
-          <div className="parent">
-            <div className="div1">
+
+        <div className="fullpage sologamee">
+            <div className="navbarbox">
+              <img src={nav} alt="icon" />
+              <h1> Game </h1>
+            </div>
+
+
+              <div className="trollgame damon">
+                <p> 42 LOVE U </p>
+                <img src={damon} />
+              </div>
+
+              <div className="floating">
               <div className="navbarbox">
                 <img src={nav} alt="icon" />
                 <h1> hi! </h1>
@@ -270,10 +286,10 @@ export const MiniGame = () => {
                     </button>
                   </div>
                 )}
-              </div>
+          </div>
+              
             </div>
-
-            <div style={{ float: "right" }} className="div3">
+            <div className="floating1">
               <div className="navbarbox">
                 <h1> score </h1>
               </div>
@@ -297,7 +313,7 @@ export const MiniGame = () => {
                             className="buttonprfl"
                             onClick={() => navToProfil(tab.id.toString())}
                           >
-                            see profile
+                            profile
                           </button>
                         </td>
                       </tr>
@@ -350,6 +366,7 @@ export const MiniGame = () => {
               )}
             </div>
             {/* )} */}
+
           </div>
         </main>
         <nav>
@@ -382,6 +399,12 @@ export const MiniGame = () => {
               <a onClick={navigateToFriends}>
                 <img src={folderwhite} alt="Menu 3" />
                 <p>Friends</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToChat}>
+                <img src={folderred} alt="Menu 3" />
+                <p>Chat</p>
               </a>
             </li>
           </ul>

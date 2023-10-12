@@ -343,6 +343,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     
       let recupRoom = this.roomMapService.getRoom(id.toString());
       let flag = 0;
+      let emitTime = 0;
 
       if (recupRoom && recupRoom.ball)
       {
@@ -431,7 +432,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           roomID: recupRoom.idRoom, end: recupRoom.end, speedX: recupRoom.ball.speedX,
           speedY: recupRoom.ball.speedY}
 
-
+          this.server.to(recupRoom.idRoom.toString()).emit('CheckAlwaysIG', roomUpdate);
+          this.server.to(recupRoom.idRoom.toString()).emit('CheckAlwaysIG2', roomUpdate);
           this.server.to(recupRoom.idRoom.toString()).emit('ballMoovON', roomUpdate);
           if (flag === 2)
           {
@@ -497,8 +499,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       if (key === NuserId)
         user1 = value;
     });
-    console.log(user1.user.username);
-    user1.emit("heLeftTheGame");
+    if (user1)
+      user1.emit("heLeftTheGame");
     }
   }
 
@@ -549,11 +551,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     let user1;
     const NuserId = Number(recipient);
     this.playerConnections.forEach((value, key) => {
-      console.log(NuserId, " ", key);
       if (key === NuserId)
         user1 = value;
     });
-    console.log(user1);
     if (user1)
       user1.emit("receiveInvite", socket.user.id);
   }
@@ -611,6 +611,20 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     }
 
 
+    @SubscribeMessage('reloadMessagesTEST')
+    async onNewMessageTEST(@MessageBody() data: {message:string, recipient:string},@ConnectedSocket() socket: Socket)
+    {
+      let user1;
+      const NuserId = Number(data[1]);
+      this.playerConnections.forEach((value, key) => {
+        if (key === NuserId)
+          user1 = value;
+      });
+      if (user1)
+        user1.emit("refreshMessagesTEST");
+      socket.emit("refreshMessagesTEST");
+    }
+
     @SubscribeMessage('reloadMessages')
     async onNewMessage(@MessageBody() data: {message:string, recipient:string},@ConnectedSocket() socket: Socket)
     {
@@ -620,11 +634,12 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
         if (key === NuserId)
           user1 = value;
       });
-      user1.emit("refreshMessages");
+      if (user1)
+        user1.emit("refreshMessages");
       socket.emit("refreshMessages");
     }
 
-    @SubscribeMessage('reloadMessRoom')
+    @SubscribeMessage('reloadMessRoomTEST')
     async onNewMessageRoom(@MessageBody() id: string,@ConnectedSocket() socket: Socket)
     {
       if (!id)
@@ -637,6 +652,26 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
             user1 = value;
           if (user1) {
             user1.emit("refreshMessagesRoom");
+            user1 = null;
+          }
+        });
+      });
+    }
+
+    @SubscribeMessage('reloadMessRoom')
+    async onChangeStatus(@MessageBody() id: string,@ConnectedSocket() socket: Socket)
+    {
+      if (!id)
+        return ;
+      let user1;
+      const Ids = this.chatService.getUsersInRoom(id);
+      (await Ids).forEach((userId) => {
+        this.playerConnections.forEach((value, key) => {
+          if (key === userId)
+            user1 = value;
+          if (user1) {
+            user1.emit("refreshAfterStatusChange");
+            user1 = null;
           }
         });
       });
@@ -648,7 +683,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
 
       if (!id)
         return ;
-      console.log("roomid:   ", id);
       let user1;
       const Ids = this.chatService.getUsersInRoom(id);
       (await Ids).forEach((userId) => {
@@ -700,7 +734,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (key === NuserId)
             user1 = value;
         });
-        user1.emit("NotifyReceiveChannelInvit");
+        if (user1)
+          user1.emit("NotifyReceiveChannelInvit");
       }
 
       @SubscribeMessage('ActuAtRoomCreate')
@@ -720,7 +755,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (key === NuserId)
             user1 = value;
         });
-        user1.emit("refreshAfterKick", roomName, data[2]);
+        if (user1)
+          user1.emit("refreshAfterKick", roomName, data[2]);
       }
       @SubscribeMessage('muteFromChannel')
       async onMteFromChannel(@MessageBody() data: {userId:number, roomId:number, reason: string, time: number},@ConnectedSocket() socket: Socket)
@@ -732,7 +768,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (key === NuserId)
             user1 = value;
         });
-        user1.emit("refreshAfterMute", roomName, data[2], data[3]);
+        if (user1)
+          user1.emit("refreshAfterMute", roomName, data[2], data[3]);
       }
 
       @SubscribeMessage('banFromChannel')
@@ -745,7 +782,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (key === NuserId)
             user1 = value;
         });
-        user1.emit("refreshAfterBan", data[1], roomName, data[2], data[3]);
+        if (user1)
+          user1.emit("refreshAfterBan", data[1], roomName, data[2], data[3]);
       }
 
       @SubscribeMessage('reloadListFriendPage')
@@ -814,7 +852,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           return ;
        let recupRoom = this.roomMapService.getRoom(roomId.toString());
        
-       console.log("roomIDDDDDD: ", recupRoom);
        if (!recupRoom)
        return ;
           const Sroom: roomSend = {player1: recupRoom.player1.username, player2: recupRoom.player2.username,
@@ -824,11 +861,5 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
             roomID: recupRoom.idRoom};
 
             socket.emit("sendRoomAtStart", Sroom);
-      }
-
-      @SubscribeMessage('ttt')
-      async ttt(@ConnectedSocket() socket: Socket)
-      {
-        console.log("dvfvdfvfdvfdvfd')");
       }
 }

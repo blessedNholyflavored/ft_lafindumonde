@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./../../App.css";
 import "./../../style/Chat.css";
+import "./../../style/Profile.css";
 import "./../../style/Logout.css";
 import { useAuth } from "./../auth/AuthProvider";
 import { Navigate, useParams } from "react-router-dom";
@@ -245,31 +246,35 @@ export const Chat = () => {
       const data = await response.json();
 
       if (data.length > 0) {
-        const promises = data.map(async (userId: string, isBlocked: string, status: string) => {
-          const username = await fetchUsernameById(userId);
-          const isBlockedResponse = await fetch(
-            `http://${window.location.hostname}:3000/friends/blocked/${userId}/${user?.id}`,
-            {
-              method: "GET",
-              credentials: "include",
-            }
-          );
-          const blocked = await isBlockedResponse.text();
-          isBlocked = blocked;
-          const statusResponse = await fetch(
-            `http://${window.location.hostname}:3000/users/status/${userId}`,
-            {
-              method: "GET",
-              credentials: "include",
-            }
-          );
-          const repStatus = await statusResponse.text();
-          status = repStatus;
-          return { id: userId, username, isBlocked, status };
-        });
+        const promises = data.map(
+          async (userId: string, isBlocked: string, status: string) => {
+            const username = await fetchUsernameById(userId);
+            const isBlockedResponse = await fetch(
+              `http://${window.location.hostname}:3000/friends/blocked/${userId}/${user?.id}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            const blocked = await isBlockedResponse.text();
+            isBlocked = blocked;
+            const statusResponse = await fetch(
+              `http://${window.location.hostname}:3000/users/status/${userId}`,
+              {
+                method: "GET",
+                credentials: "include",
+              }
+            );
+            const repStatus = await statusResponse.text();
+            status = repStatus;
+            return { id: userId, username, isBlocked, status };
+          }
+        );
 
         const usernames: privMSG[] = await Promise.all(promises);
         setPrivMSG(usernames);
+      } else {
+        setPrivMSG(data);
       }
     } catch (error) {
       console.error("Erreur :", error);
@@ -432,7 +437,7 @@ export const Chat = () => {
         // );
         setShowNotification(true);
         setNotifyMSG(
-          "You have been kicked from " + roomName + ". Raison: " + reason
+          "You have been kicked from " + roomName + ". Reason: " + reason
         );
         setNotifyType(2);
       });
@@ -445,9 +450,9 @@ export const Chat = () => {
           setNotifyMSG(
             "You have been muted from " +
               roomName +
-              ". Raison: " +
+              ". Reason: " +
               reason +
-              ", pendant: " +
+              ", for: " +
               time +
               " minutes"
           );
@@ -471,9 +476,9 @@ export const Chat = () => {
           setNotifyMSG(
             "You have been banned from " +
               roomName +
-              ". Raison: " +
+              ". Reason: " +
               reason +
-              ", pendant: " +
+              ", for: " +
               time +
               " minutes"
           );
@@ -500,7 +505,9 @@ export const Chat = () => {
     if (socket) {
       socket.on("refreshMessagesRoom", () => {
         fetchPossibleInvite();
-        fetchPrivateConv();
+        setTimeout(() => {
+          fetchPrivateConv();
+        }, 300);
       });
     }
     if (socket) {
@@ -538,6 +545,16 @@ export const Chat = () => {
       }
     };
   }, [activeChannel, banTimeLeft]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("SomeoneGoOnlineOrOffline", () => {
+        setTimeout(() => {
+          fetchPrivateConvList();
+        }, 500);
+      });
+    }
+  });
 
   const checkRoomAlreadyExist = async () => {
     if (!valueRoom) return;
@@ -991,8 +1008,8 @@ export const Chat = () => {
         <h1>TRANSCENDENCE</h1>
       </header>
       <div className="flex-bg">
-        <main>
-          <div className="fullpage">
+        <main className="commonmain">
+          <div className="fullpage fullpagechat">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
               <h1> Chat </h1>
@@ -1013,7 +1030,7 @@ export const Chat = () => {
                 <div className="small-box ">
                   <div>
                     <ul>
-                      <div className="navbarsmallbox">
+                      <div className="navbarsmallbox chantitle">
                         <p style={{ color: "white" }}>received invitations</p>
                       </div>
                       {invReceive.length === 0 ? (
@@ -1042,7 +1059,7 @@ export const Chat = () => {
                                     )
                                   }
                                 >
-                                  ACCEPT
+                                  accept request
                                   <div></div>
                                 </button>
                                 <button
@@ -1063,7 +1080,7 @@ export const Chat = () => {
 
                   <div>
                     <ul>
-                      <div className="navbarsmallbox">
+                      <div className="navbarsmallbox chantitle">
                         <p style={{ color: "white" }}>available channels</p>
                       </div>
                       {channels.length === 0 ? (
@@ -1079,7 +1096,15 @@ export const Chat = () => {
                                 disabled={activeChannel === chan.id}
                               >
                                 <div>
-                                  {chan.name} --- {chan.visibility}
+                                  {chan.visibility === "PWD_PROTECTED" && (
+                                    <span>{chan.name} 🔑</span>
+                                  )}
+                                  {chan.visibility === "PUBLIC" && (
+                                    <span>{chan.name} 🔓</span>
+                                  )}
+                                  {chan.visibility === "PRIVATE" && (
+                                    <span>{chan.name} ⛔</span>
+                                  )}
                                 </div>
                               </button>
                               {isPromptOpen === true &&
@@ -1087,8 +1112,9 @@ export const Chat = () => {
                                 chan.visibility === "PWD_PROTECTED" && (
                                   <div>
                                     <input
+                                      className="inputpasswd"
                                       type="password"
-                                      placeholder="Entrez le mot de passe"
+                                      placeholder="enter password"
                                       value={pass}
                                       onChange={handlePasswordChange}
                                     />
@@ -1136,7 +1162,9 @@ export const Chat = () => {
                 <div className="small-box">
                   <div>
                     <ul>
-                      <p>slide in your dm</p>
+                      <div className="navbarsmallbox chantitle">
+                        <p style={{ color: "white" }}>slide in your dm</p>
+                      </div>
                       {privMSG.length === 0 ||
                       privMSG.every((priv) => priv.isBlocked === "true") ? (
                         <p>no dm</p>
@@ -1158,7 +1186,17 @@ export const Chat = () => {
                                 }}
                                 disabled={selectedPrivateConv === priv.id}
                               >
-                                <div>{priv.username} + {priv.status}</div>
+                                <div>
+                                  {priv.status === "ONLINE" && (
+                                    <span>{priv.username} 🟢</span>
+                                  )}
+                                  {priv.status === "INGAME" && (
+                                    <span>{priv.username} 🎮</span>
+                                  )}
+                                  {priv.status === "OFFLINE" && (
+                                    <span>{priv.username} 🔴</span>
+                                  )}
+                                </div>
                               </button>
                             )}
                           </div>
@@ -1169,7 +1207,9 @@ export const Chat = () => {
 
                   <div>
                     <ul>
-                      <p>joined channels</p>
+                      <div className="navbarsmallbox chantitle">
+                        <p style={{ color: "white" }}>joined channels</p>
+                      </div>
                       {channelsJoin.length === 0 ? (
                         <p>no chan joined</p>
                       ) : (
@@ -1178,6 +1218,9 @@ export const Chat = () => {
                             <button
                               className="buttonseemore buttonchan"
                               onClick={() => {
+                                if (showChatButton === false)
+                                  setShowChatButton(true);
+                                else setShowChatButton(true);
                                 if (chan.AmIBanned === "false") {
                                   navToChan(chan.id, chan.name);
                                   if (showChatChannel) {
@@ -1205,14 +1248,25 @@ export const Chat = () => {
                               disabled={activeChannel === chan.id}
                             >
                               <div>
-                                {chan.name} --- {chan.visibility}
+                                {chan.visibility === "PWD_PROTECTED" && (
+                                  <span>{chan.name} 🔑</span>
+                                )}
+                                {chan.visibility === "PUBLIC" && (
+                                  <span>{chan.name} 🔓</span>
+                                )}
+                                {chan.visibility === "PRIVATE" && (
+                                  <span>{chan.name} ⛔</span>
+                                )}
                               </div>
                             </button>
                             {activeChannel === chan.id &&
                               showChatButton === true && (
                                 <div>
-                                  <button onClick={leftChannel}>
-                                    Quitter le channel ?
+                                  <button
+                                    className="buttonseemore buttonchan leave"
+                                    onClick={leftChannel}
+                                  >
+                                    Leave chan
                                   </button>
                                 </div>
                               )}
@@ -1223,7 +1277,7 @@ export const Chat = () => {
                         {isPrivatechan === 1 && (
                           <div>
                             <ul>
-                              <p>invite them!</p>
+                              <p>invite them in {activeChannelName} :</p>
                               {notInRoom.map((chan) => (
                                 <div key={chan.id}>
                                   <div style={{ fontWeight: "bold" }}>
@@ -1261,43 +1315,45 @@ export const Chat = () => {
                   </div>
                 </div>
                 <div className="small-box wider-box">
-                  <div className="chat_list">
+                  {/* <div className="chat_list">
                     <div className="navbarmainpage nav_box">
                       <img src={icon} className="buttonnav" alt="icon" />
                       <p className="title_box">WHO'S ONLINE</p>
                     </div>
-                  </div>
-                  <div className="message_box">
-                    <div className="navbarmainpage nav_box">
-                      <img src={icon} className="buttonnav" alt="icon" />
-                      <p className="title_box">CONV WITH {activeChannelName}</p>
-                      {!showConv && recipient && <PrivateChat />}
-                      {showConv && <PrivateChat />}
-                      {showChatChannel && <ChatChannel />}
-                      {!showChatChannel && id && <ChatChannel />}
-                    </div>
-                  </div>
-                  {/* <div>
-        <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
-          LOG OUT{" "}
-        </button>
-      </div> */}
+                  </div> */}
+                  {/* <div className="message_box"> */}
+                  {/* <img src={icon} className="buttonnav" alt="icon" /> */}
+                  {/* <div className="chatbox">  */}
+                  {!showConv && recipient && <PrivateChat />}
+                  {showConv && <PrivateChat />}
+                  {/* <div className="navbarsmallbox "> */}
+                  {/* <p style={{color:"black"}} className="title_box">CONV WITH {activeChannelName}</p> */}
+                  {showChatChannel && <ChatChannel />}
+                  {/* </div> */}
+                  {!showChatChannel && id && <ChatChannel />}
+                  {/* </div> */}
+                  {/* </div> */}
                 </div>
-                <div className="small-box">
+                <div style={{ overflow: "auto" }} className="small-box">
                   <div>
+                    <div className="navbarsmallbox chantitle putain">
+                      <p style={{ color: "white" }}>create new chan</p>
+                    </div>
                     <input
+                      className="labelcss select-chat"
                       type="text"
                       placeholder="Nom de la room"
                       value={valueRoom}
                       onChange={handleInputChange}
                     />
                     <select
+                      className="buttonseemore selectfield"
                       value={selectedOption}
                       onChange={handleOptionChange}
                     >
-                      <option value="public">Public</option>
-                      <option value="private">Private</option>
-                      <option value="protected">Protected</option>
+                      <option value="public">public</option>
+                      <option value="private">private</option>
+                      <option value="protected">protected</option>
                     </select>
                     {selectedOption === "protected" && (
                       <input
@@ -1308,6 +1364,7 @@ export const Chat = () => {
                       />
                     )}
                     <button
+                      className="buttonseemore buttonchan"
                       onClick={createRoom}
                       disabled={
                         isButtonDisabled ||
@@ -1316,9 +1373,10 @@ export const Chat = () => {
                         valueRoom.length > 15
                       }
                     >
-                      Créer une nouvelle room
+                      create new room
                     </button>
                     <button
+                      className="buttonseemore buttonchan"
                       onClick={joinRoom}
                       disabled={
                         isButtonDisabled ||
@@ -1327,7 +1385,7 @@ export const Chat = () => {
                         valueRoom.length > 15
                       }
                     >
-                      Rejoindre une room existante
+                      join existing room
                     </button>
                   </div>
                 </div>
@@ -1342,7 +1400,7 @@ export const Chat = () => {
             </div>
           </div>
         </main>
-        <nav>
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>

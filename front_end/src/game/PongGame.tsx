@@ -18,8 +18,8 @@ import folderyellow from "./../img/folderyellow.png";
 import folderwhite from "./../img/folderwhite.png";
 import folderviolet from "./../img/folderviolet.png";
 import icon from "./../img/buttoncomp.png";
-import { Logout } from "../components/auth/Logout";
 import logo from "./../img/logo42.png";
+import { Logout } from "../components/auth/Logout";
 
 const PongGame: React.FC = () => {
   const { id } = useParams();
@@ -39,6 +39,8 @@ const PongGame: React.FC = () => {
   const [updatelvl, setUpdatelvl] = useState<number>(0);
   const [playerId1, setPlayerId1] = useState<number>(0);
   const [playerId2, setPlayerId2] = useState<number>(0);
+  const [mapx, setMapx] = useState<number>(window.innerWidth);
+  const [mapy, setMapy] = useState<number>(window.innerHeight);
   const [countdown, setCountdown] = useState(3);
   const [checkstatus, setCheckStatus] = useState(false);
   let [ImgUrlP1, setImgUrlP1] = useState<string>("");
@@ -46,25 +48,8 @@ const PongGame: React.FC = () => {
   let [usernameP1, setUsernameP1] = useState<string>("");
   let [usernameP2, setUsernameP2] = useState<string>("");
 
-  useEffect(() => {
-    const handlePopstate = () => {
-      // Comparer la longueur de l'historique avant et après l'événement de navigation
-      const isBackButtonUsed = window.history.length > 1;
-      if (isBackButtonUsed) {
-        socket.emit("ttt");
-      }
-    };
-
-    window.addEventListener("popstate", handlePopstate);
-
-    // Nettoyez l'écouteur d'événement lorsque le composant est démonté
-    return () => {
-      window.removeEventListener("popstate", handlePopstate);
-    };
-  }, []); // Assurez-vous de ne passer aucun dépendance pour useEffect pour éviter les problèmes de performance
-
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-    if (countdown > 0) {
+    if (countdown > 0 && countdown < 2) {
       socket?.emit("reloadCountdown", id);
       setCountdown(-999);
       // window.location.href = "/gamePage";
@@ -85,7 +70,15 @@ const PongGame: React.FC = () => {
       startGameFCT();
     }, 4000);
   };
+
   useEffect(() => {
+    //   if (socket)
+    //   {
+    //       socket.on("CheckAlwaysIG2", (recupRoom: Room) => {
+    //         console.log(recupRoom.end);
+    //   });
+    // }
+
     if (countdown === 3) {
       setTimeout(() => {
         socket.emit("recupRoomAtStart", id);
@@ -198,7 +191,6 @@ const PongGame: React.FC = () => {
 
     if (socket && countdown > 0) {
       socket.on("sendRoomAtStart", (recuproom: Room) => {
-        console.log(recuproom);
         setUsernameP1(recuproom.player1 as string);
         setUsernameP2(recuproom.player2 as string);
       });
@@ -281,6 +273,14 @@ const PongGame: React.FC = () => {
 
   useEffect(() => {
     if (socket && !end) {
+      return () => {
+        socket.emit("leaveGame", id);
+      };
+    }
+  }, [socket]);
+
+  useEffect(() => {
+    if (socket && !end) {
       socket.on("playerLeave", (room: Room) => {
         setRoom(room);
       });
@@ -358,6 +358,18 @@ const PongGame: React.FC = () => {
     }
   };
 
+  const handleResize = () => {
+    setMapx(window.innerWidth);
+    setMapy(window.innerHeight);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <div>
       <header>
@@ -383,8 +395,18 @@ const PongGame: React.FC = () => {
                   </div>
                 )}
               </div>
-              <div id="middlebox">
-                <div className="pong-game" style={{ color: "black" }}>
+              <div
+                id="middlebox"
+                style={{ width: mapx / 2, height: mapy / 3.5 }}
+              >
+                <div
+                  className="pong-game"
+                  style={{
+                    color: "black",
+                    width: mapx / 2,
+                    height: mapy / 3.5,
+                  }}
+                >
                   {/* <div className="countdown-container"> */}
                   {countdown > 1 && (
                     <div className="countdown">{countdown}</div>
@@ -396,16 +418,18 @@ const PongGame: React.FC = () => {
                     <div className="countdown start">Start</div>
                   )}
                   {/* </div> */}
-                  {user && (
-                    <h2>Vous êtes connecté en tant que {user.username}</h2>
-                  )}
-                  {!end && <button onClick={NavHome}>Quitter la partie</button>}
+                  {/* {user && (
+                    <button className="buttonseemore">
+                      you are currently logged as {user.username}
+                    </button>
+                  )} */}
+                  {/* {!end && (
+                    <button className="buttonseemore" onClick={NavHome}>
+                      leave the game
+                    </button>
+                  )} */}
                   {room && room.player1 && room.player2 && (
                     <div>
-                      <p>
-                        La partie commence entre {room.player1} et{" "}
-                        {room.player2} !
-                      </p>
                       <div
                         style={{
                           textAlign: "center",
@@ -415,13 +439,13 @@ const PongGame: React.FC = () => {
                       >
                         {end && (
                           <div>
-                            <h1>Fin de partie !</h1>
+                            <p>game over</p>
                             Score - {room.player1} {room.scoreP1} |{" "}
                             {room.scoreP2} {room.player2}
-                            <p>{room.winner} remporte la partie</p>
-                            <button onClick={NavHome}>Retourner au Home</button>
+                            <p>{room.winner} wins!</p>
                           </div>
                         )}
+
                         {!end && (
                           <div>
                             Score - {room.player1} {room.scoreP1} |{" "}
@@ -431,19 +455,35 @@ const PongGame: React.FC = () => {
                       </div>
                       <div
                         className={`player-rect player1`}
-                        style={{ top: player1Pos }}
+                        style={{
+                          top: (player1Pos * mapy) / 3.5 / 400,
+                          height: (100 * mapy) / 3.5 / 400,
+                        }}
                       ></div>
                       <div
                         className={`player-rect player2`}
-                        style={{ top: player2Pos }}
+                        style={{
+                          top: (player2Pos * mapy) / 3.5 / 400,
+                          height: (100 * mapy) / 3.5 / 400,
+                        }}
                       ></div>
                       <div
                         className="ball"
-                        style={{ left: BallXpos, top: BallYpos }}
+                        style={{
+                          left: (BallXpos * mapx) / 2 / 700,
+                          top: (BallYpos * mapy) / 3.5 / 400,
+                        }}
                       ></div>
                     </div>
                   )}
                 </div>
+                <button
+                  className="buttonseemore"
+                  style={{ marginBottom: "5px" }}
+                  onClick={NavHome}
+                >
+                  back to gamepage
+                </button>
               </div>
 
               <div id="rightbox">

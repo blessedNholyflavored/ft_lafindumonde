@@ -646,14 +646,14 @@ export const FriendsPage: React.FC = () => {
               <h1> FRIENDS </h1>
             </div>
             <div className="testingrow">
-              <div className="boxrowtest2">
+              <div className="boxrowtest3">
                 <div className="navbarsmallbox">
                   <p className="boxtitle"> Friend list </p>
                 </div>
-                <ul>
+                <ul className="boxrowtest3lists">
                   {friends.length > 0 ? (
                     friends.map((friend, index) => (
-                      <div key={index}>
+                      <div key={index} className="usersListing">
                         <img
                           src={friend.pictureURL}
                           className="avatar"
@@ -670,8 +670,17 @@ export const FriendsPage: React.FC = () => {
                           {" "}
                           see more
                         </button>
-                        <div>{friend.status}</div>
-
+                        <div>
+                          {friend.status === "ONLINE" && (
+                            <span>{friend.username} 🟢</span>
+                          )}
+                          {friend.status === "INGAME" && (
+                            <span>{friend.username} 🎮</span>
+                          )}
+                          {friend.status === "OFFLINE" && (
+                            <span>{friend.username} 🔴</span>
+                          )}
+                        </div>
                         {selectedUser === friend.recipientId && (
                           <div>
                             <button
@@ -723,11 +732,11 @@ export const FriendsPage: React.FC = () => {
                   )}
                 </ul>
               </div>
-              <div className="boxrowtest2">
+              <div className="boxrowtest3">
                 <div className="navbarsmallbox">
                   <p className="boxtitle"> Blocked list </p>
                 </div>
-                <ul>
+                <ul className="boxrowtest3lists">
                   {blocked.length > 0 ? (
                     blocked.map((blocked, index) => (
                       <div key={index}>
@@ -767,7 +776,7 @@ export const FriendsPage: React.FC = () => {
                   )}
                 </ul>
               </div>
-              <div className="boxrowtest2">
+              <div className="boxrowtest3">
                 <div className="navbarsmallbox">
                   <p className="boxtitle"> Who's online? </p>
                 </div>
@@ -830,7 +839,7 @@ export const FriendsPage: React.FC = () => {
                   )}
                 </div>
               </div>
-              <div className="boxrowtest2">
+              <div className="boxrowtest3">
                 <div className="navbarsmallbox">
                   <p className="boxtitle"> Friend requests </p>
                 </div>

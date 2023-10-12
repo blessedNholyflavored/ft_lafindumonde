@@ -70,11 +70,12 @@
 }
 
 .fullpage2 {
-  background-color: white;
   height: 100%;
   margin-left: 2.5vw;
   width: 80vw;
   border: 1px solid black;
+  background-image: url("./../img/12.jpg");
+  background-size: cover;
 }
 
 .fullpage1 {
@@ -147,18 +148,38 @@
 .boxrowtest2 {
   margin: 20px;
   border: 1px solid black;
-  border-bottom: 3vh solid black;
+  border-bottom: 4rem solid black;
   box-shadow: 10px 12px 0px 0px #000;
   box-sizing: border-box;
   width: 15vw;
   height: 35vh;
   background-color: white;
+  overflow: auto;
 }
 
-.boxrowtest2 ul {
-  height: 29vh;
+.boxrowtest3 {
+  margin: 20px;
+  border: 1px solid black;
+  border-bottom: 4rem solid black;
+  box-shadow: 10px 12px 0px 0px #000;
+  box-sizing: border-box;
+  width: 15vw;
+  height: 35vh;
+  background-color: white;
+  z-index: 1000;
+}
+
+.boxrowtest2::-webkit-scrollbar {
+  display: none;
+}
+.boxrowtest3lists::-webkit-scrollbar {
+  display: none;
+}
+.boxrowtest3lists {
+  overflow: auto;
+  width: 15vw;
+  height: 27vh;
   margin: 0;
-  overflow-y: scroll;
 }
 
 .boxrowtest2 .logo {
@@ -254,7 +275,7 @@
 }
 
 .under {
-  font-size: 8px;
+  font-size: 12px;
   line-height: normal;
   color: grey;
   margin-top: -2px;
@@ -286,21 +307,20 @@
 
 .boxrowsettings img {
   width: 30%;
+  margin-bottom: 5px;
 }
 
 .formsettings {
   height: 47px;
   padding: 8px;
-  justify-content: center !important;
-  align-items: center;
   gap: 10px;
-  display: flex;
+  display: inline-block;
 }
 
 input {
   height: 30px;
   background: var(--greyscale-k, #000);
-  width: 250px;
+  width: 15vw;
   padding-left: 10px;
   border: 1px solid black;
   border-radius: 20px;
@@ -322,6 +342,7 @@ input {
   justify-content: center;
   text-align: center;
   height: 25vh;
+  width: 100%;
 }
 
 .centered-img img {
@@ -329,9 +350,10 @@ input {
 }
 
 input[type="file"] {
+  /* position: absolute; */
   height: 30px;
   background: var(--greyscale-k, #000);
-  width: 250px;
+  width: 18vw;
   padding-left: 10px;
   border: 1px solid black;
   border-radius: 20px;
@@ -392,10 +414,6 @@ input::file-selector-button {
   cursor: default;
 }
 
-.changesett {
-  margin-top: 15%;
-}
-
 .acceptbutton {
   position: relative;
   display: flex;
@@ -439,7 +457,6 @@ input::file-selector-button {
   margin-top: 10px;
   height: 29vh;
   margin: 0;
-  overflow-y: scroll;
 }
 
 .bttnholder {
@@ -471,7 +488,6 @@ input::file-selector-button {
   margin-top: 10px;
   height: 29vh;
   margin: 0;
-  overflow-y: scroll;
 }
 
 .onlinebttn {
@@ -555,3 +571,47 @@ input::file-selector-button {
   height: 35px;
   border-radius: 50%;
 }
+
+.buttnprofilefriend {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: normal !important;
+  margin-left: 5vh;
+}
+
+.gamehist-score {
+  height: 5px;
+  font-size: 70%;
+}
+
+/************
+*
+*				RESPONSIVE AND LAST ADD HOVER EFFECTS
+*
+*************/
+
+.usersListing {
+  margin: 10% 0;
+}
+
+.usersListing button {
+  margin: 3% 0;
+}
+
+.buttonseemore:hover {
+  background: radial-gradient(
+    circle,
+    rgb(255, 255, 255) 0%,
+    rgb(187, 224, 221) 100%
+  ) !important;
+}
+/* 
+jsp ?
+.onlinebttn:hover {
+  background: radial-gradient(
+    circle,
+    rgb(214, 156, 181) 0%,
+    rgb(141, 179, 221) 100%
+  );
+} */

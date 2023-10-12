@@ -6,6 +6,14 @@ import { useAuth } from "../components/auth/AuthProvider";
 import { useNavigate, useParams } from "react-router-dom";
 import { WebsocketContext } from "../services/WebsocketContext";
 import { count } from "console";
+import foldergreen from "./../img/foldergreen.png";
+import folderblue from "./../img/folderblue.png";
+import folderpink from "./../img/folderpink.png";
+import folderyellow from "./../img/folderyellow.png";
+import folderwhite from "./../img/folderwhite.png";
+import folderviolet from "./../img/folderviolet.png";
+import icon from "./../img/buttoncomp.png";
+import logo from "./../img/logo42.png";
 
 const GameFriend: React.FC = () => {
   const { id } = useParams();
@@ -219,7 +227,7 @@ const GameFriend: React.FC = () => {
       {countdown === 0 && <div className="countdown start">Start</div>}
       {/* </div> */}
       {user && <h2>Vous êtes connecté en tant que {user.username}</h2>}
-      {!end && <button onClick={NavHome}>Quitter la partie</button>}
+      {!end && <button className="buttonseemore" onClick={NavHome}>Quitter la partie</button>}
       {room && room.player1 && room.player2 && (
         <div>
           <p>

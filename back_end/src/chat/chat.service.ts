@@ -287,6 +287,84 @@ const ret2 = await prisma.user.findUnique({
 }
 }
 
+
+
+async recupLastMess(recipient:string, sender:string)
+{
+  const ret1 = await prisma.user.findUnique({
+    where: {
+      id: parseInt(sender),
+    },
+    include: { PrivMessEmited: {
+    where: {
+      recipientId:parseInt(recipient),
+    }}
+}});
+const ret2 = await prisma.user.findUnique({
+  where: {
+    id: parseInt(sender),
+  },
+  include: { PrivMessReceived: {
+  where: {
+    senderId:parseInt(recipient),
+  }}
+}});
+      if (ret1 && ret2)
+        {
+            const ret = merge(ret1, ret2);
+            const allGames: privateMessage[] = [...ret.PrivMessEmited, ...ret.PrivMessReceived].sort(
+                (a, b) => Date.parse(a.start_at) - Date.parse(b.start_at)
+            );
+        return (allGames[allGames.length - 1]);
+}
+}
+
+
+// async recupLastMess(recipient: string, sender: string){
+//   const ret1 = await prisma.user.findUnique({
+//     where: {
+//       id: parseInt(sender),
+//     },
+//     include: {
+//       PrivMessEmited: {
+//         where: {
+//           recipientId: parseInt(recipient),
+//         },
+//         orderBy: {
+//           start_at: 'desc',
+//         },
+//         take: 1,
+//       },
+//     },
+//   });
+
+//   const ret2 = await prisma.user.findUnique({
+//     where: {
+//       id: parseInt(sender),
+//     },
+//     include: {
+//       PrivMessReceived: {
+//         where: {
+//           senderId: parseInt(recipient),
+//         },
+//         orderBy: {
+//           start_at: 'desc',
+//         },
+//         take: 1,
+//       },
+//     },
+//   });
+
+//   if (ret1?.PrivMessEmited[0]) {
+//     return ret1.PrivMessEmited[0];
+//   } else if (ret2?.PrivMessReceived[0]) {
+//     return ret2.PrivMessReceived[0];
+//   } else {
+//     return null;
+//   }
+// }
+
+
 async recupRoomMess(roomId:string)
 {
   const ret1 = await prisma.chatroom.findUnique({
@@ -305,6 +383,27 @@ async recupRoomMess(roomId:string)
                 (a, b) => Date.parse(a.start_at) - Date.parse(b.start_at)
             );
         return (allGames);
+}
+}
+
+async recupRoomMessLast(roomId:string)
+{
+  const ret1 = await prisma.chatroom.findUnique({
+    where: {
+      id: parseInt(roomId),
+    },
+    select: {
+      roomMess : true,
+    }
+});
+
+      if (ret1)
+        {
+            const ret = merge(ret1);
+            const allGames: privateMessage[] = [...ret.roomMess].sort(
+                (a, b) => Date.parse(a.start_at) - Date.parse(b.start_at)
+            );
+        return (allGames[allGames.length - 1]);
 }
 }
 
