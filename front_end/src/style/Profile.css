@@ -157,8 +157,6 @@
   overflow: auto;
 }
 
-<<<<<<< HEAD
-=======
 .boxrowtest3 {
   margin: 20px;
   border: 1px solid black;
@@ -171,7 +169,6 @@
   z-index: 1000;
 }
 
->>>>>>> origin/ma/cleanAndFix
 .boxrowtest2::-webkit-scrollbar {
   display: none;
 }
@@ -337,15 +334,12 @@ input {
   align-items: center;
 }
 
-<<<<<<< HEAD
-.avatardiv input[type="file"] {
+<<<<<<< HEAD .avatardiv input[type="file"] {
   text-align: center;
   line-height: 30px;
 }
 
-=======
->>>>>>> origin/ma/cleanAndFix
-.changesett.avatarsett,
+=======>>>>>>>origin/ma/cleanAndFix .changesett.avatarsett,
 .changesett {
   display: flex;
   flex-direction: column;
@@ -596,8 +590,6 @@ input::file-selector-button {
   height: 5px;
   font-size: 70%;
 }
-<<<<<<< HEAD
-=======
 
 /************
 *
@@ -629,4 +621,3 @@ jsp ?
     rgb(141, 179, 221) 100%
   );
 } */
->>>>>>> origin/ma/cleanAndFix
