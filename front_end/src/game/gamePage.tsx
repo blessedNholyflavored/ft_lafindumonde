@@ -139,13 +139,6 @@ export const GamePage = () => {
     socket.on("heLeftTheGame", () => {
       localStorage.setItem("leftGame", "Your oppenent has left the game");
     });
-
-  //   if (socket)
-  //   {
-  //       socket.on("CheckAlwaysIG", (recupRoom: Room) => {
-  //         console.log(recupRoom.end);
-  //   });
-  // }
   });
 
   const NavToSoloPong = () => {

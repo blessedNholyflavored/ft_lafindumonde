@@ -955,25 +955,6 @@ export const Chat = () => {
     setSelectedPrivateConv(recipient as any);
   };
 
-  // const decrementBanTimeLeft = () => {
-  //   if (banTimeLeft > 0) {
-  //     console.log('cacaacaca');
-  //     setBanTimeLeft((prevTime) => prevTime - 1);
-  //   } else if (banTimeLeft <= 0 && banTimeLeft >= -2) {
-  //     fetchBanTimeLeft(activeBanChannel as number);
-  //     setUserIsBanned(false);
-  //     checkBanned(user?.id as number, activeBanChannel as any);
-  //     setActiveBanChannel(0);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const interval = setInterval(decrementBanTimeLeft, 1000);
-
-  //   return () => {
-  //     clearInterval(interval);
-  //   };
-  // }, [banTimeLeft]);
 
   const navigateToProfPage = () => {
     navigate(`/users/profile/${user?.id}`);

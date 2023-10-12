@@ -85,7 +85,6 @@ export const UserSetting: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const userId = user?.id;
-    console.log("dans front user id = ", userId);
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/users/update-username`,
@@ -120,7 +119,6 @@ export const UserSetting: React.FC = () => {
   const handleSubmitPass = async (e: React.FormEvent) => {
     e.preventDefault();
     const userId = user?.id;
-    console.log("dans front user id = ", userId);
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/users/update-pass`,
@@ -224,7 +222,6 @@ export const UserSetting: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       console.log(file.type);
-      console.log("QQQQQQQQQQQQQQQQQ", file);
       setNewPicture(file);
     }
   };
@@ -253,18 +250,15 @@ export const UserSetting: React.FC = () => {
           alert("profil picture mise à jour avec succès !");
           displayPic();
         } else {
-          //console.log("kkkkkkkkkk");
           const backError = await response.json();
           setError(backError.message);
           alert(backError.message);
         }
       } catch (error) {
-        //console.log("icicicci   ",error);
         if (error instanceof Response) {
           const backError = await error.json();
           setError(backError.message);
           alert(backError.message);
-          //console.log("llalalalaal   ", backError);
         }
       }
     }
@@ -296,10 +290,7 @@ export const UserSetting: React.FC = () => {
           credentials: "include",
         }
       );
-      // setImgUrl(newPokeImg as any);
-      // if (response.status === 401) {
-      //   console.log("oui erreur ouuuh");
-      // }
+      
       if (response.ok) {
         setShowNotification(true);
         setNotifyMSG("You successfully changed your avatar!");
@@ -367,12 +358,7 @@ export const UserSetting: React.FC = () => {
       setNotifyType(3);
       return;
     }
-    // if (user.log2FA ===true){
-    //   setShowNotification(true);
-    //   setNotifyMSG("Do you really want to reset two-factor authentication")
-    //   setNotifyType(4);
-    //   setSender(sender);
-    // }
+   
     else {
       setShowNotification(true);
       setNotifyMSG(
@@ -385,7 +371,6 @@ export const UserSetting: React.FC = () => {
 
   return (
     <>
-      {/* <body> */}
       {showNotification && (
         <Notify
           message={notifyMSG}
@@ -482,7 +467,6 @@ export const UserSetting: React.FC = () => {
                   )}
                 </div>
               </div>
-              {/* deuxieme */}
               <div className="boxrowsettings">
                 <div className="navbarsmallbox">
                   <p className="boxtitle"> CHANGE AVATAR </p>
@@ -599,7 +583,6 @@ export const UserSetting: React.FC = () => {
         </button>
         <img src={logo} className="logo" alt="icon" />
       </footer>
-      {/* </body> */}
     </>
   );
 };

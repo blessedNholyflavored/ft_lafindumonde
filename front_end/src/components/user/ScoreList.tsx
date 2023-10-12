@@ -52,12 +52,8 @@ const ScoreList = (props: any) => {
           setAchievement(getAchievementByLevel(data.level));
         }
         if (data.gameplayed !== undefined) {
-          // pas fan du else if retiré
-          // console.log("vrai nb", data.gameplayed);
-          // console.log("lol");
           setGamePlayed(data.gameplayed);
           setAchievementGame(getAchievementByGames(data.gameplayed));
-          // console.log("assignation", gameplayed);
         } else {
           console.log("error : wrong data scorelist");
         }

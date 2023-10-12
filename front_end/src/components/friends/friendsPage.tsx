@@ -40,9 +40,6 @@ export const FriendsPage: React.FC = () => {
 
   const [sender, setSender] = useState<number>(0);
   const socket = useContext(WebsocketContext);
-
-  // console.log(user.invitFriendSent);
-
   const [friendsSend, setfriendsSend] = useState<friendsSend[]>([]);
   const [friendsRequest, setfriendsRequest] = useState<friendsSend[]>([]);
   const [friends, setFriends] = useState<friendsSend[]>([]);
@@ -620,7 +617,6 @@ export const FriendsPage: React.FC = () => {
 
   return (
     <>
-      {/* <body> */}
       <header>
         <div>
           <img src={nav} alt="Menu 1" />
@@ -887,33 +883,6 @@ export const FriendsPage: React.FC = () => {
                   )}
                 </div>
               </div>
-              {/* <div className="boxrowtest">
-                <div className="navbarsmallbox">
-                  <p className="boxtitle"> INFO </p>
-                </div>
-                <ul>
-                  <h1>Liste des requetes en attente envoyees :</h1>
-                  {friendsSend.map((friend) => (
-                    <div>
-                      {friend.status === "PENDING" && (
-                        <li key={friend.id}>
-                          <div>ID: {friend.id}</div>
-                          <div>Status: {friend.status}</div>
-                          <div>Sender ID: {user?.username}</div>
-                          <div>recipientId ID: {friend.username}</div>
-                          <button
-                            onClick={() =>
-                              RefuseFriend(friend.id, friend.recipientId)
-                            }
-                          >
-                            Cancel
-                          </button>
-                        </li>
-                      )}
-                    </div>
-                  ))}
-                </ul>
-              </div> */}
             </div>
           </div>
         </main>
@@ -964,7 +933,6 @@ export const FriendsPage: React.FC = () => {
         </button>
         <img src={logo} className="logo" alt="icon" />
       </footer>
-      {/* </body> */}
     </>
   );
 };

@@ -55,12 +55,11 @@ export class UserService {
       const userDTO = plainToClass(UserDto, user);
       return userDTO;
     } catch (error) {
-      throw new BadRequestException('getUserkkkkkkkkkkk error : ' + error);
+      throw new BadRequestException('getUser error : ' + error);
     }
   }
 
   async updateUsername(id: string, newUsername: string): Promise<Boolean> {
-    console.log('dans controleur', id);
     let updatedUser = await this.getUserByID(parseInt(id));
     if ((await this.usernameAuthChecker(newUsername)) === false) {
       updatedUser = await prisma.user.update({
@@ -75,7 +74,6 @@ export class UserService {
   }
 
   async updatePassword(id: string, newPassword: string) {
-    console.log('dans controleur', id);
     let hashedPwd = await this.passwordHasher(newPassword);
     const updateUser = await prisma.user.update({
       where: { id: parseInt(id) },
@@ -87,7 +85,6 @@ export class UserService {
   }
 
   async updateMail(id: string, newMail: string) {
-    // console.log('dans controleur', id);
     const updateUser = await prisma.user.update({
       where: { id: parseInt(id) },
       data: {
@@ -283,55 +280,6 @@ export class UserService {
     return updateUser;
   }
 
-  // async getAchievementById(id: number) {
-  //   if (id === undefined) {
-  //     throw new BadRequestException('Undefined user ID');
-  //   }
-  //   try {
-  //     const achievement = await prisma.achievement.findUniqueOrThrow({
-  //       where: {
-  //         id: id,
-  //       },
-  //     });
-  //     return achievement;
-  //   } catch (error) {
-  //     throw new BadRequestException('getUser error : ' + error);
-  //   }
-  // }
-
-  // async getUserAchievements(id: number) {
-  //   try {
-  //     const achievements = await prisma.userAchievement.findMany({
-  //       where: { userId: id },
-  //     });
-  //     return achievements;
-  //   } catch (error) {
-  //     throw new BadRequestException('error');
-  //   }
-  // }
-
-  //   async getAllAchievements(): Promise<UserAchievements[]> {
-  //     const allachiev = (await prisma.userAchievement.findMany({
-  //       select: UserAchievements,
-  //     })) as UserAchievements[];
-  //     console.log(allachiev);
-  //     return allachiev;
-  //   }
-  // }
-
-  // async getUserAchievements(id: number) {
-  //   if (id === undefined) {
-  //     throw new BadRequestException('Undefined user ID');
-  //   }
-  //   try {
-  //     const achievements = await this.prisma.userAchievement.findMany({
-  //       where: { userId: id },
-  //       include: { achievement: true },
-  //       });
-  //     return achievements;
-  //   } catch (error) {
-  //     throw new BadRequestException('getUser error : ' + error);
-  //   }
   async getUserByID(id: number): Promise<User | undefined> {
     return await prisma.user.findUnique({
       where: {
