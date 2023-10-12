@@ -306,6 +306,8 @@ export const PrivateChat = () => {
   return (
     <div className="testingchat">
       <div className="chat-container">
+      <div className="chatmessagebar">
+
         <div className="chat-messages" ref={bottomEl}>
           {recipient && (
             <ul>
@@ -384,6 +386,7 @@ export const PrivateChat = () => {
                 </button>
               </div>
             )}
+          </div>
           </div>
         </div>
       </div>

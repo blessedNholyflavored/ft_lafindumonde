@@ -72,12 +72,6 @@ const PongGame: React.FC = () => {
   };
 
   useEffect(() => {
-    //   if (socket)
-    //   {
-    //       socket.on("CheckAlwaysIG2", (recupRoom: Room) => {
-    //         console.log(recupRoom.end);
-    //   });
-    // }
 
     if (countdown === 3) {
       setTimeout(() => {
@@ -439,7 +433,7 @@ const PongGame: React.FC = () => {
                           marginBottom: "10px",
                         }}
                       >
-                        {end && (
+                        {end === 1 && (
                           <div>
                             <h1>game over</h1>
                             final score 
@@ -449,8 +443,7 @@ const PongGame: React.FC = () => {
                             <p>{room.winner} wins!</p>
                           </div>
                         )}
-
-                        {!end && (
+                        {end === 0 && (
                           <div>
                              score - {room.player1} {room.scoreP1} |{" "}
                             {room.scoreP2} {room.player2}
