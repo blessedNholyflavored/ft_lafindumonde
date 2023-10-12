@@ -270,3 +270,7 @@ margin-left: 0;
 .fullpage.sologamee{
 height: 100%;
 }
+
+.countdownstyle, .backto{
+  margin-top: 25px;
+}
