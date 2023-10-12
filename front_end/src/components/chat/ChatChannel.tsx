@@ -990,7 +990,6 @@ export const ChatChannel = () => {
                 <div>no messages yet!</div>
                 )}
             </ul>
-
 )}
             <button  className="button-reset"
             >

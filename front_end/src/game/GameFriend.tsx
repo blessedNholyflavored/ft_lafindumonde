@@ -35,6 +35,7 @@ const GameFriend: React.FC = () => {
   const [SpeedBallX, setSpeedBallX] = useState<number>(-5);
   const [SpeedBallY, setSpeedBallY] = useState<number>(0);
   const [updatelvl, setUpdatelvl] = useState<number>(0);
+  const [imgFlag, setImgFlag] = useState<number>(0);
   const [countdown, setCountdown] = useState(3);
   const [checkstatus, setCheckStatus] = useState(false);
   const [mapx, setMapx] = useState<number>(window.innerWidth);
@@ -176,9 +177,11 @@ const GameFriend: React.FC = () => {
       socket.emit("gameFinished", id);
     }
 
-    if (usernameP1 && usernameP2 && countdown <= 0) catchPic();
-
-    if (socket && countdown <= 0) {
+    if (usernameP1 && usernameP2 && countdown <= 0 && imgFlag === 0){
+      catchPic();
+      setImgFlag(1);
+    }
+    if (socket && countdown <= 0 && imgFlag === 0) {
       socket.on("sendRoomAtStart", (recuproom: Room) => {
 
         setUsernameP1(recuproom.player1 as string);

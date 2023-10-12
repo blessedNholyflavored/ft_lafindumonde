@@ -72,7 +72,6 @@ const PongGame: React.FC = () => {
   };
 
   useEffect(() => {
-
     if (countdown === 3) {
       setTimeout(() => {
         socket.emit("recupRoomAtStart", id);
@@ -394,15 +393,15 @@ const PongGame: React.FC = () => {
                 style={{ width: mapx / 2, height: mapy / 3.5 }}
               >
                 <div className="countdownstyle ">
-                {countdown > 1 && (
-                  <div className="countdown">{countdown}</div>
-                )}
-                {countdown === 1 && (
-                  <div className="countdown ready">Ready ?</div>
-                )}
-                {countdown === 0 && (
-                  <div className="countdown start">Start</div>
-                )}
+                  {countdown > 1 && (
+                    <div className="countdown">{countdown}</div>
+                  )}
+                  {countdown === 1 && (
+                    <div className="countdown ready">Ready ?</div>
+                  )}
+                  {countdown === 0 && (
+                    <div className="countdown start">Start</div>
+                  )}
                 </div>
                 <div
                   className="pong-game"
@@ -435,17 +434,22 @@ const PongGame: React.FC = () => {
                       >
                         {end === 1 && (
                           <div>
-                            <h1>game over</h1>
-                            final score 
-                              <br></br>
-                             <b>{room.player1}</b> {room.scoreP1} |{" "}
+                            {room.winner === user?.username && (
+                              <h1>Victory !</h1>
+                            )}
+                            {room.winner !== user?.username && (
+                              <h1>Game over !</h1>
+                            )}
+                            final score
+                            <br></br>
+                            <b>{room.player1}</b> {room.scoreP1} |{" "}
                             {room.scoreP2} <b>{room.player2}</b>
                             <p>{room.winner} wins!</p>
                           </div>
                         )}
                         {end === 0 && (
                           <div>
-                             score - {room.player1} {room.scoreP1} |{" "}
+                            score - {room.player1} {room.scoreP1} |{" "}
                             {room.scoreP2} {room.player2}
                           </div>
                         )}
