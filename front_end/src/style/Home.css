@@ -79,7 +79,7 @@ main h2 {
 .friendshipNav {
   width: 7vw;
   display: grid;
-  justify-items: center;
+  justify-items: end;
   padding: 1rem 1vw;
 }
 
@@ -138,7 +138,6 @@ footer {
   /* width: 100%; */
 }
 
-
 .footerfriends {
   padding: 1rem;
   text-align: center;
@@ -149,8 +148,6 @@ footer {
   height: 150px;
   /* width: 100%; */
 }
-
-
 
 /* .home {
   position: absolute;
@@ -287,4 +284,21 @@ footer {
 
 .popup {
   border: 1px solid black;
+}
+
+/*************************************
+*
+*												RESPONSIVE
+*
+**************************************/
+@media (width < 1800px) {
+  .commonnav {
+    display: inline-block;
+    padding: 1rem 0;
+    margin: auto 1vw;
+    justify-items: center;
+  }
+  .commonmain {
+    padding: 2vh 0;
+  }
 }

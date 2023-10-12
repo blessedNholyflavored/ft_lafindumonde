@@ -332,6 +332,14 @@ export class UserService {
   //   } catch (error) {
   //     throw new BadRequestException('getUser error : ' + error);
   //   }
+
+	/**************************
+	 * 
+	 * 														AUTH PART				******************************************
+	 * 
+	 **************************/
+	// get user by id but without try and catch because this needs to fail in case of user creation
+	// it's going to be same case for username and email
   async getUserByID(id: number): Promise<User | undefined> {
     return await prisma.user.findUnique({
       where: {
@@ -356,13 +364,14 @@ export class UserService {
     });
   }
 
+	// boolean check if username is already taken
   async usernameAuthChecker(username: string) {
     const tmpUser = await this.getUserByUsername(username);
-
     if (tmpUser) return true;
     return false;
   }
 
+	// password hasher before store in db
   async passwordHasher(input: string) {
     if (!input) return null;
     const saltOrRounds = 10;
@@ -396,10 +405,7 @@ export class UserService {
       });
       return tmpUser;
     } catch (err) {
-      //TODO: return the accurate error
-      // doc here : https://www.prisma.io/docs/reference/api-reference/error-reference
       console.error('Error creating user:', err);
-      //throw err;
     }
   }
 
@@ -434,6 +440,8 @@ export class UserService {
     }
   }
 
+	// all this are checkers for 2FA to improve security and 
+	// communication between front and back
   async enable2FA(id: number) {
     const updateUser = await prisma.user.update({
       where: { id: id },
@@ -466,6 +474,9 @@ export class UserService {
     return updateUser;
   }
 
+	// custom prisma excluder --> Key are like a list of possible arguments, 
+	// but all needs to be inside User model
+	// it will create an alias object with all User entries except for the entered keys
   exclude<User, Key extends keyof User>(
     user: User,
     keys: Key[],

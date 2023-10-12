@@ -47,24 +47,28 @@ export function LocalLogin() {
       }
     );
     if (res.status === 404) {
+      // user not found
       setShowNotification(true);
       setNotifyMSG("This username doesn't exist");
       setNotifyType(3);
       setInputPassword("");
       setInputUsername("");
     } else if (res.status === 409) {
+      // email is a 42 type of email
       setShowNotification(true);
       setNotifyMSG("You must use the 42 Login System.");
       setNotifyType(3);
       setInputUsername("");
       setInputPassword("");
     } else if (!res.ok) {
+      // password incorrect
       setShowNotification(true);
       setNotifyMSG("Wrong password");
       setNotifyType(3);
       setInputPassword("");
       setInputUsername("");
     } else {
+      // if user connection is ok we set user to the user found in back end
       const data = await res.json();
       setUser(data.user);
       window.location.reload();
@@ -73,10 +77,6 @@ export function LocalLogin() {
   const fortyTwoLogin = () => {
     window.location.href = `http://${window.location.hostname}:3000/auth/login42`;
   };
-
-  // const returnHome = () => {
-  //   navigate("/");
-  // };
 
   const navigateRegister = () => {
     navigate("/register");
@@ -105,11 +105,14 @@ export function LocalLogin() {
           <form className="loginForm" onSubmit={handleSubmit}>
             <div className="loginFormBox">
               <label>Username:</label>
+              {/* length is a bit longer for local login to let people having underscore after their username log in */}
               <input
                 className="loginInput"
                 type="text"
                 value={inputUsername}
                 placeholder="toto"
+                minLength={3}
+                maxLength={15}
                 required
                 onChange={(e) => setInputUsername(e.target.value)}
               />
@@ -121,6 +124,7 @@ export function LocalLogin() {
                 type="password"
                 value={inputPassword}
                 placeholder="********"
+                maxLength={20}
                 required
                 onChange={(e) => setInputPassword(e.target.value)}
               />

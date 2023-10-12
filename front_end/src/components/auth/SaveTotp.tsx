@@ -4,7 +4,6 @@ import "./../../style/Login.css";
 import icon from "../../img/buttoncomp.png";
 import { useAuth } from "./AuthProvider";
 import { useNavigate, Navigate, useLocation } from "react-router-dom";
-import api from "../../services/AxiosInstance";
 
 import Notify from "../../services/Notify";
 
@@ -23,7 +22,7 @@ export const SaveTotp: React.FC = () => {
     getQRCodeImg();
   }, []);
 
-  const searchParams = new URLSearchParams(location.search);
+  // const searchParams = new URLSearchParams(location.search);
   // const qrCodeImg = searchParams.get("qrCodeImg");
 
   const handleCloseNotification = () => {
@@ -33,7 +32,6 @@ export const SaveTotp: React.FC = () => {
   const totpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (user) {
-      // try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/auth/submitCode?code=${receivedCode}`,
         {
@@ -71,6 +69,8 @@ export const SaveTotp: React.FC = () => {
           setQRCode(`${qrCodeExtract}`);
           return;
         } catch {
+          // guards setting pepe in place of QRcode if someone make a bad request
+          // with the new system without using front it's a bit overkill but still legit anyway
           setShowNotification(true);
           setNotifyMSG("Have you done something nasty ? Not cool ....");
           setNotifyType(3);

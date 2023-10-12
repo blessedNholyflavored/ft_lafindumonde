@@ -146,24 +146,46 @@
 }
 
 .boxrowtest2 {
-  /* width: 25%; */
   margin: 20px;
   border: 1px solid black;
   border-bottom: 4rem solid black;
   box-shadow: 10px 12px 0px 0px #000;
   box-sizing: border-box;
-  /* padding: 10px; */
   width: 15vw;
   height: 35vh;
   background-color: white;
   overflow: auto;
 }
 
+<<<<<<< HEAD
+=======
+.boxrowtest3 {
+  margin: 20px;
+  border: 1px solid black;
+  border-bottom: 4rem solid black;
+  box-shadow: 10px 12px 0px 0px #000;
+  box-sizing: border-box;
+  width: 15vw;
+  height: 35vh;
+  background-color: white;
+  z-index: 1000;
+}
+
+>>>>>>> origin/ma/cleanAndFix
 .boxrowtest2::-webkit-scrollbar {
   display: none;
 }
+.boxrowtest3lists::-webkit-scrollbar {
+  display: none;
+}
+.boxrowtest3lists {
+  overflow: auto;
+  width: 15vw;
+  height: 27vh;
+  margin: 0;
+}
 
-.logo {
+.boxrowtest2 .logo {
   text-align: right;
   float: right;
   margin-right: 10px;
@@ -295,13 +317,13 @@
   height: 47px;
   padding: 8px;
   gap: 10px;
-  display: flex;
+  display: inline-block;
 }
 
 input {
   height: 30px;
   background: var(--greyscale-k, #000);
-  width: 250px;
+  width: 15vw;
   padding-left: 10px;
   border: 1px solid black;
   border-radius: 20px;
@@ -315,11 +337,14 @@ input {
   align-items: center;
 }
 
+<<<<<<< HEAD
 .avatardiv input[type="file"] {
   text-align: center;
   line-height: 30px;
 }
 
+=======
+>>>>>>> origin/ma/cleanAndFix
 .changesett.avatarsett,
 .changesett {
   display: flex;
@@ -328,6 +353,7 @@ input {
   justify-content: center;
   text-align: center;
   height: 25vh;
+  width: 100%;
 }
 
 .centered-img img {
@@ -335,9 +361,10 @@ input {
 }
 
 input[type="file"] {
+  /* position: absolute; */
   height: 30px;
   background: var(--greyscale-k, #000);
-  width: 250px;
+  width: 18vw;
   padding-left: 10px;
   border: 1px solid black;
   border-radius: 20px;
@@ -440,6 +467,8 @@ input::file-selector-button {
   justify-content: center;
   color: #000;
   margin-top: 10px;
+  height: 29vh;
+  margin: 0;
 }
 
 .bttnholder {
@@ -447,6 +476,16 @@ input::file-selector-button {
   flex-direction: row;
   justify-content: center;
   gap: 10px;
+}
+@media (width < 1000px) {
+  .bttnholder {
+    display: inline-block;
+    margin: 1vh 0;
+    width: 50%;
+  }
+  .bttnholder button {
+    margin: 1vh 0;
+  }
 }
 
 .requestinfo {
@@ -459,6 +498,8 @@ input::file-selector-button {
   justify-content: center;
   color: #000;
   margin-top: 10px;
+  height: 29vh;
+  margin: 0;
 }
 
 .onlinebttn {
@@ -555,3 +596,37 @@ input::file-selector-button {
   height: 5px;
   font-size: 70%;
 }
+<<<<<<< HEAD
+=======
+
+/************
+*
+*				RESPONSIVE AND LAST ADD HOVER EFFECTS
+*
+*************/
+
+.usersListing {
+  margin: 10% 0;
+}
+
+.usersListing button {
+  margin: 3% 0;
+}
+
+.buttonseemore:hover {
+  background: radial-gradient(
+    circle,
+    rgb(255, 255, 255) 0%,
+    rgb(187, 224, 221) 100%
+  ) !important;
+}
+/* 
+jsp ?
+.onlinebttn:hover {
+  background: radial-gradient(
+    circle,
+    rgb(214, 156, 181) 0%,
+    rgb(141, 179, 221) 100%
+  );
+} */
+>>>>>>> origin/ma/cleanAndFix

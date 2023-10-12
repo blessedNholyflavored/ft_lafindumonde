@@ -19,7 +19,7 @@ import gradient from "./img/gradient.png";
 import Notify from "../services/Notify";
 import foldergreen from "./../img/foldergreen.png";
 import folderblue from "./../img/folderblue.png";
-import folderpink  from "./../img/folderpink.png";
+import folderpink from "./../img/folderpink.png";
 import folderyellow from "./../img/folderyellow.png";
 import folderwhite from "./../img/folderwhite.png";
 import folderviolet from "./../img/folderviolet.png";
@@ -45,7 +45,6 @@ export const GamePage = () => {
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
   const [sender, setSender] = useState<number>(0);
-
 
   const handlePlayerSelect = async (player: string) => {
     setSelectedPlayer(player);
@@ -124,7 +123,6 @@ export const GamePage = () => {
   };
 
   useEffect(() => {
-
     setTimeout(() => {
       const leftGame = localStorage.getItem("leftGame");
       if (leftGame) {
@@ -140,12 +138,12 @@ export const GamePage = () => {
       localStorage.setItem("leftGame", "Your oppenent has left the game");
     });
 
-  //   if (socket)
-  //   {
-  //       socket.on("CheckAlwaysIG", (recupRoom: Room) => {
-  //         console.log(recupRoom.end);
-  //   });
-  // }
+    //   if (socket)
+    //   {
+    //       socket.on("CheckAlwaysIG", (recupRoom: Room) => {
+    //         console.log(recupRoom.end);
+    //   });
+    // }
   });
 
   const NavToSoloPong = () => {
@@ -192,8 +190,7 @@ export const GamePage = () => {
         <h1>TRANSCENDENCE</h1>
       </header>
       <div className="flex-bg">
-        <main>
-          
+        <main className="commonmain">
           <div className="fullpage">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
@@ -261,7 +258,7 @@ export const GamePage = () => {
             </div>
           </div>
         </main>
-        <nav>
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>

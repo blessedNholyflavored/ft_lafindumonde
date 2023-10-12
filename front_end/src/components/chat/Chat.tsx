@@ -1032,7 +1032,7 @@ export const Chat = () => {
         <h1>TRANSCENDENCE</h1>
       </header>
       <div className="flex-bg">
-        <main>
+        <main className="commonmain">
           <div className="fullpage fullpagechat">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
@@ -1424,7 +1424,7 @@ export const Chat = () => {
             </div>
           </div>
         </main>
-        <nav>
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>

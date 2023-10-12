@@ -192,7 +192,7 @@ export const App: React.FC = () => {
   );
 };
 
-//TODO: remove this before prod
+//TODO: remove this before prod------------------------------------------------
 function AuthTest() {
   const navigate = useNavigate();
   const { user, setUser } = useAuth();

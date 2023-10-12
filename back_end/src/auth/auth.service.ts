@@ -5,12 +5,9 @@ import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import * as cookie from 'cookie';
 import { encode } from 'hi-base32';
 import * as qrcode from 'qrcode';
-// import * as imageDataURI from "image-data-uri";
 import Socket from 'src/gateway/types/socket';
-import { AuthDto } from 'src/user/dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -45,15 +42,17 @@ export class AuthService {
 	}
 
 	keyGenerator(): string {
-		//generates totpKey
+		//generates totpKey with pseudorandom algo which doesn't end until satisfying entropy level
 		const buffer = crypto.randomBytes(20);
 		const secret = encode(buffer);
 		return secret;
 	}
 
 	async idGenerator(){
-		// generates random ID for local login
+		// generates random ID for local login with high numbers to avoid 42 ids
 		let idCreated = Math.floor(99999 + (Math.random() * 99999));
+		// checking if id is already taken
+		// in this case, recursively generating again 
 		const userTest = await this.userService.getUserByID(idCreated);
 		if (userTest){
 			idCreated = await this.idGenerator();
@@ -63,7 +62,7 @@ export class AuthService {
 
 	async generate2FAkey(user: any){
 		// creates QR code from TotpKey generated
-		// + add key to user
+		// + add key and qrcode to user
 		const totpSecret = this.keyGenerator();
 		const issuer =  'ft_lafindumonde';
 		const qrCodeImg = await qrcode.toDataURL(`otpauth://totp/${issuer}:${user.id}?secret=${totpSecret}&issuer=${issuer}`);
@@ -83,7 +82,10 @@ export class AuthService {
 		}
 	}
 
+	// check if password is valid with the encrypted one stored in db
+	// the function compare() deals with crypted pass on its own
 	passwordChecker(input: string, user: User){
 		return (bcrypt.compare(input, user.password));
 	}
+
 }

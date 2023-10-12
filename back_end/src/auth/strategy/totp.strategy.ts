@@ -5,6 +5,7 @@ import { AuthService } from '../auth.service';
 import { decode } from 'hi-base32';
 
 function getTotpKey(this: null, user:any, done: (err: any, key: Buffer, period: number) => any): any {
+	// decoding key from db before checking it
   const key = {
     key: Buffer.from(decode.asBytes(user.totpKey)),
     period: 30,

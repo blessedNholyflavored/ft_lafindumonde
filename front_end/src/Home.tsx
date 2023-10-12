@@ -179,7 +179,7 @@ const Home: React.FC<HomeProps> = () => {
         )}
       </div>
       <div className="flex-bg">
-        <main>
+        <main className="commonmain">
           <div className="home">
             <p> HOME </p>
             <div className="inside">
@@ -203,7 +203,7 @@ const Home: React.FC<HomeProps> = () => {
             <img src={gaming} />
           </div>
         </main>
-        <nav>
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
