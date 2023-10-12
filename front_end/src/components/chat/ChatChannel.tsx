@@ -365,11 +365,12 @@ export const ChatChannel = () => {
     bottomEl?.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   };
 
+
   useEffect(() => {
     if (socket) {
       socket.on("refreshMessagesRoom", () => {
+        fetchLastMessage();
         setTimeout(() => {
-          fetchLastMessage();
           scrollToBottom();
         }, 300);
       });
@@ -948,8 +949,8 @@ export const ChatChannel = () => {
           onClose={handleCloseNotification}
         />
       )}
-      <div ref={bottomEl}>
         {/* <div className="realchat"> */}
+      <div ref={bottomEl}>
         <div>
           {id && (
             <ul style={{marginBottom:"50px"}}>
@@ -987,11 +988,13 @@ export const ChatChannel = () => {
                 ))
               ) : (
                 <div>no messages yet!</div>
-              )}
+                )}
             </ul>
 
 )}
-</div>
+            <button  className="button-reset"
+            >
+            </button>
         </div>
         <div className="chatmessagebar">
           {userIsMuted === true && (
@@ -1037,6 +1040,8 @@ export const ChatChannel = () => {
             </div>
           )}
         </div>
+</div>
+
         <div>
           {changeStatutButton && statutChan === "PWD_PROTECTED" && (
             <div>

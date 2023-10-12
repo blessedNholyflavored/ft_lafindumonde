@@ -848,9 +848,11 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       @SubscribeMessage('recupRoomAtStart')
       async OnRecupRoomAtStart(@MessageBody() roomId:number ,@ConnectedSocket() socket: Socket)
       {
+
         if(!roomId)
           return ;
        let recupRoom = this.roomMapService.getRoom(roomId.toString());
+       console.log("dsdfdfsdfdsfsdfsfdsfds   ", recupRoom);
        
        if (!recupRoom)
        return ;
@@ -859,7 +861,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
             ballY: 200, scoreP1: 0,
             scoreP2: 0, player1Y: 200, player2Y: 200, winner: '',
             roomID: recupRoom.idRoom};
-
             socket.emit("sendRoomAtStart", Sroom);
       }
 }

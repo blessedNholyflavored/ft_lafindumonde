@@ -104,6 +104,7 @@ export const Chat = () => {
   const [kickChan, setKickChan] = useState("");
   const [kickReason, setKickReason] = useState("");
   const [activeChannelName, setActiveChannelName] = useState("");
+  const [sender, setSender] = useState<number>(0);
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {};
 
@@ -421,6 +422,7 @@ export const Chat = () => {
       setShowNotification(true);
       setNotifyMSG(banMessage);
       setNotifyType(2);
+      setSender(0);
     }
     localStorage.removeItem("banMessage");
 
@@ -440,6 +442,7 @@ export const Chat = () => {
           "You have been kicked from " + roomName + ". Reason: " + reason
         );
         setNotifyType(2);
+        setSender(0);
       });
     }
     if (socket) {
@@ -457,6 +460,7 @@ export const Chat = () => {
               " minutes"
           );
           setNotifyType(2);
+          setSender(0);
         }
       );
     }
@@ -473,6 +477,8 @@ export const Chat = () => {
           setActiveBanChannel(roomId);
           setActiveChannel(roomId);
           setShowNotification(true);
+          setSender(0);
+
           setNotifyMSG(
             "You have been banned from " +
               roomName +
@@ -520,8 +526,18 @@ export const Chat = () => {
           setNotifyMSG("Wrong password");
           setNotifyType(2);
           setShowNotification(true);
+          setSender(0);
         });
       }
+    }
+
+    if (socket) {
+      socket.on("receiveInvite", (sender: number) => {
+        setShowNotification(true);
+        setNotifyMSG("Tu as recu une invitation pour une partie");
+        setNotifyType(1);
+        setSender(sender);
+      });
     }
 
     fetchYourRooms();
@@ -608,6 +624,7 @@ export const Chat = () => {
       setShowNotification(true);
       setNotifyMSG("Name deja pris mon gars !");
       setNotifyType(2);
+      setSender(0);
     }
     setValueRoom("");
     setIsButtonDisabled(true);
@@ -620,6 +637,8 @@ export const Chat = () => {
       setShowNotification(true);
       setNotifyMSG("Room n'existe pas !");
       setNotifyType(2);
+      setSender(0);
+
       setValueRoom("");
       setIsButtonDisabled(true);
       return "";
@@ -628,6 +647,8 @@ export const Chat = () => {
       setShowNotification(true);
       setNotifyMSG("Tu es deja dans le channel !");
       setNotifyType(2);
+      setSender(0);
+
       setValueRoom("");
       setIsButtonDisabled(true);
       return "";
@@ -641,6 +662,7 @@ export const Chat = () => {
       setShowNotification(true);
       setNotifyMSG("Room n'existe pas !");
       setNotifyType(2);
+      setSender(0);
     }
     setValueRoom("");
     setIsButtonDisabled(true);
@@ -878,6 +900,7 @@ export const Chat = () => {
         setNotifyMSG("Invite sent");
         setNotifyType(2);
         setShowNotification(true);
+        setSender(0);
       } else {
         console.error("Error creating friendship: request is pending");
         alert("Error creating friendship: request is pending");
@@ -923,6 +946,7 @@ export const Chat = () => {
 
   const handleCloseNotification = () => {
     setShowNotification(false);
+    setSender(0);
   };
 
   const desacButton = () => {
@@ -1021,7 +1045,7 @@ export const Chat = () => {
                   <Notify
                     message={notifyMSG}
                     type={notifyType}
-                    senderId={0}
+                    senderId={sender}
                     onClose={handleCloseNotification}
                   />
                 )}
@@ -1095,17 +1119,17 @@ export const Chat = () => {
                                 onClick={() => handleJoinClick(chan.id)}
                                 disabled={activeChannel === chan.id}
                               >
-                              <div>
-                                {chan.visibility === "PWD_PROTECTED" && (
-                                  <span>{chan.name} 🔑</span>
-                                )}
-                                {chan.visibility === "PUBLIC" && (
-                                  <span>{chan.name} 🔓</span>
-                                )}
-                                {chan.visibility === "PRIVATE" && (
-                                  <span>{chan.name} ⛔</span>
-                                )}
-                              </div>
+                                <div>
+                                  {chan.visibility === "PWD_PROTECTED" && (
+                                    <span>{chan.name} 🔑</span>
+                                  )}
+                                  {chan.visibility === "PUBLIC" && (
+                                    <span>{chan.name} 🔓</span>
+                                  )}
+                                  {chan.visibility === "PRIVATE" && (
+                                    <span>{chan.name} ⛔</span>
+                                  )}
+                                </div>
                               </button>
                               {isPromptOpen === true &&
                                 activeChannel === chan.id &&
@@ -1334,9 +1358,7 @@ export const Chat = () => {
                   {/* </div> */}
                   {/* </div> */}
                 </div>
-                <div 
-                style={{overflow: "auto"}}
-                className="small-box">
+                <div style={{ overflow: "auto" }} className="small-box">
                   <div>
                     <div className="navbarsmallbox chantitle putain">
                       <p style={{ color: "white" }}>create new chan</p>
