@@ -393,6 +393,17 @@ const PongGame: React.FC = () => {
                 id="middlebox"
                 style={{ width: mapx / 2, height: mapy / 3.5 }}
               >
+                <div className="countdownstyle ">
+                {countdown > 1 && (
+                  <div className="countdown">{countdown}</div>
+                )}
+                {countdown === 1 && (
+                  <div className="countdown ready">Ready ?</div>
+                )}
+                {countdown === 0 && (
+                  <div className="countdown start">Start</div>
+                )}
+                </div>
                 <div
                   className="pong-game"
                   style={{
@@ -402,15 +413,6 @@ const PongGame: React.FC = () => {
                   }}
                 >
                   {/* <div className="countdown-container"> */}
-                  {countdown > 1 && (
-                    <div className="countdown">{countdown}</div>
-                  )}
-                  {countdown === 1 && (
-                    <div className="countdown ready">Ready ?</div>
-                  )}
-                  {countdown === 0 && (
-                    <div className="countdown start">Start</div>
-                  )}
                   {/* </div> */}
                   {/* {user && (
                     <button className="buttonseemore">
@@ -433,15 +435,17 @@ const PongGame: React.FC = () => {
                       >
                         {end === 1 && (
                           <div>
-                            <p>game over</p>
-                            Score - {room.player1} {room.scoreP1} |{" "}
-                            {room.scoreP2} {room.player2}
+                            <h1>game over</h1>
+                            final score 
+                              <br></br>
+                             <b>{room.player1}</b> {room.scoreP1} |{" "}
+                            {room.scoreP2} <b>{room.player2}</b>
                             <p>{room.winner} wins!</p>
                           </div>
                         )}
                         {end === 0 && (
                           <div>
-                            Score - {room.player1} {room.scoreP1} |{" "}
+                             score - {room.player1} {room.scoreP1} |{" "}
                             {room.scoreP2} {room.player2}
                           </div>
                         )}
@@ -471,7 +475,7 @@ const PongGame: React.FC = () => {
                   )}
                 </div>
                 <button
-                  className="buttonseemore"
+                  className="buttonseemore backto"
                   style={{ marginBottom: "5px" }}
                   onClick={NavHome}
                 >
