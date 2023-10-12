@@ -1,5 +1,4 @@
 .gamecss {
-  /* display: flex; */
   display: inline-flex;
   flex-direction: row;
   justify-content: center;
@@ -9,7 +8,6 @@
 }
 
 .column {
-  /* flex: 33.33%; */
   padding: 5px;
   justify-content: center;
   align-items: center;
@@ -58,7 +56,6 @@
   border: 6px solid var(--greyscale-k, #000);
   box-shadow: 10px 12px 0px 0px #000;
   color: white;
-  /* width: 70vw; */
 }
 
 .game1 img {
@@ -99,9 +96,7 @@
     bottom: auto;
   }
 }
-/* pour le responsive peut etre un display none si window < 800/900 px */
 .trollgame img {
-  /* height: 200px; */
   width: 18vw;
 }
 
@@ -124,8 +119,7 @@
   border: 6px solid var(--greyscale-k, #000);
   overflow: auto;
   box-shadow: 7px 9px 0px 0px #000;
-  }
-
+}
 
 .floating1 {
   position: absolute;
@@ -135,9 +129,7 @@
   border: 6px solid var(--greyscale-k, #000);
   overflow: auto;
   box-shadow: 7px 9px 0px 0px #000;
-  }
-
-
+}
 
 .trollgame2 p {
   text-align: center;
@@ -146,9 +138,7 @@
   display: flex;
   margin: 5px;
 }
-/* pour le responsive peut etre un display none si window < 800/900 px */
 .trollgame2 img {
-  /* height: 200px; */
   width: 20vw;
 }
 
@@ -172,15 +162,12 @@
   grid-area: 2 / 1 / 3 / 2;
   opacity: 10.9;
   background: orangered;
-  /* background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%); */
   position: absolute;
   border: 6px solid var(--greyscale-k, #000);
 
   bottom: -15%;
   right: -30%;
 }
-
-
 
 .div3 {
   grid-area: 1 / 2 / 3 / 3;
@@ -224,14 +211,12 @@
   justify-content: center;
   align-items: center;
   float: left;
-  /* background: Red; */
   color: black;
   width: 25%;
   height: 280px;
 }
 #middlebox {
   float: left;
-  /* background: Green; */
   width: 50%;
   height: 280px;
 }
@@ -240,10 +225,10 @@
   justify-content: center;
   align-items: center;
   color: black;
-position: absolute;
-top:21%;
-right: 10%;
-  }
+  position: absolute;
+  top: 21%;
+  right: 10%;
+}
 
 .avatar {
   vertical-align: middle;
@@ -252,25 +237,24 @@ right: 10%;
   border-radius: 50%;
 }
 
-
-.fullpage.ponggame{
+.fullpage.ponggame {
   background-image: url("./../img/Abstract-Gradient-6.png");
-background-position: bottom;
-width: 100%;
-margin-left: 0;
+  background-position: bottom;
+  width: 100%;
+  margin-left: 0;
 }
 
-
-.trollgame.damon{
+.trollgame.damon {
   position: absolute;
   bottom: 30%;
   right: 15%;
 }
 
-.fullpage.sologamee{
-height: 100%;
+.fullpage.sologamee {
+  height: 100%;
 }
 
-.countdownstyle, .backto{
+.countdownstyle,
+.backto {
   margin-top: 25px;
 }

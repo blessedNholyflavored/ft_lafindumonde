@@ -82,7 +82,6 @@ const Box = (props: any) => {
       );
       if (response.ok) {
         const pictureURL = await response.text();
-        //console.log("aaaaaaA",pictureURL);
         if (pictureURL.includes("https")) {
           setImgUrl(pictureURL);
         } else {
@@ -180,7 +179,6 @@ const Box = (props: any) => {
             </div>
 
             <div className="testingrow">
-              {/* <div className="threerow"> */}
 
               <div className="home-profile">
                 <p> hi! </p>
@@ -209,8 +207,6 @@ const Box = (props: any) => {
               </div>
             </div>
           </div>
-          {/* // <Friendslist type="friends"/> */}
-          {/* // <Scorelist type ="scorelist"/> */}
         </main>
         <nav className="profileNav">
           <ul>

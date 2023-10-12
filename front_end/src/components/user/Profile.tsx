@@ -35,30 +35,7 @@ export const Profile = () => {
 		{userExists && (
 		  <Box user={user} type="info"></Box>
 		)}
-		{/* <Box type="friends"></Box> */}
 	  </div>
 	);
   };
   
-
-// useEffect(() => {
-//   getUser(props.id)
-// }, [props.id])
-
-
-// const getUser = async (id: string) => {
-//   try {
-//     const response = await fetch("http://" + window.location.hostname + ':3000'  + `/users/friends/${id}`, {
-//       method: "GET",
-//     })
-//     if (response.ok) {
-//       const data = await response.json();
-//       setUser(data);
-//     } else {
-//       console.log("POST error on /friendship/id");
-//       return "error";
-//     }
-//   } catch (error) {
-//     console.log("error", error);
-//    }
-// }

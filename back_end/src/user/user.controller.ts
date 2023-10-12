@@ -13,9 +13,9 @@ import {
   UseGuards,
   ConflictException,
   NotAcceptableException,
-	ValidationPipe,
-	UsePipes,
-	UnauthorizedException,
+  ValidationPipe,
+  UsePipes,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -37,7 +37,7 @@ export class UsersController {
   friendService: any;
   constructor(private readonly userService: UserService) {}
 
-/*
+  /*
   @Get('/')
   findAll() {
     const users = this.userService.findUser();
@@ -79,9 +79,6 @@ export class UsersController {
   @Get('/:id/avatar')
   returnPic(@Param('id') id: string) {
     const pictureURL = this.userService.getPicture(id);
-    //const backPath = path.join(, pictureURL);
-    //console.log(pictureURL);
-    //console.log(backPath);
     return pictureURL;
   }
 
@@ -108,11 +105,9 @@ export class UsersController {
           file.mimetype === 'image/png' ||
           file.mimetype === 'image/jpeg'
         ) {
-          console.log('IFFFFFFFFFFFFFFFFF');
           cb(null, true);
         } else {
           console.log(file.mimetype);
-          console.log('ELSSEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
           cb(
             new HttpException(
               'jpg/jpeg/png images files only accepted',
@@ -211,30 +206,13 @@ export class UsersController {
     return ret;
   }
 
-	@Post("/pokePic")
-	async pokePic(@Req() req: any, @Res() res:any, @Body() pic: any){
-		const photo = await this.userService.updatePicture(req.user.id.toString(), pic.pictureURL.toString());
-		const ret = await this.userService.getUserByID(req.user.id);
-		return photo;
-	}
-
-  // @Get('/scoresMG')
-  // async GetAllScores()
-  // {
-  //   console.log("bite");
-  // }
-
-  // @Get('/friends/:id')
-  // async getFriends(@Param('id') id: string) {
-  //   const friends = await this.friendService.findAll(id);
-  //   return friends;
-  // }
-
-  // @Get('/:id')
-  // async getAchievements(@Param('id') userId: string) {
-  //   const achievements = await this.userService.getUserAchievements(
-  //     parseInt(userId),
-  //   );
-  //   return achievements;
-  // }
+  @Post('/pokePic')
+  async pokePic(@Req() req: any, @Res() res: any, @Body() pic: any) {
+    const photo = await this.userService.updatePicture(
+      req.user.id.toString(),
+      pic.pictureURL.toString(),
+    );
+    const ret = await this.userService.getUserByID(req.user.id);
+    return photo;
+  }
 }

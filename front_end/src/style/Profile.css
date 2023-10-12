@@ -8,11 +8,6 @@
   font-family: IBM Plex Mono;
 }
 
-/* .mainFriendship {
-  width: 100%;
-
-} */
-
 .navbarmainpage {
   display: flex;
   height: 5%;
@@ -99,7 +94,6 @@
   background-color: white;
   border: 6px solid var(--greyscale-k, #000);
   box-shadow: 10px 12px 0px 0px #000;
-  /* height: 450px; */
   background-color: #000;
   margin-right: 35px;
 }
@@ -134,25 +128,21 @@
 }
 
 .boxrowtest {
-  /* width: 25%; */
   margin: 20px;
   border: 1px solid black;
   border-bottom: 4rem solid black;
   box-shadow: 10px 12px 0px 0px #000;
   box-sizing: border-box;
-  /* padding: 10px; */
   width: 20vw;
   height: 400px;
 }
 
 .boxrowtest2 {
-  /* width: 25%; */
   margin: 20px;
   border: 1px solid black;
   border-bottom: 4rem solid black;
   box-shadow: 10px 12px 0px 0px #000;
   box-sizing: border-box;
-  /* padding: 10px; */
   width: 15vw;
   height: 35vh;
   background-color: white;
@@ -187,18 +177,14 @@
   border-bottom: 2rem solid black;
 }
 
-/* TEMPORAIRE */
 .boxrowsettings:nth-child(3) {
   background-color: #ffff50;
   border-bottom: 2rem solid black;
 }
-/* TEMPORAIRE */
 
 .navbarsmallbox {
   display: flex;
-  /* width: 90%; */
   height: 10%;
-  /* padding: 0px 16px; */
   align-items: center;
   justify-content: center;
   background-color: black;
@@ -232,8 +218,6 @@
 
 .scorelist {
   color: black;
-  /* display: flex; */
-  /* flex-direction: column; */
   align-items: start;
 }
 
@@ -351,8 +335,6 @@ input[type="file"] {
   display: none;
 }
 input::file-selector-button {
-  /* position: relative; */
-  /* display: flex; */
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -366,15 +348,12 @@ input::file-selector-button {
   border-width: 3px;
   height: 30px;
   padding: 10px;
-  /* margin: 0; */
   box-shadow: 3px 4px 0px 0px #000;
 }
 
 .buttonsettings {
-  /* position: relative; */
   display: inline-flex;
   align-items: center;
-  /* justify-content: center; */
   align-items: center;
   cursor: pointer;
   font-family: IBM Plex Mono;
@@ -394,7 +373,6 @@ input::file-selector-button {
 }
 
 .buttonsettings:disabled {
-  /* display: none; */
   background-color: #424242;
   cursor: default;
 }
@@ -402,7 +380,6 @@ input::file-selector-button {
 .acceptbutton {
   position: relative;
   display: flex;
-  /* justify-content: center; */
   align-items: center;
   cursor: pointer;
   font-family: IBM Plex Mono;
@@ -420,7 +397,6 @@ input::file-selector-button {
 .deletebutton {
   position: relative;
   display: flex;
-  /* justify-content: center; */
   align-items: center;
   cursor: pointer;
   font-family: IBM Plex Mono;
@@ -464,7 +440,6 @@ input::file-selector-button {
 .onlinebttn {
   position: relative;
   display: flex;
-  /* justify-content: center; */
   align-items: center;
   cursor: pointer;
   font-family: IBM Plex Mono;
@@ -490,7 +465,6 @@ input::file-selector-button {
 .buttonseemore {
   position: relative;
   display: flex;
-  /* justify-content: center; */
   align-items: center;
   cursor: pointer;
   font-family: IBM Plex Mono;
