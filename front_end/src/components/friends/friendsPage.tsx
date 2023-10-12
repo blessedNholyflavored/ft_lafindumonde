@@ -668,13 +668,13 @@ export const FriendsPage: React.FC = () => {
                         </button>
                         <div>
                           {friend.status === "ONLINE" && (
-                            <span>{friend.username} 🟢</span>
+                            <span style={{fontStyle:"italic"}}> status: 🟢</span>
                           )}
                           {friend.status === "INGAME" && (
-                            <span>{friend.username} 🎮</span>
+                            <span style={{fontStyle:"italic"}}> status: 🎮</span>
                           )}
                           {friend.status === "OFFLINE" && (
-                            <span>{friend.username} 🔴</span>
+                            <span style={{fontStyle:"italic"}}> status: 🔴</span>
                           )}
                         </div>
                         {selectedUser === friend.recipientId && (

@@ -356,7 +356,7 @@ export const MiniGame = () => {
                       position: "absolute",
                       width: 10,
                       height: 80,
-                      backgroundColor: "red",
+                      backgroundColor: "yellow",
                       top: player2,
                       right: 0,
                     }}

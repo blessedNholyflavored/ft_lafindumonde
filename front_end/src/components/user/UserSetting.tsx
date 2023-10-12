@@ -105,7 +105,7 @@ export const UserSetting: React.FC = () => {
         //window.location.reload();
       } else {
         setShowNotification(true);
-        setNotifyMSG("An error happened while updating password");
+        setNotifyMSG("An error happened while updating username");
         setNotifyType(3);
         // alert(
         //   "Une erreur s'est produite lors de la mise à jour du nom d'utilisateur."

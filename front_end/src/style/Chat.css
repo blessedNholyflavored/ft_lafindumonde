@@ -227,15 +227,56 @@
 }
 
 .statusbutton {
-  position: absolute;
+  position: inherit;
   top: 76%;
+  margin-bottom: 5px;
   right: 27%;
   background-color: #fa8072;
 }
 
-.statutbutton {
+/* .statutbutton {
   position: absolute;
   top: 70%;
   right: 27%;
   background-color: #fa8072;
+} */
+
+
+.boutondetest{
+	position: absolute;
+	top:70%;
+	left:50%;
+}
+
+/* 
+.inputdetest{
+	position: absolute;
+	top:63%;
+	left:50%;
+} */
+
+.boxrowtest.jpp{
+	position: absolute;
+	top:16%;
+	right: 35%;
+	border-bottom: 0;
+	background-color: white;
+	height: 200px;
+}
+
+.navbarsmallbox.jpp {
+	margin-bottom: 10px;
+}
+
+.zindexcosin{
+	z-index: 5000;
+	/* left: 60%; */
+	top:30%;
+}
+
+.jpp input{
+	z-index: 5000;
+	position: relative;
+	top:30%;
+
 }

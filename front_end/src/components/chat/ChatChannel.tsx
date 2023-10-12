@@ -369,10 +369,12 @@ export const ChatChannel = () => {
   useEffect(() => {
     if (socket) {
       socket.on("refreshMessagesRoom", () => {
-        fetchLastMessage();
+        setTimeout(() => {
+          fetchLastMessage();
+        }, 1500);
         setTimeout(() => {
           scrollToBottom();
-        }, 300);
+        }, 500);
       });
     }
   }, [id]);
@@ -873,6 +875,8 @@ export const ChatChannel = () => {
     setTimeout(() => {
       socket.emit("reloadListRoom", id);
     }, 100);
+    setNewPass("");
+    setOnPWD(false);
   }
 
   function handleMuteButton() {
@@ -1043,42 +1047,56 @@ export const ChatChannel = () => {
 
         <div>
           {changeStatutButton && statutChan === "PWD_PROTECTED" && (
-            <div>
-              <button onClick={() => handleOnChangeMDP()}>
-                Changer le MDP
+            <div className="boxrowtest jpp">
+            <div className="navbarsmallbox jpp ">
+                <p style={{ color: "white" }}>change chan status</p>
+              </div>
+              {/* <button 
+                className="buttonseemore buttonchan"
+                onClick={() => handleOnChangeMDP()}>
+                Change password
+              </button> */}
+              <button
+                className="buttonseemore buttonchan zindexcosin"
+                onClick={() => ChangeStatutChan("PWD_PROTECTED")}
+                disabled={newPass.length === 0 || newPass.length > 15}
+              >
+                Change pass
               </button>
               <input
+              className="inputtestt"
                 type="password"
                 value={newPass}
                 onChange={(e) => setNewPass(e.target.value)}
               />
-              <button
-                onClick={() => ChangeStatutChan("PWD_PROTECTED")}
-                disabled={newPass.length === 0 || newPass.length > 15}
-              >
-                Change Password
-              </button>
             </div>
           )}
 
           {changeStatutButton && statutChan === "PUBLIC" && (
-            <div>
+            <div className="boxrowtest jpp">
+            <div className="navbarsmallbox jpp ">
+                <p style={{ color: "white" }}>change chan status</p>
+              </div>
               <button
                 className="buttonseemore buttonchan statusbutton"
                 onClick={() => ChangeStatutChan("PRIVATE")}
               >
-                pass to Private
+                switch to Private
               </button>
               <div>
                 <button
                   className="buttonseemore buttonchan statutbutton"
                   onClick={() => handleChangeToPWD()}
                 >
-                  pass to protected
+                  switch to protected
                 </button>
                 {onPWD === true && (
-                  <div>
+                  <div className="boxrowtest jpp">
+                  <div className="navbarsmallbox jpp ">
+                      <p style={{ color: "white" }}>change chan status</p>
+                    </div>
                     <input
+                    className="inputdetest"
                       type="password"
                       placeholder="newPass ?"
                       value={newPass}
@@ -1086,11 +1104,11 @@ export const ChatChannel = () => {
                     />
 
                     <button
-                      className="buttonseemore buttonchan"
+                      className="buttonseemore buttonchan statusbutton"
                       onClick={() => ChangeStatutChan("PWD_PROTECTED")}
                       disabled={newPass.length === 0}
                     >
-                      pass to Protected
+                      confirm
                     </button>
                   </div>
                 )}
@@ -1098,22 +1116,28 @@ export const ChatChannel = () => {
             </div>
           )}
           {changeStatutButton && statutChan === "PRIVATE" && (
-            <div>
+            <div className="boxrowtest jpp">
+            <div className="navbarsmallbox jpp ">
+                <p style={{ color: "white" }}>change chan status</p>
+              </div>
               <button
                 className="buttonseemore buttonchan statutbutton"
                 onClick={() => ChangeStatutChan("PUBLIC")}
               >
-                pass to Public
+                switch to Public
               </button>
               <div>
                 <button
-                  className="buttonseemore buttonchan statusbutton"
-                  onClick={() => handleChangeToPWD()}
+                className="buttonseemore buttonchan statutbutton"
+                onClick={() => handleChangeToPWD()}
                 >
-                  pass to protected
+                  switch to protected
                 </button>
                 {onPWD === true && (
-                  <div>
+                  <div className="boxrowtest jpp">
+                  <div className="navbarsmallbox jpp ">
+                      <p style={{ color: "white" }}>change chan status</p>
+                    </div>
                     <input
                       type="text"
                       placeholder="newPass ?"
@@ -1121,10 +1145,11 @@ export const ChatChannel = () => {
                       onChange={(e) => setNewPass(e.target.value)}
                     />
                     <button
-                      onClick={() => ChangeStatutChan("PWD_PROTECTED")}
+                className="buttonseemore buttonchan statutbutton"
+                onClick={() => ChangeStatutChan("PWD_PROTECTED")}
                       disabled={newPass.length === 0}
                     >
-                      pass to Protected
+                      confirm
                     </button>
                   </div>
                 )}
@@ -1132,17 +1157,29 @@ export const ChatChannel = () => {
             </div>
           )}
           {changeStatutButton && statutChan === "PWD_PROTECTED" && (
-            <div>
-              <button onClick={() => ChangeStatutChan("PRIVATE")}>
+            <div className="boxrowtest jpp">
+            <div className="navbarsmallbox jpp ">
+                <p style={{ color: "white" }}>change chan status</p>
+              </div>
+              <button 
+                className="buttonseemore buttonchan"
+                onClick={() => ChangeStatutChan("PRIVATE")}>
                 pass to Private
               </button>
-              <button onClick={() => ChangeStatutChan("PUBLIC")}>
+              <button 
+                className="buttonseemore buttonchan"
+                onClick={() => ChangeStatutChan("PUBLIC")}>
                 pass to Public
               </button>
             </div>
           )}
           {/* </div> */}
         </div>
+
+
+
+
+
         <div className="onlinepeople">
         <div className="navbarsmallbox">
                   <p className="boxtitle"> channel members </p>
