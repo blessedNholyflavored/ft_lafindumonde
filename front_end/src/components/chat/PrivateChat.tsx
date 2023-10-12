@@ -304,9 +304,9 @@ export const PrivateChat = () => {
   };
 
   return (
-    <div className="testingchat">
+    <div className="testingchat ">
       <div className="chat-container">
-      <div className="chatmessagebar">
+      <div className="chatmessagebar-private">
 
         <div className="chat-messages" ref={bottomEl}>
           {recipient && (
@@ -347,25 +347,8 @@ export const PrivateChat = () => {
             </ul>
           )}
           {/* <div ref={bottomEl}></div> */}
-          {recipient && isBlocked === "false" && (
-            <button
-              className="buttonseemore buttonnotchan"
-              onClick={() => BlockFriend(recipient.toString())}
-            >
-              block
-            </button>
-          )}
-          {isBlocked === "true" && recipient && (
-            <button
-              className="buttonseemore buttonokchan"
-              onClick={() =>
-                removeBlocked(user?.id.toString() as any, recipient.toString())
-              }
-            >
-              unblock
-            </button>
-          )}
-          <div className="sendingzoneprivate">
+          <div className="sendingzoneprivate-privatechat">
+         
             {recipient && (
               <div>
                 <input
@@ -386,6 +369,24 @@ export const PrivateChat = () => {
                 </button>
               </div>
             )}
+             {recipient && isBlocked === "false" && (
+            <button
+              className="buttonseemore buttonnotchan blocking"
+              onClick={() => BlockFriend(recipient.toString())}
+            >
+              block
+            </button>
+          )}
+          {isBlocked === "true" && recipient && (
+            <button
+              className="buttonseemore buttonokchan"
+              onClick={() =>
+                removeBlocked(user?.id.toString() as any, recipient.toString())
+              }
+            >
+              unblock
+            </button>
+          )}
           </div>
           </div>
         </div>

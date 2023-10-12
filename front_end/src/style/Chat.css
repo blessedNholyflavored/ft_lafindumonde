@@ -181,6 +181,17 @@
 	display: flex;
 	justify-content: center; /* Center the input and button horizontally */
   }
+
+  .sendingzoneprivate-privatechat {
+	position: sticky;
+	bottom: 0;
+	padding: 10px; /* Add padding for spacing */
+	display: flex;
+	justify-content: center; /* Center the input and button horizontally */
+	left:50%;
+	align-items: baseline;
+  }
+  
   
   .sendingzoneprivate input {
 	flex: 1; /* Let the input grow and take available space */
@@ -251,6 +262,10 @@
 	bottom: 0px;
 }
 
+.chatmessagebar-private{
+	bottom: 0px;
+}
+
 .statusbutton{
 	position: absolute;
 	top:76%;
@@ -264,3 +279,4 @@
 	right: 27%;
 	background-color: #FA8072	;
 }
+
