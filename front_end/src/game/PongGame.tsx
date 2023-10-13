@@ -43,6 +43,19 @@ const PongGame: React.FC = () => {
   let [ImgUrlP2, setImgUrlP2] = useState<string>("");
   let [usernameP1, setUsernameP1] = useState<string>("");
   let [usernameP2, setUsernameP2] = useState<string>("");
+  const rainbowColors = [
+    "#FF0000",
+    "#FF7F00",
+    "#FFFF00",
+    "#00FF00",
+    "#0000FF",
+    "#4B0082",
+    "#9400D3",
+  ];
+  const [colorIndex, setColorIndex] = useState<number>(0);
+  const [rainbowBall, setRainbowBall] = useState(false);
+  const [footBall, setFootBall] = useState(false);
+  const [opponentHead, setopponentHead] = useState(false);
 
   const handleBeforeUnload = useCallback(
     async (e: BeforeUnloadEvent) => {
@@ -77,8 +90,7 @@ const PongGame: React.FC = () => {
   }, [room?.end, startGameFCT]);
 
   useEffect(() => {
-    if (countdown <= 0)
-      return ;
+    if (countdown <= 0) return;
     if (countdown === 3) {
       setTimeout(() => {
         socket.emit("recupRoomAtStart", id);
@@ -88,9 +100,8 @@ const PongGame: React.FC = () => {
       startCountdown();
     }
     return () => {
-      if (socket)
-        socket.off("recupRoomAtStart");
-    }
+      if (socket) socket.off("recupRoomAtStart");
+    };
   }, [startCountdown, end, id, socket]);
 
   const handleKeyDown = useCallback(
@@ -297,7 +308,16 @@ const PongGame: React.FC = () => {
         setUpdatelvl(1);
       }
     }
-  },[end, id, playerId2, room?.winner, socket, updatelvl, user?.id, user?.username]);
+  }, [
+    end,
+    id,
+    playerId2,
+    room?.winner,
+    socket,
+    updatelvl,
+    user?.id,
+    user?.username,
+  ]);
 
   const navigateToHome = () => {
     navigate("/");
@@ -369,6 +389,7 @@ const PongGame: React.FC = () => {
     };
   }, []);
 
+
   return (
     <div>
       <header>
@@ -384,15 +405,30 @@ const PongGame: React.FC = () => {
               <img src={icon} alt="icon" />
               <h1> game </h1>
             </div>
+            <button
+              className="buttonseemore backto"
+              style={{ marginBottom: "5px" }}
+              onClick={() => {setRainbowBall(!rainbowBall); setFootBall(false)}}
+            >
+              {rainbowBall ? "Change to classic" : "Change to rainbow"}
+            </button>
+            <button
+              className="buttonseemore backto"
+              style={{ marginBottom: "5px" }}
+              onClick={() => {setFootBall(!footBall); setRainbowBall(false)}}
+            >
+              {footBall ? "Change to classic" : "Change to football"}
+            </button>
 
             <div id="boxes">
               <div id="leftbox">
-                {ImgUrlP1 && (
-                  <div>
-                    <h2>{usernameP1}</h2>
-                    <img src={ImgUrlP1} className="avatar" alt="" />
-                  </div>
-                )}
+                {ImgUrlP1 &&
+                  +(
+                    <div>
+                      <h2>{usernameP1}</h2>
+                      <img src={ImgUrlP1} className="avatar" alt="" />
+                    </div>
+                  )}
               </div>
               <div
                 id="middlebox"
@@ -461,21 +497,32 @@ const PongGame: React.FC = () => {
                         )}
                       </div>
                       <div
-                        className={`player-rect player1`}
+                        className={`player-rect player1 ${
+                          rainbowBall ? "rainbow-rect" : ""
+                        }`}
                         style={{
                           top: (player1Pos * mapy) / 3.5 / 400,
                           height: (100 * mapy) / 3.5 / 400,
                         }}
                       ></div>
                       <div
-                        className={`player-rect player2`}
+                        className={`player-rect player2 ${
+                          rainbowBall ? "rainbow-rect" : ""
+                        }`}
                         style={{
                           top: (player2Pos * mapy) / 3.5 / 400,
                           height: (100 * mapy) / 3.5 / 400,
                         }}
                       ></div>
                       <div
-                        className="ball"
+                        className={`ball ${
+                          rainbowBall
+                            ? "rainbow-ball"
+                            : footBall
+                            ? "football"
+
+                            : ""
+                        }`}
                         style={{
                           left: (BallXpos * mapx) / 2 / 700,
                           top: (BallYpos * mapy) / 3.5 / 400,
