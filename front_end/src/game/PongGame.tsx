@@ -498,7 +498,7 @@ const PongGame: React.FC = () => {
             </div>
           </div>
         </main>
-        {/* 
+        
         <nav>
           <ul>
             <li className="menu-item">
@@ -532,7 +532,7 @@ const PongGame: React.FC = () => {
               </a>
             </li>
           </ul>
-        </nav> */}
+        </nav>
       </div>
       <footer>
         <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
