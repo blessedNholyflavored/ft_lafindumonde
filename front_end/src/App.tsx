@@ -15,7 +15,6 @@ import { SaveTotp } from "./components/auth/SaveTotp";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { AuthProvider, useAuth } from "./components/auth/AuthProvider";
 import { socket, WebsocketProvider } from "./services/WebsocketContext";
-import { Websocket } from "./services/Websocket";
 import SuperPong from "./game/SuperPong";
 import { Profile } from "./components/user/Profile";
 import { FriendsPage } from "./components/friends/friendsPage";
@@ -79,14 +78,6 @@ export const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <Profile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/sock"
-            element={
-              <ProtectedRoute>
-                <Websocket />
               </ProtectedRoute>
             }
           />

@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Socket } from "socket.io-client";
 import { Room } from "../interfaces/interfaces"; // Assurez-vous d'importer les interfaces correctes
 import "../App.css";
@@ -43,19 +49,9 @@ const PongGame: React.FC = () => {
   let [ImgUrlP2, setImgUrlP2] = useState<string>("");
   let [usernameP1, setUsernameP1] = useState<string>("");
   let [usernameP2, setUsernameP2] = useState<string>("");
-  const rainbowColors = [
-    "#FF0000",
-    "#FF7F00",
-    "#FFFF00",
-    "#00FF00",
-    "#0000FF",
-    "#4B0082",
-    "#9400D3",
-  ];
-  const [colorIndex, setColorIndex] = useState<number>(0);
   const [rainbowBall, setRainbowBall] = useState(false);
   const [footBall, setFootBall] = useState(false);
-  const [opponentHead, setopponentHead] = useState(false);
+  const countdownRef = useRef(0);
 
   const handleBeforeUnload = useCallback(
     async (e: BeforeUnloadEvent) => {
@@ -90,13 +86,17 @@ const PongGame: React.FC = () => {
   }, [room?.end, startGameFCT]);
 
   useEffect(() => {
-    if (countdown <= 0) return;
-    if (countdown === 3) {
+    countdownRef.current = countdown;
+  }, [countdown]);
+
+  useEffect(() => {
+    if (countdownRef.current <= 0) return;
+    if (countdownRef.current === 3) {
       setTimeout(() => {
         socket.emit("recupRoomAtStart", id);
       }, 300);
     }
-    if (countdown > 0 && end === 0) {
+    if (countdownRef.current > 0 && end === 0) {
       startCountdown();
     }
     return () => {
@@ -389,7 +389,6 @@ const PongGame: React.FC = () => {
     };
   }, []);
 
-
   return (
     <div>
       <header>
@@ -408,14 +407,20 @@ const PongGame: React.FC = () => {
             <button
               className="buttonseemore backto"
               style={{ marginBottom: "5px" }}
-              onClick={() => {setRainbowBall(!rainbowBall); setFootBall(false)}}
+              onClick={() => {
+                setRainbowBall(!rainbowBall);
+                setFootBall(false);
+              }}
             >
               {rainbowBall ? "Change to classic" : "Change to rainbow"}
             </button>
             <button
               className="buttonseemore backto"
               style={{ marginBottom: "5px" }}
-              onClick={() => {setFootBall(!footBall); setRainbowBall(false)}}
+              onClick={() => {
+                setFootBall(!footBall);
+                setRainbowBall(false);
+              }}
             >
               {footBall ? "Change to classic" : "Change to football"}
             </button>
@@ -520,7 +525,6 @@ const PongGame: React.FC = () => {
                             ? "rainbow-ball"
                             : footBall
                             ? "football"
-
                             : ""
                         }`}
                         style={{
