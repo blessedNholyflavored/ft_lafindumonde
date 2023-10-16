@@ -162,6 +162,15 @@ export const GamePage = () => {
     navigate("/leaderboard");
   };
 
+  if (socket) {
+    socket.on("receiveInvite", (sender: number) => {
+      setShowNotification(true);
+      setNotifyMSG("Tu as recu une invitation pour une partie");
+      setNotifyType(1);
+      setSender(sender);
+    });
+  }
+
   return (
     <div>
       <header>
@@ -174,6 +183,16 @@ export const GamePage = () => {
         <main>
           <div className="fullpage">
             <div className="navbarbox">
+              <div>
+                {showNotification && (
+                  <Notify
+                    message={notifyMSG}
+                    type={notifyType}
+                    senderId={sender}
+                    onClose={handleCloseNotification}
+                  />
+                )}
+              </div>
               <img src={icon} alt="icon" />
               <h1> Game </h1>
             </div>
