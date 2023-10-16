@@ -27,7 +27,7 @@ export const ProfileBox = (props: any) => {
     fetchUserTab(id);
     fetchFriendshipStatus();
     fetchDivision();
-  }, []);
+  }, [id]);
 
   const fetchUserTab = async (id: string | undefined) => {
     try {

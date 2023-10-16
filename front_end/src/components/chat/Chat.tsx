@@ -1177,7 +1177,7 @@ export const Chat = () => {
                                       top: "3%",
                                       fontSize: "14px",
                                       backgroundColor: "rgba(0, 0, 0, 0.75)",
-                                      zIndex:"6000",
+                                      zIndex: "6000",
                                     }}
                                   >
                                     {priv.username}
@@ -1213,7 +1213,9 @@ export const Chat = () => {
                         channelsJoin.map((chan) => (
                           <div key={chan.id}>
                             <button
-                              className="buttonseemore buttonchan"
+                              className={`buttonseemore buttonchan ${
+                                activeChannel === chan.id ? "active-button" : ""
+                              }`}
                               onClick={() => {
                                 if (showChatButton === false)
                                   setShowChatButton(true);

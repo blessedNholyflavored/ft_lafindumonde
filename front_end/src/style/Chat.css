@@ -21,6 +21,10 @@
   background-image: url(../img/social.png);
 }
 
+.active-button {
+  background-color: red;
+}
+
 .divdeschats {
   display: flex;
   justify-content: space-between;

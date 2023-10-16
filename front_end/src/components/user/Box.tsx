@@ -46,7 +46,7 @@ const Box = (props: any) => {
     } else if (props.type === "friends") {
       setInfo(<Friends type={props.type} />);
     } else if (props.type === "score") setInfo(<ScoreList type={props.type} />);
-  }, [props.type]);
+  }, [props.type, id]);
 
   async function fetchUsernameById() {
     try {
