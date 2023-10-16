@@ -404,36 +404,15 @@ const PongGame: React.FC = () => {
               <img src={icon} alt="icon" />
               <h1> game </h1>
             </div>
-            <button
-              className="buttonseemore backto"
-              style={{ marginBottom: "5px" }}
-              onClick={() => {
-                setRainbowBall(!rainbowBall);
-                setFootBall(false);
-              }}
-            >
-              {rainbowBall ? "Change to classic" : "Change to rainbow"}
-            </button>
-            <button
-              className="buttonseemore backto"
-              style={{ marginBottom: "5px" }}
-              onClick={() => {
-                setFootBall(!footBall);
-                setRainbowBall(false);
-              }}
-            >
-              {footBall ? "Change to classic" : "Change to football"}
-            </button>
 
             <div id="boxes">
               <div id="leftbox">
-                {ImgUrlP1 &&
-                  (
-                    <div>
-                      <h2>{usernameP1}</h2>
-                      <img src={ImgUrlP1} className="avatar" alt="" />
-                    </div>
-                  )}
+                {ImgUrlP1 && (
+                  <div>
+                    <h2>{usernameP1}</h2>
+                    <img src={ImgUrlP1} className="avatar" alt="" />
+                  </div>
+                )}
               </div>
               <div
                 id="middlebox"
@@ -458,6 +437,32 @@ const PongGame: React.FC = () => {
                     height: mapy / 3.5,
                   }}
                 >
+                  {countdown > 0 && (
+                    <div>
+                      <button
+                        className="buttonseemore backto"
+                        style={{ marginBottom: "5px" }}
+                        onClick={() => {
+                          setRainbowBall(!rainbowBall);
+                          setFootBall(false);
+                        }}
+                      >
+                        {rainbowBall
+                          ? "Change to classic"
+                          : "Change to rainbow"}
+                      </button>
+                      <button
+                        className="buttonseemore backto"
+                        style={{ marginBottom: "5px" }}
+                        onClick={() => {
+                          setFootBall(!footBall);
+                          setRainbowBall(false);
+                        }}
+                      >
+                        {footBall ? "Change to classic" : "Change to football"}
+                      </button>
+                    </div>
+                  )}
                   {/* <div className="countdown-container"> */}
                   {/* </div> */}
                   {/* {user && (

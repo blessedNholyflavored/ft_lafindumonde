@@ -978,7 +978,7 @@ export const ChatChannel = () => {
                 value={muteTimeLeft + " secondes time left for you mute"}
                 onChange={(e) => setValue(e.target.value)}
               />
-              <button disabled>send</button>
+              <button className="buttonseemore buttonchan" disabled>send</button>
             </div>
           )}
           {yourRole === "OWNER" && (
@@ -1280,7 +1280,7 @@ export const ChatChannel = () => {
                                 value={reasonMute}
                                 onChange={(e) => setReason(e.target.value)}
                               />
-                              <button
+                              <button className="buttonseemore buttonchan onlinelist"
                                 onClick={() => MuteFromChannel(users.id)}
                                 disabled={
                                   isNaN(parseInt(timeMute)) ||
@@ -1289,7 +1289,7 @@ export const ChatChannel = () => {
                                   reasonMute.length > 30
                                 }
                               >
-                                Submit
+                                submit
                               </button>
                             </div>
                           )}
@@ -1325,7 +1325,7 @@ export const ChatChannel = () => {
                                 value={reasonBan}
                                 onChange={(e) => setReasonBan(e.target.value)}
                               />
-                              <button
+                              <button className="buttonseemore buttonchan onlinelist"
                                 onClick={() => BanFromChannel(users.id)}
                                 disabled={
                                   isNaN(parseInt(timeBan)) ||
@@ -1334,15 +1334,15 @@ export const ChatChannel = () => {
                                   reasonBan.length > 30
                                 }
                               >
-                                Submit
+                                submit
                               </button>
                             </div>
                           )}
                         </div>
                       )}
                       {selectedUserIsBanned === "true" && (
-                        <button onClick={() => UnbanFromChannel(users.id)}>
-                          Unban
+                        <button className="onlinebttn" onClick={() => UnbanFromChannel(users.id)}>
+                          unban
                         </button>
                       )}
                     </div>
@@ -1350,37 +1350,37 @@ export const ChatChannel = () => {
                   {yourRole === "ADMIN" && (
                     <div>
                       {selectedUserRole === "USER" && (
-                        <button onClick={() => passAdminOfChannel(users.id)}>
-                          Promote Admin
+                        <button className="onlinebttn" onClick={() => passAdminOfChannel(users.id)}>
+                          promote admin
                         </button>
                       )}
                       {selectedUserRole === "USER" && (
-                        <button onClick={() => kickFromChannel(users.id)}>
+                        <button className="onlinebttn" onClick={() => kickFromChannel(users.id)}>
                           kick
                         </button>
                       )}
                       {selectedUserIsMuted === "false" &&
                         selectedUserRole === "USER" && (
-                          <button onClick={() => MuteFromChannel(users.id)}>
+                          <button className="onlinebttn" onClick={() => MuteFromChannel(users.id)}>
                             mute
                           </button>
                         )}
                       {selectedUserIsMuted === "true" &&
                         selectedUserRole === "USER" && (
-                          <button onClick={() => UnMuteFromChannel(users.id)}>
-                            Unmute
+                          <button className="onlinebttn" onClick={() => UnMuteFromChannel(users.id)}>
+                            unmute
                           </button>
                         )}
                       {selectedUserIsBanned === "false" &&
                         selectedUserRole === "USER" && (
-                          <button onClick={() => BanFromChannel(users.id)}>
-                            Ban
+                          <button className="onlinebttn" onClick={() => BanFromChannel(users.id)}>
+                            ban
                           </button>
                         )}
                       {selectedUserIsBanned === "true" &&
                         selectedUserRole === "USER" && (
-                          <button onClick={() => UnbanFromChannel(users.id)}>
-                            Unban
+                          <button className="onlinebttn" onClick={() => UnbanFromChannel(users.id)}>
+                            unban
                           </button>
                         )}
                     </div>
