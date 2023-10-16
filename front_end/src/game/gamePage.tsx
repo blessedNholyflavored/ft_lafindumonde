@@ -164,7 +164,7 @@ export const GamePage = () => {
   if (socket) {
     socket.on("receiveInvite", (sender: number) => {
       setShowNotification(true);
-      setNotifyMSG("Tu as recu une invitation pour une partie");
+      setNotifyMSG("you've received a game invitation !");
       setNotifyType(1);
       setSender(sender);
     });

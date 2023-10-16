@@ -57,7 +57,7 @@ const Notify: React.FC<NotificationProps> = ({
         <div className="notification">
           {message}
           <button className="notification-link" onClick={handleViewClick}>
-            Accepter
+            accept
           </button>
         </div>
       )}
