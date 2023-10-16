@@ -1,5 +1,6 @@
 .main_chat_box {
-  margin: 30px auto;
+  margin: 1vh auto;
+  /* height: 45vh; */
   position: relative;
   justify-content: space-evenly;
 }
@@ -24,13 +25,13 @@
 .divdeschats {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  /* gap: 10px; */
 }
 .small-box {
   flex: 1;
-  height: 500px;
+  height: 49vh;
   border: 6px solid var(--greyscale-k, #000);
-  margin: 5px;
+  margin: 1vh 1vw;
   background-color: white;
   overflow: auto;
 }
@@ -131,7 +132,10 @@
 }
 
 .testingchat {
+  width: 100%;
+  width: -moz-available;
   width: -webkit-fill-available;
+  width: stretch;
   overflow: auto;
 }
 
@@ -227,15 +231,54 @@
 }
 
 .statusbutton {
-  position: absolute;
-  top: 76%;
+  position: inherit;
+  top: 62%;
+  margin-bottom: 5px;
   right: 27%;
   background-color: #fa8072;
 }
 
-.statutbutton {
+/* .statutbutton {
   position: absolute;
   top: 70%;
   right: 27%;
   background-color: #fa8072;
+} */
+
+.boutondetest {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+}
+
+/* 
+.inputdetest{
+	position: absolute;
+	top:63%;
+	left:50%;
+} */
+
+.boxrowtest.jpp {
+  position: absolute;
+  top: 16%;
+  right: 35%;
+  border-bottom: 0;
+  background-color: white;
+  height: 200px;
+}
+
+.navbarsmallbox.jpp {
+  margin-bottom: 10px;
+}
+
+.zindexcosin {
+  z-index: 5000;
+  /* left: 60%; */
+  top: 30%;
+}
+
+.jpp input {
+  z-index: 5000;
+  position: relative;
+  top: 30%;
 }

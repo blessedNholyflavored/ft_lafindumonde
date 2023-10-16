@@ -1,6 +1,7 @@
 .App {
   text-align: center;
-  padding: 7em 2em;
+  padding: 5em 2em 3em 2em;
+  /* padding: 7em 2em; */
   color: #fff;
   font-family: IBM Plex Mono;
 }
@@ -48,10 +49,6 @@ body {
   background-position: center;
   margin: 0;
   min-height: 100vh;
-}
-
-.App {
-  padding: 7em 2em;
 }
 
 .App-logo {
@@ -103,11 +100,80 @@ body {
   position: absolute;
 }
 
+@keyframes rainbow {
+  0% {
+    background-color: #ff0000;
+  }
+  14.28% {
+    background-color: #ff7f00;
+  }
+  28.57% {
+    background-color: #ffff00;
+  }
+  42.85% {
+    background-color: #00ff00;
+  }
+  57.14% {
+    background-color: #0000ff;
+  }
+  71.42% {
+    background-color: #4b0082;
+  }
+  85.71% {
+    background-color: #9400d3;
+  }
+  100% {
+    background-color: #ff0000;
+  }
+}
+
+@keyframes rainbowRect {
+  0% {
+    background-color: #9400d3;
+  }
+  14.28% {
+    background-color: #4b0082;
+  }
+  28.57% {
+    background-color: #0000ff;
+  }
+  42.85% {
+    background-color: #ff0000;
+  }
+  57.14% {
+    background-color: #ffff00;
+  }
+  71.42% {
+    background-color: #ff7f00;
+  }
+  85.71% {
+    background-color: #00ff00;
+  }
+  100% {
+    background-color: #9400d3;
+  }
+}
+
 .ball {
   width: 10px;
   height: 10px;
-  background-color: rgb(0, 23, 128);
   position: absolute;
+  border-radius: 50%;
+  background-color: red;
+}
+
+.rainbow-ball {
+  animation: rainbow 7s linear infinite;
+}
+
+.football {
+  background-image: url("img/football.jpeg");
+  background-size: cover;
+  background-color: transparent;
+}
+
+.rainbow-rect {
+  animation: rainbowRect 7s linear infinite;
 }
 
 .player-rect {

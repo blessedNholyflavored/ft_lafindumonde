@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import "./../../App.css";
 import "./../../style/Chat.css";
 import "./../../style/Profile.css";
 import "./../../style/Logout.css";
 import { useAuth } from "./../auth/AuthProvider";
-import { Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import icon from "../../img/buttoncomp.png";
 import nav from "../../img/buttoncomp.png";
 import logo from "../../img/logo42.png";
@@ -23,20 +23,6 @@ import folderpink from "../../img/folderpink.png";
 import folderyellow from "../../img/folderyellow.png";
 import folderwhite from "../../img/folderwhite.png";
 import folderviolet from "../../img/folderviolet.png";
-import folderred from "../../img/folderred.png";
-
-type MessagePayload = {
-  content: string;
-  msg: string;
-};
-
-interface messages {
-  start_at: string;
-  content: string;
-  recipientId: number;
-  senderUsername: string;
-  recipientUsername: string;
-}
 
 interface privMSG {
   id: number;
@@ -66,10 +52,7 @@ export const Chat = () => {
   const { user, setUser } = useAuth();
   const { recipient } = useParams();
   const { id } = useParams();
-  const [value, setValue] = useState("");
   const [valueRoom, setValueRoom] = useState("");
-  const [messages, setMessages] = useState<MessagePayload[]>([]);
-  const [messageListSend, setMessageList] = useState<messages[]>([]);
   const [selectedOption, setSelectedOption] = useState("public");
   const [password, setPassword] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -87,9 +70,6 @@ export const Chat = () => {
     null
   );
   const [isPrivatechan, setIsPrivatechan] = useState<number | null>(null);
-  const [isPrivateConvButtonDisabled, setIsPrivateConvButtonDisabled] =
-    useState(false);
-  const [toNotify, setToNotify] = useState(false);
   const [invSend, setInvSend] = useState<invSend[]>([]);
   const [invReceive, setInvReceive] = useState<invSend[]>([]);
   const [userIsBanned, setUserIsBanned] = useState(false);
@@ -101,14 +81,15 @@ export const Chat = () => {
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
   const [banTimeLeft, setBanTimeLeft] = useState<number>(0);
-  const [kickChan, setKickChan] = useState("");
-  const [kickReason, setKickReason] = useState("");
   const [activeChannelName, setActiveChannelName] = useState("");
   const [sender, setSender] = useState<number>(0);
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {};
 
-  async function fetchYourRoomsList() {
+
+
+  const fetchYourRoomsList = useCallback(async () => {
+
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/recupYourRooms`,
@@ -152,7 +133,7 @@ export const Chat = () => {
       console.error("Erreur :", error);
       return [];
     }
-  }
+  },[user?.id]);
 
   async function fetchRoomsList() {
     try {
@@ -230,7 +211,9 @@ export const Chat = () => {
     }
   }
 
-  async function fetchPrivateConvList() {
+
+  const fetchPrivateConvList = useCallback(async () => {
+
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/recupPrivate`,
@@ -281,32 +264,143 @@ export const Chat = () => {
       console.error("Erreur :", error);
       return [];
     }
-  }
+  },[user?.id]);
 
-  // useEffect(() => {
-  //   async function fetchYourRooms() {
-  //     const scores = await fetchYourRoomsList();
-  //   }
-  //   async function fetchRooms() {
-  //     const scores = await fetchRoomsList();
-  //   }
-  //   async function fetchPossibleInvite() {
-  //     const scores = await fetchPossibleInviteList();
-  //   }
-  //   async function fetchInviteSend() {
-  //     const scores = await fetchInviteSendList();
-  //   }
-  //   async function fetchInviteReceive() {
-  //     const scores = await fetchInviteReceiveList();
-  //   }
 
-  // }, []);
+  const checkBanned = useCallback(
+    async (userId: number, roomId: string) => {
+      if (!roomId || parseInt(roomId) === 0) return;
+      try {
+        const response = await fetch(
+          `http://${window.location.hostname}:3000/chat/banned/${userId}/${roomId}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Erreur lors de la récupération des scores.");
+        }
+        const data = await response.text();
+        if (userId === user?.id) {
+          if (data === "false") setUserIsBanned(false);
+          else setUserIsBanned(true);
+        } else return data;
+      } catch (error) {
+        console.error("Erreur:", error);
+      }
+    },
+    [user?.id]
+  );
 
-  async function checkBanned(userId: number, roomId: string) {
-    if (!roomId || parseInt(roomId) === 0) return;
+  const fetchBanTimeLeft = useCallback(
+    async (roomId: number) => {
+      if (!roomId) return;
+      try {
+        const response = await fetch(
+          `http://${window.location.hostname}:3000/chat/timeBan/${user?.id}/${roomId}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Erreur lors de la récupération des messages privés."
+          );
+        } else {
+          const data = await response.text();
+          setBanTimeLeft(parseInt(data));
+        }
+      } catch (error: any) {
+        console.log(error);
+      }
+      return "";
+    },
+    [user?.id]
+  );
+
+
+  const fetchPossibleInviteList = useCallback(async () => {
+
+    if (activeChannel) {
+      try {
+        const response = await fetch(
+          `http://${window.location.hostname}:3000/chat/usersNotInRoom/${activeChannel}/${user?.id}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        if (!response.ok) {
+          throw new Error(
+            "Erreur lors de la récupération des messages preeeeivés."
+          );
+        }
+        const data = await response.json();
+        if (data.length > 0) {
+          const friendObjects = data;
+          const friendInfo = friendObjects.map(
+            (friend: { id: number; username: string }) => ({
+              id: friend.id,
+              username: friend.username,
+            })
+          );
+          setNotInRoom(friendInfo);
+        } else setNotInRoom(data);
+      } catch (error) {
+        console.error("Erreur :", error);
+        return [];
+      }
+    }
+  },[activeChannel, user?.id]);
+
+
+  const fetchInviteSendList = useCallback(async () => {
+
+    if (activeChannel) {
+      try {
+        const response = await fetch(
+          `http://${window.location.hostname}:3000/chat/invSend/${user?.id}/${activeChannel}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Erreur lors de la récupération des scores.");
+        }
+        const data = await response.json();
+        const updatedData = await Promise.all(
+          data.map(
+            async (invSend: {
+              username: any;
+              status: string;
+              receiverId: number;
+              senderId: number;
+            }) => {
+              invSend.username = await fetchUsernameById(
+                invSend.receiverId.toString()
+              );
+              return invSend;
+            }
+          )
+        );
+        setInvSend(updatedData);
+        return data[0];
+      } catch (error) {
+        console.error("Erreur:", error);
+        return [];
+      }
+    }
+  },[activeChannel, user?.id]);
+
+  const fetchInviteReceiveList = useCallback(async () => {
+
     try {
       const response = await fetch(
-        `http://${window.location.hostname}:3000/chat/banned/${userId}/${roomId}`,
+        `http://${window.location.hostname}:3000/chat/invReceive/${user?.id}/`,
         {
           method: "GET",
           credentials: "include",
@@ -315,57 +409,59 @@ export const Chat = () => {
       if (!response.ok) {
         throw new Error("Erreur lors de la récupération des scores.");
       }
-      const data = await response.text();
-      if (userId === user?.id) {
-        if (data === "false") setUserIsBanned(false);
-        else setUserIsBanned(true);
-      } else return data;
+      const data = await response.json();
+      const updatedData = await Promise.all(
+        data.map(
+          async (invSend: {
+            chatRoomName: string | null;
+            chatroomId: number;
+            username: any;
+            status: string;
+            receiverId: number;
+            senderId: number;
+            isBlocked: boolean;
+          }) => {
+            // Utilisez recupUsername pour obtenir le nom d'utilisateur
+            invSend.username = await fetchUsernameById(
+              invSend.senderId.toString()
+            );
+            invSend.chatRoomName = await fetchRoomNameById(
+              invSend.chatroomId.toString()
+            );
+            invSend.isBlocked = await checkBlocked(
+              invSend.senderId.toString(),
+              invSend.receiverId.toString()
+            );
+            return invSend;
+          }
+        )
+      );
+      setInvReceive(updatedData);
+      return data[0];
     } catch (error) {
       console.error("Erreur:", error);
+      return [];
     }
-  }
-
-  async function fetchBanTimeLeft(roomId: number) {
-    if (!roomId) return;
-    try {
-      const response = await fetch(
-        `http://${window.location.hostname}:3000/chat/timeBan/${user?.id}/${roomId}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des messages privés.");
-      } else {
-        const data = await response.text();
-        setBanTimeLeft(parseInt(data));
-      }
-    } catch (error: any) {
-      console.log(error);
-    }
-    return "";
-  }
+  },[user?.id]);
 
   useEffect(() => {
     async function fetchYourRooms() {
-      const scores = await fetchYourRoomsList();
+      await fetchYourRoomsList();
     }
     async function fetchRooms() {
-      const scores = await fetchRoomsList();
+      await fetchRoomsList();
     }
     async function fetchPrivateConv() {
-      const scores = await fetchPrivateConvList();
+      await fetchPrivateConvList();
     }
     async function fetchPossibleInvite() {
-      const scores = await fetchPossibleInviteList();
+      await fetchPossibleInviteList();
     }
     async function fetchInviteSend() {
-      const scores = await fetchInviteSendList();
+      await fetchInviteSendList();
     }
     async function fetchInviteReceive() {
-      const scores = await fetchInviteReceiveList();
+      await fetchInviteReceiveList();
     }
 
     if (socket) {
@@ -401,22 +497,6 @@ export const Chat = () => {
       });
     }
 
-    // const kickMessage = localStorage.getItem("kickMessage");
-    // if (kickMessage) {
-    //   setShowNotification(true);
-    //   setNotifyMSG(kickMessage);
-    //   setNotifyType(2);
-    // }
-    // localStorage.removeItem("kickMessage");
-
-    // const muteMessage = localStorage.getItem("muteMessage");
-    // if (muteMessage) {
-    //   setShowNotification(true);
-    //   setNotifyMSG(muteMessage);
-    //   setNotifyType(2);
-    // }
-    // localStorage.removeItem("muteMessage");
-
     const banMessage = localStorage.getItem("banMessage");
     if (banMessage) {
       setShowNotification(true);
@@ -428,15 +508,9 @@ export const Chat = () => {
 
     if (socket) {
       socket.on("refreshAfterKick", (roomName: string, reason: string) => {
-        // window.location.reload();
-        // window.location.href = "/chat";
         navigate("/chat");
 
         socket.emit("reloadListRoomForOne");
-        // localStorage.setItem(
-        //   "kickMessage",
-        //   "You have been kicked from " + roomName + ". Raison: " + reason
-        // );
         setShowNotification(true);
         setNotifyMSG(
           "You have been kicked from " + roomName + ". Reason: " + reason
@@ -558,9 +632,36 @@ export const Chat = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
       if (socket) {
+        socket.off("receiveInvite");
+        socket.off("NotifyBadPWD");
+        socket.off("NotifyReceiveChannelInvit");
+        socket.off("refreshMessagesRoom");
+        socket.off("refreshMessages");
+        socket.off("refreshAfterUnban");
+        socket.off("refreshAfterBan");
+        socket.off("refreshAfterMute");
+        socket.off("refreshAfterKick");
+        socket.off("reloadListRoomForOne");
+        socket.off("refreshForOne");
+        socket.off("refreshAll");
+        socket.off("refreshListRoom");
       }
     };
-  }, [activeChannel, banTimeLeft]);
+  }, [
+    activeChannel,
+    banTimeLeft,
+    activeBanChannel,
+    checkBanned,
+    fetchBanTimeLeft,
+    fetchInviteReceiveList,
+    fetchInviteSendList,
+    fetchPossibleInviteList,
+    fetchPrivateConvList,
+    fetchYourRoomsList,
+    navigate,
+    socket,
+    user?.id,
+  ]);
 
   useEffect(() => {
     if (socket) {
@@ -570,6 +671,11 @@ export const Chat = () => {
         }, 500);
       });
     }
+    return () => {
+      if (socket) {
+        socket.off("SomeoneGoOnlineOrOffline");
+      }
+    };
   });
 
   const checkRoomAlreadyExist = async () => {
@@ -740,76 +846,6 @@ export const Chat = () => {
     }, 100);
   };
 
-  const fetchPossibleInviteList = async () => {
-    if (activeChannel) {
-      try {
-        const response = await fetch(
-          `http://${window.location.hostname}:3000/chat/usersNotInRoom/${activeChannel}/${user?.id}`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        if (!response.ok) {
-          throw new Error(
-            "Erreur lors de la récupération des messages preeeeivés."
-          );
-        }
-        const data = await response.json();
-        if (data.length > 0) {
-          const friendObjects = data;
-          const friendInfo = friendObjects.map(
-            (friend: { id: number; username: string }) => ({
-              id: friend.id,
-              username: friend.username,
-            })
-          );
-          setNotInRoom(friendInfo);
-        } else setNotInRoom(data);
-      } catch (error) {
-        console.error("Erreur :", error);
-        return [];
-      }
-    }
-  };
-
-  async function fetchInviteSendList() {
-    if (activeChannel) {
-      try {
-        const response = await fetch(
-          `http://${window.location.hostname}:3000/chat/invSend/${user?.id}/${activeChannel}`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Erreur lors de la récupération des scores.");
-        }
-        const data = await response.json();
-        const updatedData = await Promise.all(
-          data.map(
-            async (invSend: {
-              username: any;
-              status: string;
-              receiverId: number;
-              senderId: number;
-            }) => {
-              invSend.username = await fetchUsernameById(
-                invSend.receiverId.toString()
-              );
-              return invSend;
-            }
-          )
-        );
-        setInvSend(updatedData);
-        return data[0];
-      } catch (error) {
-        console.error("Erreur:", error);
-        return [];
-      }
-    }
-  }
 
   async function checkBlocked(senderId: string, recipientId: string) {
     try {
@@ -833,52 +869,8 @@ export const Chat = () => {
     }
   }
 
-  async function fetchInviteReceiveList() {
-    try {
-      const response = await fetch(
-        `http://${window.location.hostname}:3000/chat/invReceive/${user?.id}/`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des scores.");
-      }
-      const data = await response.json();
-      const updatedData = await Promise.all(
-        data.map(
-          async (invSend: {
-            chatRoomName: string | null;
-            chatroomId: number;
-            username: any;
-            status: string;
-            receiverId: number;
-            senderId: number;
-            isBlocked: boolean;
-          }) => {
-            // Utilisez recupUsername pour obtenir le nom d'utilisateur
-            invSend.username = await fetchUsernameById(
-              invSend.senderId.toString()
-            );
-            invSend.chatRoomName = await fetchRoomNameById(
-              invSend.chatroomId.toString()
-            );
-            invSend.isBlocked = await checkBlocked(
-              invSend.senderId.toString(),
-              invSend.receiverId.toString()
-            );
-            return invSend;
-          }
-        )
-      );
-      setInvReceive(updatedData);
-      return data[0];
-    } catch (error) {
-      console.error("Erreur:", error);
-      return [];
-    }
-  }
+
+
 
   const clickToInvite = async (id: number) => {
     if (!activeChannel || activeChannel === 0) {
@@ -955,7 +947,6 @@ export const Chat = () => {
     setSelectedPrivateConv(recipient as any);
   };
 
-
   const navigateToProfPage = () => {
     navigate(`/users/profile/${user?.id}`);
   };
@@ -1000,6 +991,8 @@ export const Chat = () => {
     // }, 100);
     setTimeout(() => {
       socket.emit("reloadListRoomForOne", id);
+      socket.emit("reloadListRoom", id);
+      
     }, 500);
     navigate("/chat");
   };

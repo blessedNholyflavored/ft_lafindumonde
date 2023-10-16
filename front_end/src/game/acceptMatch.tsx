@@ -1,15 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../App.css";
 import "../style/Home.css";
 import "../style/Logout.css";
-import { Logout } from "../components/auth/Logout";
 import { useAuth } from "../components/auth/AuthProvider";
 import { WebsocketContext } from "../services/WebsocketContext";
 
 const AcceptMatch: React.FC = () => {
   const { id } = useParams();
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const socket = useContext(WebsocketContext);
 

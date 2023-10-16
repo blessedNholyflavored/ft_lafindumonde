@@ -1,6 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Socket } from "socket.io-client";
-import { User, Room } from "../interfaces/interfaces"; // Assurez-vous d'importer les interfaces correctes
+import { Room } from "../interfaces/interfaces"; // Assurez-vous d'importer les interfaces correctes
 import "../App.css";
 import "../style/Home.css";
 import "../style/Profile.css";
@@ -9,10 +15,8 @@ import "../App.css";
 import { useAuth } from "../components/auth/AuthProvider";
 import { useNavigate, useParams } from "react-router-dom";
 import { WebsocketContext } from "../services/WebsocketContext";
-import { count } from "console";
 import nav from "./../img/buttoncomp.png";
 import foldergreen from "./../img/foldergreen.png";
-import folderblue from "./../img/folderblue.png";
 import folderpink from "./../img/folderpink.png";
 import folderyellow from "./../img/folderyellow.png";
 import folderwhite from "./../img/folderwhite.png";
@@ -26,7 +30,6 @@ const PongGame: React.FC = () => {
   const [room, setRoom] = useState<Room | null>(null);
   const [counter, setCounter] = useState(0);
   const [end, setEnd] = useState<number>(0);
-  const [startFlag, setStartflag] = useState<number>(0);
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
   const socket = useContext(WebsocketContext);
@@ -37,7 +40,6 @@ const PongGame: React.FC = () => {
   const [SpeedBallX, setSpeedBallX] = useState<number>(-5);
   const [SpeedBallY, setSpeedBallY] = useState<number>(0);
   const [updatelvl, setUpdatelvl] = useState<number>(0);
-  const [playerId1, setPlayerId1] = useState<number>(0);
   const [playerId2, setPlayerId2] = useState<number>(0);
   const [mapx, setMapx] = useState<number>(window.innerWidth);
   const [mapy, setMapy] = useState<number>(window.innerHeight);
@@ -47,20 +49,31 @@ const PongGame: React.FC = () => {
   let [ImgUrlP2, setImgUrlP2] = useState<string>("");
   let [usernameP1, setUsernameP1] = useState<string>("");
   let [usernameP2, setUsernameP2] = useState<string>("");
+  const [rainbowBall, setRainbowBall] = useState(false);
+  const [footBall, setFootBall] = useState(false);
+  const countdownRef = useRef(0);
 
-  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-    if (countdown > 0 && countdown < 2) {
-      socket?.emit("reloadCountdown", id);
-      setCountdown(-999);
-      // window.location.href = "/gamePage";
+  const handleBeforeUnload = useCallback(
+    async (e: BeforeUnloadEvent) => {
+      if (countdown > 0 && countdown < 2) {
+        socket?.emit("reloadCountdown", id);
+        setCountdown(-999);
+      }
+      socket?.emit("leaveGame", id);
+      socket?.emit("changeStatus");
+      setEnd(1);
+    },
+    [countdown, id, socket]
+  );
+
+  const startGameFCT = useCallback(async () => {
+    if (socket && counter === 0) {
+      socket?.emit("startGame", id);
+      setCounter(1);
     }
-    socket?.emit("leaveGame", id);
-    socket?.emit("changeStatus");
-    setEnd(1);
-    // NavHome();
-  };
+  }, [counter, id, socket]);
 
-  const startCountdown = () => {
+  const startCountdown = useCallback(async () => {
     const countdownInterval = setInterval(() => {
       if (room?.end !== 1) setCountdown((prevCountdown) => prevCountdown - 1);
     }, 1000);
@@ -68,32 +81,44 @@ const PongGame: React.FC = () => {
     setTimeout(() => {
       clearInterval(countdownInterval);
       startGameFCT();
+      setCountdown(-1);
     }, 4000);
-  };
+  }, [room?.end, startGameFCT]);
 
   useEffect(() => {
-    if (countdown === 3) {
+    countdownRef.current = countdown;
+  }, [countdown]);
+
+  useEffect(() => {
+    if (countdownRef.current <= 0) return;
+    if (countdownRef.current === 3) {
       setTimeout(() => {
         socket.emit("recupRoomAtStart", id);
       }, 300);
     }
-    if (countdown !== 0 && end === 0) {
+    if (countdownRef.current > 0 && end === 0) {
       startCountdown();
     }
-  }, [counter]);
+    return () => {
+      if (socket) socket.off("recupRoomAtStart");
+    };
+  }, [startCountdown, end, id, socket]);
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if ((event.key === "ArrowUp" || event.key === "ArrowDown") && !end) {
-      socket?.emit("movePoint", user?.username, event.key, room?.roomID);
-    }
-  };
+  const handleKeyDown = useCallback(
+    async (event: KeyboardEvent) => {
+      if ((event.key === "ArrowUp" || event.key === "ArrowDown") && !end) {
+        socket?.emit("movePoint", user?.username, event.key, room?.roomID);
+      }
+    },
+    [end, room?.roomID, socket, user?.username]
+  );
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [socket, room, user]);
+  }, [socket, room, user, handleKeyDown]);
 
   const NavHome = () => {
     socket.emit("changeStatus", (socket: Socket) => {});
@@ -101,14 +126,7 @@ const PongGame: React.FC = () => {
     window.location.reload();
   };
 
-  const startGameFCT = () => {
-    if (socket && counter === 0) {
-      socket?.emit("startGame", id);
-      setCounter(1);
-    }
-  };
-
-  const catchPic = () => {
+  const catchPic = useCallback(async () => {
     if (socket) {
       if (usernameP1 === user?.username) {
         socket.emit("AskForIdOpponent", id, 1);
@@ -122,15 +140,14 @@ const PongGame: React.FC = () => {
           displayPic(opponentId, 2);
         }
         if (usernameP2 === user?.username) {
-          setPlayerId1(opponentId);
           displayPic(user?.id as number, 2);
           displayPic(opponentId, 1);
         }
       });
     }
-  };
+  }, [id, socket, user?.id, usernameP1, usernameP2, user?.username]);
 
-  async function getstatus() {
+  const getstatus = useCallback(async () => {
     let status;
     try {
       const response = await fetch(
@@ -149,7 +166,7 @@ const PongGame: React.FC = () => {
         navigate("/gamePage");
       }
     } catch (error) {}
-  }
+  }, [navigate, user?.id]);
 
   useEffect(() => {
     if (socket && checkstatus === false) {
@@ -193,11 +210,6 @@ const PongGame: React.FC = () => {
 
     //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
 
-    // if (socket && counter === 0 && countdown === 0) {
-    //   socket?.emit('startGame');
-    //   setCounter(1);
-    // }
-
     //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
 
     if (socket) {
@@ -213,7 +225,6 @@ const PongGame: React.FC = () => {
           setPlayer1Pos(updatedRoom.player1Y);
           setPlayer2Pos(updatedRoom.player2Y);
         }
-        // setRoom(updatedRoom);
       });
     }
 
@@ -249,6 +260,11 @@ const PongGame: React.FC = () => {
         socket.off("recupMoov");
         socket.off("startGame2");
         socket.off("startGame");
+        socket.off("sendRoomAtStart");
+        socket.off("heLeftTheGame");
+        socket.off("gameFinished");
+        socket.off("gameIsDone");
+        socket.off("reloadCountdown");
       }
     };
   }, [
@@ -262,6 +278,11 @@ const PongGame: React.FC = () => {
     usernameP1,
     usernameP2,
     countdown,
+    catchPic,
+    checkstatus,
+    getstatus,
+    handleBeforeUnload,
+    id,
   ]);
 
   useEffect(() => {
@@ -270,7 +291,7 @@ const PongGame: React.FC = () => {
         socket.emit("leaveGame", id);
       };
     }
-  }, [socket]);
+  }, [socket, end, id]);
 
   useEffect(() => {
     if (socket && !end) {
@@ -287,7 +308,16 @@ const PongGame: React.FC = () => {
         setUpdatelvl(1);
       }
     }
-  });
+  }, [
+    end,
+    id,
+    playerId2,
+    room?.winner,
+    socket,
+    updatelvl,
+    user?.id,
+    user?.username,
+  ]);
 
   const navigateToHome = () => {
     navigate("/");
@@ -295,10 +325,6 @@ const PongGame: React.FC = () => {
 
   const navigateToProfPage = () => {
     navigate(`/users/profile/${user?.id}`);
-  };
-
-  const navigateToChat = () => {
-    navigate("/chat");
   };
 
   const navigateToFriends = () => {
@@ -378,15 +404,36 @@ const PongGame: React.FC = () => {
               <img src={icon} alt="icon" />
               <h1> game </h1>
             </div>
+            <button
+              className="buttonseemore backto"
+              style={{ marginBottom: "5px" }}
+              onClick={() => {
+                setRainbowBall(!rainbowBall);
+                setFootBall(false);
+              }}
+            >
+              {rainbowBall ? "Change to classic" : "Change to rainbow"}
+            </button>
+            <button
+              className="buttonseemore backto"
+              style={{ marginBottom: "5px" }}
+              onClick={() => {
+                setFootBall(!footBall);
+                setRainbowBall(false);
+              }}
+            >
+              {footBall ? "Change to classic" : "Change to football"}
+            </button>
 
             <div id="boxes">
               <div id="leftbox">
-                {ImgUrlP1 && (
-                  <div>
-                    <h2>{usernameP1}</h2>
-                    <img src={ImgUrlP1} className="avatar" alt="photo casse" />
-                  </div>
-                )}
+                {ImgUrlP1 &&
+                  (
+                    <div>
+                      <h2>{usernameP1}</h2>
+                      <img src={ImgUrlP1} className="avatar" alt="" />
+                    </div>
+                  )}
               </div>
               <div
                 id="middlebox"
@@ -455,21 +502,31 @@ const PongGame: React.FC = () => {
                         )}
                       </div>
                       <div
-                        className={`player-rect player1`}
+                        className={`player-rect player1 ${
+                          rainbowBall ? "rainbow-rect" : ""
+                        }`}
                         style={{
                           top: (player1Pos * mapy) / 3.5 / 400,
                           height: (100 * mapy) / 3.5 / 400,
                         }}
                       ></div>
                       <div
-                        className={`player-rect player2`}
+                        className={`player-rect player2 ${
+                          rainbowBall ? "rainbow-rect" : ""
+                        }`}
                         style={{
                           top: (player2Pos * mapy) / 3.5 / 400,
                           height: (100 * mapy) / 3.5 / 400,
                         }}
                       ></div>
                       <div
-                        className="ball"
+                        className={`ball ${
+                          rainbowBall
+                            ? "rainbow-ball"
+                            : footBall
+                            ? "football"
+                            : ""
+                        }`}
                         style={{
                           left: (BallXpos * mapx) / 2 / 700,
                           top: (BallYpos * mapy) / 3.5 / 400,
@@ -498,7 +555,7 @@ const PongGame: React.FC = () => {
             </div>
           </div>
         </main>
-        {/* 
+
         <nav>
           <ul>
             <li className="menu-item">
@@ -532,7 +589,7 @@ const PongGame: React.FC = () => {
               </a>
             </li>
           </ul>
-        </nav> */}
+        </nav>
       </div>
       <footer>
         <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>

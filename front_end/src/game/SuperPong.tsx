@@ -118,7 +118,7 @@ const SuperPong: React.FC<PongGameProps> = () => {
 
   const NavHome = () => {
     socket.emit("changeStatus", (socket: Socket) => {});
-    navigate("/");
+    navigate("/gamePage");
     window.location.reload();
   };
 
@@ -426,12 +426,13 @@ const SuperPong: React.FC<PongGameProps> = () => {
                             {room.scoreP2} {room.player2}
                             <p>{room.winner} remporte la partie</p>
                             <button
-                  className="buttonseemore backto"
-                  style={{ marginBottom: "5px" }}
-                  onClick={NavHome}
-                >
-                  back to gamepage
-                </button>                          </div>
+                              className="buttonseemore backto"
+                              style={{ marginBottom: "5px" }}
+                              onClick={NavHome}
+                            >
+                              back to gamepage
+                            </button>{" "}
+                          </div>
                         )}
                         {!end && (
                           <div>

@@ -17,8 +17,6 @@ import logo from "./../img/logo42.png";
 import nav from "./../img/buttoncomp.png";
 import { Logout } from "../components/auth/Logout";
 
-
-
 const GameFriend: React.FC = () => {
   const { id } = useParams();
   const [room, setRoom] = useState<Room | null>(null);
@@ -177,13 +175,12 @@ const GameFriend: React.FC = () => {
       socket.emit("gameFinished", id);
     }
 
-    if (usernameP1 && usernameP2 && countdown <= 0 && imgFlag === 0){
+    if (usernameP1 && usernameP2 && countdown <= 0 && imgFlag === 0) {
       catchPic();
       setImgFlag(1);
     }
     if (socket && countdown <= 0 && imgFlag === 0) {
       socket.on("sendRoomAtStart", (recuproom: Room) => {
-
         setUsernameP1(recuproom.player1 as string);
         setUsernameP2(recuproom.player2 as string);
       });
@@ -205,7 +202,6 @@ const GameFriend: React.FC = () => {
         setCounter(1);
         setRoom(updateroom);
         socket.emit("recupRoomAtStart", id);
-
       });
     }
 

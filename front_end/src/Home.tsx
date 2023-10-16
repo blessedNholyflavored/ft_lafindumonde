@@ -180,27 +180,29 @@ const Home: React.FC<HomeProps> = () => {
       </div>
       <div className="flex-bg">
         <main className="commonmain">
-          <div className="home">
-            <p> HOME </p>
-            <div className="inside">
-              <img src={ImgUrl} className="homepic" />
-              <button className="homebut">WELCOME {username}</button>
+          <div className="mainbg">
+            <div className="home">
+              <p> HOME </p>
+              <div className="inside">
+                <img src={ImgUrl} className="homepic" />
+                <button className="homebut">WELCOME {username}</button>
+              </div>
             </div>
-          </div>
 
-          <div className="chat" onClick={navigateToChat}>
-            <p> CHAT WITH FRIENDS </p>
-            <img src={chatpic} />
-          </div>
+            <div className="chat" onClick={navigateToChat}>
+              <p> CHAT WITH FRIENDS </p>
+              <img src={chatpic} />
+            </div>
 
-          <div className="troll">
-            <p> 42 LOVES U </p>
-            <img src={love} />
-          </div>
+            <div className="troll">
+              <p> 42 LOVES U </p>
+              <img src={love} />
+            </div>
 
-          <div className="game" onClick={() => navToGamePage()}>
-            <p> PLAY THE GAME </p>
-            <img src={gaming} />
+            <div className="game" onClick={() => navToGamePage()}>
+              <p> PLAY THE GAME </p>
+              <img src={gaming} />
+            </div>
           </div>
         </main>
         <nav className="commonnav">

@@ -22,17 +22,22 @@ header h1 {
   background-size: cover;
   background-position: center;
   background-image: url("../img/social.png");
-  height: 800px;
+  height: 65vh;
 }
 
 main {
   flex: 1;
-  padding: 4rem;
+  /* padding: 4rem; */
   position: relative;
 }
 
 main h2 {
   font-size: 1.5rem;
+}
+
+.mainbg {
+  margin: 1vh 0 1vh 2.5vw;
+  width: 85vw;
 }
 
 .absolute {
@@ -74,17 +79,17 @@ main h2 {
 /* Styles for the navigation */
 
 .friendshipNav {
-  width: 7vw;
+  width: 10vw;
   display: grid;
-  justify-items: end;
-  padding: 1rem 1vw;
+  justify-items: center;
+  padding: 1vh 1vw;
 }
 
 nav {
   width: 10vw;
   display: grid;
-  justify-items: end;
-  padding: 1rem 2vw;
+  justify-items: center;
+  padding: 1vh 2vw;
 }
 
 ul {
@@ -94,7 +99,7 @@ ul {
 }
 
 .menu-item {
-  margin-bottom: 1rem;
+  /* margin-bottom: 1rem; */
   cursor: pointer;
 }
 
@@ -119,10 +124,13 @@ footer {
   bottom: 0;
   background-image: url(../img/config.symbol.png);
   background-size: contain;
-  height: 150px;
+  height: 10vh;
   /* width: 100%; */
 }
 
+.logo {
+  height: 5vh;
+}
 .footersettings {
   padding: 1rem;
   text-align: center;
@@ -130,7 +138,7 @@ footer {
   bottom: 0;
   background-image: url(../img/footer2.png);
   background-size: cover;
-  height: 150px;
+  height: 10vh;
   /* width: 100%; */
 }
 
@@ -141,7 +149,7 @@ footer {
   bottom: 0;
   background-image: url(../img/footerprofile.png);
   background-size: contain;
-  height: 150px;
+  height: 10vh;
   /* width: 100%; */
 }
 
@@ -161,7 +169,7 @@ footer {
 .chat {
   position: absolute;
   top: 30%;
-  left: 30%;
+  left: 22%;
   background-color: black;
   border: 6px solid var(--greyscale-k, #000);
   box-shadow: 10px 12px 0px 0px #000;
@@ -185,7 +193,7 @@ footer {
 .game {
   position: absolute;
   top: 40%;
-  left: 55%;
+  left: 48%;
   background-color: black;
   border: 6px solid var(--greyscale-k, #000);
   box-shadow: 10px 12px 0px 0px #000;
@@ -208,7 +216,7 @@ footer {
 .troll {
   position: absolute;
   bottom: 45%;
-  right: 0%;
+  right: 5%;
   background-color: black;
   border: 6px solid var(--greyscale-k, #000);
   box-shadow: 10px 12px 0px 0px #000;
@@ -277,14 +285,27 @@ footer {
 *												RESPONSIVE
 *
 **************************************/
-@media (width < 1800px) {
+@media (width < 1300px) {
   .commonnav {
     display: inline-block;
-    padding: 1rem 0;
+    padding: 0;
     margin: auto 1vw;
     justify-items: center;
   }
+  .commonnav ul {
+    margin: 0;
+  }
   .commonmain {
     padding: 2vh 0;
+    width: 80vw;
+  }
+  .fullpage {
+    width: 80vw !important;
+  }
+  .fullpage1 {
+    width: 80vw !important;
+  }
+  .fullpage2 {
+    width: 80vw !important;
   }
 }

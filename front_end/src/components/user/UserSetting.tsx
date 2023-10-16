@@ -103,7 +103,7 @@ export const UserSetting: React.FC = () => {
         //window.location.reload();
       } else {
         setShowNotification(true);
-        setNotifyMSG("An error happened while updating password");
+        setNotifyMSG("An error happened while updating username");
         setNotifyType(3);
         // alert(
         //   "Une erreur s'est produite lors de la mise à jour du nom d'utilisateur."
@@ -294,7 +294,7 @@ export const UserSetting: React.FC = () => {
           credentials: "include",
         }
       );
-      
+
       if (response.ok) {
         setShowNotification(true);
         setNotifyMSG("You successfully changed your avatar!");
@@ -384,9 +384,7 @@ export const UserSetting: React.FC = () => {
       setNotifyMSG("You can't enable 2FA with this type of account !");
       setNotifyType(3);
       return;
-    }
-   
-    else {
+    } else {
       setShowNotification(true);
       setNotifyMSG(
         "Are you ready to save the QR code you will be provided in the next page ?"

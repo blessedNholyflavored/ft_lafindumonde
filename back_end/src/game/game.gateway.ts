@@ -625,11 +625,11 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       const NuserId = Number(data[1]);
       this.playerConnections.forEach((value, key) => {
         if (key === NuserId)
-          user1 = value;
+        user1 = value;
       });
       if (user1)
-        user1.emit("refreshMessagesTEST");
-      socket.emit("refreshMessagesTEST");
+      user1.emit("refreshMessagesTEST");
+        socket.emit("refreshMessagesTEST");
     }
 
     @SubscribeMessage('reloadMessages')
