@@ -688,8 +688,7 @@ export const Chat = () => {
   };
 
   const checkIfAlreadyIn = async () => {
-    if (!valueRoom)
-      return ;
+    if (!valueRoom) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/checkIfIn/${valueRoom}/${user?.id}`,
@@ -1166,6 +1165,24 @@ export const Chat = () => {
                                 }}
                                 disabled={selectedPrivateConv === priv.id}
                               >
+                                {selectedPrivateConv === priv.id && (
+                                  <p
+                                    className="chantitle navbarsmallbox"
+                                    style={{
+                                      position: "absolute",
+                                      color: "white",
+                                      width: "9vw",
+                                      height: "3vh",
+                                      right: "531px",
+                                      top: "3%",
+                                      fontSize: "14px",
+                                      backgroundColor: "rgba(0, 0, 0, 0.75)",
+                                      zIndex:"6000",
+                                    }}
+                                  >
+                                    {priv.username}
+                                  </p>
+                                )}
                                 <div>
                                   {priv.status === "ONLINE" && (
                                     <span>{priv.username} 🟢</span>
@@ -1242,6 +1259,21 @@ export const Chat = () => {
                             {activeChannel === chan.id &&
                               showChatButton === true && (
                                 <div>
+                                  <p
+                                    className="chantitle navbarsmallbox"
+                                    style={{
+                                      position: "absolute",
+                                      color: "white",
+                                      width: "9vw",
+                                      height: "3vh",
+                                      right: "531px",
+                                      top: "3%",
+                                      fontSize: "14px",
+                                      backgroundColor: "rgba(0, 0, 0, 0.75)",
+                                    }}
+                                  >
+                                    {chan.name}
+                                  </p>
                                   <button
                                     className="buttonseemore buttonchan leave"
                                     onClick={leftChannel}

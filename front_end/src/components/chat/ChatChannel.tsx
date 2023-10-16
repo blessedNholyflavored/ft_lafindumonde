@@ -975,7 +975,7 @@ export const ChatChannel = () => {
                   </div>
                 ))
               ) : (
-                <div>no messages yet!</div>
+                <div style={{textAlign:"center"}}>no messages yet!</div>
               )}
             </ul>
           )}
@@ -1033,11 +1033,6 @@ export const ChatChannel = () => {
             <div className="navbarsmallbox jpp ">
               <p style={{ color: "white" }}>change chan status</p>
             </div>
-            {/* <button 
-                className="buttonseemore buttonchan"
-                onClick={() => handleOnChangeMDP()}>
-                Change password
-              </button> */}
             <button
               className="buttonseemore buttonchan zindexcosin"
               onClick={() => ChangeStatutChan("PWD_PROTECTED")}

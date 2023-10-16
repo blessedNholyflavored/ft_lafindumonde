@@ -321,7 +321,6 @@ export const PrivateChat = () => {
                       {friend.recipientId !== user?.id && (
                         <div className="sentmessage">
                           <div>
-                              {/* <div>{friend.start_at}</div> */}
                               <div className="whoschattin">
                                 <div>{friend.senderUsername}</div>
                               </div>
@@ -346,7 +345,6 @@ export const PrivateChat = () => {
                 )}
               </ul>
             )}
-            {/* <div ref={bottomEl}></div> */}
             <div className="sendingzoneprivate-privatechat">
               {recipient && (
                 <div>
