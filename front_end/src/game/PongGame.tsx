@@ -428,7 +428,7 @@ const PongGame: React.FC = () => {
             <div id="boxes">
               <div id="leftbox">
                 {ImgUrlP1 &&
-                  +(
+                  (
                     <div>
                       <h2>{usernameP1}</h2>
                       <img src={ImgUrlP1} className="avatar" alt="" />

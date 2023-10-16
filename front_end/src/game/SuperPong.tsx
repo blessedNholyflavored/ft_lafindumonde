@@ -118,7 +118,7 @@ const SuperPong: React.FC<PongGameProps> = () => {
 
   const NavHome = () => {
     socket.emit("changeStatus", (socket: Socket) => {});
-    navigate("/");
+    navigate("/gamePage");
     window.location.reload();
   };
 
