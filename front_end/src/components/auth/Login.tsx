@@ -42,9 +42,10 @@ export function Login() {
           <p className="navTitle"> ▷</p>
         </div>
         <div className="boxAuthContent">
-          <img src="./login.png" onClick={fortyTwoLogin} alt="login button" />
           <h1> LOG W/ 42</h1>
-          <h2>I don't have a 42 account !</h2>
+          <img src="./login.png" onClick={fortyTwoLogin} alt="login button" />
+
+          <h3>I don't have a 42 account :</h3>
           <div className="otherLogin">
             <div className="otherLoginBox">
               <img

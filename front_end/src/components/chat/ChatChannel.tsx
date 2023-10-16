@@ -709,7 +709,6 @@ export const ChatChannel = () => {
 
   if (socket) {
     socket?.on("matchStart", (roomdId: number) => {
-      socket?.emit("updateUserIG", user?.id);
       navigate(`/gamefriend/${roomdId}`);
     });
   }
