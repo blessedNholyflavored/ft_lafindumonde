@@ -536,12 +536,12 @@ export const FriendsPage: React.FC = () => {
       if (response.ok) {
         const data = response.text();
         if ((await data).valueOf() === "exist") {
-          setNotifyMSG("Friendship already in PENDING");
+          setNotifyMSG("friend request already in PENDING");
           setShowNotification(true);
           setSender(0);
           setNotifyType(2);
         } else {
-          setNotifyMSG("Friendship sent !");
+          setNotifyMSG("friend request sent !");
           setShowNotification(true);
           setSender(0);
           setNotifyType(2);
@@ -576,7 +576,7 @@ export const FriendsPage: React.FC = () => {
   if (socket) {
     socket.on("receiveInvite", (sender: number) => {
       setShowNotification(true);
-      setNotifyMSG("Tu as recu une invitation pour une partie");
+      setNotifyMSG("you've received a game invitation !");
       setNotifyType(1);
       setSender(sender);
     });

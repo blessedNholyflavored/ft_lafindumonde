@@ -596,7 +596,7 @@ export const Chat = () => {
     if (socket) {
       socket.on("receiveInvite", (sender: number) => {
         setShowNotification(true);
-        setNotifyMSG("Tu as recu une invitation pour une partie");
+        setNotifyMSG("you've received a game invitation !");
         setNotifyType(1);
         setSender(sender);
       });
@@ -718,7 +718,7 @@ export const Chat = () => {
       }, 300);
     } else {
       setShowNotification(true);
-      setNotifyMSG("Name deja pris mon gars !");
+      setNotifyMSG("name already taken bro!");
       setNotifyType(2);
       setSender(0);
     }
@@ -731,7 +731,7 @@ export const Chat = () => {
   const joinRoom = async () => {
     if ((await checkRoomAlreadyExist()) === false) {
       setShowNotification(true);
-      setNotifyMSG("Room n'existe pas !");
+      setNotifyMSG("this room does not exist!");
       setNotifyType(2);
       setSender(0);
 
@@ -741,7 +741,7 @@ export const Chat = () => {
     }
     if ((await checkIfAlreadyIn()) === true) {
       setShowNotification(true);
-      setNotifyMSG("Tu es deja dans le channel !");
+      setNotifyMSG("you are already in this channel!");
       setNotifyType(2);
       setSender(0);
 
@@ -756,7 +756,7 @@ export const Chat = () => {
       }, 100);
     } else {
       setShowNotification(true);
-      setNotifyMSG("Room n'existe pas !");
+      setNotifyMSG("this room does not exist!");
       setNotifyType(2);
       setSender(0);
     }

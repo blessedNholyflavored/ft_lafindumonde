@@ -113,7 +113,7 @@ const Home: React.FC<HomeProps> = () => {
   if (socket) {
     socket.on("friendShipNotif", () => {
       setShowNotification(true);
-      setNotifyMSG("Tu as recu une demande d'ami");
+      setNotifyMSG("you've received a friends request!");
       setNotifyType(0);
     });
   }
@@ -121,7 +121,7 @@ const Home: React.FC<HomeProps> = () => {
   if (socket) {
     socket.on("receiveInvite", (sender: number) => {
       setShowNotification(true);
-      setNotifyMSG("Tu as recu une invitation pour une partie");
+      setNotifyMSG("you've received a game invitation!");
       setNotifyType(1);
       setSender(sender);
     });
