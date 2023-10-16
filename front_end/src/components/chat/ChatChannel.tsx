@@ -978,7 +978,7 @@ export const ChatChannel = () => {
                 value={muteTimeLeft + " secondes time left for you mute"}
                 onChange={(e) => setValue(e.target.value)}
               />
-              <button disabled>send</button>
+              <button className="buttonseemore buttonchan" disabled>send</button>
             </div>
           )}
           {yourRole === "OWNER" && (
