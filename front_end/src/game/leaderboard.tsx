@@ -209,7 +209,7 @@ export const Classement = () => {
               <div className="leaderboard">
                 <table className="leadertab">
                   <thead>
-                    <br></br>
+                    {/* <br></br> */}
                     <tr>
                       <th>Rank</th>
                       <th>Username</th>
@@ -217,20 +217,6 @@ export const Classement = () => {
                       <th>Division</th>
                     </tr>
                   </thead>
-                  {/* // <tbody >
-                {playerScores.map((tab: PlayerScore, index: number) => (
-                  <tr key={index}>
-                    <td>{tab.place}</td>
-                    <td>{tab.username}</td>
-                    <td>{tab.ELO}</td>
-                    <td>{tab.rank}</td>
-                    <td>
-                      <button className="buttonleader" onClick={() => navToProfil(tab.id.toString())}>
-                        see profile
-                      </button>
-                    </td>
-                  </tr> */}
-                  {/* </thead> */}
                   <tbody>
                     {playerScores.map((tab: PlayerScore, index: number) => (
                       <tr key={index}>
@@ -248,7 +234,7 @@ export const Classement = () => {
                         </td>
                       </tr>
                     ))}
-                    <br></br>
+                    {/* <br></br> */}
                   </tbody>
                 </table>
               </div>
