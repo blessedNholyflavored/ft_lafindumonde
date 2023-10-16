@@ -21,6 +21,7 @@ import folderpink from "./../img/folderpink.png";
 import folderyellow from "./../img/folderyellow.png";
 import folderwhite from "./../img/folderwhite.png";
 import folderviolet from "./../img/folderviolet.png";
+import folderred from "../img/folderred.png";
 import icon from "./../img/buttoncomp.png";
 import logo from "./../img/logo42.png";
 import { Logout } from "../components/auth/Logout";
@@ -335,6 +336,9 @@ const PongGame: React.FC = () => {
   const navToGamePage = () => {
     navigate("/gamePage");
   };
+  const navigateToChat = () => {
+    navigate("/chat");
+  };
 
   const displayPic = async (userId: number, pos: number) => {
     try {
@@ -396,7 +400,7 @@ const PongGame: React.FC = () => {
         <h1>TRANSCENDENCE</h1>
       </header>
       <div className="flex-bg">
-        <main>
+        <main className="commonmain">
           <div className="fullpage ponggame">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
@@ -559,7 +563,7 @@ const PongGame: React.FC = () => {
           </div>
         </main>
 
-        <nav>
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
@@ -589,6 +593,12 @@ const PongGame: React.FC = () => {
               <a onClick={navigateToFriends}>
                 <img src={folderwhite} alt="Menu 3" />
                 <p>Friends</p>
+              </a>
+            </li>
+            <li className="menu-item">
+              <a onClick={navigateToChat}>
+                <img src={folderred} alt="Menu 3" />
+                <p>Chat</p>
               </a>
             </li>
           </ul>

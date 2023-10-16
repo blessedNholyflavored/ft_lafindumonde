@@ -86,10 +86,7 @@ export const Chat = () => {
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {};
 
-
-
   const fetchYourRoomsList = useCallback(async () => {
-
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/recupYourRooms`,
@@ -133,7 +130,7 @@ export const Chat = () => {
       console.error("Erreur :", error);
       return [];
     }
-  },[user?.id]);
+  }, [user?.id]);
 
   async function fetchRoomsList() {
     try {
@@ -211,9 +208,7 @@ export const Chat = () => {
     }
   }
 
-
   const fetchPrivateConvList = useCallback(async () => {
-
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/recupPrivate`,
@@ -264,8 +259,7 @@ export const Chat = () => {
       console.error("Erreur :", error);
       return [];
     }
-  },[user?.id]);
-
+  }, [user?.id]);
 
   const checkBanned = useCallback(
     async (userId: number, roomId: string) => {
@@ -321,9 +315,7 @@ export const Chat = () => {
     [user?.id]
   );
 
-
   const fetchPossibleInviteList = useCallback(async () => {
-
     if (activeChannel) {
       try {
         const response = await fetch(
@@ -354,11 +346,9 @@ export const Chat = () => {
         return [];
       }
     }
-  },[activeChannel, user?.id]);
-
+  }, [activeChannel, user?.id]);
 
   const fetchInviteSendList = useCallback(async () => {
-
     if (activeChannel) {
       try {
         const response = await fetch(
@@ -394,10 +384,9 @@ export const Chat = () => {
         return [];
       }
     }
-  },[activeChannel, user?.id]);
+  }, [activeChannel, user?.id]);
 
   const fetchInviteReceiveList = useCallback(async () => {
-
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/invReceive/${user?.id}/`,
@@ -441,7 +430,7 @@ export const Chat = () => {
       console.error("Erreur:", error);
       return [];
     }
-  },[user?.id]);
+  }, [user?.id]);
 
   useEffect(() => {
     async function fetchYourRooms() {
@@ -845,7 +834,6 @@ export const Chat = () => {
     }, 100);
   };
 
-
   async function checkBlocked(senderId: string, recipientId: string) {
     try {
       const response = await fetch(
@@ -867,9 +855,6 @@ export const Chat = () => {
       return false;
     }
   }
-
-
-
 
   const clickToInvite = async (id: number) => {
     if (!activeChannel || activeChannel === 0) {
@@ -988,7 +973,6 @@ export const Chat = () => {
     setTimeout(() => {
       socket.emit("reloadListRoomForOne", id);
       socket.emit("reloadListRoom", id);
-      
     }, 500);
     navigate("/chat");
   };
@@ -1002,7 +986,7 @@ export const Chat = () => {
         <h1>TRANSCENDENCE</h1>
       </header>
       <div className="flex-bg">
-        <main>
+        <main className="commonmain">
           <div className="fullpage fullpagechat">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
@@ -1394,7 +1378,7 @@ export const Chat = () => {
             </div>
           </div>
         </main>
-        <nav>
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
