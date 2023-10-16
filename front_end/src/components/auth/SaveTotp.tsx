@@ -24,7 +24,6 @@ export const SaveTotp: React.FC = () => {
   }, []);
 
   const searchParams = new URLSearchParams(location.search);
-  // const qrCodeImg = searchParams.get("qrCodeImg");
 
   const handleCloseNotification = () => {
     setShowNotification(false);
@@ -33,7 +32,6 @@ export const SaveTotp: React.FC = () => {
   const totpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (user) {
-      // try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/auth/submitCode?code=${receivedCode}`,
         {

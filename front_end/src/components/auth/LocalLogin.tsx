@@ -74,10 +74,6 @@ export function LocalLogin() {
     window.location.href = `http://${window.location.hostname}:3000/auth/login42`;
   };
 
-  // const returnHome = () => {
-  //   navigate("/");
-  // };
-
   const navigateRegister = () => {
     navigate("/register");
   };

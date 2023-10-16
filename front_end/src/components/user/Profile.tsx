@@ -3,7 +3,6 @@ import '../../style/Profile.css'
 import Box from "./Box";
 import { useAuth } from "../auth/AuthProvider";
 import { useParams, useNavigate } from 'react-router-dom';
-// import myicon from "../../img/iconpic.png";
 
 export const Profile = () => {
 	const { user, setUser } = useAuth();

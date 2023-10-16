@@ -47,6 +47,8 @@ export const MiniGame = () => {
   const [countdown, setCountdown] = useState(3);
   const [playerScores, setPlayerScores] = useState<MiniScore[]>([]);
   const [counter, setCounter] = useState(0);
+  const [rebounds, setRebounds] = useState(0);
+
 
   const userId = user?.id;
   const navigate = useNavigate();
@@ -80,7 +82,6 @@ export const MiniGame = () => {
         throw new Error("Erreur lors de la récupération des scores.");
       }
       const data = await response.json();
-      // console.log("DANS LEADERBOARD.TSX", data);
       setPlayerScores(data);
     } catch (error) {
       console.error("Erreur:", error);
@@ -96,8 +97,6 @@ export const MiniGame = () => {
     fetchPlayerScores();
   }, [fetchPlayerScores]);
 
-  // Compteur de rebond pour le joueur 1
-  const [rebounds, setRebounds] = useState(0);
 
   const playerMove = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (end) return;
@@ -177,11 +176,11 @@ export const MiniGame = () => {
     }
   }, [ball, counter, end, player1, player2, socket, fetchPlayerScores]);
 
-  const reboundsRef = useRef(0); // Utilisation d'une ref pour maintenir une copie stable de rebounds
+  const reboundsRef = useRef(0);
 
   useEffect(() => {
-    reboundsRef.current = rebounds; // Mettre à jour la ref avec la valeur actuelle de rebounds
-  }, [rebounds]); // Mettre à jour la ref lorsque rebounds change
+    reboundsRef.current = rebounds;
+  }, [rebounds]);
 
   useEffect(() => {
     if (gameAreaRef.current) {
@@ -314,7 +313,6 @@ export const MiniGame = () => {
                 </table>
               </div>
             </div>
-            {/* { countdown <= 0 && ( */}
             <div
               className="div2"
               ref={gameAreaRef}
@@ -323,7 +321,6 @@ export const MiniGame = () => {
               style={{
                 width: mapx,
                 height: mapy,
-                // border: "7px solid black",
                 position: "relative",
               }}
             >
@@ -338,7 +335,6 @@ export const MiniGame = () => {
                       position: "absolute",
                       width: 10,
                       height: 400,
-                      // backgroundColor: "blue",
                       top: player1,
                       left: 0,
                     }}

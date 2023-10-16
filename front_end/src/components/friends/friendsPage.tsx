@@ -663,7 +663,6 @@ export const FriendsPage: React.FC = () => {
                         <button
                           className="buttonseemore"
                           onClick={() => handleUserClick(friend.recipientId)}
-                          // disabled={user?.id.toString() === friend.id}
                         >
                           {" "}
                           see more

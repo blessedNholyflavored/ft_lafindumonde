@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { User, Room } from "../interfaces/interfaces"; // Assurez-vous d'importer les interfaces correctes
-//import './AppTest.css'
+import { User, Room } from "../interfaces/interfaces";
 import "../App.css";
 import { useAuth } from "../components/auth/AuthProvider";
 import { useNavigate, useParams } from "react-router-dom";
@@ -52,12 +51,10 @@ const SuperPong: React.FC<PongGameProps> = () => {
     if (countdown > 0) {
       socket?.emit("reloadCountdown", id);
       setCountdown(-999);
-      // window.location.href = "/gamePage";
     }
     socket?.emit("leaveGame", id);
     socket?.emit("changeStatus");
     setEnd(1);
-    // NavHome();
   };
 
   const startCountdown = () => {
@@ -180,7 +177,6 @@ const SuperPong: React.FC<PongGameProps> = () => {
       );
       if (response.ok) {
         const recup = await response.text();
-        // setStatus(recup);
         status = recup;
       }
       if (status !== "INGAME") {
@@ -189,7 +185,13 @@ const SuperPong: React.FC<PongGameProps> = () => {
     } catch (error) {}
   }
 
+
+    //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
+
+    //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
+
   useEffect(() => {
+
     if (socket && checkstatus === false) {
       setTimeout(() => {
         getstatus();
@@ -206,7 +208,6 @@ const SuperPong: React.FC<PongGameProps> = () => {
     if (socket && !end) {
       socket.on("gameIsDone", async () => {
         setEnd(1);
-        // window.location.href = "/gamePage";
       });
     }
 
@@ -217,11 +218,7 @@ const SuperPong: React.FC<PongGameProps> = () => {
     if (socket && id && room) {
       socket.emit("gameFinished", id);
     }
-    //      CREATION DU MODEL DE LA GAME DANS LA DB
 
-    //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
-
-    //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
 
     if (socket) {
       socket.on("startGame2", async (updateroom: Room) => {
@@ -245,7 +242,6 @@ const SuperPong: React.FC<PongGameProps> = () => {
           setPlayer1Pos(updatedRoom.player1Y);
           setPlayer2Pos(updatedRoom.player2Y);
         }
-        // setRoom(updatedRoom);
       });
     }
 

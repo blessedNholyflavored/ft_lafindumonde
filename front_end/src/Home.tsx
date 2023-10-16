@@ -34,7 +34,6 @@ const Home: React.FC<HomeProps> = () => {
   const socket = useContext(WebsocketContext);
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
-  // const [recupStatus, setStatus] = useState<string>('');
   let [ImgUrl, setImgUrl] = useState<string>("");
   const [showNotification, setShowNotification] = useState(false);
 

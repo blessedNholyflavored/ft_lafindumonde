@@ -207,7 +207,7 @@ export const Chat = () => {
       return userData;
     } catch (error) {
       console.error("Erreur :", error);
-      return null; // En cas d'erreur, renvoyez null ou une valeur par défaut
+      return null;
     }
   }
 
@@ -421,7 +421,6 @@ export const Chat = () => {
             senderId: number;
             isBlocked: boolean;
           }) => {
-            // Utilisez recupUsername pour obtenir le nom d'utilisateur
             invSend.username = await fetchUsernameById(
               invSend.senderId.toString()
             );
@@ -986,9 +985,6 @@ export const Chat = () => {
     } catch (error) {
       console.error("Erreur:", error);
     }
-    // setTimeout(() => {
-    //   socket.emit("reloadMessRoom", id);
-    // }, 100);
     setTimeout(() => {
       socket.emit("reloadListRoomForOne", id);
       socket.emit("reloadListRoom", id);

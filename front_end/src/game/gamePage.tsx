@@ -50,7 +50,6 @@ export const GamePage = () => {
       if (response.ok) {
         const recup = await response.text();
         console.log(recup);
-        // setStatus(recup);
         recupStatus = recup;
       }
       if (recupStatus !== "INGAME") {
@@ -61,7 +60,7 @@ export const GamePage = () => {
           setQueueCount(count);
           if (count === 2) {
             socket?.emit("updateUserIG", user?.id);
-            socket?.emit("createGame");
+            socket?.emit("createGame"); //      CREATION DU MODEL DE LA GAME DANS LA DB
             setQueueCount(0);
             navigate(`/game/${id}`);
           }

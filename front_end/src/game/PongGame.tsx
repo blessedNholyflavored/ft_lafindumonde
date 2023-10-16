@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import { Socket } from "socket.io-client";
-import { Room } from "../interfaces/interfaces"; // Assurez-vous d'importer les interfaces correctes
+import { Room } from "../interfaces/interfaces";
 import "../App.css";
 import "../style/Home.css";
 import "../style/Profile.css";
@@ -159,7 +159,6 @@ const PongGame: React.FC = () => {
       );
       if (response.ok) {
         const recup = await response.text();
-        // setStatus(recup);
         status = recup;
       }
       if (status !== "INGAME") {
@@ -185,7 +184,6 @@ const PongGame: React.FC = () => {
     if (socket && !end) {
       socket.on("gameIsDone", async () => {
         setEnd(1);
-        // window.location.href = "/gamePage";
       });
     }
 
