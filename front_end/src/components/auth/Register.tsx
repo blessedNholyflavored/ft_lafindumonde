@@ -69,7 +69,6 @@ export function Register() {
       setInputPassword("");
       setInputUsername("");
       setInputEmail("");
-      //TODO: add a return to general login or SignIn only in this case
     } else if (res.status === 406) {
       setShowNotification(true);
       setNotifyMSG("You must use 42 LogIn system !");
