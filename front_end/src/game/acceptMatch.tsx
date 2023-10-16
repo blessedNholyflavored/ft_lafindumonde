@@ -17,8 +17,8 @@ const AcceptMatch: React.FC = () => {
   if (socket && accepted === false) {
     setAccepted(true);
     socket.emit("matchAccepted", id);
-    socket?.emit("updateUserIG", user?.id);
-    socket?.emit("updateUserIG", parseInt(id as string));
+    socket?.emit("updateUserIGFriend", user?.id);
+    socket?.emit("updateUserIGFriend", parseInt(id as string));
   }
   if (socket) {
     socket?.on("matchStart", (roomdId: number) => {

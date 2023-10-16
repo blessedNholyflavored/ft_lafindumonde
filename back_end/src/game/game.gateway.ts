@@ -526,6 +526,17 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     });
   }
 
+  @SubscribeMessage('updateUserIGFriend')
+  async onUpdateUserIGFriend(@MessageBody() id: number, @ConnectedSocket() socket: Socket,){
+    
+    this.userService.updateUserStatuIG(id, 'INGAME');
+    this.userService.updateGamePlayer(id.toString());
+    this.playerConnections.forEach((value, key) => {
+      if (value != socket)
+        value.emit("reloadInGame");
+    });
+  }
+
   @SubscribeMessage('changeStatus')
   async onChaneStatus(@ConnectedSocket() socket: Socket) {
   this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');

@@ -59,6 +59,8 @@ export class ChatService {
             id: parseInt(id2),
           },
         });
+        if (!p1 || !p2)
+          return null;
         const createdMessage = await prisma.privateMessage.create({
           data: {
             content: newMessage,
