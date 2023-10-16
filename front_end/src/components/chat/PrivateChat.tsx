@@ -36,6 +36,14 @@ export const PrivateChat = () => {
   const fetchPrivMessageList = useCallback(async () => {
     if (!recipient) return;
     try {
+      const firstres = await fetch(
+        `http://${window.location.hostname}:3000/users/${recipient}/exist`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!firstres.ok) navigate(`/chat/`);
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/recupMess/${recipient}/${user?.id}`,
         {

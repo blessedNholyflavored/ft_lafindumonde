@@ -279,11 +279,16 @@ export class UserService {
   }
 
   async getUserByID(id: number): Promise<User | undefined> {
-    return await prisma.user.findUnique({
-      where: {
-        id: Number(id),
-      },
-    });
+    try{
+			const user = await prisma.user.findUnique({
+    	  where: {
+      	  id: Number(id),
+     	 },
+   		});
+			return user;
+		} catch {
+			return undefined;
+		}
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {

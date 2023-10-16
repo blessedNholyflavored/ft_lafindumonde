@@ -16,6 +16,7 @@ import {
   ValidationPipe,
   UsePipes,
   UnauthorizedException,
+	NotFoundException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -26,7 +27,7 @@ import { join } from 'path';
 import { Response } from 'express';
 import * as mimetype from 'mime-types';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guards';
-import { throwError } from 'rxjs';
+import { NotFoundError, throwError } from 'rxjs';
 import { AuthDto } from './dto/auth.dto';
 import { MailDto, PassDto, UsernameDto } from './dto/settings.dto';
 import { format, parseISO } from 'date-fns';
@@ -215,4 +216,12 @@ export class UsersController {
     const ret = await this.userService.getUserByID(req.user.id);
     return photo;
   }
+
+	@Get('/:id/exist')
+	async doesExist(@Param('id') id: string, @Res() res: any) {
+		const user = await this.userService.getUserByID(parseInt(id));
+		if (!user)
+			throw new NotFoundException;
+		res.status(200).send();
+	}
 }
