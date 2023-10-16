@@ -131,10 +131,6 @@ export const Classement = () => {
     navigate("/chat");
   };
 
-  // const NavToSoloPong = () => {
-  //   navigate("/solopong");
-  // };
-
   const navigateToFriends = () => {
     navigate("/friends");
   };
@@ -209,7 +205,12 @@ export const Classement = () => {
               <div className="leaderboard">
                 <table className="leadertab">
                   <thead>
-                    {/* <br></br> */}
+                    <tr>
+                      <td>
+                        <br />
+                      </td>
+                    </tr>
+
                     <tr>
                       <th>Rank</th>
                       <th>Username</th>
@@ -234,7 +235,11 @@ export const Classement = () => {
                         </td>
                       </tr>
                     ))}
-                    {/* <br></br> */}
+                    <tr>
+                      <td>
+                        <br />
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </div>

@@ -266,7 +266,6 @@ export const PrivateChat = () => {
     }
     socket.emit("reloadListRoomForOne", recipient);
     navigate("/chat");
-    // window.location.reload();
   }
 
   async function removeBlocked(sender: string, recipient: string) {
@@ -287,7 +286,6 @@ export const PrivateChat = () => {
     setTimeout(() => {
       socket.emit("reloadMessRoom", recipient);
     }, 100);
-    // window.location.reload();
   }
 
   const handleEnter = (e: { key: string }) => {

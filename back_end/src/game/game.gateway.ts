@@ -106,6 +106,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     this.playerQueue.splice(0, 1);
     this.playerQueue2.splice(0, 1);
     this.socketQueue.splice(0, 1);
+    this.playerQueueBonus.splice(0, 1);
+    this.playerQueue2Bonus.splice(0, 1);
+    this.socketQueueBonus.splice(0, 1);
     console.log("diconnected");
     if (socket && socket.user)
     {

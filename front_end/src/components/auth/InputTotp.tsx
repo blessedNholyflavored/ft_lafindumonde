@@ -14,7 +14,6 @@ export const InputTotp: React.FC = () => {
   const [notifyMSG, setNotifyMSG] = useState<string>("");
   const [notifyType, setNotifyType] = useState<number>(0);
   const [sender, setSender] = useState<number>(0);
-  // const navigate = useNavigate();
 
   const handleCloseNotification = () => {
     setShowNotification(false);
