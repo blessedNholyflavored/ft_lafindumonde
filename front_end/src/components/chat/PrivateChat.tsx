@@ -318,7 +318,7 @@ export const PrivateChat = () => {
                 {messageListSend.length > 0 && user ? (
                   messageListSend.map((friend, index) => (
                     <div className="messorder">
-                      {friend.recipientId === user?.id && (
+                      {friend.recipientId !== user?.id && (
                         <div className="sentmessage">
                           <div>
                             <div key={index}>
@@ -331,7 +331,7 @@ export const PrivateChat = () => {
                           </div>
                         </div>
                       )}
-                      {friend.recipientId !== user?.id && (
+                      {friend.recipientId === user?.id && (
                         <div className="receivedmessage">
                           <div>
                             <div key={index}>
