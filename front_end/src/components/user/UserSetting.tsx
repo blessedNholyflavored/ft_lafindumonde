@@ -290,7 +290,7 @@ export const UserSetting: React.FC = () => {
           credentials: "include",
         }
       );
-      
+
       if (response.ok) {
         setShowNotification(true);
         setNotifyMSG("You successfully changed your avatar!");
@@ -357,9 +357,7 @@ export const UserSetting: React.FC = () => {
       setNotifyMSG("You can't enable 2FA with this type of account !");
       setNotifyType(3);
       return;
-    }
-   
-    else {
+    } else {
       setShowNotification(true);
       setNotifyMSG(
         "Are you ready to save the QR code you will be provided in the next page ?"

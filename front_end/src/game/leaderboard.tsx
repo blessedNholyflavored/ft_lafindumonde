@@ -163,70 +163,61 @@ export const Classement = () => {
               <h1> LEADERBOARD </h1>
             </div>
             <div className="overflowdiv">
-            <div className="container podium">
-            { second?.username && (
-              <div className="podium__item">
-                <p
-                  className="podium__city"
-                >
-                  {second?.username}
-                </p>
-                <img src={second?.pictureURL} className="avatar"></img>
+              <div className="container podium">
+                {second?.username && (
+                  <div className="podium__item">
+                    <p className="podium__city">{second?.username}</p>
+                    <img src={second?.pictureURL} className="avatar"></img>
 
-                <div className="podium__rank second">2</div>
-
-              </div>
+                    <div className="podium__rank second">2</div>
+                  </div>
                 )}
-              <div className="podium__item">
-                <p
-                  className="podium__city"
-                >
-                  {first?.username}
-                </p>
-                <img src={first?.pictureURL} className="avatar"></img>
+                <div className="podium__item">
+                  <p className="podium__city">{first?.username}</p>
+                  <img src={first?.pictureURL} className="avatar"></img>
 
-                <div className="podium__rank first">
-                  <svg
-                    className="podium__number"
-                    viewBox="0 0 27.476 75.03"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g transform="matrix(1, 0, 0, 1, 214.957736, -43.117417)">
-                      <path
-                        className="st8"
-                        d="M -198.928 43.419 C -200.528 47.919 -203.528 51.819 -207.828 55.219 C -210.528 57.319 -213.028 58.819 -215.428 60.019 L -215.428 72.819 C -210.328 70.619 -205.628 67.819 -201.628 64.119 L -201.628 117.219 L -187.528 117.219 L -187.528 43.419 L -198.928 43.419 L -198.928 43.419 Z"
-                        style={{ fill: "black" }}
-                      />
-                    </g>
-                  </svg>
+                  <div className="podium__rank first">
+                    <svg
+                      className="podium__number"
+                      viewBox="0 0 27.476 75.03"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g transform="matrix(1, 0, 0, 1, 214.957736, -43.117417)">
+                        <path
+                          className="st8"
+                          d="M -198.928 43.419 C -200.528 47.919 -203.528 51.819 -207.828 55.219 C -210.528 57.319 -213.028 58.819 -215.428 60.019 L -215.428 72.819 C -210.328 70.619 -205.628 67.819 -201.628 64.119 L -201.628 117.219 L -187.528 117.219 L -187.528 43.419 L -198.928 43.419 L -198.928 43.419 Z"
+                          style={{ fill: "black" }}
+                        />
+                      </g>
+                    </svg>
+                  </div>
                 </div>
-              </div>
-                { third?.username && (
-              <div className="podium__item">
-                <p
-                  className="podium__city"
-                >
-                  {third?.username}
-                </p>
-                <img src={third?.pictureURL} className="avatar" alt="ya personne"></img>
-                  
-                <div className="podium__rank third">3</div>
-              </div>
-                )}
-            </div>
+                {third?.username && (
+                  <div className="podium__item">
+                    <p className="podium__city">{third?.username}</p>
+                    <img
+                      src={third?.pictureURL}
+                      className="avatar"
+                      alt="ya personne"
+                    ></img>
 
-            <div className="leaderboard">
-              <table className="leadertab">
-                <thead>
-                  <br></br>
-                  <tr>
-                    <th>Rank</th>
-                    <th>Username</th>
-                    <th>Elo</th>
-                    <th>Division</th>
-                  </tr>
-                </thead>
-                {/* // <tbody >
+                    <div className="podium__rank third">3</div>
+                  </div>
+                )}
+              </div>
+
+              <div className="leaderboard">
+                <table className="leadertab">
+                  <thead>
+                    <br></br>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Username</th>
+                      <th>Elo</th>
+                      <th>Division</th>
+                    </tr>
+                  </thead>
+                  {/* // <tbody >
                 {playerScores.map((tab: PlayerScore, index: number) => (
                   <tr key={index}>
                     <td>{tab.place}</td>
@@ -239,30 +230,29 @@ export const Classement = () => {
                       </button>
                     </td>
                   </tr> */}
-                {/* </thead> */}
-                <tbody>
-                  {playerScores.map((tab: PlayerScore, index: number) => (
-                    <tr key={index}>
-                      <td>{tab.place}</td>
-                      <td>{tab.username}</td>
-                      <td>{tab.ELO}</td>
-                      <td>{tab.rank}</td>
-                      <td>
-                        <button
-                          className="buttonleader"
-                          onClick={() => navToProfil(tab.id.toString())}
-                        >
-                          see profile
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  <br></br>
-                </tbody>
-              </table>
+                  {/* </thead> */}
+                  <tbody>
+                    {playerScores.map((tab: PlayerScore, index: number) => (
+                      <tr key={index}>
+                        <td>{tab.place}</td>
+                        <td>{tab.username}</td>
+                        <td>{tab.ELO}</td>
+                        <td>{tab.rank}</td>
+                        <td>
+                          <button
+                            className="buttonleader"
+                            onClick={() => navToProfil(tab.id.toString())}
+                          >
+                            see profile
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    <br></br>
+                  </tbody>
+                </table>
+              </div>
             </div>
-            </div>
-
           </div>
         </main>
         <nav>

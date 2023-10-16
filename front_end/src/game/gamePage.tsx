@@ -186,7 +186,7 @@ export const GamePage = () => {
 
               <div className="trollgame2">
                 <p> it was so hard </p>
-                <img src={sponge} alt="icon"/>
+                <img src={sponge} alt="icon" />
               </div>
 
               <div className="game1">

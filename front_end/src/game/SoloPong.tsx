@@ -183,7 +183,6 @@ export const MiniGame = () => {
     reboundsRef.current = rebounds; // Mettre à jour la ref avec la valeur actuelle de rebounds
   }, [rebounds]); // Mettre à jour la ref lorsque rebounds change
 
-
   useEffect(() => {
     if (gameAreaRef.current) {
       gameAreaRef.current.focus();
