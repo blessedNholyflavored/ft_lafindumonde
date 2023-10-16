@@ -1070,7 +1070,7 @@ export const ChatChannel = () => {
                   <input
                     className="inputdetest"
                     type="password"
-                    placeholder="newPass ?"
+                    placeholder="new password?"
                     value={newPass}
                     onChange={(e) => setNewPass(e.target.value)}
                   />
@@ -1112,7 +1112,7 @@ export const ChatChannel = () => {
                   </div>
                   <input
                     type="text"
-                    placeholder="newPass ?"
+                    placeholder="new password ?"
                     value={newPass}
                     onChange={(e) => setNewPass(e.target.value)}
                   />
