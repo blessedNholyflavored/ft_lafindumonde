@@ -20,33 +20,6 @@ export class AuthController{
     /************************
      * 
      * 
-     *                                  ROUTE TO CREATE FAKE USERS
-     *      
-     * 
-     * *********************/
-    /*****************************************/
-	                    // TODO: suppr cette route pour la prod
-    /*****************************************/
-
-// pour creer le user : avec l'extension RESTED</> faire une requete post
-// a http://localhost:3000/auth/test
-// avec Content-Type /// application/json dans le Header
-// et dans le Request Body, Type: JSON, faire et remplir les champs username, id et email (eventuellement pictureURL si on veut...
-
-	@Post('test')
-	async loginTest(@Body() body: {username: string, id: number, email: string}, @Res() res: any){
-		if (!body.username || !body.id || !body.email){
-			throw new BadRequestException("id, username or email is missing");
-		}
-		const user = await this.authService.retrieveUser(body);
-		const token = await this.authService.login(user);
-		res.cookie('access_token', token.access_token, {httpOnly: true, sameSite: true}).json({user: this.userService.exclude(user, ['totpKey', 'totpQRCode','password']), token}).statusCode(200).send();
-
-	}
-
-    /************************
-     * 
-     * 
      *                                  LOGIN LOCAL (not available yet)
      *      
      * 
@@ -77,7 +50,6 @@ export class AuthController{
 		let newID = await this.authService.idGenerator();
 		while (await this.userService.getUserByID(newID))
 			newID = await this.authService.idGenerator();
-		//TODO: CHEKER for username and email (check it doesn't exist) --> if it exists ? strange
 		if (await this.userService.mailChecker(authDtos.email) === false)
 			throw new ConflictException("username or email already taken !");
 		if (await this.userService.FortyTwoMailCheck(authDtos.email) === false)
@@ -150,16 +122,11 @@ export class AuthController{
     @Get('2FAdisable')
     @UseGuards(...AuthenticatedGuard)
     async twoFAdisabler(@Req() req: any){
-			//TODO: check with front if error ok and remove console log here
         if (req.user.enabled2FA == false)
-            console.log("2FA is already disabled !");
+					return this.userService.exclude(req.user, ['totpKey', 'totpQRCode', 'password']);
         else {
             const updtUser = await this.userService.disable2FA(req.user.id);
-			await this.userService.setLog2FA(updtUser, false);
-            if (updtUser.enabled2FA == false)
-                console.log("2FA correctly disabled !");
-            else
-                console.log("An issue happened disabling 2fa ???");
+						await this.userService.setLog2FA(updtUser, false);
             return this.userService.exclude(updtUser, ['totpKey','totpQRCode', 'password']);
         }
         return this.userService.exclude(req.user, ['totpKey', 'totpQRCode', 'password']);
