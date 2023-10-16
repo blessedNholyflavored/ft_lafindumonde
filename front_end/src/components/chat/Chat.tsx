@@ -84,7 +84,25 @@ export const Chat = () => {
   const [activeChannelName, setActiveChannelName] = useState("");
   const [sender, setSender] = useState<number>(0);
 
-  const handleBeforeUnload = (e: BeforeUnloadEvent) => {};
+
+  useEffect(() => {
+    const shouldRedirect = sessionStorage.getItem('shouldRedirect');
+
+    if (shouldRedirect) {
+      sessionStorage.removeItem('shouldRedirect');
+      navigate('/chat');
+    }
+
+    const handleBeforeUnload = () => {
+      sessionStorage.setItem('shouldRedirect', 'true');
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [navigate]);
 
   const fetchYourRoomsList = useCallback(async () => {
     try {
@@ -615,10 +633,10 @@ export const Chat = () => {
       setActiveBanChannel(0);
     }
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+    localStorage.removeItem('hasRedirected');
+
       if (socket) {
         socket.off("receiveInvite");
         socket.off("NotifyBadPWD");
@@ -951,9 +969,53 @@ export const Chat = () => {
   const navigateToSettings = () => {
     navigate("/settings");
   };
+
   const navigateToHome = () => {
     navigate("/");
   };
+
+  const handleViewProfile = (userId: number) => {
+    navigate(`/users/profile/${userId}`);
+  };
+
+    async function checkBlockedForNotify(senderId: string, recipientId: number) {
+    if (!senderId || !recipientId) return;
+    try {
+      const response = await fetch(
+        `http://${window.location.hostname}:3000/friends/blocked/${senderId}/${recipientId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des données.");
+      }
+
+      const data = await response.json();
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error("Erreur:", error);
+      return false;
+    }
+  }
+
+  async function inviteToMatch(sender: string, recipient: number) {
+    if (!recipient) return;
+    if (
+      user &&
+      (await checkBlockedForNotify(user?.id.toString(), recipient)) === false
+    )
+      socket.emit("inviteToMatch", recipient);
+  }
+
+  if (socket) {
+    socket?.on("matchStart", (roomdId: number) => {
+      navigate(`/gamefriend/${roomdId}`);
+    });
+  }
 
   const leftChannel = async () => {
     if (!id) return;
@@ -977,6 +1039,8 @@ export const Chat = () => {
     }, 500);
     navigate("/chat");
   };
+
+
 
   return (
     <>
@@ -1151,50 +1215,76 @@ export const Chat = () => {
                         privMSG.map((priv) => (
                           <div key={priv.id}>
                             {priv.isBlocked === "false" && (
-                              <button
-                                className="buttonseemore buttonchan"
-                                onClick={() => {
-                                  navToPrivateConv(priv.id);
-                                  if (showConv) {
-                                    handleButtonConv();
-                                  } else {
-                                    setShowConv(true);
-                                    setShowChatChannel(false);
-                                    setActiveChannel(0);
-                                  }
-                                }}
-                                disabled={selectedPrivateConv === priv.id}
-                              >
+                              <div>
+                                <button
+                                  className={`buttonseemore buttonchan ${
+                                    selectedPrivateConv === priv.id
+                                      ? "active-priv"
+                                      : ""
+                                  }`}
+                                  onClick={() => {
+                                    navToPrivateConv(priv.id);
+                                    if (showConv) {
+                                      handleButtonConv();
+                                    } else {
+                                      setShowConv(true);
+                                      setShowChatChannel(false);
+                                      setActiveChannel(0);
+                                    }
+                                  }}
+                                  disabled={selectedPrivateConv === priv.id}
+                                >
+                                  {selectedPrivateConv === priv.id && (
+                                    <p
+                                      className="chantitle navbarsmallbox"
+                                      style={{
+                                        position: "absolute",
+                                        color: "white",
+                                        width: "9vw",
+                                        height: "3vh",
+                                        right: "531px",
+                                        top: "3%",
+                                        fontSize: "14px",
+                                        backgroundColor: "rgba(0, 0, 0, 0.75)",
+                                        zIndex: "6000",
+                                      }}
+                                    >
+                                      {priv.username}
+                                    </p>
+                                  )}
+                                  <div>
+                                    {priv.status === "ONLINE" && (
+                                      <span>{priv.username} 🟢</span>
+                                    )}
+                                    {priv.status === "INGAME" && (
+                                      <span>{priv.username} 🎮</span>
+                                    )}
+                                    {priv.status === "OFFLINE" && (
+                                      <span>{priv.username} 🔴</span>
+                                    )}
+                                  </div>
+                                </button>
                                 {selectedPrivateConv === priv.id && (
-                                  <p
-                                    className="chantitle navbarsmallbox"
-                                    style={{
-                                      position: "absolute",
-                                      color: "white",
-                                      width: "9vw",
-                                      height: "3vh",
-                                      right: "531px",
-                                      top: "3%",
-                                      fontSize: "14px",
-                                      backgroundColor: "rgba(0, 0, 0, 0.75)",
-                                      zIndex: "6000",
-                                    }}
-                                  >
-                                    {priv.username}
-                                  </p>
+                                  <div>
+                                    <button
+                                      className="buttonseemore buttonchan privbutt"
+                                      onClick={() =>
+                                        handleViewProfile(recipient as any)
+                                      }
+                                    >
+                                      nav to {priv.username}'s profile
+                                    </button>
+                                    <button
+                                      className="buttonseemore buttonchan privbutt2"
+                                      onClick={() =>
+                                        inviteToMatch(user?.id as any, priv.id)
+                                      }
+                                    >
+                                      invite {priv.username} to play
+                                    </button>
+                                  </div>
                                 )}
-                                <div>
-                                  {priv.status === "ONLINE" && (
-                                    <span>{priv.username} 🟢</span>
-                                  )}
-                                  {priv.status === "INGAME" && (
-                                    <span>{priv.username} 🎮</span>
-                                  )}
-                                  {priv.status === "OFFLINE" && (
-                                    <span>{priv.username} 🔴</span>
-                                  )}
-                                </div>
-                              </button>
+                              </div>
                             )}
                           </div>
                         ))
