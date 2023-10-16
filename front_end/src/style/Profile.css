@@ -224,6 +224,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  margin: 2vh;
 }
 
 .icon {
@@ -243,6 +244,7 @@
 .scorelist {
   color: black;
   align-items: start;
+  margin: 2vh;
 }
 
 .footersmallbox1 {
@@ -536,9 +538,11 @@ input::file-selector-button {
 .gameHistory {
   overflow: auto;
   width: 20vw;
-  height: 300px;
+  height: 35vh;
 }
-
+.gameHistory::-webkit-scrollbar {
+  display: none;
+}
 .games {
   color: black;
   display: grid;
