@@ -34,6 +34,7 @@ export const PrivateChat = () => {
   const bottomEl = useRef<null | HTMLDivElement>(null);
 
   const fetchPrivMessageList = useCallback(async () => {
+    if (!recipient) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/recupMess/${recipient}/${user?.id}`,
@@ -106,6 +107,7 @@ export const PrivateChat = () => {
   }, [recipient, user?.id]);
 
   const fetchLastMessage = useCallback(async () => {
+    if (!recipient) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/recupLastMess/${user?.id}/${recipient}`,

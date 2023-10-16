@@ -225,8 +225,7 @@ export const ChatChannel = () => {
 
   const fetchYourRole = useCallback(
     async (userId: number) => {
-      if (!id)
-        return "";
+      if (!id) return "";
       try {
         const response = await fetch(
           `http://${window.location.hostname}:3000/chat/getRole/${userId}/${id}`,
@@ -535,6 +534,7 @@ export const ChatChannel = () => {
   };
 
   const kickFromChannel = async (userId: number) => {
+    if (!id || !userId) return;
     const reason = reasonKick;
     try {
       const response = await fetch(
@@ -560,6 +560,7 @@ export const ChatChannel = () => {
   };
 
   const MuteFromChannel = async (userId: number) => {
+    if (!id || !userId) return;
     let reason = reasonMute;
     let time = timeMute;
     if (!time) time = "0";
@@ -588,6 +589,7 @@ export const ChatChannel = () => {
   };
 
   const BanFromChannel = async (userId: number) => {
+    if (!id || !userId) return;
     let reason = reasonBan;
     let time = timeBan;
     if (!time) time = "0";
@@ -616,6 +618,7 @@ export const ChatChannel = () => {
   };
 
   const UnbanFromChannel = async (userId: number) => {
+    if (!id || !userId) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/unban/${id}/${userId}}`,
@@ -637,6 +640,7 @@ export const ChatChannel = () => {
   };
 
   const UnMuteFromChannel = async (userId: number) => {
+    if (!id || !userId) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/unmute/${id}/${userId}/`,
@@ -677,6 +681,7 @@ export const ChatChannel = () => {
   };
 
   async function checkBlockedForNotify(senderId: string, recipientId: number) {
+    if (!senderId || !recipientId) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/friends/blocked/${senderId}/${recipientId}`,
@@ -700,6 +705,7 @@ export const ChatChannel = () => {
   }
 
   async function inviteToMatch(sender: string, recipient: number) {
+    if (!recipient) return;
     if (
       user &&
       (await checkBlockedForNotify(user?.id.toString(), recipient)) === false
@@ -714,6 +720,7 @@ export const ChatChannel = () => {
   }
 
   async function deleteFriend(sender: string, recipient: string) {
+    if (!recipient) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/friends/delete/${recipient}`,
@@ -773,6 +780,7 @@ export const ChatChannel = () => {
   }
 
   async function passAdminOfChannel(userId: number) {
+    if (!id) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/admin/${userId}/${id}`,
@@ -794,6 +802,7 @@ export const ChatChannel = () => {
   }
 
   async function demoteAdminOfChannel(userId: number) {
+    if (!id) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/demoteAdmin/${userId}/${id}`,
@@ -815,6 +824,7 @@ export const ChatChannel = () => {
   }
 
   async function getStatutChan() {
+    if (!id) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/statut/${id}`,
@@ -834,6 +844,7 @@ export const ChatChannel = () => {
   }
 
   async function ChangeStatutChan(option: string) {
+    if (!id) return;
     let pass: string | null = "42";
     if (option === "PWD_PROTECTED") {
       pass = newPass;
