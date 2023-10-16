@@ -185,13 +185,11 @@ const SuperPong: React.FC<PongGameProps> = () => {
     } catch (error) {}
   }
 
+  //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
 
-    //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
-
-    //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
+  //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
 
   useEffect(() => {
-
     if (socket && checkstatus === false) {
       setTimeout(() => {
         getstatus();
@@ -218,7 +216,6 @@ const SuperPong: React.FC<PongGameProps> = () => {
     if (socket && id && room) {
       socket.emit("gameFinished", id);
     }
-
 
     if (socket) {
       socket.on("startGame2", async (updateroom: Room) => {
@@ -369,7 +366,7 @@ const SuperPong: React.FC<PongGameProps> = () => {
       </header>
 
       <div className="flex-bg">
-        <main>
+        <main className="commonmain">
           <div className="fullpage ponggame">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
@@ -482,7 +479,7 @@ const SuperPong: React.FC<PongGameProps> = () => {
             </div>
           </div>
         </main>
-        <nav className="profileNav">
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>

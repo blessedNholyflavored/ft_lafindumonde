@@ -17,7 +17,6 @@ header h1 {
   text-align: center;
 }
 
-
 .flex-bg {
   display: flex;
   background-size: cover;
@@ -135,7 +134,6 @@ footer {
   /* width: 100%; */
 }
 
-
 .footerfriends {
   padding: 1rem;
   text-align: center;
@@ -146,8 +144,6 @@ footer {
   height: 150px;
   /* width: 100%; */
 }
-
-
 
 .home {
   top: 5%;
@@ -274,4 +270,33 @@ footer {
 
 .popup {
   border: 1px solid black;
+}
+
+@media (width < 1300px) {
+  .commonnav {
+    display: inline-block;
+    padding: 0;
+    margin: auto 1vw;
+    justify-items: center;
+  }
+  .commonnav ul {
+    margin: 0;
+  }
+  .commonmain {
+    padding: 2vh 0;
+    width: 80vw;
+  }
+  .fullpage {
+    width: 80vw !important;
+  }
+  .fullpage1 {
+    width: 80vw !important;
+  }
+  .fullpage2 {
+    width: 80vw !important;
+  }
+
+  input {
+    width: 15vw !important;
+  }
 }
