@@ -217,8 +217,12 @@
 }
 
 .scorelist {
+  margin: 2vh 2vw;
   color: black;
   align-items: start;
+}
+.scorelist div {
+  margin: 1vh;
 }
 
 .footersmallbox1 {
