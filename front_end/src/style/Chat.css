@@ -102,7 +102,7 @@
 .sentmessage {
   align-self: flex-end;
   background-color: #b9d9eb;
-  max-width: 30em;
+  max-width: 25em;
   padding: 0.125em 2.5em;
   border-radius: 1rem;
   box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3),
@@ -114,7 +114,7 @@
   background-color: #0bda51;
   margin-bottom: 2px;
   align-self: flex-start;
-  max-width: 30em;
+  max-width: 25em;
   padding: 0.125em 2.5em;
   border-radius: 1rem;
   box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3),
@@ -180,6 +180,12 @@
   background-color: red;
 }
 
+.onlinelist:disabled {
+  cursor: default;
+}
+.buttonseemore:disabled:hover {
+  background: none #fff !important;
+}
 .sendingzonechannel {
   position: sticky;
   bottom: 0;
@@ -282,4 +288,18 @@
   z-index: 5000;
   position: relative;
   top: 30%;
+}
+
+/***************
+*
+*								RESPONSIVE
+*
+***************/
+@media (width < 1300px) {
+  .receivedmessage {
+    max-width: 50%;
+  }
+  .sentmessage {
+    max-width: 50%;
+  }
 }

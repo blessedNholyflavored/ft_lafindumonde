@@ -486,7 +486,7 @@ const SuperPong: React.FC<PongGameProps> = () => {
             </div>
           </div>
         </main>
-        <nav className="profileNav">
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
