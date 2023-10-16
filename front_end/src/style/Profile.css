@@ -478,13 +478,27 @@ input::file-selector-button {
   box-shadow: 3px 4px 0px 0px #000;
 }
 
+.buttonseemore:hover {
+  background: radial-gradient(
+    circle,
+    rgb(255, 255, 255) 0%,
+    rgb(203, 245, 241) 100%
+  ) !important;
+}
+
 .onlinebttn,
 .buttonseemore {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
-
+.onlinebttn:hover {
+  background: radial-gradient(
+    circle,
+    rgb(214, 156, 181) 0%,
+    rgb(141, 179, 221) 100%
+  );
+}
 .emptymessage {
   font-weight: 600;
   display: flex;
@@ -528,4 +542,11 @@ input::file-selector-button {
 .gamehist-score {
   height: 5px;
   font-size: 70%;
+}
+
+@media (width < 1300px) {
+  .formsettings {
+    display: inline;
+    height: 7vh;
+  }
 }

@@ -106,8 +106,7 @@ export const UserSetting: React.FC = () => {
         setNotifyMSG("An error happened while updating username");
         setNotifyType(3);
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const handleSubmitPass = async (e: React.FormEvent) => {
@@ -162,8 +161,7 @@ export const UserSetting: React.FC = () => {
         setNotifyMSG("An error happened while updating email address");
         setNotifyType(3);
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const displayPic = async () => {
@@ -372,7 +370,7 @@ export const UserSetting: React.FC = () => {
       </header>
 
       <div className="flex-bg">
-        <main>
+        <main className="commonmain">
           <div className="fullpage">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
@@ -517,7 +515,7 @@ export const UserSetting: React.FC = () => {
           </div>
         </main>
 
-        <nav>
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>

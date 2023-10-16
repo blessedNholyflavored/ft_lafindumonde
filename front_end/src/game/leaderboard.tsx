@@ -152,7 +152,7 @@ export const Classement = () => {
       </header>
 
       <div className="flex-bg">
-        <main>
+        <main className="commonmain">
           <div className="fullpage2">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
@@ -246,7 +246,7 @@ export const Classement = () => {
             </div>
           </div>
         </main>
-        <nav>
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>

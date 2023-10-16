@@ -626,7 +626,7 @@ export const FriendsPage: React.FC = () => {
         <h1>TRANSCENDENCE</h1>
       </header>
       <div className="flex-bg">
-        <main className="mainFriendship">
+        <main className="commonmain">
           <div>
             {showNotification && (
               <Notify
@@ -896,7 +896,7 @@ export const FriendsPage: React.FC = () => {
             </div>
           </div>
         </main>
-        <nav className="friendshipNav">
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>
