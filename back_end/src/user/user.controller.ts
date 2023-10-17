@@ -16,7 +16,7 @@ import {
   ValidationPipe,
   UsePipes,
   UnauthorizedException,
-	NotFoundException,
+  NotFoundException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -48,7 +48,6 @@ export class UsersController {
   @Post('/update-username')
   @UsePipes(new ValidationPipe())
   async updating_username(@Req() req: any, @Body() username: UsernameDto) {
-    console.log('service update username ', req.user.id);
     const newUsername = username['username'];
     if (
       (await this.userService.updateUsername(req.user.id, newUsername)) == false
@@ -59,7 +58,6 @@ export class UsersController {
   @Post('/update-pass')
   @UsePipes(new ValidationPipe())
   updating_password(@Req() req: any, @Body() password: PassDto) {
-    console.log('service update username ', req.user.id);
     const newPassword = password['password'];
     this.userService.updatePassword(req.user.id, newPassword);
   }
@@ -108,7 +106,6 @@ export class UsersController {
         ) {
           cb(null, true);
         } else {
-          console.log(file.mimetype);
           cb(
             new HttpException(
               'jpg/jpeg/png images files only accepted',
@@ -217,11 +214,10 @@ export class UsersController {
     return photo;
   }
 
-	@Get('/:id/exist')
-	async doesExist(@Param('id') id: string, @Res() res: any) {
-		const user = await this.userService.getUserByID(parseInt(id));
-		if (!user)
-			throw new NotFoundException;
-		res.status(200).send();
-	}
+  @Get('/:id/exist')
+  async doesExist(@Param('id') id: string, @Res() res: any) {
+    const user = await this.userService.getUserByID(parseInt(id));
+    if (!user) throw new NotFoundException();
+    res.status(200).send();
+  }
 }
