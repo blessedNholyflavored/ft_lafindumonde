@@ -194,7 +194,7 @@ const Box = (props: any) => {
               </div>
               <div className="boxrowtest">
                 <div className="navbarsmallbox">
-                  <p className="boxtitle"> Game History </p>
+                  <p className="boxtitle"> GAME HISTORY </p>
                 </div>
                 <GameHistory type="info" />
               </div>

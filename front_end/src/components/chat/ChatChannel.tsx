@@ -977,7 +977,7 @@ export const ChatChannel = () => {
                   </div>
                 ))
               ) : (
-                <div style={{textAlign:"center"}}>no messages yet!</div>
+                <div className="emptymessage" style={{textAlign:"center"}}>no messages yet!</div>
               )}
             </ul>
           )}

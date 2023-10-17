@@ -1236,7 +1236,7 @@ export const Chat = () => {
                                 >
                                   {selectedPrivateConv === priv.id && (
                                     <p
-                                      className="chantitle navbarsmallbox"
+                                      className="chantitle navbarsmallbox chantitle-fix"
                                       style={{
                                         position: "absolute",
                                         color: "white",
@@ -1352,16 +1352,14 @@ export const Chat = () => {
                               showChatButton === true && (
                                 <div>
                                   <p
-                                    className="chantitle navbarsmallbox"
+                                    className="chantitle navbarsmallbox chantitle-fix"
                                     style={{
                                       position: "absolute",
-                                      color: "white",
                                       width: "9vw",
                                       height: "3vh",
                                       right: "531px",
-                                      top: "3%",
+                                      top: "-7%",
                                       fontSize: "14px",
-                                      backgroundColor: "rgba(0, 0, 0, 0.75)",
                                     }}
                                   >
                                     {chan.name}

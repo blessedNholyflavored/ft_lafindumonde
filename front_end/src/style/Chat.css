@@ -314,3 +314,14 @@
   position: relative;
   top: 30%;
 }
+
+.emptymessage{
+  display: flex;
+}
+
+.chantitle-fix{
+  border: 6px solid var(--greyscale-k, #000);
+  /* box-shadow: 10px 12px 0px 0px #000; */
+  background-color: white;
+  color: black;
+}

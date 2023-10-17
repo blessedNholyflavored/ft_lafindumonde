@@ -343,7 +343,7 @@ export const PrivateChat = () => {
                     </div>
                   ))
                 ) : (
-                  <div>no messages yet!</div>
+                  <div className="emptymessage">no messages yet!</div>
                 )}
               </ul>
             )}
