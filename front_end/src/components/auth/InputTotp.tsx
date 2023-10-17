@@ -43,9 +43,7 @@ export const InputTotp: React.FC = () => {
           setNotifyType(3);
           setReceivedCode("");
         }
-      } catch (error) {
-        console.error("Error: ", error);
-      }
+      } catch {}
     }
   };
 
