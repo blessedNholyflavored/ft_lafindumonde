@@ -524,7 +524,9 @@ export const ChatChannel = () => {
 
   const onSubmit = () => {
     if (value.length > 0) {
-      socket.emit("newMessageRoom", value, id);
+      let modifiedString = value.replace(/[&'"]/g, (match: string | number) => ({'&': '＆', "'": '’', '"': '”'}[match]) as any);
+
+      socket.emit("newMessageRoom", modifiedString, id);
       setValue("");
       setTimeout(() => {
         socket.emit("reloadMessRoomTEST", id);

@@ -209,7 +209,8 @@ export const PrivateChat = () => {
 
   const onSubmit = () => {
     if (value.length > 0) {
-      socket.emit("newMessage", value, recipient);
+      let modifiedString = value.replace(/[&'"]/g, (match: string | number) => ({'&': '＆', "'": '’', '"': '”'}[match]) as any);
+      socket.emit("newMessage", modifiedString, recipient);
       setTimeout(() => {
         socket.emit("reloadMessagesTEST", value, recipient);
       }, 200);
