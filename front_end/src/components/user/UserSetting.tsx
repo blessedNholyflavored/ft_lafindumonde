@@ -101,19 +101,12 @@ export const UserSetting: React.FC = () => {
         setShowNotification(true);
         setNotifyMSG("Username successfully updated !");
         setNotifyType(2);
-        // alert("Nom d'utilisateur mis à jour avec succès !");
-        //window.location.reload();
       } else {
         setShowNotification(true);
         setNotifyMSG("An error happened while updating username");
         setNotifyType(3);
-        // alert(
-        //   "Une erreur s'est produite lors de la mise à jour du nom d'utilisateur."
-        // );
       }
-    } catch (error) {
-      //console.error("Erreur:", error);
-    }
+    } catch (error) {}
   };
 
   const handleSubmitPass = async (e: React.FormEvent) => {
@@ -135,13 +128,10 @@ export const UserSetting: React.FC = () => {
         setShowNotification(true);
         setNotifyMSG("Password successfully updated !");
         setNotifyType(2);
-        // alert("Password mis à jour avec succès !");
-        //window.location.reload();
       } else {
         setShowNotification(true);
         setNotifyMSG("An error happened while updating password");
         setNotifyType(3);
-        // alert("Une erreur s'est produite lors de la mise à jour du password.");
       }
     } catch (error) {
       console.error("Erreur:", error);
@@ -166,17 +156,12 @@ export const UserSetting: React.FC = () => {
         setShowNotification(true);
         setNotifyMSG("Mail successfully updated !");
         setNotifyType(2);
-        // alert("mail mis à jour avec succès !");
-        //window.location.reload();
       } else {
         setShowNotification(true);
         setNotifyMSG("An error happened while updating email address");
         setNotifyType(3);
-        // alert("Une erreur s'est produite lors de la mise à jour du mail.");
       }
-    } catch (error) {
-      //console.error("Erreur:", error);
-    }
+    } catch (error) {}
   };
 
   const displayPic = async () => {
@@ -290,7 +275,7 @@ export const UserSetting: React.FC = () => {
           credentials: "include",
         }
       );
-      
+
       if (response.ok) {
         setShowNotification(true);
         setNotifyMSG("You successfully changed your avatar!");
@@ -357,9 +342,7 @@ export const UserSetting: React.FC = () => {
       setNotifyMSG("You can't enable 2FA with this type of account !");
       setNotifyType(3);
       return;
-    }
-   
-    else {
+    } else {
       setShowNotification(true);
       setNotifyMSG(
         "Are you ready to save the QR code you will be provided in the next page ?"
@@ -387,7 +370,7 @@ export const UserSetting: React.FC = () => {
       </header>
 
       <div className="flex-bg">
-        <main>
+        <main className="commonmain">
           <div className="fullpage">
             <div className="navbarbox">
               <img src={icon} alt="icon" />
@@ -407,7 +390,6 @@ export const UserSetting: React.FC = () => {
                   <form className="formsettings" onSubmit={handleSubmit}>
                     <label className="labelcss">
                       <input
-                        // className="inputcss"
                         type="text"
                         value={newUsername}
                         minLength={3}
@@ -430,7 +412,6 @@ export const UserSetting: React.FC = () => {
                       >
                         <label className="labelcss">
                           <input
-                            // className="inputcss"
                             type="password"
                             value={newPass}
                             minLength={8}
@@ -450,7 +431,6 @@ export const UserSetting: React.FC = () => {
                         >
                           <label className="labelcss">
                             <input
-                              // className="inputcss"
                               type="email"
                               value={newMail}
                               placeholder="type new mail"
@@ -535,7 +515,7 @@ export const UserSetting: React.FC = () => {
           </div>
         </main>
 
-        <nav>
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>

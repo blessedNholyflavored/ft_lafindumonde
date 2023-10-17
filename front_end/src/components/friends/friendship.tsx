@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useAuth } from "../auth/AuthProvider";
 import { useNavigate, useParams } from "react-router-dom";
 import { WebsocketContext } from "../../services/WebsocketContext";
+import Notify from "../../services/Notify";
 //
 
 export enum FriendsInvitationStatus {
@@ -21,6 +22,10 @@ export const FriendshipComponent = ({
   const socket = useContext(WebsocketContext);
   const navigate = useNavigate();
   const [accepted, setAccepted] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const [notifyMSG, setNotifyMSG] = useState<string>("");
+  const [notifyType, setNotifyType] = useState<number>(0);
+  const [sender, setSender] = useState<number>(0);
 
   useEffect(() => {
     fetchFriendshipStatus();
@@ -79,7 +84,10 @@ export const FriendshipComponent = ({
         )
           socket.emit("notifyFriendShip", id);
         socket.emit("reloadListFriendPage", id);
-        alert("Friendship created successfully.");
+        setShowNotification(true);
+        setNotifyMSG("Friend request sent !");
+        setNotifyType(2);
+        setSender(sender);
       } else {
         console.error("Error creating friendship: request is pending");
         alert("Error creating friendship: request is pending");
@@ -231,18 +239,31 @@ export const FriendshipComponent = ({
     });
   }
 
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
+
   //
   return (
     <div className="buttnprofilefriend">
+      <div>
+        {showNotification && (
+          <Notify
+            message={notifyMSG}
+            type={notifyType}
+            senderId={sender}
+            onClose={handleCloseNotification}
+          />
+        )}
+      </div>
       {user && user.id.toString() !== recipientId && (
-        <form 
-        onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <button
             className="buttonseemore buttonchan"
             type="submit"
             disabled={checkButton()}
           >
-          friendship status:  {friendshipStatus}
+            friendship status: {friendshipStatus}
           </button>
         </form>
       )}
@@ -250,8 +271,7 @@ export const FriendshipComponent = ({
         user &&
         user.id.toString() !== recipientId && (
           <button
-          className="buttonseemore buttonchan"
-
+            className="buttonseemore buttonchan"
             onClick={() => BlockFriend(user?.id as any, id as string)}
             disabled={checkButton()}
           >
@@ -259,10 +279,10 @@ export const FriendshipComponent = ({
           </button>
         )}
       {user && user.id.toString() !== recipientId && (
-        <button 
-        className="buttonseemore buttonchan"
-      
-        onClick={() => inviteToMatch(user?.id as any, id as string)}>
+        <button
+          className="buttonseemore buttonchan"
+          onClick={() => inviteToMatch(user?.id as any, id as string)}
+        >
           inviter en match ?
         </button>
       )}

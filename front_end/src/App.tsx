@@ -15,7 +15,6 @@ import { SaveTotp } from "./components/auth/SaveTotp";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { AuthProvider, useAuth } from "./components/auth/AuthProvider";
 import { socket, WebsocketProvider } from "./services/WebsocketContext";
-import { Websocket } from "./services/Websocket";
 import SuperPong from "./game/SuperPong";
 import { Profile } from "./components/user/Profile";
 import { FriendsPage } from "./components/friends/friendsPage";
@@ -67,26 +66,10 @@ export const App: React.FC = () => {
           <Route path="/local_login" element={<LocalLogin />} />
           <Route path="/register" element={<Register />} />
           <Route
-            path="/auth"
-            element={
-              <ProtectedRoute>
-                <AuthTest />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/users/profile/:id"
             element={
               <ProtectedRoute>
                 <Profile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/sock"
-            element={
-              <ProtectedRoute>
-                <Websocket />
               </ProtectedRoute>
             }
           />
@@ -191,25 +174,5 @@ export const App: React.FC = () => {
     </AuthProvider>
   );
 };
-
-//TODO: remove this before prod
-function AuthTest() {
-  const navigate = useNavigate();
-  const { user, setUser } = useAuth();
-
-  const navigateToHome = () => {
-    navigate("/");
-  };
-
-  return (
-    <div className="Salut">
-      <h1>{user!.username}</h1>
-      <img src={user!.pictureURL} alt="profile pic" />
-      <p>{JSON.stringify(user)}</p>
-      <button onClick={() => Logout({ user, setUser })}>LOG OUT </button>
-      <button onClick={navigateToHome}>HOME</button>
-    </div>
-  );
-}
 
 export default App;

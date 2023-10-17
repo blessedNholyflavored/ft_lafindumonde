@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { User, Room } from "../interfaces/interfaces"; // Assurez-vous d'importer les interfaces correctes
+import { User, Room } from "../interfaces/interfaces";
 import "../App.css";
 import { useAuth } from "../components/auth/AuthProvider";
 import { useNavigate, useParams } from "react-router-dom";
@@ -16,8 +16,6 @@ import icon from "./../img/buttoncomp.png";
 import logo from "./../img/logo42.png";
 import nav from "./../img/buttoncomp.png";
 import { Logout } from "../components/auth/Logout";
-
-
 
 const GameFriend: React.FC = () => {
   const { id } = useParams();
@@ -51,12 +49,10 @@ const GameFriend: React.FC = () => {
     if (countdown > 0) {
       socket?.emit("reloadCountdown", id);
       setCountdown(-999);
-      // window.location.href = "/gamePage";
     }
     socket?.emit("leaveGame", id);
     socket?.emit("changeStatus");
     setEnd(1);
-    // NavHome();
   };
 
   const startCountdown = () => {
@@ -135,7 +131,6 @@ const GameFriend: React.FC = () => {
       );
       if (response.ok) {
         const recup = await response.text();
-        // setStatus(recup);
         status = recup;
       }
       if (status !== "INGAME") {
@@ -143,6 +138,10 @@ const GameFriend: React.FC = () => {
       }
     } catch (error) {}
   }
+
+  //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
+
+  //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
 
   useEffect(() => {
     if (socket && checkstatus === false) {
@@ -161,7 +160,6 @@ const GameFriend: React.FC = () => {
     if (socket && !end) {
       socket.on("gameIsDone", async () => {
         setEnd(1);
-        // window.location.href = "/gamePage";
       });
     }
 
@@ -177,35 +175,22 @@ const GameFriend: React.FC = () => {
       socket.emit("gameFinished", id);
     }
 
-    if (usernameP1 && usernameP2 && countdown <= 0 && imgFlag === 0){
+    if (usernameP1 && usernameP2 && countdown <= 0 && imgFlag === 0) {
       catchPic();
       setImgFlag(1);
     }
     if (socket && countdown <= 0 && imgFlag === 0) {
       socket.on("sendRoomAtStart", (recuproom: Room) => {
-
         setUsernameP1(recuproom.player1 as string);
         setUsernameP2(recuproom.player2 as string);
       });
     }
-
-    //      CREATION DU MODEL DE LA GAME DANS LA DB
-
-    //      LANCEMENT DE LA PARTIE (AFFICHAGE DU DEBUT)
-
-    // if (socket && counter === 0 && countdown === 0) {
-    //   socket?.emit('startGame');
-    //   setCounter(1);
-    // }
-
-    //      RECUP DES DATAS DU BACK VERS LE FRONT POUR AFFICHAGE AU DEBUT DE LA GAME
 
     if (socket) {
       socket.on("startFriendGame", async (updateroom: Room) => {
         setCounter(1);
         setRoom(updateroom);
         socket.emit("recupRoomAtStart", id);
-
       });
     }
 
@@ -215,7 +200,6 @@ const GameFriend: React.FC = () => {
           setPlayer1Pos(updatedRoom.player1Y);
           setPlayer2Pos(updatedRoom.player2Y);
         }
-        // setRoom(updatedRoom);
       });
     }
 
@@ -360,7 +344,6 @@ const GameFriend: React.FC = () => {
                     height: mapy / 3.5,
                   }}
                 >
-                  {/* <div className="countdown-container"> */}
                   {countdown > 1 && (
                     <div className="countdown">{countdown}</div>
                   )}
@@ -370,17 +353,7 @@ const GameFriend: React.FC = () => {
                   {countdown === 0 && (
                     <div className="countdown start">Start</div>
                   )}
-                  {/* </div> */}
-                  {/* {user && (
-                    <button className="buttonseemore">
-                      you are currently logged as {user.username}
-                    </button>
-                  )} */}
-                  {/* {!end && (
-                    <button className="buttonseemore" onClick={NavHome}>
-                      leave the game
-                    </button>
-                  )} */}
+
                   {room && room.player1 && room.player2 && (
                     <div>
                       <div
@@ -449,41 +422,6 @@ const GameFriend: React.FC = () => {
             </div>
           </div>
         </main>
-        {/* 
-        <nav>
-          <ul>
-            <li className="menu-item">
-              <a onClick={navigateToHome}>
-                <img src={folderviolet} alt="Menu 3" />
-                <p>Home</p>
-              </a>
-            </li>
-            <li className="menu-item">
-              <a onClick={() => navToGamePage()}>
-                <img src={foldergreen} alt="Menu 3" />
-                <p>Game</p>
-              </a>
-            </li>
-            <li className="menu-item">
-              <a onClick={navigateToProfPage}>
-                <img src={folderpink} alt="Menu 3" />
-                <p>Profile</p>
-              </a>
-            </li>
-            <li className="menu-item">
-              <a onClick={navigateToSettings}>
-                <img src={folderyellow} alt="Menu 3" />
-                <p>Settings</p>
-              </a>
-            </li>
-            <li className="menu-item">
-              <a onClick={navigateToFriends}>
-                <img src={folderwhite} alt="Menu 3" />
-                <p>Friends</p>
-              </a>
-            </li>
-          </ul>
-        </nav> */}
       </div>
       <footer>
         <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>

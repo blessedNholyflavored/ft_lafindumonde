@@ -1,9 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import io, { Socket } from "socket.io-client";
-import { Room, User } from "../interfaces/interfaces";
 import icon from "./../img/buttoncomp.png";
-import chat_pic from "./img/fill.pic.png";
 import "../App.css";
 import "../style/Home.css";
 import "../style/Game.css";
@@ -13,13 +10,9 @@ import { useAuth } from "../components/auth/AuthProvider";
 import { WebsocketContext } from "../services/WebsocketContext";
 
 import nav from "./../img/buttoncomp.png";
-import gaming from "./img/gamingpreview.png";
-import chatpic from "./img/chatpic.png";
-import gradient from "./img/gradient.png";
 import Notify from "../services/Notify";
 import foldergreen from "./../img/foldergreen.png";
-import folderblue from "./../img/folderblue.png";
-import folderpink  from "./../img/folderpink.png";
+import folderpink from "./../img/folderpink.png";
 import folderyellow from "./../img/folderyellow.png";
 import folderwhite from "./../img/folderwhite.png";
 import folderviolet from "./../img/folderviolet.png";
@@ -38,7 +31,6 @@ export const GamePage = () => {
   const { user, setUser } = useAuth();
   const [queueCount, setQueueCount] = useState<number>(0);
   const [queueCountBonus, setQueueCountBonus] = useState<number>(0);
-  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   let recupStatus = "";
   const [inGame, setInGame] = useState<number>(0);
   const [showNotification, setShowNotification] = useState(false);
@@ -46,10 +38,7 @@ export const GamePage = () => {
   const [notifyType, setNotifyType] = useState<number>(0);
   const [sender, setSender] = useState<number>(0);
 
-
   const handlePlayerSelect = async (player: string) => {
-    setSelectedPlayer(player);
-
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/users/status/${user?.id}`,
@@ -61,7 +50,6 @@ export const GamePage = () => {
       if (response.ok) {
         const recup = await response.text();
         console.log(recup);
-        // setStatus(recup);
         recupStatus = recup;
       }
       if (recupStatus !== "INGAME") {
@@ -72,7 +60,7 @@ export const GamePage = () => {
           setQueueCount(count);
           if (count === 2) {
             socket?.emit("updateUserIG", user?.id);
-            socket?.emit("createGame");
+            socket?.emit("createGame"); //      CREATION DU MODEL DE LA GAME DANS LA DB
             setQueueCount(0);
             navigate(`/game/${id}`);
           }
@@ -95,8 +83,6 @@ export const GamePage = () => {
   };
 
   const handlePlayerSelect222 = async (player: string) => {
-    setSelectedPlayer(player);
-
     try {
       if (user) socket?.emit("joinQueue", user.id, 1);
       setUser(user);
@@ -124,7 +110,6 @@ export const GamePage = () => {
   };
 
   useEffect(() => {
-
     setTimeout(() => {
       const leftGame = localStorage.getItem("leftGame");
       if (leftGame) {
@@ -176,6 +161,15 @@ export const GamePage = () => {
     navigate("/leaderboard");
   };
 
+  if (socket) {
+    socket.on("receiveInvite", (sender: number) => {
+      setShowNotification(true);
+      setNotifyMSG("you've received a game invitation !");
+      setNotifyType(1);
+      setSender(sender);
+    });
+  }
+
   return (
     <div>
       <header>
@@ -185,10 +179,19 @@ export const GamePage = () => {
         <h1>TRANSCENDENCE</h1>
       </header>
       <div className="flex-bg">
-        <main>
-          
+        <main className="commonmain">
           <div className="fullpage">
             <div className="navbarbox">
+              <div>
+                {showNotification && (
+                  <Notify
+                    message={notifyMSG}
+                    type={notifyType}
+                    senderId={sender}
+                    onClose={handleCloseNotification}
+                  />
+                )}
+              </div>
               <img src={icon} alt="icon" />
               <h1> Game </h1>
             </div>
@@ -196,12 +199,12 @@ export const GamePage = () => {
             <div className="gamecss">
               <div className="trollgame">
                 <p> 42 LOVES U </p>
-                <img src={sadpepe} />
+                <img src={sadpepe} alt="icon" />
               </div>
 
               <div className="trollgame2">
                 <p> it was so hard </p>
-                <img src={sponge} />
+                <img src={sponge} alt="icon" />
               </div>
 
               <div className="game1">
@@ -254,7 +257,7 @@ export const GamePage = () => {
             </div>
           </div>
         </main>
-        <nav>
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>

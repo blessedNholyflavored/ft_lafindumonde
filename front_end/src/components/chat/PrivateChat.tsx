@@ -1,19 +1,17 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import "./../../App.css";
 import "./../../style/Chat.css";
 import "./../../style/Logout.css";
 import { useAuth } from "./../auth/AuthProvider";
-import { Navigate, useParams } from "react-router-dom";
-import icon from "../../img/buttoncomp.png";
-import logo from "../../img/logo42.png";
-import { Logout } from "./../auth/Logout";
+import { useParams } from "react-router-dom";
 import { WebsocketContext } from "../../services/WebsocketContext";
 import { useNavigate } from "react-router-dom";
-
-type MessagePayload = {
-  content: string;
-  msg: string;
-};
 
 interface messages {
   senderId: any;
@@ -25,33 +23,27 @@ interface messages {
   isBlocked: string;
 }
 
-interface channels {
-  name: string;
-  visibility: string;
-  id: number;
-}
-
 export const PrivateChat = () => {
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const { recipient } = useParams();
   const [value, setValue] = useState("");
-  const [valueRoom, setValueRoom] = useState("");
-  // const [messages, setMessages] = useState<MessagePayload[]>([]);
   const [messageListSend, setMessageList] = useState<messages[]>([]);
-  const [lastMessage, setLastMessage] = useState<messages>();
-  const [selectedOption, setSelectedOption] = useState("public");
-  const [password, setPassword] = useState("");
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  const [channelsJoin, setChannelsJoin] = useState<channels[]>([]);
   const navigate = useNavigate();
   const socket = useContext(WebsocketContext);
   const [isBlocked, setIsBlocked] = useState<string>("");
-  let messages: messages;
   const bottomEl = useRef<null | HTMLDivElement>(null);
-  const messageListRef = useRef<any>(null);
 
-  async function fetchPrivMessageList() {
+  const fetchPrivMessageList = useCallback(async () => {
+    if (!recipient) return;
     try {
+      const firstres = await fetch(
+        `http://${window.location.hostname}:3000/users/${recipient}/exist`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!firstres.ok) navigate(`/chat/`);
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/recupMess/${recipient}/${user?.id}`,
         {
@@ -120,9 +112,10 @@ export const PrivateChat = () => {
       console.error("Erreur :", error);
       return [];
     }
-  }
+  }, [recipient, user?.id]);
 
-  async function fetchLastMessage() {
+  const fetchLastMessage = useCallback(async () => {
+    if (!recipient) return;
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/chat/recupLastMess/${user?.id}/${recipient}`,
@@ -134,7 +127,7 @@ export const PrivateChat = () => {
       if (!response.ok) {
         throw new Error("Erreur lors de la récupération des messages privés.");
       }
-      messages = await response.json();
+      const messages = await response.json();
       try {
         const senderResponse = await fetch(
           `http://${window.location.hostname}:3000/users/${messages.senderId}/username`,
@@ -175,7 +168,7 @@ export const PrivateChat = () => {
       console.error("Erreur :", error);
       return null;
     }
-  }
+  }, [recipient, user?.id]);
 
   useEffect(() => {
     if (socket) {
@@ -186,23 +179,38 @@ export const PrivateChat = () => {
         }, 300);
       });
     }
-  }, []);
+    return () => {
+      if (socket) {
+        socket.off("refreshMessagesTEST");
+      }
+    };
+  });
 
   useEffect(() => {
     async function fetchPrivMessage() {
       if (recipient) {
-        const scores = await fetchPrivMessageList();
+        await fetchPrivMessageList();
       }
     }
 
     checkBlocked(recipient as any, user?.id as any);
     fetchPrivMessage();
     if (isBlocked === "true") navigate("/chat");
-  }, [isBlocked]);
+    return () => {
+      if (socket) {
+        socket.off("refreshMessagesTEST");
+        socket.off("reloadMessRoom");
+        socket.off("reloadListRoomForOne");
+        socket.off("reloadMessagesTEST");
+        socket.off("newMessage");
+      }
+    };
+  }, [isBlocked, fetchPrivMessageList, navigate, recipient, user?.id, socket]);
 
   const onSubmit = () => {
     if (value.length > 0) {
-      socket.emit("newMessage", value, recipient);
+      let modifiedString = value.replace(/[&'"]/g, (match: string | number) => ({'&': '＆', "'": '’', '"': '”'}[match]) as any);
+      socket.emit("newMessage", modifiedString, recipient);
       setTimeout(() => {
         socket.emit("reloadMessagesTEST", value, recipient);
       }, 200);
@@ -269,7 +277,6 @@ export const PrivateChat = () => {
     }
     socket.emit("reloadListRoomForOne", recipient);
     navigate("/chat");
-    // window.location.reload();
   }
 
   async function removeBlocked(sender: string, recipient: string) {
@@ -290,7 +297,6 @@ export const PrivateChat = () => {
     setTimeout(() => {
       socket.emit("reloadMessRoom", recipient);
     }, 100);
-    // window.location.reload();
   }
 
   const handleEnter = (e: { key: string }) => {
@@ -306,88 +312,84 @@ export const PrivateChat = () => {
   return (
     <div className="testingchat ">
       <div className="chat-container">
-      <div className="chatmessagebar-private">
+        <div className="chatmessagebar-private">
 
-        <div className="chat-messages" ref={bottomEl}>
-          {recipient && (
-            <ul>
-              {messageListSend.length > 0 && user ? (
-                messageListSend.map((friend, index) => (
-                  <div className="messorder">
-                    {friend.recipientId === user?.id && (
-                      <div className="sentmessage">
-                        <div>
-                          <div key={index}>
-                            {/* <div>{friend.start_at}</div> */}
-                            <div className="whoschattin">
-                              <div>{friend.senderUsername}</div>
-                            </div>
-                            <div>{friend.content}</div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {friend.recipientId !== user?.id && (
-                      <div className="receivedmessage">
-                        <div>
-                          <div key={index}>
-                            <div className="whoschattin">
-                              <div>{friend.senderUsername}</div>
-                            </div>
-                            <div>{friend.content}</div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <div>no messages yet!</div>
-              )}
-            </ul>
-          )}
-          {/* <div ref={bottomEl}></div> */}
-          <div className="sendingzoneprivate-privatechat">
-         
+          <div className="chat-messages" ref={bottomEl}>
             {recipient && (
-              <div>
-                <input
-                  type="text"
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
-                  onKeyPress={handleEnter}
-                />
-                <button
-                  className="buttonseemore buttonchan"
-                  onClick={() => {
-                    onSubmit();
-                    scrollToBottom();
-                  }}
-                  disabled={value.length > 80}
-                >
-                  send
-                </button>
-              </div>
+              <ul>
+                {messageListSend.length > 0 && user ? (
+                  messageListSend.map((friend, index) => (
+                    <div className="messorder" key={index}>
+                      {friend.recipientId !== user?.id && (
+                        <div className="sentmessage">
+                          <div>
+                              <div className="whoschattin">
+                                <div>{friend.senderUsername}</div>
+                              </div>
+                              <div>{friend.content}</div>
+                          </div>
+                        </div>
+                      )}
+                      {friend.recipientId === user?.id && (
+                        <div className="receivedmessage">
+                          <div>
+                              <div className="whoschattin">
+                                <div>{friend.senderUsername}</div>
+                              </div>
+                              <div>{friend.content}</div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div>no messages yet!</div>
+                )}
+              </ul>
             )}
-             {recipient && isBlocked === "false" && (
-            <button
-              className="buttonseemore buttonnotchan blocking"
-              onClick={() => BlockFriend(recipient.toString())}
-            >
-              block
-            </button>
-          )}
-          {isBlocked === "true" && recipient && (
-            <button
-              className="buttonseemore buttonokchan"
-              onClick={() =>
-                removeBlocked(user?.id.toString() as any, recipient.toString())
-              }
-            >
-              unblock
-            </button>
-          )}
-          </div>
+            <div className="sendingzoneprivate-privatechat">
+              {recipient && (
+                <div>
+                  <input
+                    type="text"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    onKeyPress={handleEnter}
+                  />
+                  <button
+                    className="buttonseemore buttonchan"
+                    onClick={() => {
+                      onSubmit();
+                      scrollToBottom();
+                    }}
+                    disabled={value.length > 80}
+                  >
+                    send
+                  </button>
+                </div>
+              )}
+              {recipient && isBlocked === "false" && (
+                <button
+                  className="buttonseemore buttonnotchan blocking"
+                  onClick={() => BlockFriend(recipient.toString())}
+                >
+                  block
+                </button>
+              )}
+              {isBlocked === "true" && recipient && (
+                <button
+                  className="buttonseemore buttonokchan"
+                  onClick={() =>
+                    removeBlocked(
+                      user?.id.toString() as any,
+                      recipient.toString()
+                    )
+                  }
+                >
+                  unblock
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

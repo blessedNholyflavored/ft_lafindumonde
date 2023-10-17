@@ -1,15 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../App.css";
 import "../style/Home.css";
 import "../style/Logout.css";
-import { Logout } from "../components/auth/Logout";
 import { useAuth } from "../components/auth/AuthProvider";
 import { WebsocketContext } from "../services/WebsocketContext";
 
 const AcceptMatch: React.FC = () => {
   const { id } = useParams();
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const socket = useContext(WebsocketContext);
 
@@ -18,8 +17,8 @@ const AcceptMatch: React.FC = () => {
   if (socket && accepted === false) {
     setAccepted(true);
     socket.emit("matchAccepted", id);
-    socket?.emit("updateUserIG", user?.id);
-    socket?.emit("updateUserIG", parseInt(id as string));
+    socket?.emit("updateUserIGFriend", user?.id);
+    socket?.emit("updateUserIGFriend", parseInt(id as string));
   }
   if (socket) {
     socket?.on("matchStart", (roomdId: number) => {

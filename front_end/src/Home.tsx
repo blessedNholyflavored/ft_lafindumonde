@@ -34,7 +34,6 @@ const Home: React.FC<HomeProps> = () => {
   const socket = useContext(WebsocketContext);
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
-  // const [recupStatus, setStatus] = useState<string>('');
   let [ImgUrl, setImgUrl] = useState<string>("");
   const [showNotification, setShowNotification] = useState(false);
 
@@ -114,7 +113,7 @@ const Home: React.FC<HomeProps> = () => {
   if (socket) {
     socket.on("friendShipNotif", () => {
       setShowNotification(true);
-      setNotifyMSG("Tu as recu une demande d'ami");
+      setNotifyMSG("you've received a friends request!");
       setNotifyType(0);
     });
   }
@@ -122,7 +121,7 @@ const Home: React.FC<HomeProps> = () => {
   if (socket) {
     socket.on("receiveInvite", (sender: number) => {
       setShowNotification(true);
-      setNotifyMSG("Tu as recu une invitation pour une partie");
+      setNotifyMSG("you've received a game invitation!");
       setNotifyType(1);
       setSender(sender);
     });
@@ -319,24 +318,3 @@ const Home: React.FC<HomeProps> = () => {
 };
 
 export default Home;
-
-/*
-  return (
-    <div>
-      <h2>Les WebSocket c'est dla merde</h2>
-      <button onClick={() => handlePlayerSelect('1')}>RECHERCHE DE PARTIE</button>
-      <button onClick={navigateToProfPage}>Aller à la page Prof</button>
-      <button onClick={() => handlePlayerSelect222('1')}>Rdfsfvdsvfdsvfdfd</button>
-
-
-      {queueCount > 0 && (
-        <p>En attente d'autres joueurs...</p>
-      )}
-      {queueCount === 2 && (
-        <p>La partie commence entre Ldinaut et Mcouppe !</p>
-      )}
-	  		<div className="logoutBox">
-			<button className="logoutBtn" onClick={() => Logout({user, setUser})}>LOG OUT </button>
-		</div>
-    </div>
-  );*/

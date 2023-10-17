@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { useAuth } from "../auth/AuthProvider";
-import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { WebsocketContext } from "../../services/WebsocketContext";
 import Notify from "../../services/Notify";
@@ -11,7 +10,6 @@ import foldergreen from "./../../img/foldergreen.png";
 import folderblue from "./../../img/folderblue.png";
 import folderpink from "./../../img/folderpink.png";
 import folderyellow from "./../../img/folderyellow.png";
-import folderwhite from "./../../img/folderwhite.png";
 import folderviolet from "./../../img/folderviolet.png";
 import icon from "../../img/buttoncomp.png";
 import "../../style/Profile.css";
@@ -36,7 +34,6 @@ interface onlinePlayers {
 
 export const FriendsPage: React.FC = () => {
   const { user, setUser } = useAuth();
-  const [username, setUsername] = useState<string>("");
 
   const [sender, setSender] = useState<number>(0);
   const socket = useContext(WebsocketContext);
@@ -50,9 +47,50 @@ export const FriendsPage: React.FC = () => {
   const [notifyType, setNotifyType] = useState<number>(0);
   const navigate = useNavigate();
   const [selectedUser, setSelectedUser] = useState(0);
-  let [ImgURL, setImgURL] = useState<string>("");
+  let [ImgURL] = useState<string>("");
 
-  async function fetchfriendsSend() {
+  const displayPic = useCallback(
+    async (userId: number) => {
+      try {
+        const response = await fetch(
+          `http://${window.location.hostname}:3000/users/${userId}/avatar`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        if (response.ok) {
+          const pictureURL = await response.text();
+          if (pictureURL.includes("https")) {
+            return pictureURL;
+          } else {
+            try {
+              const response = await fetch(
+                `http://${window.location.hostname}:3000/users/uploads/${pictureURL}`,
+                {
+                  method: "GET",
+                  credentials: "include",
+                }
+              );
+              if (response.ok) {
+                const blob = await response.blob();
+                const absoluteURL = URL.createObjectURL(blob);
+                return absoluteURL;
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+      return ImgURL;
+    },
+    [ImgURL]
+  );
+
+  const fetchfriendsSend = useCallback(async () => {
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/friends/invSend/${user?.id}`,
@@ -83,9 +121,9 @@ export const FriendsPage: React.FC = () => {
       console.error("Erreur:", error);
       return [];
     }
-  }
+  }, [user?.id]);
 
-  async function fetchfriendsRequest() {
+  const fetchfriendsRequest = useCallback(async () => {
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/friends/invRequest/${user?.id}`,
@@ -124,9 +162,9 @@ export const FriendsPage: React.FC = () => {
       console.error("Erreur:", error);
       return [];
     }
-  }
+  }, [displayPic, user]);
 
-  const fetchFriendsList = async () => {
+  const fetchFriendsList = useCallback(async () => {
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/friends/${user?.id}`,
@@ -167,9 +205,9 @@ export const FriendsPage: React.FC = () => {
     } catch (error) {
       console.error("Error fetching friends:", error);
     }
-  };
+  }, [displayPic, user?.id]);
 
-  const fetchBlockedList = async () => {
+  const fetchBlockedList = useCallback(async () => {
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/friends/blockedList/${user?.id}`,
@@ -211,9 +249,9 @@ export const FriendsPage: React.FC = () => {
     } catch (error) {
       console.error("Error fetching blocked friends:", error);
     }
-  };
+  }, [displayPic, user?.id]);
 
-  const fetchOnlinePlayersList = async () => {
+  const fetchOnlinePlayersList = useCallback(async () => {
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/friends/online/${user?.id}`,
@@ -246,7 +284,7 @@ export const FriendsPage: React.FC = () => {
     } catch (error) {
       console.error("Error fetching online players:", error);
     }
-  };
+  }, [displayPic, user?.id]);
 
   useEffect(() => {
     if (socket) {
@@ -282,26 +320,33 @@ export const FriendsPage: React.FC = () => {
     }
 
     async function fetchScores() {
-      const scores = await fetchfriendsSend();
+      await fetchfriendsSend();
     }
     async function fetchRequest() {
-      const scores = await fetchfriendsRequest();
+      await fetchfriendsRequest();
     }
     async function fetchFriends() {
-      const scores = await fetchFriendsList();
+      await fetchFriendsList();
     }
     async function fetchBlocked() {
-      const scores = await fetchBlockedList();
+      await fetchBlockedList();
     }
     async function fetchOnlinePlayers() {
-      const scores = await fetchOnlinePlayersList();
+      await fetchOnlinePlayersList();
     }
     fetchScores();
     fetchRequest();
     fetchFriends();
     fetchBlocked();
     fetchOnlinePlayers();
-  }, []);
+  }, [
+    socket,
+    fetchBlockedList,
+    fetchFriendsList,
+    fetchOnlinePlayersList,
+    fetchfriendsRequest,
+    fetchfriendsSend,
+  ]);
 
   async function recupUsername(userId: number) {
     try {
@@ -491,12 +536,12 @@ export const FriendsPage: React.FC = () => {
       if (response.ok) {
         const data = response.text();
         if ((await data).valueOf() === "exist") {
-          setNotifyMSG("Friendship already in PENDING");
+          setNotifyMSG("friend request already in PENDING");
           setShowNotification(true);
           setSender(0);
           setNotifyType(2);
         } else {
-          setNotifyMSG("Friendship sent !");
+          setNotifyMSG("friend request sent !");
           setShowNotification(true);
           setSender(0);
           setNotifyType(2);
@@ -531,7 +576,7 @@ export const FriendsPage: React.FC = () => {
   if (socket) {
     socket.on("receiveInvite", (sender: number) => {
       setShowNotification(true);
-      setNotifyMSG("Tu as recu une invitation pour une partie");
+      setNotifyMSG("you've received a game invitation !");
       setNotifyType(1);
       setSender(sender);
     });
@@ -547,10 +592,6 @@ export const FriendsPage: React.FC = () => {
 
   const navigateToChat = () => {
     navigate("/chat");
-  };
-
-  const NavToSoloPong = () => {
-    navigate("/solopong");
   };
 
   const navigateToFriends = () => {
@@ -576,45 +617,6 @@ export const FriendsPage: React.FC = () => {
     if (flag === 1) setSelectedUser(0);
   };
 
-  const displayPic = async (userId: number) => {
-    try {
-      const response = await fetch(
-        `http://${window.location.hostname}:3000/users/${userId}/avatar`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-      if (response.ok) {
-        const pictureURL = await response.text();
-        if (pictureURL.includes("https")) {
-          return pictureURL;
-          // setImgURL(pictureURL);
-        } else {
-          try {
-            const response = await fetch(
-              `http://${window.location.hostname}:3000/users/uploads/${pictureURL}`,
-              {
-                method: "GET",
-                credentials: "include",
-              }
-            );
-            if (response.ok) {
-              const blob = await response.blob();
-              const absoluteURL = URL.createObjectURL(blob);
-              return absoluteURL;
-            }
-          } catch (error) {
-            console.error(error);
-          }
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-    return ImgURL;
-  };
-
   return (
     <>
       <header>
@@ -624,7 +626,7 @@ export const FriendsPage: React.FC = () => {
         <h1>TRANSCENDENCE</h1>
       </header>
       <div className="flex-bg">
-        <main className="mainFriendship">
+        <main className="commonmain">
           <div>
             {showNotification && (
               <Notify
@@ -653,7 +655,7 @@ export const FriendsPage: React.FC = () => {
                         <img
                           src={friend.pictureURL}
                           className="avatar"
-                          alt="photo casse"
+                          alt=""
                         />
                         <div style={{ fontWeight: "bold" }}>
                           {friend.username}
@@ -661,20 +663,28 @@ export const FriendsPage: React.FC = () => {
                         <button
                           className="buttonseemore"
                           onClick={() => handleUserClick(friend.recipientId)}
-                          // disabled={user?.id.toString() === friend.id}
                         >
                           {" "}
                           see more
                         </button>
                         <div>
                           {friend.status === "ONLINE" && (
-                            <span>{friend.username} 🟢</span>
+                            <span style={{ fontStyle: "italic" }}>
+                              {" "}
+                              status: 🟢
+                            </span>
                           )}
                           {friend.status === "INGAME" && (
-                            <span>{friend.username} 🎮</span>
+                            <span style={{ fontStyle: "italic" }}>
+                              {" "}
+                              status: 🎮
+                            </span>
                           )}
                           {friend.status === "OFFLINE" && (
-                            <span>{friend.username} 🔴</span>
+                            <span style={{ fontStyle: "italic" }}>
+                              {" "}
+                              status: 🔴
+                            </span>
                           )}
                         </div>
                         {selectedUser === friend.recipientId && (
@@ -739,7 +749,7 @@ export const FriendsPage: React.FC = () => {
                         <img
                           src={blocked.pictureURL}
                           className="avatar"
-                          alt="photo casse"
+                          alt=""
                         />
                         <div style={{ fontWeight: "bold" }}>
                           {blocked.username}
@@ -783,7 +793,7 @@ export const FriendsPage: React.FC = () => {
                         <img
                           src={friend.pictureURL}
                           className="avatar"
-                          alt="photo casse"
+                          alt=""
                         />
                         <div className="name1">{friend.username}</div>
                         <button
@@ -852,7 +862,7 @@ export const FriendsPage: React.FC = () => {
                             <img
                               src={friend.pictureURL}
                               className="avatar"
-                              alt="photo casse"
+                              alt=""
                             />
                             <div>{friend?.username}</div>
                             <div style={{ fontStyle: "italic", fontSize: 12 }}>
@@ -886,7 +896,7 @@ export const FriendsPage: React.FC = () => {
             </div>
           </div>
         </main>
-        <nav className="friendshipNav">
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>

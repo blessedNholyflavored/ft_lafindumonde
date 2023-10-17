@@ -1,17 +1,20 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+  useCallback,
+} from "react";
 import { useAuth } from "../components/auth/AuthProvider";
 import { WebsocketContext } from "../services/WebsocketContext";
 import { useNavigate } from "react-router-dom";
 import nav from "./../img/buttoncomp.png";
 import foldergreen from "./../img/foldergreen.png";
-import folderblue from "./../img/folderblue.png";
 import folderred from "./../img/folderred.png";
-import folderpink  from "./../img/folderpink.png";
+import folderpink from "./../img/folderpink.png";
 import folderyellow from "./../img/folderyellow.png";
 import folderwhite from "./../img/folderwhite.png";
 import folderviolet from "./../img/folderviolet.png";
-import sadpepe from "./../img/sadpepe.png";
-import sponge from "./../img/sponge.jpg";
 import { Logout } from "../components/auth/Logout";
 import logo from "./../img/logo42.png";
 import damon from "./../img/damon.png";
@@ -24,17 +27,12 @@ interface MiniScore {
 }
 
 export const MiniGame = () => {
-  const [player1, setPlayer1] = useState(0);
+  const [player1] = useState(0);
   const [player2, setPlayer2] = useState(200);
-  const [keyCode, setKeyCode] = useState("");
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const mapy = 400;
   const mapx = 700;
   const [ballSpeed, setBallSpeed] = useState(5);
-  const [player1Point, setPoint1] = useState(0);
-  const [player2Point, setPoint2] = useState(0);
-  const [player1tsc, setPoint1tsc] = useState(0);
-  const [player2tsc, setPoint2tsc] = useState(0);
   const [ball, setBall] = useState<{ x: number; y: number }>({
     x: 350,
     y: 200,
@@ -49,6 +47,8 @@ export const MiniGame = () => {
   const [countdown, setCountdown] = useState(3);
   const [playerScores, setPlayerScores] = useState<MiniScore[]>([]);
   const [counter, setCounter] = useState(0);
+  const [rebounds, setRebounds] = useState(0);
+
 
   const userId = user?.id;
   const navigate = useNavigate();
@@ -67,9 +67,9 @@ export const MiniGame = () => {
     if (countdown !== 0 && counter === 0) {
       startCountdown();
     }
-  }, [counter]);
+  }, [counter, countdown]);
 
-  async function fetchPlayerScores() {
+  const fetchPlayerScores = useCallback(async () => {
     try {
       const response = await fetch(
         `http://${window.location.hostname}:3000/users/mini/${userId}`,
@@ -82,27 +82,24 @@ export const MiniGame = () => {
         throw new Error("Erreur lors de la récupération des scores.");
       }
       const data = await response.json();
-      // console.log("DANS LEADERBOARD.TSX", data);
       setPlayerScores(data);
     } catch (error) {
       console.error("Erreur:", error);
       return [];
     }
-  }
+  }, [userId]);
+
   function navToProfil(id: string) {
     navigate(`/users/profile/${id}`);
   }
 
   useEffect(() => {
     fetchPlayerScores();
-  }, []);
+  }, [fetchPlayerScores]);
 
-  // Compteur de rebond pour le joueur 1
-  const [rebounds, setRebounds] = useState(0);
 
   const playerMove = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (end) return;
-    setKeyCode(e.key);
     const key = e.keyCode;
     const speed = 30;
 
@@ -123,7 +120,7 @@ export const MiniGame = () => {
       }, 1000 / 60);
       return () => clearInterval(interval);
     }
-  }, [ballDir, counter]);
+  }, [ballDir, counter, ballSpeed, fetchPlayerScores]);
 
   useEffect(() => {
     const randomValue: number = Math.random();
@@ -144,49 +141,46 @@ export const MiniGame = () => {
             ball.y + 8 >= player1 &&
             ball.y <= player1 + 400)
         ) {
-          if (ball.y <= player2 - 20 || ball.y <= player1 - 20)
-          {
+          if (ball.y <= player2 - 20 || ball.y <= player1 - 20) {
             setBallDir((prevBallDir: { x: number; y: number }) => ({
               ...prevBallDir,
               y: -prevBallDir.y - randomValue,
               x: -prevBallDir.x,
-
-              
             }));
-          }
-          else if (ball.y <= player2 + 20 || ball.y <= player1 + 20)
-          {
+          } else if (ball.y <= player2 + 20 || ball.y <= player1 + 20) {
             setBallDir((prevBallDir: { x: number; y: number }) => ({
               ...prevBallDir,
               y: -prevBallDir.y + randomValue,
               x: -prevBallDir.x,
-
+            }));
+          } else {
+            setBallDir((prevBallDir: { x: number; y: number }) => ({
+              ...prevBallDir,
+              x: -prevBallDir.x,
+              y: -prevBallDir.y + randomValue / 2,
             }));
           }
-          else
-          {
-          setBallDir((prevBallDir: { x: number; y: number }) => ({
-            ...prevBallDir,
-            x: -prevBallDir.x,
-            y: -prevBallDir.y + randomValue / 2,
-          }));
-        }
 
           if (ball.x < mapx / 2) {
             setRebounds((prevRebounds) => prevRebounds + 1);
-            setBallSpeed(ballSpeed + 0.1);
-              
+            setBallSpeed((prevBallSpeed) => prevBallSpeed + 0.1);
           }
         } else if (ball.x >= mapx - 8 - 10) {
           setEnd(true);
-          socket?.emit("updateScoreMiniGame", rebounds);
+          socket?.emit("updateScoreMiniGame", reboundsRef.current);
           setTimeout(() => {
             fetchPlayerScores();
           }, 500);
         }
       }
     }
-  }, [ball, counter]);
+  }, [ball, counter, end, player1, player2, socket, fetchPlayerScores]);
+
+  const reboundsRef = useRef(0);
+
+  useEffect(() => {
+    reboundsRef.current = rebounds;
+  }, [rebounds]);
 
   useEffect(() => {
     if (gameAreaRef.current) {
@@ -245,20 +239,18 @@ export const MiniGame = () => {
       </header>
       <div className="flex-bg ">
         <main style={{ color: "black" }}>
-
-        <div className="fullpage sologamee">
+          <div className="fullpage sologamee">
             <div className="navbarbox">
               <img src={nav} alt="icon" />
               <h1> Game </h1>
             </div>
 
+            <div className="trollgame damon">
+              <p> 42 LOVE U </p>
+              <img src={damon} alt="" />
+            </div>
 
-              <div className="trollgame damon">
-                <p> 42 LOVE U </p>
-                <img src={damon} />
-              </div>
-
-              <div className="floating">
+            <div className="floating">
               <div className="navbarbox">
                 <img src={nav} alt="icon" />
                 <h1> hi! </h1>
@@ -286,8 +278,7 @@ export const MiniGame = () => {
                     </button>
                   </div>
                 )}
-          </div>
-              
+              </div>
             </div>
             <div className="floating1">
               <div className="navbarbox">
@@ -322,7 +313,6 @@ export const MiniGame = () => {
                 </table>
               </div>
             </div>
-            {/* { countdown <= 0 && ( */}
             <div
               className="div2"
               ref={gameAreaRef}
@@ -331,7 +321,6 @@ export const MiniGame = () => {
               style={{
                 width: mapx,
                 height: mapy,
-                // border: "7px solid black",
                 position: "relative",
               }}
             >
@@ -346,7 +335,6 @@ export const MiniGame = () => {
                       position: "absolute",
                       width: 10,
                       height: 400,
-                      // backgroundColor: "blue",
                       top: player1,
                       left: 0,
                     }}
@@ -356,7 +344,7 @@ export const MiniGame = () => {
                       position: "absolute",
                       width: 10,
                       height: 80,
-                      backgroundColor: "red",
+                      backgroundColor: "yellow",
                       top: player2,
                       right: 0,
                     }}
@@ -366,7 +354,6 @@ export const MiniGame = () => {
               )}
             </div>
             {/* )} */}
-
           </div>
         </main>
         <nav>

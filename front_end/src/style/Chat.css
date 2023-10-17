@@ -21,6 +21,30 @@
   background-image: url(../img/social.png);
 }
 
+.active-button {
+  background-color: rgb(35, 114, 179);
+}
+
+.active-priv {
+  background-color: rgb(38, 161, 0);
+}
+
+.privbutt {
+  position: absolute;
+  width: 10vw;
+  height: 3vh;
+  right: 88px;
+  top: 82%;
+}
+
+.privbutt2 {
+  position: absolute;
+  width: 10vw;
+  height: 3vh;
+  right: 88px;
+  top: 70%;
+}
+
 .divdeschats {
   display: flex;
   justify-content: space-between;
@@ -124,6 +148,7 @@
   display: flex;
   flex-direction: column;
   overflow: auto;
+  overflow-wrap: break-word;
 }
 
 .whoschattin {
@@ -131,7 +156,10 @@
 }
 
 .testingchat {
+  width: 100%;
+  width: -moz-available;
   width: -webkit-fill-available;
+  width: stretch;
   overflow: auto;
 }
 
@@ -173,6 +201,14 @@
 
 .onlinelist button {
   background-color: red;
+}
+
+.onlinelist:disabled {
+  cursor: default;
+}
+
+.buttonseemore:disabled:hover {
+  background: none !important;
 }
 
 .sendingzonechannel {
@@ -227,15 +263,54 @@
 }
 
 .statusbutton {
-  position: absolute;
+  position: inherit;
   top: 76%;
+  margin-bottom: 5px;
   right: 27%;
   background-color: #fa8072;
 }
 
-.statutbutton {
+/* .statutbutton {
   position: absolute;
   top: 70%;
   right: 27%;
   background-color: #fa8072;
+} */
+
+.boutondetest {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+}
+
+/* 
+.inputdetest{
+	position: absolute;
+	top:63%;
+	left:50%;
+} */
+
+.boxrowtest.jpp {
+  position: absolute;
+  top: 16%;
+  right: 35%;
+  border-bottom: 0;
+  background-color: white;
+  height: 200px;
+}
+
+.navbarsmallbox.jpp {
+  margin-bottom: 10px;
+}
+
+.zindexcosin {
+  z-index: 5000;
+  /* left: 60%; */
+  top: 30%;
+}
+
+.jpp input {
+  z-index: 5000;
+  position: relative;
+  top: 30%;
 }

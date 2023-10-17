@@ -106,6 +106,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     this.playerQueue.splice(0, 1);
     this.playerQueue2.splice(0, 1);
     this.socketQueue.splice(0, 1);
+    this.playerQueueBonus.splice(0, 1);
+    this.playerQueue2Bonus.splice(0, 1);
+    this.socketQueueBonus.splice(0, 1);
     console.log("diconnected");
     if (socket && socket.user)
     {
@@ -523,6 +526,17 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     });
   }
 
+  @SubscribeMessage('updateUserIGFriend')
+  async onUpdateUserIGFriend(@MessageBody() id: number, @ConnectedSocket() socket: Socket,){
+    
+    this.userService.updateUserStatuIG(id, 'INGAME');
+    this.userService.updateGamePlayer(id.toString());
+    this.playerConnections.forEach((value, key) => {
+      if (value != socket)
+        value.emit("reloadInGame");
+    });
+  }
+
   @SubscribeMessage('changeStatus')
   async onChaneStatus(@ConnectedSocket() socket: Socket) {
   this.userService.updateUserStatuIG(socket.user.id, 'ONLINE');
@@ -625,11 +639,11 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
       const NuserId = Number(data[1]);
       this.playerConnections.forEach((value, key) => {
         if (key === NuserId)
-          user1 = value;
+        user1 = value;
       });
       if (user1)
-        user1.emit("refreshMessagesTEST");
-      socket.emit("refreshMessagesTEST");
+      user1.emit("refreshMessagesTEST");
+        socket.emit("refreshMessagesTEST");
     }
 
     @SubscribeMessage('reloadMessages')

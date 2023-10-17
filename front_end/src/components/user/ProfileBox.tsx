@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import icon from "../../img/iconpic.png";
-import FriendshipComponent from "./../friends/friendship"; // Assurez-vous que le chemin d'importation est correct
+import FriendshipComponent from "./../friends/friendship";
 import { useAuth } from "../auth/AuthProvider";
 import { WebsocketContext } from "../../services/WebsocketContext";
 
@@ -27,7 +27,7 @@ export const ProfileBox = (props: any) => {
     fetchUserTab(id);
     fetchFriendshipStatus();
     fetchDivision();
-  }, []);
+  }, [id]);
 
   const fetchUserTab = async (id: string | undefined) => {
     try {
@@ -45,7 +45,6 @@ export const ProfileBox = (props: any) => {
         setLevel(data.level.toString());
         setXp(data.xp);
         setElo(data.ELO);
-        // }
       } else {
         console.log("error : wrong fetch");
       }

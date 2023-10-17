@@ -10,7 +10,7 @@ export const GameHistory = (props: any) => {
 
   useEffect(() => {
     FetchGames();
-  }, []);
+  }, [id]);
 
   interface Game {
     id: number;

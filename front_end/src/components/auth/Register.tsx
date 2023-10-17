@@ -20,7 +20,6 @@ export function Register() {
   const [sender] = useState<number>(0);
   const navigate = useNavigate();
 
-  // check if user is already logged in
   useEffect(() => {
     if (user) {
       navigate("/");
@@ -34,7 +33,6 @@ export function Register() {
     navigate("/local_login");
   };
 
-  // sending input to back_end to verify and register
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const id = Math.floor(Math.random() * 151);
@@ -48,12 +46,6 @@ export function Register() {
         pokeimg = resData.sprites.other.home.front_default;
       })
       .catch(() => (pokeimg = champi.toString()));
-    // await fetch(`https://dog.ceo/api/breeds/image/random`, {
-    //   method: "GET",
-    // })
-    //   .then((response) => response.json())
-    //   .then((responseData) => (dogimg = responseData.message.toString()))
-    //   .catch(() => (dogimg = champi.toString()));
     const res = await fetch(
       `http://${window.location.hostname}:3000/auth/register`,
       {
@@ -77,7 +69,6 @@ export function Register() {
       setInputPassword("");
       setInputUsername("");
       setInputEmail("");
-      //TODO: add a return to general login or SignIn only in this case
     } else if (res.status === 406) {
       setShowNotification(true);
       setNotifyMSG("You must use 42 LogIn system !");
@@ -98,10 +89,6 @@ export function Register() {
       window.location.reload();
     }
   };
-
-  // const returnHome = () => {
-  //   navigate("/");
-  // };
 
   const fortyTwoLogin = () => {
     window.location.href = `http://${window.location.hostname}:3000/auth/login42`;

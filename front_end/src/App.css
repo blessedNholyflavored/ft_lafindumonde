@@ -103,12 +103,53 @@ body {
   position: absolute;
 }
 
+@keyframes rainbow {
+  0% { background-color: #FF0000; }
+  14.28% { background-color: #FF7F00; }
+  28.57% { background-color: #FFFF00; }
+  42.85% { background-color: #00FF00; } 
+  57.14% { background-color: #0000FF; }
+  71.42% { background-color: #4B0082; }
+  85.71% { background-color: #9400D3; }
+  100% { background-color: #FF0000; }
+}
+
+@keyframes rainbowRect {
+  0% { background-color: #9400D3; }
+  14.28% { background-color: #4B0082; }
+  28.57% { background-color: #0000FF; }
+  42.85% { background-color: #FF0000; } 
+  57.14% { background-color: #FFFF00; }
+  71.42% { background-color: #FF7F00; }
+  85.71% { background-color: #00FF00; }
+  100% { background-color: #9400D3; }
+}
+
+
+
 .ball {
   width: 10px;
   height: 10px;
-  background-color: rgb(0, 23, 128);
   position: absolute;
+  border-radius: 50%;
+  background-color: red;
 }
+
+.rainbow-ball {
+  animation: rainbow 7s linear infinite;
+}
+
+.football {
+  background-image: url('img/football.jpeg');
+  background-size: cover;
+  background-color: transparent;
+}
+
+.rainbow-rect {
+  animation: rainbowRect 7s linear infinite;
+}
+
+
 
 .player-rect {
   position: absolute;

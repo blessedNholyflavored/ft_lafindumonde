@@ -4,14 +4,12 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaClient, User, USER_STATUS } from '@prisma/client'; // Renommez "User" en "PrismaUser"
+import { PrismaClient, User, USER_STATUS } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaUserCreateInput } from './user-create.input';
 import { Game, Leaderboard, MiniScore } from '../interfaces';
 import * as bcrypt from 'bcrypt';
 import { AuthDto } from './dto/auth.dto';
-//import { createUserDto } from 'src/dto/createUserDto.dto';
-// import { UserAchievements } from '../user/user.interface';
 import { merge } from 'lodash';
 import { plainToClass } from 'class-transformer';
 import { parse } from 'path';
@@ -281,11 +279,16 @@ export class UserService {
   }
 
   async getUserByID(id: number): Promise<User | undefined> {
-    return await prisma.user.findUnique({
-      where: {
-        id: Number(id),
-      },
-    });
+    try{
+			const user = await prisma.user.findUnique({
+    	  where: {
+      	  id: Number(id),
+     	 },
+   		});
+			return user;
+		} catch {
+			return undefined;
+		}
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
@@ -344,10 +347,7 @@ export class UserService {
       });
       return tmpUser;
     } catch (err) {
-      //TODO: return the accurate error
-      // doc here : https://www.prisma.io/docs/reference/api-reference/error-reference
       console.error('Error creating user:', err);
-      //throw err;
     }
   }
 

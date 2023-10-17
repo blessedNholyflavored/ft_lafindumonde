@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
 import "../style/Notify.css";
-import { Link, useNavigate } from "react-router-dom"; // Importez Link depuis react-router-dom
+import { Link, useNavigate } from "react-router-dom";
 
-// Définissez une interface pour les props du composant
 interface NotificationProps {
-  message: string; // Indiquez le type de la prop message (string ici)
-  onClose: () => void; // Fonction pour fermer la notification
+  message: string;
+  onClose: () => void;
   type: number;
   senderId: number;
 }
@@ -38,13 +37,11 @@ const Notify: React.FC<NotificationProps> = ({
         credentials: "include",
       }
     );
-    if (res.status != 200) {
+    if (res.status !== 200) {
       return navigate(`/settings`);
     } else {
       return navigate(`/totpSave`);
     }
-    // const data = await res.json();
-    // return navigate(`/totpSave?qrCodeImg=${encodeURIComponent(data.code)}`);
   };
   return (
     <>
@@ -60,7 +57,7 @@ const Notify: React.FC<NotificationProps> = ({
         <div className="notification">
           {message}
           <button className="notification-link" onClick={handleViewClick}>
-            Accepter
+            accept
           </button>
         </div>
       )}

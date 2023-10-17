@@ -11,7 +11,6 @@ import "./../../App.css";
 import "./../../style/Profile.css";
 import { InputTotp } from "./InputTotp";
 
-// interface User
 export interface User {
   id: number;
   username: string;
