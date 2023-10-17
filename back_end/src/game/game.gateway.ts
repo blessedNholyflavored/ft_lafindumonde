@@ -473,6 +473,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
     let recupRoom = this.roomMapService.getRoom(id.toString());
     if (!recupRoom || !recupRoom.idP1 || !recupRoom.idP2)
       return ;
+    if (socket.user.id != recupRoom.idP1 && socket.user.id != recupRoom.idP2)
+      return ;
     if (socket.user.id == recupRoom.idP1)
       NuserId = recupRoom.idP2;
     else

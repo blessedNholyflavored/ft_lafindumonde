@@ -232,7 +232,9 @@ export const UserSetting: React.FC = () => {
         if (response.ok) {
           const result = await response.json();
           setImgUrl(result.pictureURL);
-          alert("profil picture mise à jour avec succès !");
+          setShowNotification(true);
+          setNotifyMSG("You successfully changed your avatar!");
+          setNotifyType(2);
           displayPic();
         } else {
           const backError = await response.json();
