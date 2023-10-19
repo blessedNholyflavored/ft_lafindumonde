@@ -674,7 +674,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayInit {
           if (key === userId)
             user1 = value;
           if (user1) {
-            user1.emit("refreshMessagesRoom");
+            user1.emit("refreshMessagesRoom", id);
             user1 = null;
           }
         });

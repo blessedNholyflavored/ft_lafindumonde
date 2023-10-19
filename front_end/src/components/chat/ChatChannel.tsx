@@ -398,7 +398,8 @@ export const ChatChannel = () => {
 
   useEffect(() => {
     if (socket) {
-      socket.on("refreshMessagesRoom", () => {
+      socket.on("refreshMessagesRoom", (roomId: string) => {
+        if (roomId != id) return;
         fetchLastMessage();
         setTimeout(() => {
           scrollToBottom();
@@ -524,7 +525,11 @@ export const ChatChannel = () => {
 
   const onSubmit = () => {
     if (value.length > 0) {
-      let modifiedString = value.replace(/[&'"]/g, (match: string | number) => ({'&': '＆', "'": '’', '"': '”'}[match]) as any);
+      let modifiedString = value.replace(
+        /[&'"]/g,
+        (match: string | number) =>
+          ({ "&": "＆", "'": "’", '"': "”" }[match] as any)
+      );
 
       socket.emit("newMessageRoom", modifiedString, id);
       setValue("");
@@ -977,7 +982,9 @@ export const ChatChannel = () => {
                   </div>
                 ))
               ) : (
-                <div className="emptymessage" style={{textAlign:"center"}}>no messages yet!</div>
+                <div className="emptymessage" style={{ textAlign: "center" }}>
+                  no messages yet!
+                </div>
               )}
             </ul>
           )}
@@ -1373,21 +1380,70 @@ export const ChatChannel = () => {
                         </button>
                       )}
                       {selectedUserRole === "USER" && (
-                        <button
-                          className="onlinebttn"
-                          onClick={() => kickFromChannel(users.id)}
-                        >
-                          kick
-                        </button>
+                        <div>
+                          <button
+                            className="onlinebttn"
+                            onClick={() => handleKickButton()}
+                          >
+                            kick
+                          </button>
+                          {onKick === true && (
+                            <div>
+                              <input
+                                type="text"
+                                placeholder="Reason ?"
+                                value={reasonKick}
+                                onChange={(e) => setReasonKick(e.target.value)}
+                              />
+                              <button
+                                className="buttonseemore buttonchan onlinelist"
+                                onClick={() => kickFromChannel(users.id)}
+                                disabled={reasonKick.length > 30}
+                              >
+                                send
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       )}
                       {selectedUserIsMuted === "false" &&
                         selectedUserRole === "USER" && (
-                          <button
-                            className="onlinebttn"
-                            onClick={() => MuteFromChannel(users.id)}
-                          >
-                            mute
-                          </button>
+                          <div>
+                            <button
+                              className="onlinebttn"
+                              onClick={() => handleMuteButton()}
+                            >
+                              mute
+                            </button>
+                            {onMute === true && (
+                              <div>
+                                <input
+                                  type="text"
+                                  placeholder="Time ?"
+                                  value={timeMute}
+                                  onChange={(e) => setTimeMute(e.target.value)}
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Reason ?"
+                                  value={reasonMute}
+                                  onChange={(e) => setReason(e.target.value)}
+                                />
+                                <button
+                                  className="buttonseemore buttonchan onlinelist"
+                                  onClick={() => MuteFromChannel(users.id)}
+                                  disabled={
+                                    isNaN(parseInt(timeMute)) ||
+                                    parseInt(timeMute) === 0 ||
+                                    timeMute.length > 3 ||
+                                    reasonMute.length > 30
+                                  }
+                                >
+                                  submit
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         )}
                       {selectedUserIsMuted === "true" &&
                         selectedUserRole === "USER" && (
@@ -1400,12 +1456,42 @@ export const ChatChannel = () => {
                         )}
                       {selectedUserIsBanned === "false" &&
                         selectedUserRole === "USER" && (
-                          <button
-                            className="onlinebttn"
-                            onClick={() => BanFromChannel(users.id)}
-                          >
-                            ban
-                          </button>
+                          <div>
+                            <button
+                              className="onlinebttn"
+                              onClick={() => handleBanButton()}
+                            >
+                              ban
+                            </button>
+                            {onBan === true && (
+                              <div>
+                                <input
+                                  type="text"
+                                  placeholder="Time ?"
+                                  value={timeBan}
+                                  onChange={(e) => setTimeBan(e.target.value)}
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Reason ?"
+                                  value={reasonBan}
+                                  onChange={(e) => setReasonBan(e.target.value)}
+                                />
+                                <button
+                                  className="buttonseemore buttonchan onlinelist"
+                                  onClick={() => BanFromChannel(users.id)}
+                                  disabled={
+                                    isNaN(parseInt(timeBan)) ||
+                                    parseInt(timeBan) === 0 ||
+                                    timeBan.length > 3 ||
+                                    reasonBan.length > 30
+                                  }
+                                >
+                                  submit
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         )}
                       {selectedUserIsBanned === "true" &&
                         selectedUserRole === "USER" && (
