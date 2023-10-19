@@ -49,7 +49,6 @@ export const MiniGame = () => {
   const [counter, setCounter] = useState(0);
   const [rebounds, setRebounds] = useState(0);
 
-
   const userId = user?.id;
   const navigate = useNavigate();
 
@@ -96,7 +95,6 @@ export const MiniGame = () => {
   useEffect(() => {
     fetchPlayerScores();
   }, [fetchPlayerScores]);
-
 
   const playerMove = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (end) return;
@@ -238,7 +236,7 @@ export const MiniGame = () => {
         <h1>TRANSCENDENCE</h1>
       </header>
       <div className="flex-bg ">
-        <main style={{ color: "black" }}>
+        <main style={{ color: "black" }} className="commonmain">
           <div className="fullpage sologamee">
             <div className="navbarbox">
               <img src={nav} alt="icon" />
@@ -356,7 +354,7 @@ export const MiniGame = () => {
             {/* )} */}
           </div>
         </main>
-        <nav>
+        <nav className="commonnav">
           <ul>
             <li className="menu-item">
               <a onClick={navigateToHome}>

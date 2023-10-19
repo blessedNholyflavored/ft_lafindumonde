@@ -101,10 +101,12 @@ export const UserSetting: React.FC = () => {
         setShowNotification(true);
         setNotifyMSG("Username successfully updated !");
         setNotifyType(2);
+        setNewUsername("");
       } else {
         setShowNotification(true);
         setNotifyMSG("An error happened while updating username");
         setNotifyType(3);
+        setNewUsername("");
       }
     } catch (error) {}
   };
@@ -128,10 +130,12 @@ export const UserSetting: React.FC = () => {
         setShowNotification(true);
         setNotifyMSG("Password successfully updated !");
         setNotifyType(2);
+        setNewPass("");
       } else {
         setShowNotification(true);
         setNotifyMSG("An error happened while updating password");
         setNotifyType(3);
+        setNewPass("");
       }
     } catch (error) {
       console.error("Erreur:", error);
@@ -156,10 +160,12 @@ export const UserSetting: React.FC = () => {
         setShowNotification(true);
         setNotifyMSG("Mail successfully updated !");
         setNotifyType(2);
+        setNewMail("");
       } else {
         setShowNotification(true);
         setNotifyMSG("An error happened while updating email address");
         setNotifyType(3);
+        setNewMail("");
       }
     } catch (error) {}
   };

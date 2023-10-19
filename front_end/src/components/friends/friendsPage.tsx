@@ -856,9 +856,9 @@ export const FriendsPage: React.FC = () => {
                     </div>
                   ) : (
                     friendsRequest.map((friend) => (
-                      <div>
+                      <div key={friend.id}>
                         {friend.status === "PENDING" && !friend.isBlocked && (
-                          <div className="requestinfo" key={friend.id}>
+                          <div className="requestinfo" >
                             <img
                               src={friend.pictureURL}
                               className="avatar"
