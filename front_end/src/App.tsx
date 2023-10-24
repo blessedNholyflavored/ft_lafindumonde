@@ -24,6 +24,7 @@ import AcceptMatch from "./game/acceptMatch";
 import GameFriend from "./game/GameFriend";
 import GamePage from "./game/gamePage";
 import PageNotFound from "./PageNotFound";
+import Creators from "./Creators";
 
 export const App: React.FC = () => {
   return (
@@ -166,6 +167,14 @@ export const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <Navigate to="/404" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/creators"
+            element={
+              <ProtectedRoute>
+                <Creators />
               </ProtectedRoute>
             }
           />

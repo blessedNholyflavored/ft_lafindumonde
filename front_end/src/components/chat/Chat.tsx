@@ -1549,7 +1549,7 @@ export const Chat = () => {
         <button className="logoutBtn" onClick={() => Logout({ user, setUser })}>
           LOG OUT{" "}
         </button>
-        <img src={logo} className="logo" alt="icon" />
+        < a href="/creators"> <img src={logo} className="logo" alt="icon" /></a>
       </footer>
     </>
   );
