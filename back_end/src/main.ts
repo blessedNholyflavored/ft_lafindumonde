@@ -12,7 +12,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.get(PrismaService);
   app.enableCors({
-    origin: 'http://' + process.env.HOSTNAME + ':8080',
+    origin: 'http://' + process.env.HOSTNAME,
     credentials: true,
   });
   app.use(cookieParser());

@@ -26,7 +26,7 @@ import { USER_STATUS } from '@prisma/client'; // Renommez "User" en "PrismaUser"
 // ici add de l'authorisation de recup des credentials du front (le token)
 @WebSocketGateway({
   cors: {
-    origin: "http://" + process.env.HOSTNAME + ":8080",
+    origin: "http://" + process.env.HOSTNAME,
     credentials: true
   },
   path: "",

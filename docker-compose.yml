@@ -50,7 +50,7 @@ services:
       - ./front_end:/usr/src/app
       - front_node_modules:/usr/src/app/node_modules
     ports:
-      - 8080:8080
+      - 80:80
 
 networks:
   transcendence:
