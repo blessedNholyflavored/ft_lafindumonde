@@ -80,6 +80,7 @@ const SuperPong: React.FC<PongGameProps> = () => {
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if ((event.key === "ArrowUp" || event.key === "ArrowDown") && !end) {
+      event.preventDefault();
       socket?.emit("movePoint", user?.username, event.key, room?.roomID);
     }
   };

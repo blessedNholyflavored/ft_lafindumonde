@@ -100,7 +100,7 @@ export const MiniGame = () => {
     if (end) return;
     const key = e.keyCode;
     const speed = 30;
-
+    e.preventDefault();
     if (key === 38 && player2 > 10) {
       setPlayer2(player2 - speed);
     } else if (key === 40 && player2 < mapy - 80) {

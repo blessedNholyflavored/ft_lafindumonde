@@ -26,6 +26,7 @@ import icon from "./../img/buttoncomp.png";
 import logo from "./../img/logo42.png";
 import { Logout } from "../components/auth/Logout";
 
+
 const PongGame: React.FC = () => {
   const { id } = useParams();
   const [room, setRoom] = useState<Room | null>(null);
@@ -53,6 +54,7 @@ const PongGame: React.FC = () => {
   const [rainbowBall, setRainbowBall] = useState(false);
   const [footBall, setFootBall] = useState(false);
   const countdownRef = useRef(0);
+
 
   const handleBeforeUnload = useCallback(
     async (e: BeforeUnloadEvent) => {
@@ -108,6 +110,7 @@ const PongGame: React.FC = () => {
   const handleKeyDown = useCallback(
     async (event: KeyboardEvent) => {
       if ((event.key === "ArrowUp" || event.key === "ArrowDown") && !end) {
+        event.preventDefault();
         socket?.emit("movePoint", user?.username, event.key, room?.roomID);
       }
     },
