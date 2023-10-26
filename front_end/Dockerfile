@@ -1,17 +1,20 @@
-FROM node:latest 
+FROM node:14-alpine AS builder
 
-# Create app directory and set it as our working directory. This will be the working directory for your application:
 WORKDIR /usr/src/app
 
-# Copy application dependency ,  package*.json , all fucture directory ,  to the container image.
-COPY --chown=node:node package*.json ./
+COPY package*.json ./
 
-RUN npm install
+RUN npm install --only=production
 
-# I had prb for copy with failed it ==> https://stackoverflow.com/questions/63783323/getting-copy-failed-stat-when-trying-to-copy-package-json-file-in-docker-on-dig
-COPY --chown=node:node . .
+COPY . .
 
 RUN npm run build
-#EXPOSE 8080
 
-CMD ["npm", "start"]
+FROM nginx:alpine
+
+COPY --from=builder /usr/src/app/build /usr/share/nginx/html
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+

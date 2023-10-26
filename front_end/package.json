@@ -18,7 +18,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.14.2",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "reactjs-popup": "^2.0.6",
     "socket.io": "^4.7.1",
     "socket.io-client": "^4.7.1",
@@ -29,7 +29,7 @@
   },
   "scripts": {
     "start": "DISABLE_ESLINT_PLUGIN=true PORT=80 react-scripts start",
-    "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
+    "build": "DISABLE_ESLINT_PLUGIN=true PORT=80 react-scripts build",
     "test": "DISABLE_ESLINT_PLUGIN=true react-scripts test",
     "eject": "react-scripts eject"
   },
